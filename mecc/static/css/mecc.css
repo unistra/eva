@@ -1,0 +1,117 @@
+/*Flatten das boostrap from https://gist.github.com/nodesocket/5843712*/
+.well, .navbar-inner, .popover, .btn, .tooltip, input, select, textarea, pre, .progress, .modal, .add-on, .alert, .table-bordered, .nav>.active>a, .dropdown-menu, .tooltip-inner, .badge, .label, .input-group-addon, .img-polaroid {
+ 	-moz-box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+
+  -webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	border-radius: 0px !important;
+
+	border-collapse: collapse !important;
+	background-image: none !important;
+}
+
+.hover-row:hover { background: #F5F8FE; }
+
+.table-head { background-color: #EFF4FE; color: #358CD3;}
+
+.fa-spin-custom, .glyphicon-spin {
+  -webkit-animation: spin 1500ms infinite linear;
+  animation: spin 1500ms infinite linear;
+}
+
+@-webkit-keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(359deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(45deg);
+  }
+  50% {
+    transform: rotate(150deg);
+  }
+  70% {
+    transform: rotate(325deg);
+  }
+  100% {
+      transform: rotate(359deg);
+  }
+}
+
+
+/*
+ * Style tweaks
+ * --------------------------------------------------
+*
+ * Off Canvas
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .row-offcanvas-left
+  .sidebar-offcanvas {
+    left: -10%;
+  }
+
+  .row-offcanvas-left.active {
+    left: 10%;
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 33%;
+    margin-left: 10px;
+  }
+}
+
+
+/* Sidebar navigation */
+.nav-sidebar {
+  background-color: #f5f5f5;
+  margin-right: -1em;
+  margin-bottom: 20px;
+  margin-left: -7em;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a {
+  color: #fff;
+  background-color: #428bca;
+}
+
+/*
+ * Main content
+ */
+
+.main {
+  padding: 0px;
+  background-color: #fff;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}

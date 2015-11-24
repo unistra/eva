@@ -1,0 +1,4 @@
+[run]
+source = mecc/
+omit = mecc/settings/*
+       mecc/wsgi.py
