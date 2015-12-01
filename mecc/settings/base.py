@@ -309,3 +309,12 @@ LOGGING = {
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+##########
+# Camelot #
+##########
+
+CAMELOT_SPORE = 'http://rest-api.u-strasbg.fr/camelot/description.json'
+CAMELOT_BASE_URL = "https://camelot-test.u-strasbg.fr"
+CAMELOT_TOKEN = "f8a635587c1cf39826fbd9aabfeab35107cd54b8"

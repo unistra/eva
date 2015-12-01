@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    <title>{% block title %}mecc{% endblock %}</title>
+    <title>{% block title %}MECC{% endblock %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,67 +16,85 @@
     <link rel="stylesheet" href="{% static 'css/mecc.css' %}" type="text/css" title="no title" charset="utf-8" />
 
     <script src="{% dipstrap 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
+    <script src="{% dipstrap 'js/vendor/jquery-1.11.0.min.js' %}"></script>
+    <script src="{% dipstrap 'js/vendor/bootstrap.min.js' %}"></script>
     {% block head-javascript %}{% endblock %}
 </head>
 
 <body>
+  <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
         <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">mecc</a>
-            </div>
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/commission">{% trans 'Commission' %}</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
+                <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
             </div>
         </div>
     </div>
-    <div class="container">
-      <div class="row row-offcanvas row-offcanvas-left">
+         <!-- Sidebar -->
 
-         <div class="col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar" role="navigation">
+         <div id="sidebar-wrapper">
+             <ul class="sidebar-nav">
+                 <li>
+                     <a href="{% url 'commission:home'%}"
+                     {% if 'commission' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Commission' %}</a>
 
-            <ul class="nav nav-sidebar">
-              <li class="active"><a href="#">Overview</a></li>
-              <li><a href="#">Reports</a></li>
-              <li><a href="#">Analytics</a></li>
-              <li><a href="#">Export</a></li>
-            </ul>
-            <ul class="nav nav-sidebar">
-              <li><a href="">Nav item</a></li>
-              <li><a href="">Nav item again</a></li>
-              <li><a href="">One more nav</a></li>
-              <li><a href="">Another nav item</a></li>
-              <li><a href="">More navigation</a></li>
-            </ul>
-            <ul class="nav nav-sidebar">
-              <li><a href="">Nav item again</a></li>
-              <li><a href="">One more nav</a></li>
-              <li><a href="">Another nav item</a></li>
-            </ul>
+                 </li>
+                 <li>
+                     <a href="#"
+                     {% if 'year' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Years' %}</a>
+                 </li>
+                 <li>
+                     <a href="#collapseDegree" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+                     {% if 'degree' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Degree' %}</a>
+                     <ul class="collapse" id="collapseDegree">
+                       <li><a href="#">{% trans 'Degree type' %}</a></li>
+                       <li><a href="#">{% trans 'Degrees' %}</a></li>
 
-        </div>
-    {% block content %}
-    Contenu de mecc
-    {% endblock %}
-    </div>
-    <div class="navbar navbar-default navbar-fixed-bottom">
-        <footer>
-            <div class="container">
-                <p class="credit">&copy; Direction Informatique - Universit&eacute; de Strasbourg - {% now "Y" %}</p>
-            </div>
-        </footer>
-    </div>
-    <script src="{% dipstrap 'js/vendor/jquery-1.11.0.min.js' %}"></script>
-    <script src="{% dipstrap 'js/vendor/bootstrap.min.js' %}"></script>
+                    </ul>
+                 </li>
+
+
+                     <!-- <p class="credit">&copy; DI - UDS - {% now "Y" %}</p> -->
+
+             </ul>
+         </div>
+
+         <div id="page-content-wrapper">
+             <div class="container-fluid">
+               <a href="#menu-toggle" id="menu-toggle">
+                 <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+               </a>
+               <h4>
+                   {% block page-header %}
+                   {% endblock %}
+               </h4>
+
+                       {% block content %}
+                       Contenu de mecc
+                       {% endblock %}
+
+             </div>
+         </div>
+         <!-- /#page-content-wrapper -->
+
+     </div>
+
+   </div>
+
+
     {% block foot-javascript %}{% endblock %}
+    <script>
+    $("#menu-toggle").click(function(e) {
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+
 </body>
 </html>

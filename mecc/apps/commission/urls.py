@@ -3,8 +3,10 @@ from . import views
 
 
 urlpatterns = [
-    url(r'$', views.home,
+    url(r'^$', views.home,
         name='home'),
-    url(r'^delete/$', views.delete_member,
+    url(r'^delete/(?P<pk>\d+)$', views.delete_member,
         name='delete'),
+    url(r'^search/$', views.search,
+        name='search'),
 ]

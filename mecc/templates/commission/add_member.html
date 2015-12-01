@@ -8,34 +8,34 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{% trans "Add a member" %}</h4>
+          <h4 class="modal-title">{% trans "Search a member" %}</h4>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-          <label for="num-student">{% trans "Member ID" %}</label>
-              <input type="text" class="form-control" placeholder="{% trans 'Member ID' %}" id="id_member" onKeyPress="if (event.keyCode == 13) searchMember()">
-         </div>
-            <a class="btn btn-default" onclick="searchMember();" style="width:120px">{% trans 'Search' %}
-              <span class="glyphicon glyphicon-refresh glyphicon-spin" style='display:none' id='spin'></span>
-           </a>
+        <div class="modal-body" style="padding-bottom:0">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Member id or first name" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" onclick="searchMember()">
+          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        </button>
+      </span>
+    </div><!-- /input-group -->
+    <div id="load-wrap" style="display:none">
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+  </div>
           <span id='error'></span>
         </br>
-      </div>
-      <div class="modal-footer" style="display:none" id="confirm">
-        lolilol
       </div>
     </div>
   </div>
 </div>
 
-
 <script type="text/javascript">
-
   function searchMember(){
-    document.getElementById('spin').style.display = '';
-    console.log('........');
+    search = document.getElementById("to-search").value
+    document.getElementById('load-wrap').style.display = '';
+    location.href = 'search/?member=' + search
   }
-
-
-
 </script>

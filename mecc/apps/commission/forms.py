@@ -1,14 +1,14 @@
 from django import forms
-from mecc.apps.commission.models import ECICommission
+from mecc.apps.commission.models import ECICommissionMember
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Button
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import ugettext_lazy as _
 
 
-class ECICommissionForm(forms.ModelForm):
+class ECICommissionMemberForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(ECICommissionForm, self).__init__(*args, **kwargs)
+        super(ECICommissionMemberForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
@@ -25,5 +25,5 @@ class ECICommissionForm(forms.ModelForm):
         )
 
     class Meta:
-        model = ECICommission
+        model = ECICommissionMember
         exclude = ()

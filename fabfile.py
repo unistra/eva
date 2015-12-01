@@ -17,7 +17,7 @@ env.application_name = 'mecc'   # name of webapp
 env.root_package_name = 'mecc'  # name of app in webapp
 
 env.remote_home = '/home/django'  # remote home root
-env.remote_python_version = ''  # python version
+env.remote_python_version = '3.4'  # python version
 env.remote_virtualenv_root = join(env.remote_home, '.virtualenvs')  # venv root
 env.remote_virtualenv_dir = join(env.remote_virtualenv_root,
                                  env.application_name)  # venv for webapp dir
@@ -89,21 +89,21 @@ def dev():
 def test():
     """Define test stage"""
     env.roledefs = {
-        'web': ['mecc-test.net'],
-        'lb': ['lb.mecc-test.net'],
+        'web': ['django-test.u-strasbg.fr'],
+        'lb': ['django-test.u-strasbg.fr'],
     }
     # env.user = 'root'  # user for ssh
     env.backends = ['127.0.0.1']
-    env.server_name = 'mecc-test.net'
+    env.server_name = 'mecc-test.u-strasbg.fr'
     env.short_server_name = 'mecc-test'
     env.static_folder = '/site_media/'
     env.server_ip = ''
     env.no_shared_sessions = False
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/mecc.net.pem'
-    env.path_to_cert_key = '/etc/ssl/private/mecc.net.key'
+    env.path_to_cert = '/etc/ssl/certs/wildcard.u-strasbg.fr-cert.pem'
+    env.path_to_cert_key = '/etc/ssl/private/wildcard.u-strasbg.fr-key.pem'
     env.goal = 'test'
-    env.socket_port = ''
+    env.socket_port = '8030'
     env.socket_host = '127.0.0.1'
     env.map_settings = {}
     execute(build_env)
