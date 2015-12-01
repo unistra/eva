@@ -1,4 +1,5 @@
 {% load i18n %}
+<a data-toggle="modal" data-target="#addMember" class="glyphicon glyphicon-search btn btn-link"> {% trans 'Search another member' %}</a>
 
 <!-- Modal -->
   <div class="modal fade fade" id="addMember" role="dialog">
@@ -36,6 +37,6 @@
   function searchMember(){
     search = document.getElementById("to-search").value
     document.getElementById('load-wrap').style.display = '';
-    location.href = 'search/?member=' + search
+    location.href = '/commission/search/?member=' + search
   }
 </script>

@@ -10,10 +10,10 @@
 
 {% block content %}
 
-
-	<input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filter' %}">
-
-  <table class="table results order-table">
+{% include "commission/add_member.html" %}
+<input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filter' %}">
+<span id='count-row'><span id='count'></span></span>
+  <table class="table results order-table" id="table">
     <thead>
     <tr class='table-head'>
       <th> {% trans 'Member id' %}</th>
@@ -63,6 +63,9 @@
 			Arr.forEach.call(tables, function(table) {
 				Arr.forEach.call(table.tBodies, function(tbody) {
 					Arr.forEach.call(tbody.rows, _filter);
+					var numOfVisibleRows = $('tr:visible').length - 1;
+					var resu = numOfVisibleRows < 2 ? " Result" :  " Results";
+					document.getElementById('count').textContent = numOfVisibleRows + resu;
 				});
 			});
 		}
@@ -85,10 +88,12 @@
 	document.addEventListener('readystatechange', function() {
 		if (document.readyState === 'complete') {
 			LightTableFilter.init();
+
 		}
 	});
 
 })(document);
+
 
 $(".hit").click(function(){
    var value=$(this).closest('tr').children('td:first').text();

@@ -15,22 +15,12 @@ class ECICommissionMember(models.Model):
     firstname = models.CharField(_('First name'), max_length=35)
     member_type = models.CharField(_('Member type'), blank=False,
                                    choices=member_type_choice, max_length=20)
+    mail = models.CharField(_('Mail'), max_length=256)
 
     def __str__(self):
         return '%s %s' % (self.name, self.firstname)
 
     class Meta:
         permissions = (
-            ('can_view_eci_commission', _('Can view ECI Commission')),
+            ('can_view_eci_commission_member', _('Can view ECI Commission Member')),
         )
-
-
-class Mail(models.Model):
-    """
-    Mail model
-    """
-    adress = models.EmailField(max_length=254)
-    member = models.ForeignKey(ECICommissionMember)
-
-    def __str__(self):
-        return adress

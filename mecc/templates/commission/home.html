@@ -37,10 +37,8 @@ No one is here...
 </br>
 
 {% endif %}
-
-
-<a data-toggle="modal" data-target="#addMember" class="glyphicon glyphicon-plus btn btn-link">{% trans 'Add a member' %}</a>
-
+<div>
 {% include "commission/add_member.html" %}
+</div>
 {% include "commission/delete_member.html" %}
 {% endblock %}
