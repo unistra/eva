@@ -50,7 +50,6 @@ def ask_camelot(val):
     for e in goto:
         r = json.loads(e.text)
         vart += 1
-        print('%s \n---------\n%s' % (vart, r))
         if r and 'results' in r and r['results']:
             for i in r['results']:
                 a = {
@@ -65,8 +64,6 @@ def ask_camelot(val):
                         a.update({"id_member": m['username']})
                         mails.append(m['mail'])
                 a.update({"mail": mails})
-
-                print(a)
 
                 if a not in result:
                     result.append(a)
