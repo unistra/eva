@@ -27,11 +27,26 @@ def delete_member(request, pk):
 
 def search(request, template='commission/select.html'):
 
+    if request.method == 'POST':
+        print('ppp')
+        form_data = ECICommissionMemberForm(request.POST)
+        instance = form_data.save(commit=False)
+        instance.save()
+
     if request.is_ajax():
         pass
-        
+
     data = {}
     x = request.GET.get('member', '')
     data['title'] = _('Result for "%s"' % x)
     request.session['liste'] = data['liste'] = ask_camelot(x)
+    nb_found = len(data['liste'])
+    data['form'] = ECICommissionMemberForm
+
+    # if nb_found == 1:
+    #     print('only one')
+    # elif nb_found == 0:
+    #     print('nyulllll')
+    # else:
+    #     print('a looooooooooooooooooooooooooooooooooooot')
     return render(request, template, data)

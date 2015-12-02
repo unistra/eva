@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
 
 {% load i18n %}
 
@@ -10,7 +10,7 @@
 
 {% block content %}
 
-{% include "commission/add_member.html" %}
+{% include "commission/search_member.html" %}
 <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filter' %}">
 <span id='count-row'><span id='count'></span></span>
   <table class="table results order-table" id="table">
@@ -25,7 +25,7 @@
 
 {% for e in liste %}
 
-    <tr class="hover-row hit" >
+    <tr class="hover-row hit select" >
       <td>
       {{e.id_member}}
       </td>
@@ -48,12 +48,32 @@
 
 {% endfor %}
   </table>
+
+
+  <div class="modal fade fade" id="selectedMember" role="dialog" style="display:none">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{% trans "Confirm selection" %}</h4>
+        </div>
+        <div class="modal-body" style="padding-bottom:0">
+          {% crispy form %}
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
   <script type="text/javascript">
 
   (function(document) {
 	'use strict';
 
-	var LightTableFilter = (function(Arr) {
+	var TableFilter = (function(Arr) {
 
 		var _input;
 
@@ -87,16 +107,24 @@
 
 	document.addEventListener('readystatechange', function() {
 		if (document.readyState === 'complete') {
-			LightTableFilter.init();
-
+			TableFilter.init();
 		}
 	});
 
 })(document);
 
-
 $(".hit").click(function(){
-   var value=$(this).closest('tr').children('td:first').text();
-console.log(value);});
+  $('#selectedMember').modal('show');
+  id=$(this).closest('tr').children('td:first');
+  first_name = $(id).next('td');
+  last_name = $(first_name).next('td');
+  mail = $(last_name).next('td');
+  document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
+  document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
+  document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
+  document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
+  console.log(id);
+});
+
   </script>
 {% endblock %}

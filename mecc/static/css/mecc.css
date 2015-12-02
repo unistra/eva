@@ -18,9 +18,11 @@
 
 #count-row {float: right; color: #D3D7DA; line-height: 1.75em; margin-right: 0.5em;}
 
-.hover-row:hover {background: #F5F8FE; cursor: pointer;}
+.hover-row:hover {background: #F5F8FE;}
 
-/*.table-head {background-color: #E4F0FB; color: #004A87;}*/
+.select {cursor: pointer;}
+
+.table-head {background-color: #E4F0FB; color: #004A87;}
 
 #collapseDegree {background-color: #003968; color: #000000;}
 
@@ -80,10 +82,17 @@
 /*******************************************************************************
 /* Sidebar Styles */
 /*TODO : css for seected submenu*/
-#collapseDegree li {
-  padding: 0em;
+#collapseDegree {
+  list-style-type: none;
+  padding: 0;
 }
 
+#collapseDegree li a {
+  padding-left: 0.5em;
+}
+.open {
+  background: #00294B;
+}
 .sidebar-nav {
     position: absolute;
     top: 0;
