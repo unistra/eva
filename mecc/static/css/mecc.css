@@ -12,9 +12,21 @@
 	background-image: none !important;
 }
 
+select{
+  border:0;
+  padding: 0;
+  background-color: #F5F8FE;
+}
+
+/*******************************************************************************
+/* Title style */
+#title {font-weight: normal; font-size: 1.75em;	line-height: 1.1em;}
+#title-hr {margin: 0.5em 0 1.2em 0;}
+
+
 /*******************************************************************************
 /* Table style */
-.table-filter {float: right; margin-bottom: 1em;height: 1.5em}
+.table-filter {float: right; margin-bottom: 0; height: 1.5em}
 
 #count-row {float: right; color: #D3D7DA; line-height: 1.75em; margin-right: 0.5em;}
 
@@ -43,6 +55,9 @@
 /*******************************************************************************
 /* Toggle Styles */
 
+#wrapper.toggled #sidebar-wrapper {width: 10em;}
+#wrapper.toggled {padding-left: 10em;}
+
 #wrapper {
     padding-left: 0;
     padding-right: 0;
@@ -52,15 +67,13 @@
     transition: all 1s ;
 }
 
-#wrapper.toggled {padding-left: 8em;}
-
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
-    left: 8em;
+    left: 10em;
     width: 0;
     height: 100%;
-    margin-left: -8em;
+    margin-left: -10em;
     overflow-y: auto;
     background:#004A87;
     -webkit-transition: all 0.5s ease;
@@ -69,34 +82,27 @@
     transition: all 0.5s ease;
 }
 
-#wrapper.toggled #sidebar-wrapper {width: 8em;}
-
 #page-content-wrapper {
-    width: 100%;
+  width: 100%;
+  padding: 0 5em 0 5em;
 
-    padding: 0 5em 0 5em;
 }
 
-/*#wrapper.toggled #page-content-wrapper {position: absolute;}*/
+#wrapper.toggled #page-content-wrapper {position: relative;}
 
 /*******************************************************************************
 /* Sidebar Styles */
 /*TODO : css for seected submenu*/
-#collapseDegree {
-  list-style-type: none;
-  padding: 0;
-}
+#collapseDegree {list-style-type: none; padding: 0;}
 
-#collapseDegree li a {
-  padding-left: 0.5em;
-}
-.open {
-  background: #00294B;
-}
+#collapseDegree li a {padding-left: 0.5em;}
+
+.open {background: #00294B;}
+
 .sidebar-nav {
     position: absolute;
     top: 0;
-    width: 8em;
+    width: 10em;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -131,11 +137,11 @@ li:hover .sub-level {
     list-style: none;
 }
 
-/* With screen > 768px*/
+/* With screen > 768px */
 
 @media(min-width:768px) {
     #wrapper {
-        padding-left: 8em;
+        padding-left: 10em;
     }
 
     #wrapper.toggled {
@@ -143,7 +149,7 @@ li:hover .sub-level {
     }
 
     #sidebar-wrapper {
-        width: 8em;
+        width: 10em;
     }
 
     #wrapper.toggled #sidebar-wrapper {
@@ -157,11 +163,12 @@ li:hover .sub-level {
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
+
     }
 }
 
 /*******************************************************************************
-/*loading dot animation full css*/
+/*Loading dot animation */
 
 #load-wrap {
   width: 3em;

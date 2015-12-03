@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+import re
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from mecc.apps.utils.ws import ask_camelot
@@ -9,36 +10,53 @@ from .forms import ECICommissionMemberForm
 
 
 def home(request, template='commission/home.html'):
+    if request.is_ajax() and request.method == 'POST':
+        id_member = request.POST.get('id_member', '')
+        last_name = request.POST.get('last_name', '')
+        type_member = request.POST.get('type_member', '')
+        member = ECICommissionMember.objects.get(id_member=id_member)
+        if member.name == last_name:
+            member.member_type = type_member
+            member.save()
+
     data = {}
     people = [e for e in ECICommissionMember.objects.all()]
     data['form'] = ECICommissionMemberForm
-    if request.method == 'POST':
-        form_data = ECICommissionMemberForm(request.POST)
-        instance = form_data.save(commit=False)
-        instance.save()
+    # if request.method == 'POST':
+    #     form_data = ECICommissionMemberForm(request.POST)
+    #     instance = form_data.save(commit=False)
+    #     instance.save()
 
     data['commission_staff'] = ECICommissionMember.objects.all()
+    data['staff_mails'] = re.sub(r"'| |]|\[", "",  # REGEX POWA !!!
+        str([e.mail for e in data['commission_staff']])).replace('|', ',')
+
     return render(request, template, data)
 
 
-def delete_member(request, pk):
+def delete_member(request):
+    if request.method == 'POST':
+        id_member = request.POST.get('id_member', '')
+        print(id_member)
+        member = ECICommissionMember.objects.get(id_member=id_member)
+        member.delete()
+        return redirect('commission:home')
     return render(request)
 
 
 def search(request, template='commission/select.html'):
 
     if request.method == 'POST':
-        print('ppp')
         form_data = ECICommissionMemberForm(request.POST)
         instance = form_data.save(commit=False)
         instance.save()
+        return redirect('commission:home')
 
-    if request.is_ajax():
-        pass
+
 
     data = {}
     x = request.GET.get('member', '')
-    data['title'] = _('Result for "%s"' % x)
+    data['title'] = _('Résultats pour : "%s"' % x)
     request.session['liste'] = data['liste'] = ask_camelot(x)
     nb_found = len(data['liste'])
     data['form'] = ECICommissionMemberForm

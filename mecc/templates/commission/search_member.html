@@ -1,5 +1,4 @@
 {% load i18n %}
-<a data-toggle="modal" data-target="#searchMember" class="glyphicon glyphicon-search btn btn-link"> {% trans 'Search another member' %}</a>
 
 <!-- Modal -->
   <div class="modal fade" id="searchMember" role="dialog">
@@ -9,11 +8,11 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{% trans "Search a member" %}</h4>
+          <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
         </div>
         <div class="modal-body" style="padding-bottom:0">
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="Member id or first name" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+      <input type="text" class="form-control" placeholder="ID Membre ou Nom" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button" onclick="searchMember()">
           <span class="glyphicon glyphicon-search" aria-hidden="true"></span>

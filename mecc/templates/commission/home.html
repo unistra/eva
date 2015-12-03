@@ -2,7 +2,9 @@
 
 {% load i18n %}
 {% load field_name %}
-
+{% block page-header %}
+{% trans 'Commission ECI et étudiants élus' %}
+{% endblock %}
 {% block page-content %}
 
 {% endblock %}
@@ -12,19 +14,26 @@
 
 
 {% if commission_staff %}
-<table class="table table-bordered">
+<table class="table">
   <tr class='table-head'>
     <th> {% get_field_name commission_staff.0 'id_member' %}</th>
     <th>{% get_field_name commission_staff.0 'name' %}</th>
     <th>{% get_field_name commission_staff.0 'firstname' %}</th>
     <th>{% get_field_name commission_staff.0 'member_type' %}</th>
+    <th></th>
   </tr>
     {% for e in commission_staff %}
   <tr class="hover-row">
     <td>{{e.id_member}}</td>
     <td>{{e.name}}</td>
     <td>{{e.firstname}}</td>
-    <td>{{e.member_type}}</td>
+    <td>
+      <select class='select-type'>
+        <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
+        <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
+        <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
+      </select>
+    </td>
     <td>
       <a href="" class="glyphicon glyphicon-trash" id="{{e.id_member}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
     </td>
@@ -33,12 +42,40 @@
 </table>
 
 {% else %}
-No one is here...
+{% trans "Il n'y a aucun membre." %}
 </br>
 
 {% endif %}
-<div>
-{% include "commission/search_member.html" %}
+<div style='text-align: center;margin-top:2em;'>
+<a data-toggle="modal" data-target="#searchMember" class="btn btn-primary"> {% trans 'Ajouter un membre' %}</a>
+<a href="mailto:{{staff_mails}}" class="btn btn-primary"> {% trans "Envoyer un message" %}</a>
 </div>
+{% include "commission/search_member.html" %}
 {% include "commission/delete_member.html" %}
+
+<script>
+
+$('select').on('change', function() {
+  new_type = this.value;
+  firstname = $(this).parents('td').prev().text();
+  name = $(this).parents('td').prev().prev().text();
+  id = $(this).parents('td').prev().prev().prev().text();
+  $.ajax({
+    url: "/commission/",
+    type: "POST",
+    data : {
+      id_member: id,
+      last_name: name,
+      type_member: new_type,
+      csrfmiddlewaretoken: '{{ csrf_token }}'
+    },
+    success: function(data) {
+      console.log('Ajax request sucessfully sent');
+    }
+  });
+
+})
+
+</script>
+
 {% endblock %}

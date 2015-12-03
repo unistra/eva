@@ -7,13 +7,13 @@ class ECICommissionMember(models.Model):
     ECI Commission model
     """
     member_type_choice = (
-        ('commission', _('ECI Commission')), ('tenured', _('Tenured Student')),
-        ('supply', _('Supply Student')),
+        ('commission', _('Commission ECI')), ('tenured', _('Etudiant CFVU titulaire')),
+        ('supply', _('Etudiant CFVU suppléant')),
     )
-    id_member = models.CharField(_('Member ID'), max_length=35)
-    name = models.CharField(_('Name'), max_length=35)
-    firstname = models.CharField(_('First name'), max_length=35)
-    member_type = models.CharField(_('Member type'), blank=False,
+    id_member = models.CharField(_('ID Membre'), max_length=35, unique=True)
+    name = models.CharField(_('Nom'), max_length=35)
+    firstname = models.CharField(_('Prénom'), max_length=35)
+    member_type = models.CharField(_('Type'), blank=False,
                                    choices=member_type_choice, max_length=20)
     mail = models.CharField(_('Mail'), max_length=256)
 
@@ -22,5 +22,5 @@ class ECICommissionMember(models.Model):
 
     class Meta:
         permissions = (
-            ('can_view_eci_commission_member', _('Can view ECI Commission Member')),
+            ('can_view_eci_commission_member', _('Peut voir les membres de la commission ECI')),
         )

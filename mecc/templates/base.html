@@ -39,23 +39,23 @@
                      <a href="{% url 'commission:home'%}"
                      {% if 'commission' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Commission' %}</a>
+                     {% endif %}>{% trans 'Commission ECI' %}</a>
 
                  </li>
                  <li>
                      <a href="#"
                      {% if 'year' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Years' %}</a>
+                     {% endif %}>{% trans 'Année' %}</a>
                  </li>
                   <li class="dropdown">
                      <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
                      {% if 'degree' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Degree' %} <span class="caret"></span></a>
+                     {% endif %}>{% trans 'Diplôme' %} <span class="caret"></span></a>
                      <ul class="collapse" id="collapseDegree">
-                       <li><a href="#">{% trans 'Degree type' %}</a></li>
-                       <li><a href="#">{% trans 'Degrees' %}</a></li>
+                       <li><a href="#">{% trans 'Type de diplôme' %}</a></li>
+                       <li><a href="#">{% trans 'Diplômes' %}</a></li>
 
                     </ul>
                  </li>
@@ -69,13 +69,14 @@
                <a href="#menu-toggle" id="menu-toggle">
                  <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                </a>
-               <h4>
+               <div id='title'>
                    {% block page-header %}
+                   MECC
                    {% endblock %}
-               </h4>
-
+                 <hr id='title-hr'>
+               </div>
                        {% block content %}
-                       Contenu de mecc
+                       Page d'accueil de mecc
                        {% endblock %}
 
              </div>

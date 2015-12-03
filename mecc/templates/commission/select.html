@@ -9,16 +9,16 @@
 {% endblock %}
 
 {% block content %}
-
-{% include "commission/search_member.html" %}
-<input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filter' %}">
-<span id='count-row'><span id='count'></span></span>
+<div>
+<a data-toggle="modal" data-target="#searchMember" class="btn btn-link"> {% trans 'Effectuer une nouvelle recherche' %}</a>
+<input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">
+<span id='count-row'><span id='count'></span></span></div>
   <table class="table results order-table" id="table">
     <thead>
     <tr class='table-head'>
-      <th> {% trans 'Member id' %}</th>
-      <th> {% trans 'First name' %}</th>
-      <th> {% trans 'Last name' %}</th>
+      <th> {% trans 'ID Membre' %}</th>
+      <th> {% trans 'Nom' %}</th>
+      <th> {% trans 'Prénom' %}</th>
       <th> {% trans 'Mail' %}</th>
     </tr>
     </thead>
@@ -30,10 +30,10 @@
       {{e.id_member}}
       </td>
       <td>
-      {{e.first_name}}
+      {{e.last_name}}
       </td>
       <td>
-      {{e.last_name}}
+      {{e.first_name}}
       </td>
       <td>
         {% for m in e.mail %}
@@ -57,7 +57,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{% trans "Confirm selection" %}</h4>
+          <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
         </div>
         <div class="modal-body" style="padding-bottom:0">
           {% crispy form %}
@@ -68,6 +68,7 @@
   </div>
 </div>
 
+{% include "commission/search_member.html" %}
   <script type="text/javascript">
 
   (function(document) {
@@ -84,7 +85,7 @@
 				Arr.forEach.call(table.tBodies, function(tbody) {
 					Arr.forEach.call(tbody.rows, _filter);
 					var numOfVisibleRows = $('tr:visible').length - 1;
-					var resu = numOfVisibleRows < 2 ? " Result" :  " Results";
+					var resu = numOfVisibleRows < 2 ? " Résultat" :  " Résultats";
 					document.getElementById('count').textContent = numOfVisibleRows + resu;
 				});
 			});
@@ -116,9 +117,9 @@
 $(".hit").click(function(){
   $('#selectedMember').modal('show');
   id=$(this).closest('tr').children('td:first');
-  first_name = $(id).next('td');
-  last_name = $(first_name).next('td');
-  mail = $(last_name).next('td');
+  last_name = $(id).next('td');
+  first_name = $(last_name).next('td');
+  mail = $(first_name).next('td');
   document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
   document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
   document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');

@@ -9,17 +9,17 @@
      <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">{% trans "Delete member " %}</h4>
+        <h4 class="modal-title">{% trans "Supprimer un membre " %}</h4>
       </div>
       <div class="modal-body">
-        <span>{% trans "Are you sure that you want to delete this member ?" %}</span></br>
+        <span style="margin-bottom:0.2em">{% trans "Êtes vous sûr de vouloir supprimer ce membre ?" %}</span></br>
         <strong><span id="confirm_name"></span></strong>
         <span id='confirm_first_name'></span>
       </div>
       <div class="modal-footer" id="confirm" style="padding-bottom:1em">
         <form method="POST" id="delete_form">
           {% csrf_token %}
-          <input type='hidden' name='confirmed_num' id="confirmed_num" value=""/>
+          <input type='hidden' name='id_member' id="id_member" value=""/>
           <input type="submit" value='{% trans "Yes" %}' class="btn btn-primary"/>
           <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "No" %}</button>
         </form>
@@ -33,10 +33,12 @@ function fillModal($this, value){
   member_type = $($this).closest('td').prev('td');
   firstname = $(member_type).prev('td');
   name = $(firstname).prev('td').text();
+  id_member = $(firstname).prev('td').prev('td');
   console.log(firstname.text());
   console.log(name);
+  document.getElementById("id_member").value = id_member.text() ;
   document.getElementById("confirm_name").textContent = name ;
   document.getElementById("confirm_first_name").textContent = firstname.text() ;
-  document.getElementById("delete_form").action = "/commission/delete/" + value ;
+  document.getElementById("delete_form").action = "/commission/delete/" ;
 }
 </script>

@@ -27,8 +27,8 @@ class ECICommissionMemberForm(forms.ModelForm):
                 css_class='row'),
 
             FormActions(
-                Submit('add', _('Add')),
-                Button('cancel', _('Cancel'), data_dismiss='modal')
+                Submit('add', _('Ajouter')),
+                Button('cancel', _('Annuler'), data_dismiss='modal')
             )
         )
 
