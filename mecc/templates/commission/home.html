@@ -2,11 +2,9 @@
 
 {% load i18n %}
 {% load field_name %}
+
 {% block page-header %}
 {% trans 'Commission ECI et étudiants élus' %}
-{% endblock %}
-{% block page-content %}
-
 {% endblock %}
 
 {% block content %}
@@ -60,6 +58,7 @@ $('select').on('change', function() {
   firstname = $(this).parents('td').prev().text();
   name = $(this).parents('td').prev().prev().text();
   id = $(this).parents('td').prev().prev().prev().text();
+
   $.ajax({
     url: "/commission/",
     type: "POST",
@@ -69,9 +68,6 @@ $('select').on('change', function() {
       type_member: new_type,
       csrfmiddlewaretoken: '{{ csrf_token }}'
     },
-    success: function(data) {
-      console.log('Ajax request sucessfully sent');
-    }
   });
 
 })

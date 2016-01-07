@@ -25,7 +25,7 @@
 # class Yearly(models.Model):
 #     """
 #     Yearly model, contains code institute and the needed
-#     staff for a specific year
+#     stuff for a specific year
 #     """
 #     code_institute = models.CharField(_('Code Institute'), max_length=5)
 #

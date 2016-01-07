@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class ECICommissionMember(models.Model):
     """
-    ECI Commission model
+    ECI Commission Member model
     """
     member_type_choice = (
         ('commission', _('Commission ECI')), ('tenured', _('Etudiant CFVU titulaire')),

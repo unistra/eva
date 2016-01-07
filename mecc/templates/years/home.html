@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+
+{% block page-header %}
+{% trans 'Années universitaires' %}
+{% endblock %}
+
+{% block content %}
+
+{% if years %}
+<table class="table">
+  <tr class='table-head'>
+    <th> {% get_field_name years.0 'code_year' %}</th>
+    <th>{% get_field_name years.0 'label_year' %}</th>
+    <th>{% get_field_name years.0 'is_target_year' %}</th>
+    <th>{% get_field_name years.0 'date_validation' %}</th>
+    <th>{% get_field_name years.0 'date_expected' %}</th>
+    <th>{% get_field_name years.0 'pdf_doc' %}</th>
+    <th>{% get_field_name years.0 'is_year_init' %}</th>
+    <th></th>
+  </tr>
+    {% for e in years %}
+  <tr class="hover-row">
+    <td>{{e.id_member}}</td>
+    <td>{{e.name}}</td>
+    <td>{{e.firstname}}</td>
+
+    <td>
+      <a href="" class="glyphicon glyphicon-pencil" id="{{e.code_year}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+    </td>
+    <td>
+      <a href="" class="glyphicon glyphicon-trash" id="{{e.code_year}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+    </td>
+  </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+{% trans "Aucune année disponible." %}
+{% endif %}
+
+</br>
+<div class='pull-right'>
+  <a data-toggle="modal" data-target="#addYear" class="btn btn-primary"> {% trans 'Ajouter une nouvelle année' %}</a>
+</div>
+
+{% include "years/add_year.html" %}
+{% endblock %}

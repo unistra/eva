@@ -9,6 +9,8 @@ urlpatterns = patterns(
     url(r'^$', 'mecc.views.home', name='home'),
     url(r'^commission/', include('mecc.apps.commission.urls',
         namespace='commission')),
+    url(r'^years/', include('mecc.apps.years.urls',
+        namespace='years')),
     url(r'^admin/', include(admin.site.urls)),
 )
 

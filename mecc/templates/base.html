@@ -43,10 +43,10 @@
 
                  </li>
                  <li>
-                     <a href="#"
+                     <a href="{% url 'years:home' %}"
                      {% if 'year' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Année' %}</a>
+                     {% endif %}>{% trans 'Années' %}</a>
                  </li>
                   <li class="dropdown">
                      <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
