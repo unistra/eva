@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block page-header %}
+{% trans 'Fiche composante' %}
+{% endblock %}
+
+{% block content %}
+{{latest_id}}
+
+<form action="/institute/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+
+{% endblock %}

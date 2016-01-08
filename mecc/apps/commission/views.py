@@ -26,7 +26,7 @@ def home(request, template='commission/home.html'):
     #     instance.save()
 
     data['commission_staff'] = ECICommissionMember.objects.all()
-    data['staff_mails'] = re.sub(r"'| |]|\[", "",  # REGEX POWA !!!
+    data['staff_mails'] = re.sub(r"'| |]|\[", "",  # ###### REGEX POWA !!!
         str([e.mail for e in data['commission_staff']])).replace('|', ',')
 
     return render(request, template, data)

@@ -1,7 +1,19 @@
-# from django.db import models
-# from django.utils.translation import ugettext_lazy as _
-#
-#
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+
+class AcademicField(models.Model):
+    name = models.CharField(_('Domaine'), max_length=70)
+
+    def __str__(self):
+        return self.name
+
+
+class Institute(models.Model):
+    code = models.CharField(_('Code composante'), max_length=3)
+    is_on_duty = models.BooleanField(_('En service'))
+    label = models.CharField(_('Libellé composante'), max_length=85)
+    field = models.CharField(_('Domaine'), max_length=70)
 # class Person(models.Model):
 #     """"
 #     Person model used as parent and directly as Institute Director & \

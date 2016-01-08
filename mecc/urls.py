@@ -11,6 +11,8 @@ urlpatterns = patterns(
         namespace='commission')),
     url(r'^years/', include('mecc.apps.years.urls',
         namespace='years')),
+    url(r'^institute/', include('mecc.apps.institute.urls',
+        namespace='institute')),
     url(r'^admin/', include(admin.site.urls)),
 )
 

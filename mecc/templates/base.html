@@ -36,6 +36,13 @@
          <div id="sidebar-wrapper">
              <ul class="sidebar-nav">
                  <li>
+                     <a href="/"
+                     {% if 'board' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Tableau de bord' %}</a>
+
+                 </li>
+                 <li>
                      <a href="{% url 'commission:home'%}"
                      {% if 'commission' in request.path %}
                         class="item-selected"
@@ -43,21 +50,34 @@
 
                  </li>
                  <li>
+                     <a href="{% url 'institute:home'%}"
+                     {% if 'institute' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Composantes' %}</a>
+
+                 </li>
+                 <li>
                      <a href="{% url 'years:home' %}"
                      {% if 'year' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Années' %}</a>
+                     {% endif %}>{% trans 'Années universitaires' %}</a>
                  </li>
                   <li class="dropdown">
                      <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
                      {% if 'degree' in request.path %}
                         class="item-selected"
-                     {% endif %}>{% trans 'Diplôme' %} <span class="caret"></span></a>
+                     {% endif %}>{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
                      <ul class="collapse" id="collapseDegree">
-                       <li><a href="#">{% trans 'Type de diplôme' %}</a></li>
-                       <li><a href="#">{% trans 'Diplômes' %}</a></li>
+                       <li><a href="#">{% trans 'Types de diplômes' %}</a></li>
+                       <li><a href="#">{% trans 'Liste des diplômes' %}</a></li>
 
                     </ul>
+                 </li>
+                 <li>
+                     <a href="/"
+                     {% if 'rules' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Règles générales' %}</a>
                  </li>
                      <!-- <p class="credit">&copy; DI - UDS - {% now "Y" %}</p> -->
 
