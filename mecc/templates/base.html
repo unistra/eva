@@ -74,11 +74,24 @@
                     </ul>
                  </li>
                  <li>
-                     <a href="/"
+                     <a href="#"
                      {% if 'rules' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Règles générales' %}</a>
                  </li>
+                 <li style="margin-top:3em">
+                     <a href="#"
+                     {% if 'rules' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
+                 </li>
+                 <li class="bottom">
+                     <a href="#"
+                     {% if 'rules' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
+                 </li>
+
                      <!-- <p class="credit">&copy; DI - UDS - {% now "Y" %}</p> -->
 
              </ul>

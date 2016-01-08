@@ -4,8 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class InstituteForm(forms.ModelForm):
-    # field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
-    #                                required=True, label=_('Domaine'))
+    field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
+                                   required=True, label=_('Domaine'))
 
     class Meta:
         model = Institute

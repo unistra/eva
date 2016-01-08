@@ -36,7 +36,7 @@
 /*******************************************************************************
 /* Toggle Styles */
 
-#wrapper.toggled #sidebar-wrapper {width: 12.5em;}
+#wrapper.toggled #sidebar-wrapper {width: 13em;}
 #wrapper.toggled {padding-left: 11em;}
 
 #wrapper {
@@ -79,6 +79,16 @@
 
 .open {background: #00294B;}
 
+.bottom {
+ position: fixed; bottom: 0; width: 13em;
+ margin-bottom: 0.5em;
+}
+
+.bottom a {
+ padding-left: 1em;
+ line-height: 1.75em;
+}
+
 .sidebar-nav {
     position: absolute;
     top: 0;
@@ -89,7 +99,6 @@
 }
 
 .sidebar-nav li {
-    text-indent: 1em;
     line-height: 2.75em;
 }
 
@@ -98,6 +107,7 @@
     text-decoration: none;
     margin-bottom: 1px;
     margin-top: 1px;
+    padding-left: 1em;
     color: #FFFFFF;
 }
 
