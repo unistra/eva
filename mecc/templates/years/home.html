@@ -20,13 +20,28 @@
     <th>{% get_field_name years.0 'pdf_doc' %}</th>
     <th>{% get_field_name years.0 'is_year_init' %}</th>
     <th></th>
+    <th></th>
   </tr>
     {% for e in years %}
   <tr class="hover-row">
-    <td>{{e.id_member}}</td>
-    <td>{{e.name}}</td>
-    <td>{{e.firstname}}</td>
-
+    <td>{{e.code_year}}</td>
+    <td>{{e.label_year}}</td>
+    <td>
+      {% if e.is_target_year == True %}
+        <span class="glyphicon glyphicon-ok green"></span>
+      {% else %}
+        <span class="glyphicon glyphicon-remove red"></span>
+      {% endif %}
+    </td>
+    <td>{{e.date_validation}}</td>
+    <td>{{e.date_expected}}</td>
+    <td>{{e.pdf_doc}}</td>
+    <td>
+      {% if e.is_year_init == True %}
+        <span class="glyphicon glyphicon-ok green">ss</span>
+      {% else %}
+        <span class="glyphicon glyphicon-remove red"></span>
+      {% endif %}</td>
     <td>
       <a href="" class="glyphicon glyphicon-pencil" id="{{e.code_year}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
     </td>
@@ -43,8 +58,7 @@
 
 </br>
 <div class='pull-right'>
-  <a data-toggle="modal" data-target="#addYear" class="btn btn-primary"> {% trans 'Ajouter une nouvelle année' %}</a>
+  <a href="{% url 'years:create' %}" class="btn btn-primary"> {% trans 'Ajouter une nouvelle année' %}</a>
 </div>
 
-{% include "years/add_year.html" %}
 {% endblock %}

@@ -9,11 +9,20 @@ class AcademicField(models.Model):
         return self.name
 
 
+class Staff(models.Model):
+    _id = models.CharField(_('ID'), max_length=35)
+    _lastname = models.CharField(_('Nom'), max_length=35)
+    _firstname = models.CharField(_('Prénom'), max_length=35)
+    _mail = models.EmailField(_('Email'))
+
+
 class Institute(models.Model):
     code = models.CharField(_('Code composante'), max_length=3)
     is_on_duty = models.BooleanField(_('En service'))
     label = models.CharField(_('Libellé composante'), max_length=85)
-    field = models.CharField(_('Domaine'), max_length=70)
+    field = models.CharField(_('Domaine'), max_length=70, blank=False)
+    dircomp = models.OneToOneField(Staff, blank=True, null=True)
+
 # class Person(models.Model):
 #     """"
 #     Person model used as parent and directly as Institute Director & \

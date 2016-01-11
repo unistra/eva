@@ -1,3 +1,7 @@
+/*******************************************************************************
+/* Color True/False icon */
+.glyphicon-ok.green{color:#2D882D}
+.glyphicon-remove.red{color:#AA3939}
 
 /*******************************************************************************
 /* Title style */
@@ -37,7 +41,7 @@
 /* Toggle Styles */
 
 #wrapper.toggled #sidebar-wrapper {width: 13em;}
-#wrapper.toggled {padding-left: 11em;}
+#wrapper.toggled {padding-left: 12em;}
 
 #wrapper {
     padding-left: 0;
@@ -63,11 +67,7 @@
     transition: all 0.5s ease;
 }
 
-#page-content-wrapper {
-  width: 100%;
-  padding: 0 5em 0 5em;
-
-}
+#page-content-wrapper {width: 100%;padding: 0 5em 0 5em;}
 
 #wrapper.toggled #page-content-wrapper {position: relative;}
 

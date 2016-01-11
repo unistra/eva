@@ -7,12 +7,14 @@
 {% endblock %}
 
 {% block content %}
-{{latest_id}}
+ID Composante (auto) : {{latest_id}}
 
-<form action="/institute/" method="post">
+<form action="{% url 'institute:home' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />
 </form>
+
+
 
 {% endblock %}

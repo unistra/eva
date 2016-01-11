@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
+from django.http import JsonResponse
 
 import json
 
@@ -36,9 +37,11 @@ def home(request, template='institute/home.html'):
             instance = form_data.save(commit=False)
             instance.save()
         except ValueError as e:
-            return JsonResponse({'message': 'Les donnéees entrées ne\
-            permetttent pas d\'ajouter une composante.'})
-        return redirect('commission:home')
+            data = {}
+            data['error'] = 'Les données entrées ne permettent pas de créer une \
+                nouvelle composante'
+            return render(request, template, data)
+        return redirect('institute:home')
 
     data = {}
 
