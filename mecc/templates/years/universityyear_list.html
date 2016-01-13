@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+
+{% block page-header %}
+{% trans 'Années universitaires' %}
+{% endblock %}
+
+{% block content %}
+
+{% if object_list %}
+<table class="table">
+  <tr class='table-head'>
+    <th> {% get_field_name object_list.0 'code_year' %}</th>
+    <th>{% get_field_name object_list.0 'label_year' %}</th>
+    <th>{% get_field_name object_list.0 'is_target_year' %}</th>
+    <th>{% get_field_name object_list.0 'date_validation' %}</th>
+    <th>{% get_field_name object_list.0 'date_expected' %}</th>
+    <th>{% get_field_name object_list.0 'pdf_doc' %}</th>
+    <th>{% get_field_name object_list.0 'is_year_init' %}</th>
+    <th></th>
+    <th></th>
+  </tr>
+    {% for e in object_list %}
+  <tr class="hover-row">
+    <td>{{e.code_year}}</td>
+    <td>{{e.label_year}}</td>
+    <td>
+      {% if e.is_target_year == True %}
+        <span class="glyphicon glyphicon-ok green"></span>
+      {% else %}
+        <span class="glyphicon glyphicon-remove red"></span>
+      {% endif %}
+    </td>
+    <td>{{e.date_validation}}</td>
+    <td>{{e.date_expected}}</td>
+    <td>{{e.pdf_doc}}</td>
+    <td>
+      {% if e.is_year_init == True %}
+        <span class="glyphicon glyphicon-ok green"></span>
+      {% else %}
+        <span class="glyphicon glyphicon-remove red"></span>
+      {% endif %}</td>
+    <td>
+      <a href="{% url 'years:edit' code_year=e.code_year %}" class="glyphicon glyphicon-pencil"></a>
+    </td>
+    <td>
+      <a href="{% url 'years:delete' code_year=e.code_year %}" class="glyphicon glyphicon-trash"></a>
+    </td>
+  </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+{% trans "Aucune année disponible." %}
+{% endif %}
+
+</br>
+<div class='pull-right'>
+  <a href="{% url 'years:create' %}" class="btn btn-primary"> {% trans 'Ajouter une nouvelle année' %}</a>
+</div>
+
+{% endblock %}

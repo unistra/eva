@@ -11,25 +11,23 @@
 
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
-{{latest_id}}
 
-<form action="{% url 'years:home' %}" method="post">
+<form action="" method="post">
     {% csrf_token %}
-    {% for field in form %}
-          <div class="fieldWrapper">
-              {{ field.errors }}
-              {{ field.label_tag }} {{ field }}
-          </div>
-      {% endfor %}
-    <input type="submit" value="Submit" />
+    {{form.as_p}}
+    <input type="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}" />
 </form>
 
 <script>
 $('#id_date_validation, #id_date_expected').datepicker({
-    language: "fr",
+    orientation: "bottom auto",
     todayHighlight: true,
     autoclose: true,
+    language: "fr",
 });
+
+e = document.getElementById("id_code_year");
+
   </script>
 
 {% endblock %}

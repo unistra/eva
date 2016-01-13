@@ -1,31 +1,47 @@
-from django.utils.translation import ugettext_lazy as _
-from mecc.apps.years.models import UniversityYear
-from mecc.apps.years.forms import UniversityYearForm
-from django.shortcuts import render, redirect
-
 from .models import UniversityYear
-from .forms import UniversityYearForm
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
+from django.views.generic.list import ListView
+from django.utils import timezone
 
 
-def create(request, template='years/create.html'):
-    data = {}
-    data['form'] = UniversityYearForm
-    return render(request, template, data)
+class UniversityYearDelete(DeleteView):
+    model = UniversityYear
+
+    slug_field = 'code_year'
+    slug_url_kwarg = 'code_year'
+
+    success_url = '/years'
 
 
-def home(request, template='years/home.html'):
-    if request.method == 'POST':
-        form = UniversityYearForm(request.POST)
-        print(form.data['code_year'])
-        print(form.data['label_year'])
-        print(form.data['date_validation'])
-        print(form.data['date_expected'])
-        print(form.data['pdf_doc'])
-        instance = form.save(commit=False)
-        instance.save()
-        return redirect('years:home')
+class UniversityYearCreate(CreateView):
+    model = UniversityYear
+    fields = [
+        'code_year',
+        'label_year',
+        'is_target_year',
+        'date_validation',
+        'date_expected',
+        'pdf_doc',
+        'is_year_init'
+    ]
+    success_url = '/years'
 
-    data = {}
-    data['years'] = UniversityYear.objects.all()
-    data['form'] = UniversityYearForm
-    return render(request, template, data)
+
+class UniversityYearUpdate(UpdateView):
+    model = UniversityYear
+    fields = [
+        'label_year',
+        'is_target_year',
+        'date_validation',
+        'date_expected',
+        'is_year_init'
+    ]
+
+    slug_field = 'code_year'
+    slug_url_kwarg = 'code_year'
+
+    success_url = '/years'
+
+
+class UniversityYearListView(ListView):
+    model = UniversityYear

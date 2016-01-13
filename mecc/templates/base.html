@@ -85,7 +85,7 @@
                         class="item-selected"
                      {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
                  </li>
-                 <li class="bottom">
+                 <li class="bottom" id='hideme'>
                      <a href="#"
                      {% if 'rules' in request.path %}
                         class="item-selected"
@@ -124,8 +124,10 @@
     {% block foot-javascript %}{% endblock %}
     <script>
     $("#menu-toggle").click(function(e) {
-        $("#wrapper").toggleClass("toggled");
+      $("#wrapper").toggleClass("toggled");
     });
+
+
     </script>
 
 </body>

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -13,3 +14,9 @@ class UniversityYear(models.Model):
     date_expected = models.DateField(_('Date prévisionnelle de la CFVU MECC'))
     pdf_doc = models.CharField(_('Documents cadre (pdf)'), max_length=100, blank=True)
     is_year_init = models.BooleanField(_('Initialisation Composante'), default=False)
+
+    def __str__(self):
+        return 'Année universitaire'
+
+    def get_absolute_url(self):
+        return reverse('years:home', args=(self.code_year,))

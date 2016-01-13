@@ -71,6 +71,8 @@
 
 #wrapper.toggled #page-content-wrapper {position: relative;}
 
+#sidebar-wrapper .sidebar-nav .bottom {display: none}
+.toggled #sidebar-wrapper .sidebar-nav .bottom {display: block}
 /*******************************************************************************
 /* Sidebar Styles */
 #collapseDegree {list-style-type: none; padding: 0;}
@@ -80,7 +82,8 @@
 .open {background: #00294B;}
 
 .bottom {
- position: fixed; bottom: 0; width: 13em;
+ position:fixed;
+ bottom: 0.5em; width: 13em;
  margin-bottom: 0.5em;
 }
 
@@ -96,6 +99,7 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    height: 100%;
 }
 
 .sidebar-nav li {
@@ -151,10 +155,15 @@ li:hover .sub-level {
     }
 
     #wrapper.toggled #page-content-wrapper {
-        position: relative;
         margin-right: 0;
 
     }
+
+
+    #sidebar-wrapper .sidebar-nav .bottom {display: block}
+    .toggled #sidebar-wrapper .sidebar-nav .bottom {display: none}
+
+    #wrapper.toggled .sidebar-nav{display: none;}
 }
 
 /*******************************************************************************
