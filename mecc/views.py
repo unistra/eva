@@ -8,7 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def home(request):
     try:
-        request.session['current_year'] = UniversityYear.objects.get(is_target_year=True).label_year
+        o = UniversityYear.objects.get(is_target_year=True)
+
+        request.session['current_year'] = o.label_year
+        request.session['current_code_year'] = o.code_year
     except ObjectDoesNotExist:
         pass
     return render_to_response('base.html')
