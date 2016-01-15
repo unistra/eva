@@ -12,13 +12,13 @@
 {% if object_list %}
 <table class="table">
   <tr class='table-head'>
-    <th> {% get_field_name object_list.0 'code_year' %}</th>
-    <th>{% get_field_name object_list.0 'label_year' %}</th>
-    <th>{% get_field_name object_list.0 'is_target_year' %}</th>
-    <th>{% get_field_name object_list.0 'date_validation' %}</th>
-    <th>{% get_field_name object_list.0 'date_expected' %}</th>
-    <th>{% get_field_name object_list.0 'pdf_doc' %}</th>
-    <th>{% get_field_name object_list.0 'is_year_init' %}</th>
+    <th>{% trans 'Code année' %}</th>
+    <th>{% trans 'Libellé année' %}</th>
+    <th>{% trans 'Cible courante' %}</th>
+    <th>{% trans 'Date validation cadre en CFVU' %}</th>
+    <th>{% trans 'Date prévisionnelle CFVU MECC' %}</th>
+    <th>{% trans 'Documents pdf' %}</th>
+    <th>{% trans 'Initialisation des composantes effectuée' %}</th>
     <th></th>
     <th></th>
   </tr>
@@ -28,19 +28,19 @@
     <td>{{e.label_year}}</td>
     <td>
       {% if e.is_target_year == True %}
-        <span class="glyphicon glyphicon-ok green"></span>
+        <strong>{% trans "OUI" %}</strong>
       {% else %}
-        <span class="glyphicon glyphicon-remove red"></span>
+        non
       {% endif %}
     </td>
-    <td>{{e.date_validation}}</td>
-    <td>{{e.date_expected}}</td>
+    <td>{{e.date_validation|date:"d/m/Y"}}</td>
+    <td>{{e.date_expected|date:"d/m/Y"}}</td>
     <td>{{e.pdf_doc}}</td>
     <td>
       {% if e.is_year_init == True %}
-        <span class="glyphicon glyphicon-ok green"></span>
+      <strong>{% trans "OUI" %}</strong>
       {% else %}
-        <span class="glyphicon glyphicon-remove red"></span>
+      non
       {% endif %}</td>
     <td>
       <a href="{% url 'years:edit' code_year=e.code_year %}" class="glyphicon glyphicon-pencil"></a>
@@ -60,5 +60,4 @@
 <div class='pull-right'>
   <a href="{% url 'years:create' %}" class="btn btn-primary"> {% trans 'Ajouter une nouvelle année' %}</a>
 </div>
-
 {% endblock %}

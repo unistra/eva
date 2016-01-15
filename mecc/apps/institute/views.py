@@ -23,6 +23,7 @@ class InstituteCreate(CreateView):
         'field',
         'dircomp',
     ]
+    success_url = '/institute'
 
 
 class InstituteUpdate(UpdateView):

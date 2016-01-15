@@ -6,4 +6,10 @@ class UniversityYearForm(forms.ModelForm):
 
     class Meta:
         model = UniversityYear
-        exclude = ('',)
+        fields = [
+            'code_year',
+            'label_year',
+            'is_target_year',
+            'date_validation',
+            'date_expected',
+        ]

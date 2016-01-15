@@ -1,7 +1,64 @@
 /*******************************************************************************
-/* Color True/False icon */
-.glyphicon-ok.green{color:#2D882D}
-.glyphicon-remove.red{color:#AA3939}
+/* Navbar */
+#nav-right{
+  position: absolute;
+  color:#fff;
+  padding: 10px 15px;
+  font-size: 18px;
+  line-height: 20px;
+  height: 40px;
+  top: 0;
+  right: 3em;
+}
+
+
+/*******************************************************************************
+/* Fiches */
+
+#id_code_year, #id_label_year, #id_date_validation, #id_date_expected,  #id_label, #id_field, #id_dircomp{
+  position: relative;
+  width: 15.7em;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #555;
+  height: 2.5em;
+  line-height: 1.42857;
+  text-indent: 0.5em;
+}
+
+#id_code {
+  position: relative;
+  width: 7em;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #555;
+  height: 2.5em;
+  line-height: 1.42857;
+  text-indent: 0.5em;
+}
+#id_is_target_year, #id_is_year_init, #id_is_on_duty, #id_pdf_doc, {
+
+}
+
+label[for=id_code_year], label[for=id_label_year], label[for=id_is_target_year], label[for=id_date_validation], label[for=id_date_expected], label[for=id_pdf_doc], label[for=id_is_year_init] {
+  width: 17em;
+}
+
+label[for=id_label], label[for=id_field], label[for=id_dircomp], label[for='id_code'] {
+  width: 12em;
+}
+
+label[for=id_pdf_doc]:before, label[for=id_is_year_init]:before, label[for=id_is_year_init]:after{
+    content: "";
+    display: block;
+    height: 0.15em;
+    width: 37em;
+    margin: 2em 0 1.5em 0;
+    background: #358CD3;
+    box-shadow: 0.1em 0.2em 0.4em #888888;
+    position:relative;
+    left:-1em;
+}
 
 /*******************************************************************************
 /* Title style */

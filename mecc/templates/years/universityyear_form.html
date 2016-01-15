@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load staticfiles %}
+{% load field_name %}
 
 {% block page-header %}
 {% trans 'Fiche année universitaire' %}
@@ -12,10 +13,19 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
-<form action="" method="post">
+<form action="" method="post" style="width:35em" >
     {% csrf_token %}
     {{form.as_p}}
-    <input type="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}" />
+    <div style="text-align:center">
+      <button class="btn btn-primary" type="submit" >
+        {% trans 'Valider et retourner à la liste des ' %}</br>
+        {% trans 'années universitaires'%}
+      </button>
+      <a class="btn btn-primary" href="{% url 'years:home' %}"  >
+        {% trans 'Annuler et retourner à la liste des ' %}</br>
+        {% trans 'années universitaires'%}
+      </a>
+    </div>
 </form>
 
 <script>
@@ -25,9 +35,24 @@ $('#id_date_validation, #id_date_expected').datepicker({
     autoclose: true,
     language: "fr",
 });
-
+// Create prefill for label_year
+var form = document.getElementById("id_label_year");
 e = document.getElementById("id_code_year");
+form.readOnly = true;
+e.addEventListener('keyup', function () {
+  var val = document.getElementById("id_code_year").value
+  if (val === ''){
 
+  } else {
+  n = parseInt(val) + 1
+  form.value =  "Année universitaire " + val + "/" + n
+  }
+}, false);
+
+// Alert
+var achtung = document.getElementByClass()
   </script>
+
+
 
 {% endblock %}

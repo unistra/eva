@@ -4,15 +4,15 @@
 {% load staticfiles %}
 
 {% block page-header %}
-{% trans 'Fiche année universitaire' %}
+{% trans 'Fiche composante' %}
 {% endblock %}
 
 {% block content %}
 
-<form action="" method="post">
+<form action="" method="post" class="col-xs-6">
     {% csrf_token %}
-    {{form.as_p}}
-    <input type="submit" value="{% trans 'Valider' %}" />
+    {{form}}
+    <input class="btn btn-primary" type="submit" value="{% trans 'Valider' %}" />
 </form>
 
 
