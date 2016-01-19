@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load field_name %}
+{% load crispy_forms_tags %}
 
 {% block page-header %}
 {% trans 'Fiche année universitaire' %}
@@ -13,20 +14,23 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
-<form action="" method="post" style="width:35em" >
-    {% csrf_token %}
-    {{form.as_p}}
-    <div style="text-align:center">
-      <button class="btn btn-primary" type="submit" >
-        {% trans 'Valider et retourner à la liste des ' %}</br>
-        {% trans 'années universitaires'%}
-      </button>
-      <a class="btn btn-primary" href="{% url 'years:home' %}"  >
-        {% trans 'Annuler et retourner à la liste des ' %}</br>
-        {% trans 'années universitaires'%}
-      </a>
+<form action="" method="post"  id='form-flex'>
+<hr id="hr1">
+<hr id="hr2">
+<hr id="hr3">
+<a href="{% url 'years:initialize' %}" class="btn btn-primary" id="init_years">{% trans 'Initialiser les composantes' %} </a>
+<a href="#" class="btn btn-primary" id="upload_doc">{% trans 'Déposer le document cadre' %} </a>
+    {% crispy form %}
+    <div id="btn-sbmt">
+    <input type="submit" name="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}"
+    class="btn btn-primary btn-lines" id="submit-id-submit">
+    <a href='{% url "years:home" %}'value="" class="btn btn-primary btn-lines" id="button-id-back">
+      {% trans 'Annuler et retourner à la liste des années universitaires' %}</a>
+
     </div>
 </form>
+
+
 
 <script>
 $('#id_date_validation, #id_date_expected').datepicker({
@@ -38,7 +42,6 @@ $('#id_date_validation, #id_date_expected').datepicker({
 // Create prefill for label_year
 var form = document.getElementById("id_label_year");
 e = document.getElementById("id_code_year");
-form.readOnly = true;
 e.addEventListener('keyup', function () {
   var val = document.getElementById("id_code_year").value
   if (val === ''){
@@ -49,8 +52,17 @@ e.addEventListener('keyup', function () {
   }
 }, false);
 
-// Alert
-var achtung = document.getElementByClass()
+is_year_init = document.getElementById("id_is_year_init");
+is_year_init.style.fontWeight = "bold";
+console.log(is_year_init.value);
+if (is_year_init.value === "False") {
+  is_year_init.value = "NON";
+  is_year_init.style.color = "red";
+
+} else {
+  is_year_init.value = "OUI";
+  is_year_init.style.color = "green";
+}
   </script>
 
 

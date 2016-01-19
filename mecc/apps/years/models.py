@@ -26,7 +26,7 @@ class UniversityYear(models.Model):
         error_messages={'unique': _('Ce code année est déjà utilisé.')}
     )
     label_year = models.CharField(
-        _('Libellé année'), max_length=35
+        _('Libellé année'), max_length=35, blank=True,
     )
     is_target_year = models.BooleanField(
         _('Cible courante'), default=False
@@ -48,6 +48,8 @@ class UniversityYear(models.Model):
         return 'Année universitaire %s' % label_year
 
     def clean_fields(self, exclude=None):
+        print(self.is_year_init)
+        
         reg = re.compile('^\d{4}$')
         if not reg.match(str(self.code_year)):
             raise ValidationError(

@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block page-header %}
 {% trans 'Fiche année universitaire' %}
@@ -15,12 +16,8 @@
 
 <form action="{% url 'years:home' %}" method="post">
     {% csrf_token %}
-    {% for field in form %}
-          <div class="fieldWrapper">
-              {{ field.errors }}
-              {{ field.label_tag }} {{ field }}
-          </div>
-      {% endfor %}
+    {% crispy form %}
+
     <input type="submit" value="Submit" />
 </form>
 
