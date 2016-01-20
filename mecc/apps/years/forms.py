@@ -15,10 +15,10 @@ class UniversityYearForm(forms.ModelForm):
         initial='0',
         required=True,
     )
-
-    is_year_init = forms.CharField(max_length=5, min_length=3,
+    is_year_init = forms.CharField(
+        max_length=5, min_length=3,
         label=_('Initialisation des composantes effectuée'),
-        initial=False,
+        initial='False',
     )
     pdf_doc = forms.CharField(
         widget=forms.Textarea(attrs={'rows':4, 'cols':40}),

@@ -48,7 +48,11 @@ class UniversityYear(models.Model):
         return 'Année universitaire %s' % label_year
 
     def clean_fields(self, exclude=None):
-        print(self.is_year_init)
+
+        if self.code_year in set([e.code_year for e in InstituteYear.objects.all()]):
+            self.is_year_init = True
+        else:
+            self.is_year_init = False
 
         reg = re.compile('^\d{4}$')
         if not reg.match(str(self.code_year)):
@@ -64,6 +68,8 @@ class UniversityYear(models.Model):
                         Veuillez la désactiver au préalable.'), ]})
             except UniversityYear.DoesNotExist:
                     pass
+
+
 
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
