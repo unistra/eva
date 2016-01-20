@@ -22,7 +22,7 @@ class UniversityYearForm(forms.ModelForm):
     )
     pdf_doc = forms.CharField(
         widget=forms.Textarea(attrs={'rows':4, 'cols':40}),
-        label=_('Documents pdf'))
+        label=_('Documents pdf'), required=False)
 
     helper = FormHelper()
     helper.form_tag = False

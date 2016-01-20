@@ -15,6 +15,14 @@ from .forms import InstituteForm
 
 
 class InstituteCreate(CreateView):
+    def get_context_data(self, **kwargs):
+        context = super(InstituteCreate, self).get_context_data(**kwargs)
+        try:
+            context['latest_instit_id'] = Institute.objects.latest('id').id + 1
+        except ObjectDoesNotExist:
+            context['latest_instit_id'] = 1
+        return context
+
     model = Institute
     fields = [
         'code',
@@ -27,6 +35,7 @@ class InstituteCreate(CreateView):
 
 
 class InstituteUpdate(UpdateView):
+
     model = Institute
     fields = [
         'is_on_duty',

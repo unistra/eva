@@ -38,7 +38,7 @@ class UniversityYear(models.Model):
         _('Date prévisionnelle CFVU MECC'), blank=True, null=True
     )
     pdf_doc = models.CharField(
-        _('Documents pdf'), max_length=100, blank=True
+        _('Documents pdf'), max_length=100, blank=True, null=True
     )
     is_year_init = models.BooleanField(
         _('Initialisation des composantes effectuée'), default=False
@@ -49,7 +49,7 @@ class UniversityYear(models.Model):
 
     def clean_fields(self, exclude=None):
         print(self.is_year_init)
-        
+
         reg = re.compile('^\d{4}$')
         if not reg.match(str(self.code_year)):
             raise ValidationError(
