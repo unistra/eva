@@ -17,5 +17,6 @@ urlpatterns = [
         name='create'),
     url(r'^delete/(?P<code_year>\d+)', UniversityYearDelete.as_view(),
         name='delete'),
-    url(r'intialise/', initialize_year, name='initialize')
+    url(r'^initialize/(?P<code_year>\d+)', initialize_year,
+        name='initialize')
 ]

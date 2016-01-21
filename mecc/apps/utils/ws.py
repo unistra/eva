@@ -41,7 +41,8 @@ def ask_camelot(val):
 
     goto = [
         client.get_persons(format='json', username=val),
-        client.get_persons(format='json', last_name=val)
+        client.get_persons(format='json', last_name=val),
+        client.get_persons(format='json', birth_name=val)
         # client.get_persons(format='json', first_name=val)
     ]
 
@@ -49,13 +50,14 @@ def ask_camelot(val):
     vart = 0
     for e in goto:
         r = json.loads(e.text)
+        print(r['results'])
         vart += 1
         if r and 'results' in r and r['results']:
             for i in r['results']:
+                
                 a = {
                     "first_name": i['first_name'],
                     "last_name": i['last_name'],
-                    "first_name": i['first_name'],
                 }
                 mails = []
 

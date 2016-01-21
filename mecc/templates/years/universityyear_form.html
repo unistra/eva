@@ -18,19 +18,17 @@
 <hr id="hr1">
 <hr id="hr2">
 <hr id="hr3">
-<a href="{% url 'years:initialize' %}" class="btn btn-primary" id="init_years">{% trans 'Initialiser les composantes' %} </a>
+<a {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years"  {% if not object %} disabled {% endif %}> {% trans 'Initialiser les composantes' %} </a>
 <a href="#" class="btn btn-primary" id="upload_doc">{% trans 'Déposer le document cadre' %} </a>
     {% crispy form %}
     <div id="btn-sbmt">
     <input type="submit" name="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}"
     class="btn btn-primary btn-lines" id="submit-id-submit">
-    <a href='{% url "years:home" %}'value="" class="btn btn-primary btn-lines" id="button-id-back">
+    <a href='{% url "years:home" %}'value="" class="btn btn-primary">
       {% trans 'Annuler et retourner à la liste des années universitaires' %}</a>
 
     </div>
-</form>
-
-
+</form1>
 
 <script>
 $('#id_date_validation, #id_date_expected').datepicker({
@@ -45,7 +43,7 @@ e = document.getElementById("id_code_year");
 e.addEventListener('keyup', function () {
   var val = document.getElementById("id_code_year").value
   if (val === ''){
-
+    form.value =  "Année universitaire"
   } else {
   n = parseInt(val) + 1
   form.value =  "Année universitaire " + val + "/" + n
@@ -63,8 +61,11 @@ if (is_year_init.value === "False") {
   is_year_init.value = "OUI";
   is_year_init.style.color = "green";
 }
-  </script>
 
+{% if object %}
+document.getElementById('id_code_year').readOnly = true;
+{% endif %}
+  </script>
 
 
 {% endblock %}

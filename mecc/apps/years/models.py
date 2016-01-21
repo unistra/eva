@@ -45,7 +45,7 @@ class UniversityYear(models.Model):
     )
 
     def __str__(self):
-        return 'Année universitaire %s' % label_year
+        return self.label_year
 
     def clean_fields(self, exclude=None):
 

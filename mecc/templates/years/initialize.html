@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+
+{% block page-header %}
+{% trans 'Années universitaires' %}
+{% endblock %}
+
+{% block content %}
+{{message}} </br></br>
+<a href='{% url "years:home" %}'value="" class="btn btn-primary btn-lines" style="width:15em">
+  {% trans 'Retour à la liste des années universitaires' %}</a>
+{% endblock %}

@@ -18,6 +18,8 @@
     width: 48%;
     margin:2px;
 }
+
+form div .btn-lines {}
 .asteriskField {
     display: none;
 }
