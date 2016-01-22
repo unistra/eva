@@ -58,12 +58,4 @@ def search(request, template='commission/select.html'):
     request.session['liste'] = data['liste'] = ask_camelot(x)
     nb_found = len(data['liste'])
     data['form'] = ECICommissionMemberForm
-    #
-    # if nb_found == 1:
-    #     print(data['liste'])
-    #     print('only one')
-    # elif nb_found == 0:
-    #     print('nyulllll')
-    # else:
-    #     print('a looooooooooooooooooooooooooooooooooooot')
     return render(request, template, data)

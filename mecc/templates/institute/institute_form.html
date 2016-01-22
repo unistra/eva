@@ -2,19 +2,82 @@
 
 {% load i18n %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block page-header %}
 {% trans 'Fiche composante' %}
 {% endblock %}
 
 {% block content %}
-
-<form action="" method="post" class="col-xs-6">
-    {% csrf_token %}
-    {{form}}
-    <input class="btn btn-primary" type="submit" value="{% trans 'Valider' %}" />
+<div class='flex-container'>
+<form action="" method="post" id='form-comp'>
+<div id="div_auto_id">
+  <label for="auto_id" class="control-label col-lg-5 requiredField">
+                {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
+<div class="controls col-lg-6"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
+</div>
+  <hr id="hr1">
+  <hr id="hr2">
+  <hr id="hr3">
+  {% crispy form %}
+    <input id="btn-add-composante" class="btn btn-primary btn-lines" type="submit" value="{% trans 'Ajouter une composante' %}" />
+<div id='first'></div>
 </form>
+<div id="comp-right">
 
-{{latest_instit_id}}
+  <h3> {% trans "Année cible" %} {{dates.code_year}}/{{dates.code_year|add:'1'}}</h3>
+
+  <div id="div_cadre_gen">
+    <label for="cadre_gen" class="control-label col-lg-12">
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'><strong>{{cadre_gen}}</strong></a></label>
+  </div>
+
+  <div>
+    <label class="control-label col-lg-8">
+      {% trans "Date prévisionnelle CFVU MECC" %}
+    </label>
+    <div class="controls col-lg-4">
+      <input class=" form-control" value="{{current_year.date_expected|date:'d/m/Y'}}" readonly="True">
+    </div>
+  </div>
+
+<div></br></div>
+
+  <div>
+    <label class="control-label col-lg-8">
+      {% trans "Date prévisionnelle Conseil comp. MECC" %}
+    </label>
+    <div class="controls col-lg-4">
+      <input class=" form-control" value="{{dates.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
+    </div>
+  </div>
+
+  <div>
+    <label class="control-label col-lg-8">
+      {% trans "Date dernière notification MECC" %}
+    </label>
+    <div class="controls col-lg-4">
+      <input class=" form-control" value="{{dates.date_last_notif|date:'d/m/Y'}}" readonly="True">
+    </div>
+  </div>
+
+  <div></br></div>
+
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Documents (PV, émargement, lettre de présentation)" %}
+    </label>
+    <div class="controls col-lg-12">
+      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+    </div>
+  </div>
+<a id="comp-right-btn-close"  href="{% url 'years:create' %}" class="btn btn-primary btn-lines">
+   {% trans 'Fermer la fiche' %}
+ </a>
+
+</div>
+</div>
+
+
 
 {% endblock %}

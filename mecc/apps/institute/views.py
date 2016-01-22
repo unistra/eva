@@ -13,6 +13,8 @@ import json
 from .models import Institute, AcademicField
 from .forms import InstituteForm
 
+from ..years.models import UniversityYear, InstituteYear
+
 
 class InstituteCreate(CreateView):
     def get_context_data(self, **kwargs):
@@ -21,16 +23,15 @@ class InstituteCreate(CreateView):
             context['latest_instit_id'] = Institute.objects.latest('id').id + 1
         except ObjectDoesNotExist:
             context['latest_instit_id'] = 1
+        current_year = UniversityYear.objects.get(is_target_year=True)
+        context['current_year'] = current_year
+        context['cadre_gen'] = "ToDo.pdf"
+        context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
         return context
 
     model = Institute
-    fields = [
-        'code',
-        'is_on_duty',
-        'label',
-        'field',
-        'dircomp',
-    ]
+    form_class = InstituteForm
+
     success_url = '/institute'
 
 
