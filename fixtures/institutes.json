@@ -185,7 +185,7 @@
     "fields": {
         "code": "EPE",
         "rac": null,
-        "label": "Ecole supérieure du professorat et de l"éducation (ESPE)",
+        "label": "Ecole supérieure du professorat et de l'éducation (ESPE)",
         "field": "Sciences humaines et sociales",
         "dircomp": null,
         "is_on_duty": true,
@@ -198,7 +198,7 @@
     "fields": {
         "code": "GEO",
         "rac": null,
-        "label": "Faculté de géographie et d"aménagement",
+        "label": "Faculté de géographie et d'aménagement",
         "field": "Sciences humaines et sociales",
         "dircomp": null,
         "is_on_duty": true,
