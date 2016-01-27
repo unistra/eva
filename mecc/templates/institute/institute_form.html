@@ -6,6 +6,9 @@
 
 {% block page-header %}
 {% trans 'Fiche composante' %}
+{% if object%}
+<a href="{% url 'institute:delete' code=object.code %}" class="glyphicon glyphicon-trash"></a>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -29,7 +32,7 @@
 
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'><strong>{{cadre_gen}}</strong></a></label>
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'>{{cadre_gen}}</a></label>
   </div>
 
   <div>
@@ -71,13 +74,29 @@
       <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
     </div>
   </div>
-<a id="comp-right-btn-close"  href="{% url 'years:create' %}" class="btn btn-primary btn-lines">
+<a id="comp-right-btn-close"  href="{% url 'institute:home' %}" class="btn btn-primary btn-lines">
    {% trans 'Fermer la fiche' %}
  </a>
 
 </div>
 </div>
+<script>
+c = document.getElementById("div_id_is_on_duty");
+v = document.getElementById("id_code").parentNode;
+v.appendChild(c)
 
+
+
+
+select = document.getElementById('id_field')
+select.addEventListener("change", function(){
+  console.log(select.value);
+})
+lastVal = select.options[select.options.length - 1].value
+
+console.log(lastVal);
+
+</script>
 
 
 {% endblock %}

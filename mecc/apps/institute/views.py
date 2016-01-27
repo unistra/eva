@@ -5,7 +5,7 @@ from django.core import serializers
 from django.http import JsonResponse
 
 
-from django.views.generic.edit import UpdateView, CreateView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
 import json
@@ -14,6 +14,21 @@ from .models import Institute, AcademicField
 from .forms import InstituteForm
 
 from ..years.models import UniversityYear, InstituteYear
+
+
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.core.signals import request_finished
+
+
+class InstituteDelete(DeleteView):
+
+    model = Institute
+
+    slug_field = 'code'
+    slug_url_kwarg = 'code'
+
+    success_url = '/institute'
 
 
 class InstituteCreate(CreateView):
@@ -25,7 +40,7 @@ class InstituteCreate(CreateView):
             context['latest_instit_id'] = 1
         current_year = UniversityYear.objects.get(is_target_year=True)
         context['current_year'] = current_year
-        context['cadre_gen'] = "ToDo.pdf"
+        context['cadre_gen'] = "xxxxx.pdf"
         context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
         return context
 
@@ -38,19 +53,31 @@ class InstituteCreate(CreateView):
 class InstituteUpdate(UpdateView):
 
     model = Institute
-    fields = [
-        'is_on_duty',
-        'label',
-        'field',
-        'dircomp',
-    ]
+    form_class = InstituteForm
+
+    def get_context_data(self, **kwargs):
+        context = super(InstituteUpdate, self).get_context_data(**kwargs)
+        try:
+            context['latest_instit_id'] = Institute.objects.latest('id').id + 1
+        except ObjectDoesNotExist:
+            context['latest_instit_id'] = 1
+        current_year = UniversityYear.objects.get(is_target_year=True)
+        context['current_year'] = current_year
+        context['cadre_gen'] = "xxxxx.pdf"
+        context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
+        return context
+
 
     slug_field = 'code'
     slug_url_kwarg = 'code'
 
     success_url = '/institute'
 
-#
+
+@receiver(pre_save, sender=Institute)
+def call_back_save_institute(sender, **kwargs):
+    print(kwargs['instance'].code)
+
 # #
 #
 # def edit(request, code, template='institute/create.html'):

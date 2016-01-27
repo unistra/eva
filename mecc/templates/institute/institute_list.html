@@ -15,7 +15,7 @@
     <li>{{ field.grouper }}
     <ul>
         {% for item in field.list %}
-          <li><a href='{{ item.code }}'>{{ item.label }}</a></li>
+          <li><a href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></li>
         {% endfor %}
     </ul>
     </li>

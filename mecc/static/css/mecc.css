@@ -84,7 +84,10 @@ form hr{
 #form-comp #first{height: 4em;order:-1;}
 #form-comp #div_auto_id{order:1;margin-bottom: 1em;}
 #form-comp #div_id_code{order:2;}
-#form-comp #div_id_code + div{order:3;} /*Adjacent sibling selectors used with a '+'*/
+#id_code{width: 57%; float:left}
+#div_id_is_on_duty{width: 40%; float:right; margin-top:0px}
+label[for=id_is_on_duty]{margin-top: 0.6em;}
+#form-comp #div_id_code + div{order:3; display: none} /*Adjacent sibling selectors used with a '+'*/
 #form-comp #div_id_label{order:4;}
 #form-comp #div_id_field{order:5;}
 #form-comp #div_id_dircomp{order:7;}

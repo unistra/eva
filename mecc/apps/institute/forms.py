@@ -11,7 +11,9 @@ from django.utils.translation import ugettext_lazy as _
 
 class InstituteForm(forms.ModelForm):
     field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
-                                   required=True, label=_('Domaine'))
+                                   required=True, label=_('Domaine'),
+
+                                    )
 
     helper = FormHelper()
     helper.form_tag = False
@@ -27,7 +29,6 @@ class InstituteForm(forms.ModelForm):
             Field('rac'),
             Field('diretu'),
             Field('scol_manager'),
-
 
     )
 
