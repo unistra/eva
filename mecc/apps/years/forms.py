@@ -12,7 +12,6 @@ class UniversityYearForm(forms.ModelForm):
         choices=((0, "Non"), (1, "OUI")),
         coerce=lambda x: bool(int(x)),
         widget=forms.Select,
-        initial='0',
         required=True,
     )
     is_year_init = forms.CharField(

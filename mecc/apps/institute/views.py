@@ -74,6 +74,19 @@ class InstituteUpdate(UpdateView):
     success_url = '/institute'
 
 
+
+class InstituteListView(ListView):
+    def get_context_data(self, **kwargs):
+        context = super(InstituteListView, self).get_context_data(**kwargs)
+        try:
+            context['ordered_list'] = Institute.objects.all().order_by('field', 'label')
+        except Institute.DoesNotExist:
+            context['ordered_list'] = False
+        return context
+
+    model = Institute
+
+
 @receiver(pre_save, sender=Institute)
 def call_back_save_institute(sender, **kwargs):
     print(kwargs['instance'].code)

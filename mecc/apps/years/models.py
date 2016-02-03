@@ -29,7 +29,7 @@ class UniversityYear(models.Model):
         _('Libellé année'), max_length=35, blank=True,
     )
     is_target_year = models.BooleanField(
-        _('Cible courante'), default=False
+        _('Cible courante')
     )
     date_validation = models.DateField(
         _('Date validation cadre en CFVU'), blank=True, null=True

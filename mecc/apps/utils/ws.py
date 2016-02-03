@@ -31,6 +31,10 @@ def create_client(name, token, spore, base_url):
     return client
 
 
+def ask_ldap():
+    client = create_client('ldap_client', settings.LDAP_TOKEN,
+                           settings.LDAP_SPORE, settings.LDAP_BASE_URL)
+
 def ask_camelot(val):
     # Getting key and value from first elements of first dict
     # k = next(iter(args[0].keys()))
@@ -54,7 +58,7 @@ def ask_camelot(val):
         vart += 1
         if r and 'results' in r and r['results']:
             for i in r['results']:
-                
+
                 a = {
                     "first_name": i['first_name'],
                     "last_name": i['last_name'],

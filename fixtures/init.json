@@ -1,0 +1,500 @@
+[{
+    "model": "institute.academicfield",
+    "fields": {
+        "name": "Arts, Lettres, Langues"
+    },
+    "pk": 1
+}, {
+    "model": "institute.academicfield",
+    "fields": {
+        "name": "Droit, \u00e9conomie, gestion et sciences politiques et sociales"
+    },
+    "pk": 2
+}, {
+    "model": "institute.academicfield",
+    "fields": {
+        "name": "Sant\u00e9"
+    },
+    "pk": 3
+}, {
+    "model": "institute.academicfield",
+    "fields": {
+        "name": "Sciences humaines et sociales"
+    },
+    "pk": 4
+}, {
+    "model": "institute.academicfield",
+    "fields": {
+        "name": "Sciences, Technologies"
+    },
+    "pk": 5
+},
+{
+    "model": "institute.institute",
+    "fields": {
+        "code": "ART",
+        "rac": null,
+        "label": "Faculté des arts",
+        "field": 1,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 1
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "LVI",
+        "rac": null,
+        "label": "Faculté des langues et des cultures étrangères",
+        "field": 1,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 2
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "LGA",
+        "rac": null,
+        "label": "Faculté des langues et sciences humaines appliquées (LSHA)",
+        "field": 1,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 3
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "LET",
+        "rac": null,
+        "label": "Faculté des lettres",
+        "field": 1,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 4
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "CPI",
+        "rac": null,
+        "label": "Centre d 'études internationales de la propriété intellectuelle (CEIPI)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 5
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "CUJ",
+        "rac": null,
+        "label": "Centre universitaire d'enseignement du journalisme (CUEJ)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 6
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "EMS",
+        "rac": null,
+        "label": "Ecole de management Strasbourg (EM)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 7
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "DRT",
+        "rac": null,
+        "label": "Faculté de droit, de sciences politiques et de gestion",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 8
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "SEG",
+        "rac": null,
+        "label": "Faculté de sciences économiques et de gestion (FSEG)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 9
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "PAG",
+        "rac": null,
+        "label": "Institut de préparation à l'administration générale (IPAG)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 10
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "IEP",
+        "rac": null,
+        "label": "Institut d'études politiques (IEP)",
+        "field": 2,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 11
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ODO",
+        "rac": null,
+        "label": "Faculté de chirurgie dentaire",
+        "field": 3,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 12
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "MED",
+        "rac": null,
+        "label": "Faculté de médecine",
+        "field": 3,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 13
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "PHA",
+        "rac": null,
+        "label": "Faculté de pharmacie",
+        "field": 3,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 14
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "EPE",
+        "rac": null,
+        "label": "Ecole supérieure du professorat et de l'éducation (ESPE)",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 15
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "GEO",
+        "rac": null,
+        "label": "Faculté de géographie et d'aménagement",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 16
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "PLI",
+        "rac": null,
+        "label": "Faculté de philosophie",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 17
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "PSY",
+        "rac": null,
+        "label": "Faculté de psychologie",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 18
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "EDU",
+        "rac": null,
+        "label": "Faculté de sciences de l'éducation",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 19
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "THC",
+        "rac": null,
+        "label": "Faculté de théologie catholique",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 20
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "THP",
+        "rac": null,
+        "label": "Faculté de théologie protestante",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 21
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "APS",
+        "rac": null,
+        "label": "Faculté des sciences du sport",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 22
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "HIS",
+        "rac": null,
+        "label": "Faculté des Sciences Historiques",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 23
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "SOC",
+        "rac": null,
+        "label": "Faculté des sciences sociales",
+        "field": 4,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 24
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "EOT",
+        "rac": null,
+        "label": "Ecole et observatoire des sciences de la Terre (EOST)",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 25
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ECP",
+        "rac": null,
+        "label": "Ecole européenne de chimie, polymères et matériaux (ECPM)",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 26
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ESB",
+        "rac": null,
+        "label": "Ecole supérieure de biotechnologie de Strasbourg (ESBS)",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 27
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "CHM",
+        "rac": null,
+        "label": "Faculté de chimie",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 28
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "VIE",
+        "rac": null,
+        "label": "Faculté des sciences de la vie",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 29
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "IHA",
+        "rac": null,
+        "label": "Institut universitaire de technologie de Haguenau",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 30
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ISC",
+        "rac": null,
+        "label": "Institut universitaire de technologie Louis Pasteur",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 31
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ILL",
+        "rac": null,
+        "label": "Institut universitaire de technologie Robert Schuman",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 32
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "OBS",
+        "rac": null,
+        "label": "Observatoire astronomique de Strasbourg",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 33
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "ESP",
+        "rac": null,
+        "label": "Télécom Physique Strasbourg",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 34
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "MAI",
+        "rac": null,
+        "label": "UFR de Mathématique et d'informatique",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 35
+}, {
+    "model": "institute.institute",
+    "fields": {
+        "code": "PHI",
+        "rac": null,
+        "label": "UFR physique et ingénierie",
+        "field": 5,
+        "dircomp": null,
+        "is_on_duty": true,
+        "scol_manager": [],
+        "diretu": []
+    },
+    "pk": 36
+}]

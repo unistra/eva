@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-from .views import InstituteCreate, InstituteUpdate, InstituteDelete
+from .views import InstituteCreate, InstituteUpdate, InstituteDelete, InstituteListView
 from django.views.generic.list import ListView
 from .models import Institute
 
@@ -12,9 +12,7 @@ urlpatterns = [
     #     name='edit'),
     # url(r'^create/$', views.create,
     #     name='create'),
-    url(r'^$', ListView.as_view(
-            model=Institute,
-            template_name='institute/institute_list.html'),
+    url(r'^$', InstituteListView.as_view(),
         name='home'),
     url(r'^new/$', InstituteCreate.as_view(),
         name='create'),

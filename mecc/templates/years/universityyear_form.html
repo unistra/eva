@@ -53,7 +53,7 @@ e.addEventListener('keyup', function () {
 
 is_year_init = document.getElementById("id_is_year_init");
 is_year_init.style.fontWeight = "bold";
-console.log(is_year_init.value);
+
 if (is_year_init.value === "False") {
   is_year_init.value = "NON";
   is_year_init.style.color = "red";
@@ -65,8 +65,11 @@ if (is_year_init.value === "False") {
 
 {% if object %}
 document.getElementById('id_code_year').readOnly = true;
+{% if object.is_target_year %}
+console.log("helllllooooooo");
+document.getElementById('id_is_target_year').value = 1;
 {% endif %}
-
+{% endif %}
 
   </script>
 

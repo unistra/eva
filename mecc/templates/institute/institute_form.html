@@ -68,12 +68,23 @@
 
   <div>
     <label class="control-label col-lg-12">
-      {% trans "Documents (PV, émargement, lettre de présentation)" %}
+      {% trans "Lettre de présentation" %}
     </label>
     <div class="controls col-lg-12">
       <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
     </div>
   </div>
+
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Autre documents" %}
+    </label>
+    <div class="controls col-lg-12">
+      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+    </div>
+  </div>
+
+
 <a id="comp-right-btn-close"  href="{% url 'institute:home' %}" class="btn btn-primary btn-lines">
    {% trans 'Fermer la fiche' %}
  </a>
@@ -90,7 +101,7 @@ v.appendChild(c)
 
 select = document.getElementById('id_field')
 select.addEventListener("change", function(){
-  console.log(select.value);
+
 })
 lastVal = select.options[select.options.length - 1].value
 

@@ -1,9 +1,10 @@
 from django import forms
-from mecc.apps.institute.models import Institute, AcademicField
+from mecc.apps.institute.models import Institute, AcademicField, Staff, ScolManager
 from django.utils.translation import ugettext_lazy as _
 
 from django import forms
-from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, StrictButton
+from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,\
+    StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
 from django.utils.translation import ugettext_lazy as _
@@ -11,9 +12,23 @@ from django.utils.translation import ugettext_lazy as _
 
 class InstituteForm(forms.ModelForm):
     field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
-                                   required=True, label=_('Domaine'),
+                                   required=True, label=_('Domaine'))
+    #
+    # dircomp = forms.ModelChoiceField(queryset=Staff.objects.all() if len(Staff.objects.all()) > 0 else ['aucun'],
+    #                                  label=_('Directeur de composante'),
+    #                                  required=False,)
 
-                                    )
+    # rac = forms.ModelChoiceField(queryset=Staff.objects.all(),
+    #                              label=_('Responsable administratif'),
+    #                              required=False,)
+    #
+    # diretu = forms.ModelChoiceField(queryset=Staff.objects.all(),
+    #                                 label=("Directeurs d\'études"),
+    #                                 required=False,)
+    #
+    # scol_manager =forms.ModelChoiceField(queryset=ScolManager.objects.all(),
+    #                                      label=("Gestionnaires de scolarité"),
+    #                                      required=False)
 
     helper = FormHelper()
     helper.form_tag = False
