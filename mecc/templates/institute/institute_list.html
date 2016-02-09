@@ -7,15 +7,16 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="flex-container">
+<div class='div-flex' style="width:60%">
 {% if ordered_list %}
 {% regroup ordered_list by field as institute_list %}
-<ul>
+<ul id="composante_liste">
 {% for field in institute_list  %}
-    <li>{{ field.grouper }}
+    <li class="grouper">{{ field.grouper }}
     <ul>
         {% for item in field.list %}
-          <li><a href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></li>
+          <li><a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></li>
         {% endfor %}
     </ul>
     </li>
@@ -30,4 +31,55 @@
 <div style='text-align: center;margin-top:2em;'>
   <a href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
 </div>
+</div>
+<div id='table-right'>
+<table class="table">
+  <tr>
+    <th>{% trans 'Directeur' %}</th>
+    <th>{% trans 'Responsable admin' %}</th>
+    <th>{% trans 'Date prév Conseil' %}</th>
+    <th>{% trans 'Date dernière notif MECC' %}</th>
+  </tr>
+  {% for e in ordered_list %}
+  <tr id='tr_{{e.code}}' style="display:none">
+    <td>{{e.dircomp}}</td>
+    <td>{{e.rac}}</td>
+    {% for a in institute_year%}
+
+      {% if a.id_cmp == e.id %}
+    <td>{{a.code_year}}</td>
+    <td>{{a.date_last_notif}}</td>
+      {% endif %}
+  {% endfor %}
+  </tr>
+
+{% endfor%}
+</table>
+</div>
+</div>
+
+<script>
+var lastCmp = null
+$('.cmp').hover(function(){
+  var cmp = "tr_" + this.id
+  table = document.getElementById('table-right');
+  table.style.display = "flex";
+  table.style.position = "fixed";
+
+  toProcess = document.getElementById(cmp);
+  toProcess.style.display = "";
+  if (lastCmp === null || lastCmp === cmp) {
+  } else {
+    lastProcessed = document.getElementById(lastCmp);
+    lastProcessed.style.display = "none"
+  }
+
+
+ },
+ function(){
+
+   lastCmp =  "tr_" + this.id
+
+  });
+</script>
 {% endblock %}

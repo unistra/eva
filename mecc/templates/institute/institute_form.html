@@ -5,6 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block page-header %}
+
 {% trans 'Fiche composante' %}
 {% if object%}
 <a href="{% url 'institute:delete' code=object.code %}" class="glyphicon glyphicon-trash"></a>
@@ -12,18 +13,28 @@
 {% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'css/easy-autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/autocomplete.js' %}"></script>
+
 <div class='flex-container'>
 <form action="" method="post" id='form-comp'>
 <div id="div_auto_id">
   <label for="auto_id" class="control-label col-lg-5 requiredField">
                 {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
-<div class="controls col-lg-6"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
+<div class="controls col-lg-6"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
 </div>
   <hr id="hr1">
   <hr id="hr2">
   <hr id="hr3">
   {% crispy form %}
-    <input id="btn-add-composante" class="btn btn-primary btn-lines" type="submit" value="{% trans 'Ajouter une composante' %}" />
+
+    <input id="btn-add-composante" class="btn btn-primary btn-lines" type="submit" value=
+  {% if object%}
+  "{% trans 'Éditer la composante' %}"
+  {% else %}
+    "{% trans 'Ajouter une composante' %}"
+  {% endif %}/>
 <div id='first'></div>
 </form>
 <div id="comp-right">
@@ -37,24 +48,33 @@
 
   <div>
     <label class="control-label col-lg-8">
-      {% trans "Date prévisionnelle CFVU MECC" %}
+      {% trans "Date validation cadre en CFVU" %}
     </label>
     <div class="controls col-lg-4">
-      <input class=" form-control" value="{{current_year.date_expected|date:'d/m/Y'}}" readonly="True">
+      <input class=" form-control" value="{{current_year.date_validation|date:'d/m/Y'}}" readonly="True">
     </div>
   </div>
+
+
+<div>
+  <label class="control-label col-lg-8">
+    {% trans "Date prévisionnelle CFVU MECC" %}
+  </label>
+  <div class="controls col-lg-4">
+    <input class=" form-control" value="{{dates.date_expected|date:'d/m/Y'}}" readonly="True">
+  </div>
+</div>
 
 <div></br></div>
 
-  <div>
-    <label class="control-label col-lg-8">
-      {% trans "Date prévisionnelle Conseil comp. MECC" %}
-    </label>
-    <div class="controls col-lg-4">
-      <input class=" form-control" value="{{dates.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
-    </div>
+<div>
+  <label class="control-label col-lg-8">
+    {% trans "Date prévisionnelle Conseil comp. MECC" %}
+  </label>
+  <div class="controls col-lg-4">
+    <input class=" form-control" value="{{dates.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
   </div>
-
+</div>
   <div>
     <label class="control-label col-lg-8">
       {% trans "Date dernière notification MECC" %}
@@ -77,7 +97,7 @@
 
   <div>
     <label class="control-label col-lg-12">
-      {% trans "Autre documents" %}
+      {% trans "Autres documents" %}
     </label>
     <div class="controls col-lg-12">
       <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
@@ -92,22 +112,72 @@
 </div>
 </div>
 <script>
-c = document.getElementById("div_id_is_on_duty");
-v = document.getElementById("id_code").parentNode;
-v.appendChild(c)
+// Add checkbox next to id_code
+check_box = document.getElementById("div_id_is_on_duty");
+id_code = document.getElementById("id_code").parentNode;
+id_code.appendChild(check_box)
 
+// ////////// ************ Let's do some AJAX
+code_cmp = document.getElementById("id_code").value
+var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
+var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
 
+// $.getJSON(url_prof, function(data) {
+//     var options = {
+//         data: data
+//         , getValue: function(element) {
+//             return element.last_name + " " + element.first_name
+//         }
+//         , list: {
+//             match: {
+//                 enabled: true
+//             }
+//         }
+//     , };
+//     $("#id_label").easyAutocomplete(options);
+// });
+//
+// $.getJSON(url_adm, function(data) {
+//     var options = {
+//         data: data
+//         , getValue: function(element) {
+//             return element.last_name + " " + element.first_name
+//         }
+//         , list: {
+//             match: {
+//                 enabled: true
+//             }
+//         }
+//     , };
+//     $("#id_code").easyAutocomplete(options);
+// });
+//
+// $("#id_label").autocomplete({
+//     source: function (request, response) {
+//         $.ajax({
+//             url: url_adm,
+//             data: { query: request.term },
+//             success: function (data) {
+//                 var transformed = $.map(data, function (el) {
+//                     return {
+//                         label: el.phrase,
+//                         id: el.id
+//                     };
+//                 });
+//                 response(transformed);
+//             },
+//             error: function () {
+//                 response([]);
+//             }
+//         });
+//     }});
 
-
-select = document.getElementById('id_field')
-select.addEventListener("change", function(){
-
-})
-lastVal = select.options[select.options.length - 1].value
-
-console.log(lastVal);
+$('#id_label').autocomplete({
+    serviceUrl: url_adm,
+    onSelect: function (suggestion) {
+        alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+    }
+});
 
 </script>
-
-
 {% endblock %}

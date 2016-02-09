@@ -78,9 +78,7 @@ def initialize_year(request, code_year, template='years/initialize.html'):
     institutes_id_cmp = set([e.id for e in institutes])
 
     missing_id_cmp = asked_id_cmp ^ institutes_id_cmp
-    print('\nasked_id = \n%s\n\n' % asked_id_cmp)
-    print('institutes_id_cmp = \n%s\n\n' % institutes_id_cmp)
-    print('missing_id = %s ' % missing_id_cmp)
+
     if len(missing_id_cmp) is 0:
         data['message'] = _("L'initialisation des composantes est à jour.")
         return render(request, template, data)

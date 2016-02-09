@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from django.contrib import admin
 from django import forms
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_save
 
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
@@ -11,10 +12,20 @@ from django.forms import ModelForm
 from django import forms
 from django.db.models import CharField
 from django.utils.translation import ugettext_lazy as _
+from django.dispatch import receiver
+from .apps.institute.models import Institute
 
+# TODO: do stuff ^^
+@receiver(pre_save, sender=Institute)
+def call_back_save_institute(sender, **kwargs):
+    pass
 
 class CustomUser(User):
     stuff = CharField(_('Stuff'), max_length=35)
+
+    def save(self, *args, **kwargs):
+        pass
+
 
 
 class UserCreationFormWithoutPass(forms.ModelForm):
@@ -32,8 +43,8 @@ class UserCreationFormWithoutPass(forms.ModelForm):
     def save(self, commit=True):
         user = super(UserCreationFormWithoutPass, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
+
+        user.save()
 
         return user
 

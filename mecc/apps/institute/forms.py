@@ -13,22 +13,18 @@ from django.utils.translation import ugettext_lazy as _
 class InstituteForm(forms.ModelForm):
     field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
                                    required=True, label=_('Domaine'))
-    #
-    # dircomp = forms.ModelChoiceField(queryset=Staff.objects.all() if len(Staff.objects.all()) > 0 else ['aucun'],
-    #                                  label=_('Directeur de composante'),
-    #                                  required=False,)
 
-    # rac = forms.ModelChoiceField(queryset=Staff.objects.all(),
-    #                              label=_('Responsable administratif'),
-    #                              required=False,)
+    # dircomp = forms.ChoiceField(choices=[], label=_('Directeur de composante'),
+    #                             required=False,)
     #
-    # diretu = forms.ModelChoiceField(queryset=Staff.objects.all(),
-    #                                 label=("Directeurs d\'études"),
-    #                                 required=False,)
+    # rac = forms.ChoiceField(choices=[], label=_('Responsable administratif'),
+    #                         required=False,)
     #
-    # scol_manager =forms.ModelChoiceField(queryset=ScolManager.objects.all(),
-    #                                      label=("Gestionnaires de scolarité"),
-    #                                      required=False)
+    # diretu = forms.ChoiceField(choices=[], label=("Directeurs d\'études"),
+    #                            required=False,)
+    #
+    # scol_manager = forms.ChoiceField(choices=[], label=("Gestionnaires de scolarité"),
+    #                                  required=False)
 
     helper = FormHelper()
     helper.form_tag = False

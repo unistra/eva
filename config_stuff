@@ -1,0 +1,10 @@
+
+=== GET Enseignant by structures
+
+http get  "https://camelot-test.u-strasbg.fr/warehouse/persons.json?employee_type=Enseignant&structure=DRT&page_size=500" "Authorization: Token f8a635587c1cf39826fbd9aabfeab35107cd54b8"
+
+
+=== GET Administratif by structures
+
+http get  "https://camelot-test.u-strasbg.fr/warehouse/persons.json?employee_type=Administratif&structure=DRT&page_size=500" "Authorization: Token f8a635587c1cf39826fbd9aabfeab35107cd54b8"
+confi

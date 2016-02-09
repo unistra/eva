@@ -2,12 +2,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-
+from ..utils.ws import get_list_from_cmp
 import json
 
 from .models import Institute, AcademicField
@@ -19,6 +19,24 @@ from ..years.models import UniversityYear, InstituteYear
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.signals import request_finished
+
+
+def get_list(request, employee_type, pk):
+    if employee_type == 'prof':
+        type_staff = 'Enseignant'
+    elif employee_type == 'adm':
+        type_staff = 'Administratif'
+    t = get_list_from_cmp(cmp=pk, employee_type=type_staff)
+    return JsonResponse(t, safe=False)
+
+
+def get_dircom_and_rac(request):
+    data = []
+    if request.is_ajax():
+        code = request.GET.get('code_cmp', '')
+        institute = Institute.objects.get(code=code)
+        data['dircomp'] = institute.dircomp
+        data['rac'] = institute.rac
 
 
 class InstituteDelete(DeleteView):
@@ -53,6 +71,7 @@ class InstituteCreate(CreateView):
 class InstituteUpdate(UpdateView):
 
     model = Institute
+
     form_class = InstituteForm
 
     def get_context_data(self, **kwargs):
@@ -65,6 +84,7 @@ class InstituteUpdate(UpdateView):
         context['current_year'] = current_year
         context['cadre_gen'] = "xxxxx.pdf"
         context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
+
         return context
 
 
@@ -82,9 +102,13 @@ class InstituteListView(ListView):
             context['ordered_list'] = Institute.objects.all().order_by('field', 'label')
         except Institute.DoesNotExist:
             context['ordered_list'] = False
+        current_year = UniversityYear.objects.get(is_target_year=True).code_year
+        context['institute_year'] = InstituteYear.objects.filter(code_year=current_year)
         return context
 
     model = Institute
+
+
 
 
 @receiver(pre_save, sender=Institute)
