@@ -32,6 +32,8 @@
   <a href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
 </div>
 </div>
+
+
 <div id='table-right'>
 <table class="table">
   <tr>
@@ -47,7 +49,7 @@
     {% for a in institute_year%}
 
       {% if a.id_cmp == e.id %}
-    <td>{{a.code_year}}</td>
+    <td>{{a.date_expected_MECC}}</td>
     <td>{{a.date_last_notif}}</td>
       {% endif %}
   {% endfor %}
