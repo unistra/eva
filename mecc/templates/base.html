@@ -22,6 +22,7 @@
     {% block head-javascript %}{% endblock %}
 </head>
 
+
 <body>
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
@@ -67,12 +68,16 @@
                  </li>
                   <li class="dropdown">
                      <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-                     {% if 'degree' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
-                     <ul class="collapse" id="collapseDegree">
-                       <li><a href="#">{% trans 'Types de diplômes' %}</a></li>
-                       <li><a href="#">{% trans 'Liste des diplômes' %}</a></li>
+                    >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
+                     <ul class="collapse {% if 'degree' in request.path %} in {% endif %} "id="collapseDegree">
+                       <li><a href="{% url 'degree:type' %}"
+                        {% if 'degree/type' in request.path %}
+                          class="item-selected"
+                       {% endif %}>{% trans 'Types de diplômes' %}</a></li>
+                       <li><a href="{% url 'degree:list' %}"
+                         {% if 'degree/list' in request.path %}
+                          class="item-selected"
+                       {% endif %}>{% trans 'Liste des diplômes' %}</a></li>
 
                     </ul>
                  </li>

@@ -1,3 +1,16 @@
+.font-color-grey{
+  color:grey;
+}
+
+.fm-modal .modal-head {
+    font-size: 1.5em;
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+.row{
+  margin-top: 0.5em;
+}
 
 /*******************************************************************************
 /* Composante table-right*/
@@ -8,7 +21,6 @@
 ul{
   padding-left: 2em;
 }
-
 
 /*******************************************************************************
 /* Navbar */
@@ -50,8 +62,18 @@ ul{
 }
 
 label{
-  margin-top: 0.6em;
+  margin-bottom: 0.5em;
+  padding-top: 0.5em;
 }
+
+
+label[for=id_is_in_use]{
+  position: absolute;
+  top: -0.6em;
+}
+
+
+
 
 #id_is_year_init{
   background-color: #fff;
@@ -96,8 +118,8 @@ form hr{
 #form-comp #first{height: 4em;order:-1;}
 #form-comp #div_auto_id{order:1;margin-bottom: 1em;}
 #form-comp #div_id_code{order:2;}
-#id_code{width: 57%; float:left}
-#div_id_is_on_duty{width: 40%; float:right; margin-top:0px}
+#id_code{width: 43%; float:left}
+#div_id_is_on_duty{width: 47%; float:right; margin-top:0px}
 label[for=id_is_on_duty]{margin-top: 0.6em;}
 #form-comp #div_id_code + div{order:3; display: none} /*Adjacent sibling selectors used with a '+'*/
 #form-comp #div_id_label{order:4;}
@@ -200,7 +222,7 @@ align-self: center;
 /* Sidebar Styles */
 #collapseDegree {list-style-type: none; padding: 0;}
 
-#collapseDegree li a {padding-left: 0.5em;}
+#collapseDegree li a {padding-left: 2em;}
 
 .open {background: #00294B;}
 
@@ -307,7 +329,6 @@ li:hover .sub-level {
   height: 0.5em;
   width: 0.5em;
   background-color: #004A87;
-  border-radius: 50%;
   -webkit-animation: loading 1.6s infinite;
   -moz-animation: loading 1.6s infinite;
   -o-animation: loading 1.6s infinite;
@@ -389,10 +410,13 @@ li:hover .sub-level {
 
   -webkit-border-radius: 0px !important;
 	-moz-border-radius: 0px !important;
-	border-radius: 0px !important;
 
 	border-collapse: collapse !important;
 	background-image: none !important;
+}
+
+* {
+  border-radius: 0 !important;
 }
 
 select{

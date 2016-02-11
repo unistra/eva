@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+
+
+{% block page-header %}
+{% trans 'Type de diplômes' %}
+{% endblock %}
+
+
+{% block content %}
+{% block modal %}
+{% endblock %}
+
+{% if object_list %}
+<table class="table">
+  <tr class='table-head'>
+    <th>{% trans 'ID type' %}</th>
+    <th>{% trans "N° ordre affichage" %}</th>
+    <th>{% trans 'Libellé court' %}</th>
+    <th>{% trans 'Libellé long' %}</th>
+    <th>{% trans 'En service' %}</th>
+    <th>{% trans 'Catégorie MECC' %}</th>
+    <th></th>
+    <th></th>
+  </tr>
+    {% for e in object_list %}
+  <tr class="hover-row">
+    <td class='font-color-grey'>{{e.id}}</td>
+    <td>{{e.display_order}}</td>
+    <td>{{e.short_label}}</td>
+    <td>{{e.long_label}}</td>
+    <td>{{e.is_in_use}}</td>
+    <td>{{e.mecc_cat}}</td>
+    <td>
+      <a href="{% url 'degree:type_edit' id=e.id %}" class="fm-update glyphicon glyphicon-pencil"
+        data-fm-head=" {% trans 'Éditer un type de diplôme' %}" data-fm-callback="reload"
+        data-fm-target="#e-{{ e.id }}"></a>
+
+    </td>
+    <td>
+      <a href="{% url 'degree:type_delete' id=e.id %}" class="fm-delete glyphicon glyphicon-trash"
+        data-fm-head="{% trans 'Confirmer la suppression du type :' %} </br> <br><small>{{e.short_label}} - {{e.long_label}} </small>" data-fm-callback="reload"
+        data-fm-target="#e-{{ e.id }}"></a>
+
+    </td>
+  </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+{% endif %}
+
+</br>
+<div class='pull-right'>
+  <a href="{% url 'degree:type_create'  %}" class="fm-create btn btn-primary" data-fm-head=" {% trans 'Ajouter un type de diplôme' %}" data-fm-callback="reload"> {% trans 'Ajouter un type de diplôme' %}</a>
+</div>
+
+{% include "degree/modal.html" %}
+<script>
+        $(function() {
+            $.fm({debug: true});
+        });
+</script>
+{% endblock %}

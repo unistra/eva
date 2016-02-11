@@ -223,7 +223,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     'crispy_forms',
-
+    'fm',
 )
 
 LOCAL_APPS = (
@@ -301,7 +301,7 @@ LOGGING = {
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
+FM_DEFAULT_FORM_TEMPLATE = 'degree/degreetype_form.html'
 
 ##########
 # Camelot #
