@@ -4,4 +4,4 @@ britney
 django-crispy-forms
 django-fm
 dal
-dal_select2,
+dal_select2
