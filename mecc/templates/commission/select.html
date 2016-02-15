@@ -1,124 +1,114 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-
 {% load i18n %}
 
 {% block page-header %}
 {{title}}
-
 {% endblock %}
 
 {% block content %}
 <div>
-<a data-toggle="modal" data-target="#searchMember" class="btn btn-link"> {% trans 'Effectuer une nouvelle recherche' %}</a>
-<input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">
-<span id='count-row'><span id='count'></span></span></div>
-  <table class="table results order-table" id="table">
-    <thead>
-    <tr class='table-head'>
-      <th> {% trans 'ID Membre' %}</th>
-      <th> {% trans 'Nom' %}</th>
-      <th> {% trans 'Prénom' %}</th>
-      <th> {% trans 'Mail' %}</th>
-    </tr>
-    </thead>
-
-{% for e in liste %}
-
-    <tr class="hover-row hit select" >
+   <a data-toggle="modal" data-target="#searchMember" class="btn btn-link"> {% trans 'Effectuer une nouvelle recherche' %}</a>
+   <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">
+   <span id='count-row'><span id='count'></span></span>
+</div>
+<table class="table results order-table" id="table">
+   <thead>
+      <tr class='table-head'>
+         <th> {% trans 'ID Membre' %}</th>
+         <th> {% trans 'Nom' %}</th>
+         <th> {% trans 'Prénom' %}</th>
+         <th> {% trans 'Mail' %}</th>
+      </tr>
+   </thead>
+   {% for e in liste %}
+   <tr class="hover-row hit select" >
       <td>
-      {{e.id_member}}
+         {{e.id_member}}
       </td>
       <td>
-      {{e.last_name}}
+         {{e.last_name}}
       </td>
       <td>
-      {{e.first_name}}
+         {{e.first_name}}
       </td>
       <td>
-        {% for m in e.mail %}
-        {% if not forloop.first %} | {% endif %}<span>{{m}}</span>
-        {% endfor %}
+         {% for m in e.mail %}
+         {% if not forloop.first %} | {% endif %}<span>{{m}}</span>
+         {% endfor %}
       </td>
-    </tr>
-
-{% endfor %}
-  </table>
-
-
-  <div class="modal fade fade" id="selectedMember" role="dialog" style="display:none">
-    <div class="modal-dialog">
-
+   </tr>
+   {% endfor %}
+</table>
+<div class="modal fade fade" id="selectedMember" role="dialog" style="display:none">
+   <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
-        </div>
-        <div class="modal-body" style="padding-bottom:0">
-          {% crispy form %}
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
+         </div>
+         <div class="modal-body" style="padding-bottom:0">
+            {% crispy form %}
+         </div>
       </div>
-    </div>
-  </div>
+   </div>
 </div>
-
 {% include "commission/search_member.html" %}
-  <script type="text/javascript">
+<script type="text/javascript">
+   (function(document) {
+   'use strict';
 
-  (function(document) {
-	'use strict';
+   var TableFilter = (function(Arr) {
 
-	var TableFilter = (function(Arr) {
+   var _input;
 
-		var _input;
+   function _onInputEvent(e) {
+   	_input = e.target;
+   	var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
+   	Arr.forEach.call(tables, function(table) {
+   		Arr.forEach.call(table.tBodies, function(tbody) {
+   			Arr.forEach.call(tbody.rows, _filter);
+   			var numOfVisibleRows = $('tr:visible').length - 1;
+   			var resu = numOfVisibleRows < 2 ? " Résultat" :  " Résultats";
+   			document.getElementById('count').textContent = numOfVisibleRows + resu;
+   		});
+   	});
+   }
 
-		function _onInputEvent(e) {
-			_input = e.target;
-			var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
-			Arr.forEach.call(tables, function(table) {
-				Arr.forEach.call(table.tBodies, function(tbody) {
-					Arr.forEach.call(tbody.rows, _filter);
-					var numOfVisibleRows = $('tr:visible').length - 1;
-					var resu = numOfVisibleRows < 2 ? " Résultat" :  " Résultats";
-					document.getElementById('count').textContent = numOfVisibleRows + resu;
-				});
-			});
-		}
+   function _filter(row) {
+   	var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
+   	row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
+   }
 
-		function _filter(row) {
-			var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
-			row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
-		}
+   return {
+   	init: function() {
+   		var inputs = document.getElementsByClassName('table-filter');
+   		Arr.forEach.call(inputs, function(input) {
+   			input.oninput = _onInputEvent;
+   		});
+   	}
+   };
+   })(Array.prototype);
 
-		return {
-			init: function() {
-				var inputs = document.getElementsByClassName('table-filter');
-				Arr.forEach.call(inputs, function(input) {
-					input.oninput = _onInputEvent;
-				});
-			}
-		};
-	})(Array.prototype);
+   document.addEventListener('readystatechange', function() {
+   if (document.readyState === 'complete') {
+   	TableFilter.init();
+   }
+   });
 
-	document.addEventListener('readystatechange', function() {
-		if (document.readyState === 'complete') {
-			TableFilter.init();
-		}
-	});
+   })(document);
 
-})(document);
-
-$(".hit").click(function(){
-  $('#selectedMember').modal('show');
-  id=$(this).closest('tr').children('td:first');
-  last_name = $(id).next('td');
-  first_name = $(last_name).next('td');
-  mail = $(first_name).next('td');
-  document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
-  document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
-  document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
-  document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
-});
-
-  </script>
+   $(".hit").click(function(){
+   $('#selectedMember').modal('show');
+   id=$(this).closest('tr').children('td:first');
+   last_name = $(id).next('td');
+   first_name = $(last_name).next('td');
+   mail = $(first_name).next('td');
+   document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
+   document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
+   document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
+   document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
+   });
+</script>
 {% endblock %}

@@ -6,7 +6,6 @@ from ..institute.models import Institute
 import re
 
 
-
 class InstituteYear(models.Model):
     id_cmp = models.IntegerField(_('ID composante'))
     code_year = models.IntegerField(_('Code année'))

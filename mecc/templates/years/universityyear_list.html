@@ -40,7 +40,7 @@
       {% if e.is_year_init == True %}
       <strong>{% trans "OUI" %}</strong>
       {% else %}
-      non
+      {% trans "non" %}
       {% endif %}</td>
     <td>
       <a href="{% url 'years:edit' code_year=e.code_year %}" class="glyphicon glyphicon-pencil"></a>

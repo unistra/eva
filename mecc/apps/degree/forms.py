@@ -3,7 +3,7 @@ from .models import DegreeType
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field, \
     HTML
-from crispy_forms.bootstrap import InlineField
+from crispy_forms.bootstrap import InlineField, FormActions
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -21,14 +21,12 @@ class DegreeTypeForm(forms.ModelForm):
             Div(
                 Div(
                     Div(
-                        Div(
-                            HTML("""
-                                <label for="id_degree_type" class="control-label col-md-5">
-                                ID type diplôme <small>(auto)</small></label>
-                                <div class="controls col-md-3">
-                                <input class="form-control" id="id_degree_type" name="id_degree_type" readonly=True>
-                                    </div>
-
+                        HTML("""
+                            <label for="id_degree_type" class="control-label col-md-5">
+                            ID type diplôme <small>(auto)</small></label>
+                            <div class="controls col-md-3">
+                            <input class="form-control" id="id_degree_type" name="id_degree_type" readonly=True>
+                                </div>
                             """),
                             InlineField('is_in_use'),
                             css_class='col-md-12'
@@ -36,25 +34,29 @@ class DegreeTypeForm(forms.ModelForm):
                         ),
                             css_class='row'
                     ),
-                    Div(
-                        Div(Field('display_order'), css_class='col-md-12'),
-                        css_class="row"
-                    ),
-                    Div(
-                        Div(Field('short_label'), css_class='col-md-12'),
-                        css_class="row"
-                    ),
-                    Div(
-                        Div(Field('long_label'), css_class='col-md-12'),
-                        css_class="row"
-                    ),
-                    Div(
-                        Div(Field('mecc_cat', readonly=True), css_class='col-md-12'),
-                        css_class="row"
-                    ),
+                Div(
+                    Div(Field('display_order'), css_class='col-md-12'),
+                    css_class="row"
                 ),
-                css_class='modal-body'
+                Div(
+                    Div(Field('short_label'), css_class='col-md-12'),
+                    css_class="row"
+                ),
+                Div(
+                    Div(Field('long_label'), css_class='col-md-12'),
+                    css_class="row"
+                ),
+                Div(
+                    Div(Field('mecc_cat', readonly=True), css_class='col-md-12'),
+                    css_class="row"
+                ),
+                Div(
+                    FormActions(
+                        Button('cancel', 'Cancel', onclick='history.go(-1);', css_class='pull-right'),
+                        Submit('add', _('Valider'), css_class="pull-right", style="margin-right:0.5em;"),
+                    ), css_class="row", style='padding-top:1em;'
 
+                )
             ),
 
         )

@@ -1,11 +1,18 @@
-
+{% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 
-
-<div id="form-container">
-    <form role="form" class="form" method="POST" enctype="multipart/form-data" action="">
-      {% crispy form %}
-
-    </form>
-</div>
+{% block content %}
+  <div class="row">
+     <div class="col-md-10 col-md-offset-1">
+        <form action="" method="post">
+           {% crispy form %}
+        </form>
+     </div>
+  </div>
+  </div>
+  <script>
+     id_degree_type = document.getElementById("id_degree_type");
+     id_degree_type.value = {% if object%}"{{object.id}}"{%else%}"{{latest_id}}" {%endif%}
+  </script>
+{% endblock %}

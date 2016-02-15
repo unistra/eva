@@ -1,41 +1,40 @@
 {% load i18n %}
-
 <!-- Modal -->
-  <div class="modal fade" id="searchMember" role="dialog">
-    <div class="modal-dialog">
-
+<div class="modal fade" id="searchMember" role="dialog">
+   <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
-        </div>
-        <div class="modal-body" style="padding-bottom:0">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="ID Membre ou Nom" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" onclick="searchMember()">
-          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-        </button>
-      </span>
-    </div><!-- /input-group -->
-    <div id="load-wrap" style="display:none">
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-  </div>
-          <span id='error'></span>
-        </br>
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
+         </div>
+         <div class="modal-body" style="padding-bottom:0">
+            <div class="input-group">
+               <input type="text" class="form-control" placeholder="ID Membre ou Nom" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+               <span class="input-group-btn">
+               <button class="btn btn-default" type="button" onclick="searchMember()">
+               <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+               </button>
+               </span>
+            </div>
+            <!-- /input-group -->
+            <div id="load-wrap" style="display:none">
+               <div class="circle"></div>
+               <div class="circle"></div>
+               <div class="circle"></div>
+               <div class="circle"></div>
+            </div>
+            <span id='error'></span>
+            </br>
+         </div>
       </div>
-    </div>
-  </div>
+   </div>
 </div>
 
 <script type="text/javascript">
-  function searchMember(){
-    search = document.getElementById("to-search").value
-    document.getElementById('load-wrap').style.display = '';
-    location.href = '/commission/search/?member=' + search
-  }
+   function searchMember(){
+     search = document.getElementById("to-search").value
+     document.getElementById('load-wrap').style.display = '';
+     location.href = '/commission/search/?member=' + search
+   }
 </script>

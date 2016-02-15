@@ -30,7 +30,7 @@ env.timezone = 'Europe/Paris'  # timezone for remote
 env.keep_releases = 3  # number of old releases to keep before cleaning
 env.extra_goals = ['preprod']  # add extra goal(s) to defaults (test,dev,prod)
 env.dipstrap_version = 'latest'
-env.verbose_output = False  # True for verbose output
+env.verbose_output = True  # True for verbose output
 
 # optional parameters
 

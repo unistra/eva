@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% load i18n %}
 
 {% block page-header %}
@@ -7,29 +6,24 @@
 {% endblock %}
 
 {% block content %}
-
 {% if institutes %}
-
-  {% regroup institutes by field as institute_list %}
-
-  <ul>
-  {% for field in institute_list %}
-      <li>{{ field.grouper }}
+{% regroup institutes by field as institute_list %}
+<ul>
+   {% for field in institute_list %}
+   <li>
+      {{ field.grouper }}
       <ul>
-          {% for item in field.list %}
-            <li><a href='{{ item.code }}'>{{ item.label }}</a></li>
-          {% endfor %}
+         {% for item in field.list %}
+         <li><a href='{{ item.code }}'>{{ item.label }}</a></li>
+         {% endfor %}
       </ul>
-      </li>
-  {% endfor %}
-  </ul>
-
+   </li>
+   {% endfor %}
+</ul>
 {% else %}
 {% trans "Aucune composante." %}
 {% endif %}
-
-
 <div style='text-align: center;margin-top:2em;'>
-  <a href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
+   <a href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
 </div>
 {% endblock %}

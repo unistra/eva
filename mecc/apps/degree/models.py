@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 
 class DegreeType(models.Model):
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=True)
+    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
     is_in_use = models.BooleanField(_('En service'))
     short_label = models.CharField(_('Libellé court'), max_length=40)
     long_label = models.CharField(_('Libellé long'), max_length=70)
@@ -14,10 +15,16 @@ class DegreeType(models.Model):
         return self.short_label
 
     class Meta:
-        ordering = ['display_order']
+        ordering = ['display_order', 'short_label']
 
     def get_absolute_url(self):
         return reverse('degree:type')
+
+    def clean_fields(self, exclude=None):
+        if self.display_order < 0:
+            raise ValidationError({'display_order': [
+                _('L\'ordre d\'affichage doit être positif.'),
+                    ]})
 
 
 class Degree(models.Model):
