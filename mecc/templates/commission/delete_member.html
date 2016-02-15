@@ -34,8 +34,6 @@ function fillModal($this, value){
   firstname = $(member_type).prev('td');
   name = $(firstname).prev('td').text();
   id_member = $(firstname).prev('td').prev('td');
-  console.log(firstname.text());
-  console.log(name);
   document.getElementById("id_member").value = id_member.text() ;
   document.getElementById("confirm_name").textContent = name ;
   document.getElementById("confirm_first_name").textContent = firstname.text() ;

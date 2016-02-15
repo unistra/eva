@@ -5,4 +5,4 @@ from ..models import Institute
 
 @receiver(pre_save, sender=Institute)
 def call_back_save_institute(sender, **kwargs):
-    print(kwargs['instance'].code)
+    pass

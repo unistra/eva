@@ -56,10 +56,16 @@ class InstituteCreate(CreateView):
             context['latest_instit_id'] = Institute.objects.latest('id').id + 1
         except ObjectDoesNotExist:
             context['latest_instit_id'] = 1
-        current_year = UniversityYear.objects.get(is_target_year=True)
-        context['current_year'] = current_year
+        try:
+            current_year = UniversityYear.objects.get(
+                is_target_year=True).code_year
+            context['institute_year'] = InstituteYear.objects.filter(
+                code_year=current_year)
+            context['dates'] = UniversityYear.objects.get(
+                code_year=current_year.code_year)
+        except UniversityYear.DoesNotExist:
+            context['institute_year'] = _('Aucune année selectionnée')
         context['cadre_gen'] = "xxxxx.pdf"
-        context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
         return context
 
     model = Institute
@@ -80,13 +86,18 @@ class InstituteUpdate(UpdateView):
             context['latest_instit_id'] = Institute.objects.latest('id').id + 1
         except ObjectDoesNotExist:
             context['latest_instit_id'] = 1
-        current_year = UniversityYear.objects.get(is_target_year=True)
-        context['current_year'] = current_year
+        try:
+            current_year = UniversityYear.objects.get(
+                is_target_year=True).code_year
+            context['institute_year'] = InstituteYear.objects.filter(
+                code_year=current_year)
+            context['dates'] = UniversityYear.objects.get(
+                code_year=current_year)
+        except UniversityYear.DoesNotExist:
+            context['institute_year'] = _('Aucune année selectionnée')
         context['cadre_gen'] = "xxxxx.pdf"
-        context['dates'] = UniversityYear.objects.get(code_year=current_year.code_year)
 
         return context
-
 
     slug_field = 'code'
     slug_url_kwarg = 'code'
@@ -94,69 +105,21 @@ class InstituteUpdate(UpdateView):
     success_url = '/institute'
 
 
-
 class InstituteListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
         try:
-            context['ordered_list'] = Institute.objects.all().order_by('field', 'label')
+            context['ordered_list'] = Institute.objects.all().order_by(
+                'field', 'label')
         except Institute.DoesNotExist:
             context['ordered_list'] = False
-        current_year = UniversityYear.objects.get(is_target_year=True).code_year
-        context['institute_year'] = InstituteYear.objects.filter(code_year=current_year)
+        try:
+            current_year = UniversityYear.objects.get(
+                is_target_year=True).code_year
+            context['institute_year'] = InstituteYear.objects.filter(
+                code_year=current_year)
+        except UniversityYear.DoesNotExist:
+            context['institute_year'] = _('Aucune année selectionnée')
         return context
 
     model = Institute
-
-
-
-
-@receiver(pre_save, sender=Institute)
-def call_back_save_institute(sender, **kwargs):
-    print(kwargs['instance'].code)
-
-# #
-#
-# def edit(request, code, template='institute/create.html'):
-#     instance = get_object_or_404(Institute, code=code)
-#     form = InstituteForm(request.POST, instance=instance)
-#     form.save()
-#     return render(request, template, {'form': form})
-#
-#
-# def create(request, template='institute/create.html'):
-#     data = {}
-#     try:
-#         data['latest_id'] = Institute.objects.latest('id').id + 1
-#     except ObjectDoesNotExist:
-#         data['latest_id'] = 1
-#     data['form'] = InstituteForm
-#
-#     return render(request, template, data)
-#
-#
-# def home(request, template='institute/home.html'):
-#     if request.method == 'POST':
-#         form_data = InstituteForm(request.POST)
-#         try:
-#             instance = form_data.save(commit=False)
-#             instance.save()
-#         except ValueError as e:
-#             data = {}
-#             data['error'] = 'Les données entrées ne permettent pas de créer une \
-#                 nouvelle composante'
-#             return render(request, template, data)
-#         return redirect('institute:home')
-#
-#     data = {}
-#
-#     list_institute = serializers.serialize(
-#         'json', Institute.objects.all(),
-#         fields=('code', 'label', 'field')
-#     )
-#
-#     l = [e['fields'] for e in json.loads(list_institute)]
-#
-#     data['institutes'] = l
-#
-#     return render(request, template, data)

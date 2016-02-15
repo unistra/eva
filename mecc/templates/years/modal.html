@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load static %}
 {% load fm_tags %}
+
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+
 <div tabindex="-1" role="dialog" aria-hidden="true" id="fm-modal" class="fm-modal modal">
     <div class="modal-loader" style="display: none;">
         <img class="modal-loader-img" src="{% static "fm/img/loading-bars.svg" %}">
@@ -27,3 +31,30 @@
     </div>
 </div>
 <script type="text/javascript" src="{% static "fm/js/fm.js" %}?v={% fm_version %}"></script>
+
+
+<script>
+$(function(){
+
+// this line will add an event handler to the selected inputs, both
+// current and future, whenever they are clicked...
+// this is delegation at work, and you can use any containing element
+// you like - I just used the "body" tag for convenience...
+    $(".modal-body").on("click", "#id_date_expected_MECC", function(){
+            $(this).datepicker({
+                todayHighlight: true,
+                autoclose: true,
+                language: "fr",
+            });
+
+    });
+    $(".modal-body").on("click", "#id_date_last_notif", function(){
+            $(this).datepicker({
+                todayHighlight: true,
+                autoclose: true,
+                language: "fr",
+            });
+
+    });
+});
+</script>

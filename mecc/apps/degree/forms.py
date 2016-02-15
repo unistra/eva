@@ -15,17 +15,18 @@ class DegreeTypeForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-5'
         self.helper.field_class = 'col-md-7'
-
+        self.render_hidden_fields = True
+        self.render_unmentioned_fields = True
         self.helper.layout = Layout(
             Div(
                 Div(
                     Div(
                         Div(
                             HTML("""
-                                <label for="id_object" class="control-label col-md-5">
+                                <label for="id_degree_type" class="control-label col-md-5">
                                 ID type diplôme <small>(auto)</small></label>
                                 <div class="controls col-md-3">
-                                <input class="form-control" id="id_object" name="id_object" type="number" readonly=True>
+                                <input class="form-control" id="id_degree_type" name="id_degree_type" readonly=True>
                                     </div>
 
                             """),
@@ -60,4 +61,5 @@ class DegreeTypeForm(forms.ModelForm):
 
     class Meta:
         model = DegreeType
-        exclude = ()
+        fields = ['is_in_use', 'id', 'display_order', 'short_label',
+                  'long_label', 'mecc_cat']

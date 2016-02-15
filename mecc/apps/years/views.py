@@ -1,13 +1,22 @@
-from .models import UniversityYear, InstituteYear
+from .models import UniversityYear, InstituteYear, InstituteYear2
 from ..institute.models import Institute
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils import timezone
-from .forms import UniversityYearForm
+from .forms import UniversityYearForm, InstituteYear2Form
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_text
 from django.shortcuts import redirect, render
+from fm.views import AjaxFormMixin, AjaxDeleteView, AjaxUpdateView, AjaxCreateView
+
+
+class InstituteYear2Create(AjaxCreateView):
+    form_class = InstituteYear2Form
+
+
+class InstituteYear2ListView(ListView):
+    model = InstituteYear2
 
 
 class UniversityYearDelete(DeleteView):
@@ -20,12 +29,6 @@ class UniversityYearDelete(DeleteView):
 
 
 class UniversityYearCreate(CreateView):
-    # ## Useless as we can use {{object}} in update tempalte view
-    # def get_context_data(self, **kwargs):
-    #     context = super(UniversityYearCreate, self).get_context_data(**kwargs)
-    #     context['create'] = True
-    #     return context
-
     model = UniversityYear
     form_class = UniversityYearForm
     success_url = '/years'
@@ -95,23 +98,3 @@ def initialize_year(request, code_year, template='years/initialize.html'):
             data['message'] = _('%s composantes ont été initialisées.' % x)
 
     return render(request, template, data)
-
-    # if asked_id_cmp == institutes_id_cmp:
-    # else:
-    #     missing_id_cmp = asked_id_cmp ^ institutes_id_cmp
-        # ^ symmetric difference operator (^) give a set of items in either list but not both
-
-
-    # q = Institute.objects.all()
-    # instit_ids = [e.id for e in q]
-    #
-    # q2 = InstituteYear.objects.all()
-    # instit_years = [e.id_cmp for e in q2]
-    # initialized_years = set([e.code_year for e in q2])
-    # if y.code_year not in initialized_years or len(instit_ids) != len(instit_years) or y != None:
-    #     for e in instit_ids:
-    #         InstituteYear.objects.create(
-    #             id_cmp=e, code_year=code_year
-    #         )
-    #     y.is_year_init = True
-    #     y.save()

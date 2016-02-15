@@ -1,5 +1,5 @@
 from django import forms
-from mecc.apps.years.models import UniversityYear
+from mecc.apps.years.models import UniversityYear, InstituteYear2
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
@@ -38,7 +38,6 @@ class UniversityYearForm(forms.ModelForm):
             Field('pdf_doc', readonly=True),
     )
 
-
     class Meta:
         model = UniversityYear
         fields = [
@@ -50,3 +49,9 @@ class UniversityYearForm(forms.ModelForm):
             'is_year_init',
             'pdf_doc'
         ]
+
+
+class InstituteYear2Form(forms.ModelForm):
+    class Meta:
+        model = InstituteYear2
+        exclude = ()

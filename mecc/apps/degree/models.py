@@ -1,31 +1,3 @@
-# from django.db import models
-# from django.utils.translation import ugettext_lazy as _
-# from mecc.apps.institute.models import Institute
-#
-#
-# class Degree(models.Model):
-
-#     degree_type = models.ForeignKey('DegreeType')
-#     label_type = models.CharField(_('Label type'), max_length=25)
-#     mention = models.CharField(_('Mention'), max_length=25)
-#     speciality = models.CharField(_('Speciality'), max_length=25)
-#     course = models.CharField(_('Course'), max_length=25)
-#     title = models.CharField(_('Title')),
-#     in_use = models.BooleanField(_('In use'))
-#     start = models.IntegerField(_('Start'))
-#     end = models.IntegerField(_('End'))
-#     ref_formation = models.CharField(_('REF SI Formation'), max_length=25)
-#     ref_scol = models.CharField(_('REF SI Scol'), max_length=25)
-#     # institutes = models.ManyToManyField(Institute)
-#
-#     def __str__(self):
-#         return '%s %s' % (self.label_type, self.mention)
-#
-#     class Meta:
-#         ordering = ['label_type', 'mention']
-#         permissions = (('can_view_degree', 'Can view degree'),)
-#
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse

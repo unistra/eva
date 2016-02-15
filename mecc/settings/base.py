@@ -224,6 +224,8 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'crispy_forms',
     'fm',
+    'dal',
+    'dal_select2',
 )
 
 LOCAL_APPS = (
@@ -232,6 +234,7 @@ LOCAL_APPS = (
     'mecc.apps.degree',
     'mecc.apps.institute',
     'mecc.apps.years',
+    'mecc.apps.adm',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -298,6 +301,9 @@ LOGGING = {
     }
 }
 
+
+# ### Custom users ######"
+AUTH_USER_MODEL = 'adm.MeccUser'
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

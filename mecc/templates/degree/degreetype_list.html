@@ -36,14 +36,13 @@
     <td>
       <a href="{% url 'degree:type_edit' id=e.id %}" class="fm-update glyphicon glyphicon-pencil"
         data-fm-head=" {% trans 'Éditer un type de diplôme' %}" data-fm-callback="reload"
-        data-fm-target="#e-{{ e.id }}"></a>
+        data-fm-target="#e-{{ e.id }}" id='{{e.id}}'></a>
 
     </td>
     <td>
       <a href="{% url 'degree:type_delete' id=e.id %}" class="fm-delete glyphicon glyphicon-trash"
         data-fm-head="{% trans 'Confirmer la suppression du type :' %} </br> <br><small>{{e.short_label}} - {{e.long_label}} </small>" data-fm-callback="reload"
         data-fm-target="#e-{{ e.id }}"></a>
-
     </td>
   </tr>
     {% endfor %}
@@ -51,7 +50,6 @@
 
 {% else %}
 {% endif %}
-
 </br>
 <div class='pull-right'>
   <a href="{% url 'degree:type_create'  %}" class="fm-create btn btn-primary" data-fm-head=" {% trans 'Ajouter un type de diplôme' %}" data-fm-callback="reload"> {% trans 'Ajouter un type de diplôme' %}</a>
@@ -62,5 +60,8 @@
         $(function() {
             $.fm({debug: true});
         });
+        var stuff = document.getElementById('')
+console.log();
+
 </script>
 {% endblock %}

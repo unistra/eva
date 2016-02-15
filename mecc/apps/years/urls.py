@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from .views import UniversityYearUpdate, UniversityYearListView, \
-    UniversityYearCreate, UniversityYearDelete, initialize_year
+    UniversityYearCreate, UniversityYearDelete, initialize_year, \
+    InstituteYear2ListView, InstituteYear2Create
 
 urlpatterns = [
     # url(r'^$', views.home,
@@ -18,5 +19,9 @@ urlpatterns = [
     url(r'^delete/(?P<code_year>\d+)', UniversityYearDelete.as_view(),
         name='delete'),
     url(r'^initialize/(?P<code_year>\d+)', initialize_year,
-        name='initialize')
+        name='initialize'),
+    url(r'^v2/list/$', InstituteYear2ListView.as_view(),
+        name='list'),
+    url(r'^v2/create/$', InstituteYear2Create.as_view(),
+        name='create2'),
 ]

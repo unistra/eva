@@ -7,7 +7,6 @@ from fm.views import AjaxFormMixin, AjaxDeleteView, AjaxUpdateView, AjaxCreateVi
 from django.conf import settings
 
 
-
 class DegreeListView(ListView):
     model = Degree
 
@@ -15,18 +14,18 @@ class DegreeListView(ListView):
 class DegreeTypeListView(ListView):
     model = DegreeType
 
-
-class DegreeTypeCreate(AjaxCreateView):
-    model = DegreeType
-    form_class = DegreeTypeForm
-
     def get_context_data(self, **kwargs):
-        context = super(DegreeTypeCreate, self).get_context_data(**kwargs)
+        context = super(DegreeTypeListView, self).get_context_data(**kwargs)
         try:
             context['latest_id'] = DegreeType.objects.latest('id').id + 1
         except ObjectDoesNotExist:
             context['latest_id'] = 1
         return context
+
+
+class DegreeTypeCreate(AjaxCreateView):
+    model = DegreeType
+    form_class = DegreeTypeForm
 
     success_url = '/degree/type'
 

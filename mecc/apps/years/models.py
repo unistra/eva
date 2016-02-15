@@ -2,8 +2,9 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-
+from ..institute.models import Institute
 import re
+
 
 
 class InstituteYear(models.Model):
@@ -69,7 +70,17 @@ class UniversityYear(models.Model):
             except UniversityYear.DoesNotExist:
                     pass
 
-
-
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
+
+
+class InstituteYear2(models.Model):
+    id_cmp = models.ForeignKey(Institute, verbose_name=_('Composante'))
+    year = models.ForeignKey(UniversityYear,
+                             verbose_name=_('Année universitaire'))
+    date_expected_MECC = models.DateField(
+        _('Date prévisionnelle comp. MECC'), blank=True, null=True
+    )
+    date_last_notif = models.DateField(
+        _('Date dernière notification MECC'), blank=True, null=True
+    )
