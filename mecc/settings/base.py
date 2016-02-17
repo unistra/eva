@@ -300,8 +300,7 @@ LOGGING = {
 }
 
 
-# ### Custom users ######"
-AUTH_USER_MODEL = 'adm.MeccUser'
+# ### Custom users stuff######"
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

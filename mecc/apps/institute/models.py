@@ -2,7 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-from ..adm.models import MeccUser, ScolManagerUser
+from django.contrib.auth.models import User
 
 
 class AcademicField(models.Model):
@@ -32,10 +32,10 @@ class Institute(models.Model):
     is_on_duty = models.BooleanField(_('En service'))
     label = models.CharField(_('Libellé composante'), max_length=85)
     field = models.ForeignKey(AcademicField, blank=False)
-    dircomp = models.ForeignKey(MeccUser, related_name='dircomp', on_delete=models.CASCADE, blank=True, null=True)
-    rac = models.ForeignKey(MeccUser, related_name='racs', on_delete=models.CASCADE, blank=True, null=True)
-    diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
-    scol_manager = models.ManyToManyField(ScolManagerUser, related_name='scol_managers', blank=True)
+    dircomp = models.ForeignKey(User, related_name='dircomp', on_delete=models.CASCADE, blank=True, null=True)
+    rac = models.ForeignKey(User, related_name='racs', on_delete=models.CASCADE, blank=True, null=True)
+    diretu = models.ManyToManyField(User, related_name='diretu', blank=True)
+    scol_manager = models.ManyToManyField(User, related_name='scol_managers', blank=True)
 
     def clean_fields(self, exclude=None):
         try:
