@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_text
 from django.shortcuts import redirect, render
-from fm.views import AjaxFormMixin, AjaxDeleteView, AjaxUpdateView, AjaxCreateView
+from fm.views import AjaxCreateView
 
 
 class InstituteYear2Create(AjaxCreateView):

@@ -1,9 +1,12 @@
 {% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+
 <!-- Modal -->
-<div class="modal fade" id="searchMember" role="dialog">
-   <div class="modal-dialog">
+<div class="modal fade" id="searchMember" role="dialog" style="z-index: 1400;">
+   <div class="modal-dialog modal-90" >
       <!-- Modal content-->
-      <div class="modal-content">
+      <div class="modal-content select-pple">
          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
@@ -17,6 +20,8 @@
                </button>
                </span>
             </div>
+            <table>
+            </table>
             <!-- /input-group -->
             <div id="load-wrap" style="display:none">
                <div class="circle"></div>
@@ -24,17 +29,105 @@
                <div class="circle"></div>
                <div class="circle"></div>
             </div>
-            <span id='error'></span>
+            <br>
+            <div class="table-responsive">
+
+            <table class="table results order-table" id="table" style="display:none">
+               <thead id="to-fill">
+                  <tr class='table-head'>
+                     <th> {% trans 'Nom' %}</th>
+                     <th> {% trans 'Prénom' %}</th>
+                     <th> {% trans 'Statut' %}</th>
+                     <th> {% trans 'Composante' %}</th>
+                     <th> {% trans 'Mail' %}</th>
+                     <th> {% trans 'ID Membre' %}</th>
+                  </tr>
+               </thead>
+            </table>
             </br>
+         </div>
+       </div>
+      </div>
+   </div>
+</div>
+
+
+<div class="modal fade fade" id="selectedMember" role="dialog" style="display:none">
+   <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
+         </div>
+         <div class="modal-body" style="padding-bottom:0">
+            {% crispy form %}
          </div>
       </div>
    </div>
 </div>
 
+
+
 <script type="text/javascript">
+var last_search = null
    function searchMember(){
-     search = document.getElementById("to-search").value
+     search = document.getElementById("to-search").value;
+     if (search != last_search){
+       last_search = search;
      document.getElementById('load-wrap').style.display = '';
-     location.href = '/commission/search/?member=' + search
-   }
+     $.ajax({
+        url: "{% url 'commission:get_pple'%}",
+        type : "GET",
+        data: {
+          member: search,
+        },
+        success: function(data) {
+          if (data.message) {
+            document.getElementById('confirm').style.display = 'none';
+            $('#error').html("<div class='alert alert-warning fade in'>" +
+              "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+              data.message + "</div>");
+          } else {
+            document.getElementById('load-wrap').style.display = 'none';
+            document.getElementById('table').style.display = '';
+            parent_table = document.getElementById('table');
+            for (var i = 0; i < data.pple.length; i++){
+              var tr = document.createElement('tr');
+                tr.appendChild(document.createElement('td'))
+                tr.appendChild(document.createElement('td'))
+                tr.appendChild(document.createElement('td'))
+                tr.appendChild(document.createElement('td'))
+                tr.appendChild(document.createElement('td'))
+                tr.appendChild(document.createElement('td'))
+              tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
+              tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
+              tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
+              tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
+              tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
+              tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
+              tr.className += 'hover-row hit select gen-table'
+              parent_table.appendChild(tr)
+            }
+
+$(".hit").click(function(){
+$('#selectedMember').modal('show');
+var last_name=$(this).closest('tr').children('td:first');
+var first_name = $(last_name).next('td');
+var status = $(first_name).next('td');
+var institute = $(first_name).next('td').next('td');
+var mail = $(institute).next('td');
+var id = $(mail).next('td');
+document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
+document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
+document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
+document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
+document.getElementById('id_institute').value = institute.text().replace(/\s+/g, '');
+document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
+});
+        }}
+      })
+    //  location.href = '/commission/search/?member=' + search;
+  };
+     }
 </script>

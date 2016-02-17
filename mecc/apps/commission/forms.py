@@ -13,13 +13,15 @@ class ECICommissionMemberForm(forms.ModelForm):
         self.helper.layout = Layout(
 
             Div(
-                Div(Field('name', readonly=True), css_class='col-xs-6'),
-                Div(Field('firstname', readonly=True), css_class='col-xs-6'),
+                Div(Field('last_name', readonly=True), css_class='col-xs-4'),
+                Div(Field('first_name', readonly=True), css_class='col-xs-4'),
+                Div(Field('status', readonly=True), css_class='col-xs-4'),
                 css_class='row'),
 
             Div(
-                Div(Field('id_member', readonly=True), css_class='col-xs-6'),
-                Div(Field('mail', readonly=True), css_class='col-xs-6'),
+                Div(Field('institute', readonly=True), css_class='col-xs-4'),
+                Div(Field('mail', readonly=True), css_class='col-xs-4'),
+                Div(Field('id_member', readonly=True), css_class='col-xs-4'),
                 css_class='row'),
 
             Div(

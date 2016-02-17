@@ -8,6 +8,7 @@ import urllib
 import json
 
 from django.utils.translation import ugettext_lazy as _
+from datetime import date, datetime
 
 
 def create_client(name, token, spore, base_url):
@@ -70,10 +71,61 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
     return result
 
 
+def get_pple(val):
+
+    last_year = date.today().year - 1
+    current_date = datetime.now()
+    client = create_client('camelot_client', settings.CAMELOT_TOKEN,
+                           settings.CAMELOT_SPORE, settings.CAMELOT_BASE_URL)
+
+    goto = [
+        client.get_persons(format='json', username=val),
+        client.get_persons(format='json', last_name=val),
+        client.get_persons(format='json', birth_name=val)
+    ]
+
+    result = []
+
+    for e in goto:
+        r = json.loads(e.text)
+        if r and 'results' in r and r['results']:
+            for i in r['results']:
+                for e in i['accounts']:
+                    if e['is_active'] == True:
+                        person = {
+                            "last_name": i['last_name'],
+                            "birth_name": i['birth_name'],
+                            "first_name": i['first_name'].title(),
+                            "birth_date": i['birth_date'],
+                        }
+                        for student in i['student_states']:
+                            if int(student['registration_year']) >= last_year and student['comp'] != "DES":
+                                extra = {
+                                    "institute": student['comp'],
+                                    "status": "Étudiant",
+                                    "mail": e['mail'],
+                                    "username": e['username']
+                                }
+                                person.update(extra)
+
+                                if person not in result:
+                                    result.append(person)
+                        for employee in i['employee_states']:
+
+                            if employee['end_date'] is None or datetime.strptime(employee['end_date'], "%Y-%m-%d") >= current_date:
+                                extra = {
+                                    "institute": employee['affiliation'],
+                                    "status": employee['type'],
+                                    "mail": e['mail'],
+                                    "username": e['username']
+                                }
+                                person.update(extra)
+                                if person not in result:
+                                    result.append(person)
+
+    return result
+
 def ask_camelot(val):
-    # Getting key and value from first elements of first dict
-    # k = next(iter(args[0].keys()))
-    # v = next(iter(args[0].values()))
 
     client = create_client('camelot_client', settings.CAMELOT_TOKEN,
                            settings.CAMELOT_SPORE, settings.CAMELOT_BASE_URL)
@@ -86,11 +138,8 @@ def ask_camelot(val):
     ]
 
     result = []
-    vart = 0
     for e in goto:
         r = json.loads(e.text)
-        vart += 1
-        vart += 1
         if r and 'results' in r and r['results']:
             for i in r['results']:
 

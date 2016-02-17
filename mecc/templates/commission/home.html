@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load field_name %}
 
 {% block page-header %}
 {% trans 'Commission ECI et étudiants élus' %}
@@ -8,19 +7,23 @@
 
 {% block content %}
   {% if commission_staff %}
-    <table class="table">
+    <table class="table table-striped">
        <tr class='table-head'>
-          <th> {% get_field_name commission_staff.0 'id_member' %}</th>
-          <th>{% get_field_name commission_staff.0 'name' %}</th>
-          <th>{% get_field_name commission_staff.0 'firstname' %}</th>
-          <th>{% get_field_name commission_staff.0 'member_type' %}</th>
-          <th></th>
+         <th> {% trans 'Nom' %}</th>
+         <th> {% trans 'Prénom' %}</th>
+         <th> {% trans 'Statut' %}</th>
+         <th> {% trans 'Composante' %}</th>
+         <th> {% trans 'ID Membre' %}</th>
+         <th> {% trans 'Type' %}</th>
+         <th></th>
        </tr>
        {% for e in commission_staff %}
        <tr class="hover-row">
+          <td>{{e.last_name}}</td>
+          <td>{{e.first_name}}</td>
+          <td>{{e.status}}</td>
+          <td>{{e.institute}}</td>
           <td>{{e.id_member}}</td>
-          <td>{{e.name}}</td>
-          <td>{{e.firstname}}</td>
           <td>
              <select class='select-type'>
              <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
@@ -48,22 +51,19 @@
 {% include "commission/delete_member.html" %}
 
 <script>
-   $('select').on('change', function() {
+   $('.select-type').on('change', function() {
      new_type = this.value;
-     firstname = $(this).parents('td').prev().text();
-     name = $(this).parents('td').prev().prev().text();
-     id = $(this).parents('td').prev().prev().prev().text();
-
+     id = $(this).parents('td').prev().text();
      $.ajax({
        url: "/commission/",
        type: "POST",
        data : {
          id_member: id,
-         last_name: name,
          type_member: new_type,
          csrfmiddlewaretoken: '{{ csrf_token }}'
        },
      });
-   })
+   });
+
 </script>
 {% endblock %}

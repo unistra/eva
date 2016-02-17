@@ -3,7 +3,6 @@ from django.views.generic.list import ListView
 from .models import Degree, DegreeType
 from .forms import DegreeTypeForm
 from django.core.exceptions import ObjectDoesNotExist
-from fm.views import AjaxFormMixin, AjaxDeleteView, AjaxUpdateView, AjaxCreateView
 from django.conf import settings
 
 

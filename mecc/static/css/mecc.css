@@ -2,14 +2,40 @@
   color:grey;
 }
 
-.fm-modal .modal-head {
-    font-size: 1.5em;
-    text-align: center;
-    margin-top: 1.5em;
-}
-
 .row{
   margin-top: 0.5em;
+}
+
+.no-border {
+  border-width: 0px;
+}
+
+.fixed:after{
+  position:fixed;
+}
+
+.modal-90 {
+    width: 75%!important;
+    max-height: 100%;
+}
+
+.gen-table > td{
+  padding: 0.5em;
+}
+#selectedMember{
+  position: fixed;
+   top: 0;
+   left: 0;
+   height: 100%;
+   width: 100%;
+   background-color: rgba(0,0,0,0.5);
+   z-index: 1500;
+}
+.modal-75{
+  width:50%!important;
+  max-height: 100%;
+  margin-top:3em;
+
 }
 
 /*******************************************************************************
@@ -172,7 +198,8 @@ align-self: center;
 
 .hover-row:hover {background: #F5F8FE;}
 
-.select {cursor: pointer;}
+.select {cursor: pointer;
+}
 
 .table-head {background-color: #E4F0FB; color: #004A87;}
 
@@ -184,6 +211,10 @@ align-self: center;
   font-size: 1.5em;
   color:#004A87;
 }
+
+.glyphicon-menu-hamburger:before {
+    position:fixed;
+  }
 #menu-toggle{
   text-decoration: none;
   position:relative;

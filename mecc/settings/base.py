@@ -223,7 +223,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     'crispy_forms',
-    'fm',
+    'fm'
 )
 
 LOCAL_APPS = (

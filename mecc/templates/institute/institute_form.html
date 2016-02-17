@@ -14,8 +14,8 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{% static 'css/easy-autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<script src="{% static 'js/autocomplete.js' %}"></script>
+{# <link rel="stylesheet" href="{% static 'css/easy-autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/autocomplete.js' %}"></script>#}
 
 <div class='flex-container'>
 <form action="" method="post" id='form-comp'>
@@ -121,63 +121,63 @@ id_code.appendChild(check_box)
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
-
-// $.getJSON(url_prof, function(data) {
-//     var options = {
-//         data: data
-//         , getValue: function(element) {
-//             return element.last_name + " " + element.first_name
-//         }
-//         , list: {
-//             match: {
-//                 enabled: true
-//             }
-//         }
-//     , };
-//     $("#id_label").easyAutocomplete(options);
-// });
 //
-// $.getJSON(url_adm, function(data) {
-//     var options = {
-//         data: data
-//         , getValue: function(element) {
-//             return element.last_name + " " + element.first_name
-//         }
-//         , list: {
-//             match: {
-//                 enabled: true
-//             }
-//         }
-//     , };
-//     $("#id_code").easyAutocomplete(options);
-// });
+// // $.getJSON(url_prof, function(data) {
+// //     var options = {
+// //         data: data
+// //         , getValue: function(element) {
+// //             return element.last_name + " " + element.first_name
+// //         }
+// //         , list: {
+// //             match: {
+// //                 enabled: true
+// //             }
+// //         }
+// //     , };
+// //     $("#id_label").easyAutocomplete(options);
+// // });
+// //
+// // $.getJSON(url_adm, function(data) {
+// //     var options = {
+// //         data: data
+// //         , getValue: function(element) {
+// //             return element.last_name + " " + element.first_name
+// //         }
+// //         , list: {
+// //             match: {
+// //                 enabled: true
+// //             }
+// //         }
+// //     , };
+// //     $("#id_code").easyAutocomplete(options);
+// // });
+// //
+// // $("#id_label").autocomplete({
+// //     source: function (request, response) {
+// //         $.ajax({
+// //             url: url_adm,
+// //             data: { query: request.term },
+// //             success: function (data) {
+// //                 var transformed = $.map(data, function (el) {
+// //                     return {
+// //                         label: el.phrase,
+// //                         id: el.id
+// //                     };
+// //                 });
+// //                 response(transformed);
+// //             },
+// //             error: function () {
+// //                 response([]);
+// //             }
+// //         });
+// //     }});
 //
-// $("#id_label").autocomplete({
-//     source: function (request, response) {
-//         $.ajax({
-//             url: url_adm,
-//             data: { query: request.term },
-//             success: function (data) {
-//                 var transformed = $.map(data, function (el) {
-//                     return {
-//                         label: el.phrase,
-//                         id: el.id
-//                     };
-//                 });
-//                 response(transformed);
-//             },
-//             error: function () {
-//                 response([]);
-//             }
-//         });
-//     }});
-
-$('#id_label').autocomplete({
-    serviceUrl: url_adm,
-    onSelect: function (suggestion) {
-        alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-    }
-});
+// $('#id_label').autocomplete({
+//     serviceUrl: url_adm,
+//     onSelect: function (suggestion) {
+//         alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+//     }
+// });
 
 </script>
 {% endblock %}

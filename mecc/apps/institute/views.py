@@ -61,8 +61,6 @@ class InstituteCreate(CreateView):
                 is_target_year=True).code_year
             context['institute_year'] = InstituteYear.objects.filter(
                 code_year=current_year)
-            context['dates'] = UniversityYear.objects.get(
-                code_year=current_year.code_year)
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         context['cadre_gen'] = "xxxxx.pdf"

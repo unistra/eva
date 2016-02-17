@@ -9,4 +9,6 @@ urlpatterns = [
         name='delete'),
     url(r'^search/$', views.search,
         name='search'),
+    url(r'^get_pple/$', views.get_list_of_pple,
+        name='get_pple'),
 ]

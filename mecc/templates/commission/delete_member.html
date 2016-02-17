@@ -26,13 +26,14 @@
 </div>
 <script>
    function fillModal($this, value){
-     member_type = $($this).closest('td').prev('td');
-     firstname = $(member_type).prev('td');
-     name = $(firstname).prev('td').text();
-     id_member = $(firstname).prev('td').prev('td');
+    var member_type = $($this).closest('td').prev('td');
+    var id_member = $(member_type).prev('td');
+    var first_name=$(id_member).prev('td').prev('td').prev('td');
+    var  last_name= $(first_name).prev('td');
+
      document.getElementById("id_member").value = id_member.text() ;
-     document.getElementById("confirm_name").textContent = name ;
-     document.getElementById("confirm_first_name").textContent = firstname.text() ;
+     document.getElementById("confirm_name").textContent = last_name.text() ;
+     document.getElementById("confirm_first_name").textContent = first_name.text() ;
      document.getElementById("delete_form").action = "/commission/delete/" ;
    }
 </script>
