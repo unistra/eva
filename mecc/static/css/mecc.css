@@ -103,6 +103,12 @@ label{
   }
 }
 
+@media(max-width:775px){
+  .modal-90 {
+    width:100%!important;
+  }
+}
+
 @media(min-width:992px){
   label[for=id_is_in_use]{
       position: absolute;
@@ -321,6 +327,7 @@ li:hover .sub-level {
     width:100%;
   }
   #page-content-wrapper{padding-right: 0;padding-left: 4em;}
+
 }
 /* With screen > 768px */
 @media(min-width:768px) {

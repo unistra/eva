@@ -30,9 +30,9 @@
                <div class="circle"></div>
             </div>
             <br>
-            <div class="table-responsive">
+            <div class="table-responsive" style="display:none" id="table-resp">
 
-            <table class="table results order-table" id="table" style="display:none">
+            <table class="table results order-table" id="table">
                <thead id="to-fill">
                   <tr class='table-head'>
                      <th> {% trans 'Nom' %}</th>
@@ -90,7 +90,7 @@ var last_search = null
               data.message + "</div>");
           } else {
             document.getElementById('load-wrap').style.display = 'none';
-            document.getElementById('table').style.display = '';
+            document.getElementById('table-resp').style.display = '';
             parent_table = document.getElementById('table');
             for (var i = 0; i < data.pple.length; i++){
               var tr = document.createElement('tr');
