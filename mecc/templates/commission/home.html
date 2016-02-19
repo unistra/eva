@@ -9,13 +9,11 @@
   {% if commission_staff %}
   <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">
 
-    <table class="table table-striped order-table">
+    <table class="table order-table">
       <thead>
        <tr class='table-head'>
          <th> {% trans 'Nom' %}</th>
          <th> {% trans 'Prénom' %}</th>
-         <th> {% trans 'Statut' %}</th>
-         <th> {% trans 'Composante' %}</th>
          <th> {% trans 'ID Membre' %}</th>
          <th> {% trans 'Type' %}</th>
          <th></th>
@@ -25,11 +23,9 @@
        <tbody >
        {% for e in commission_staff %}
        <tr class="hover-row">
-          <td>{{e.user.user.last_name}}</td>
-          <td>{{e.user.user.first_name}}</td>
-          <td>{{e.user.status}}</td>
-          <td>{{e.user.institute}}</td>
-          <td>{{e.user.user.username}}</td>
+          <td>{{e.last_name}}</td>
+          <td>{{e.first_name}}</td>
+          <td>{{e.username}}</td>
           <td>
              <select class='select-type'>
              <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
@@ -61,11 +57,12 @@
    $('.select-type').on('change', function() {
      new_type = this.value;
      id = $(this).parents('td').prev().text();
+     console.log(id);
      $.ajax({
        url: "/commission/",
        type: "POST",
        data : {
-         id_member: id,
+         username: id,
          type_member: new_type,
          csrfmiddlewaretoken: '{{ csrf_token }}'
        },

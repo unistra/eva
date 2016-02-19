@@ -83,5 +83,5 @@ CAMELOT_TOKEN = "f8a635587c1cf39826fbd9aabfeab35107cd54b8"
 ####################
 
 LDAP_SPORE = 'http://rest-api.u-strasbg.fr/ldapws/description.json'
-LDAP_BASE_URL = "https://ldapws-test.u-strasbg.fr"
+LDAP_BASE_URL = "http://ldapws-test.u-strasbg.fr"
 LDAP_TOKEN = "d800c7d0ed5f38b66b6a5a1fe804f0dff500d236"

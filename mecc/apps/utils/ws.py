@@ -7,7 +7,7 @@ import britney_utils
 import urllib
 import json
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from datetime import date, datetime
 
 
@@ -24,7 +24,6 @@ def create_client(name, token, spore, base_url):
     try:
         client = britney_utils.get_client(name, spore, base_url,
                                           middlewares=middlewares)
-
     except (SporeMethodStatusError, SporeMethodCallError) as e:
         raise InvalidParamError("Spore returns a %s" % e)
     except urllib.error.URLError as e:
@@ -68,6 +67,45 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
         page_num += 1
         get_list_from_cmp(cmp, employee_type, page_num=page_num, result=result)
 
+    return result
+
+
+def get_from_ldap(val):
+    print(settings.LDAP_TOKEN)
+    print(settings.LDAP_SPORE)
+    print(settings.LDAP_BASE_URL)
+    client = create_client('ldap_client', settings.LDAP_TOKEN,
+                           settings.LDAP_SPORE, settings.LDAP_BASE_URL)
+
+    ask = client.list_users(
+        format='json', establishment='UDS', last_or_birth_name=val
+    )
+
+    result = []
+    r = json.loads(ask.text)
+    for e in r:
+        if e['is_active']:
+            if e['primary_affiliation'] == 'student':
+                affiliation = _('Étudiant')
+                cmp = e['main_registration_code'] if e['main_registration_code'] != None else _('Non renseigné')
+            else:
+                cmp = e['main_affectation_code'] if e['main_affectation_code'] != None else _('Non renseigné')
+                if e['primary_affiliation'] == 'employee':
+                    affiliation = _('Administratif')
+                else:
+                    affiliation = _('Enseignant')
+                print(cmp)
+                person = {
+                    "last_name": e['last_name'],
+                    "first_name": e['first_name'],
+                    "status": affiliation,
+                    "institute": cmp,
+                    "birth_date": e['birth_date'],
+                    "username": e['username'],
+                    "mail": e['mail'],
+                    }
+                result.append(person)
+    print(result)
     return result
 
 

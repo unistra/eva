@@ -2,40 +2,32 @@ from django.utils.translation import ugettext as _
 import re   # ### REGEX
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from mecc.apps.utils.ws import ask_camelot, get_pple
+from mecc.apps.utils.ws import ask_camelot, get_pple, get_from_ldap
 
 from .models import ECICommissionMember
-from .forms import ECIForm, UserForm, MeccUserForm
-from ..adm.forms import MeccUserForm, UserForm
+from .forms import ECIForm
 from ..adm.models import MeccUser
 
 
 def home(request, template='commission/home.html'):
     if request.is_ajax() and request.method == 'POST':
-        id_member = request.POST.get('id_member', '')
+        username = request.POST.get('username', '')
         type_member = request.POST.get('type_member', '')
-        user = MeccUser.objects.get(user__username=id_member)
-        member = ECICommissionMember.objects.get(user=user)
+        member = ECICommissionMember.objects.get(username=username)
         member.member_type = type_member
         member.save()
 
     data = {}
-    data['form_user'] = UserForm
-    data['form_meccuser'] = MeccUserForm
-    data['form_eci'] = ECIForm
+    data['form'] = ECIForm
     if request.method == 'POST':
-        person = {}
-        for e in request.POST:
-            person[e] = request.POST.get(e)
-
-        member = ECICommissionMember.objects.create_member(person)
-        # if form_data.is_valid():
-        #     instance = form_data.save(commit=False)
-        #     instance.save()
+        form_data = ECIForm(request.POST)
+        if form_data.is_valid():
+            instance = form_data.save(commit=False)
+            instance.save()
 
 
     data['commission_staff'] = ECICommissionMember.objects.all()
-    data['staff_mails'] = [e.user.user.email for e in data['commission_staff']]
+    data['staff_mails'] = [e.email for e in data['commission_staff']]
 
     return render(request, template, data)
 
@@ -54,7 +46,7 @@ def get_list_of_pple(request):
     if request.is_ajax():
         x = request.GET.get('member', '')
         if len(x) > 1:
-            data['pple'] = get_pple(x)
+            data['pple'] = get_from_ldap(x)
             return JsonResponse(data)
         else:
             return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})

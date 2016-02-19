@@ -304,12 +304,3 @@ LOGGING = {
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-FM_DEFAULT_FORM_TEMPLATE = 'degree/degreetype_form.html'
-
-##########
-# Camelot #
-##########
-
-CAMELOT_SPORE = 'http://rest-api.u-strasbg.fr/camelot/description.json'
-CAMELOT_BASE_URL = "https://camelot-test.u-strasbg.fr"
-CAMELOT_TOKEN = "f8a635587c1cf39826fbd9aabfeab35107cd54b8"

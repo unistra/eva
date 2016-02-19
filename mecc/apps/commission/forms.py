@@ -15,44 +15,48 @@ class ECIForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Field('member_type')
+            Field('username'),
+            Field('last_name'),
+            Field('first_name'),
+            Field('member_type'),
+            Field('mail')
         )
 
     class Meta:
         model = ECICommissionMember
-        fields = ['member_type']
+        fields = ['username', 'member_type', 'last_name', 'first_name', 'email']
 
-
-class MeccUserForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(MeccUserForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            Field('status'),
-            # Field('birth_date'),
-        )
-
-    class Meta:
-        model = MeccUser
-        fields = ['status', 'cmp', 'birth_date', ]
-
-
-class UserForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.Layout = Layout(
-            Field('username'),
-            Field('last_name'),
-            Field('first_name'),
-            Field('email'),
-        )
-
-    class Meta:
-        model = User
-        fields = ['username', 'last_name', 'first_name', 'email']
+#
+# class MeccUserForm(ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super(MeccUserForm, self).__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.form_tag = False
+#         self.helper.layout = Layout(
+#             Field('status'),
+#             # Field('birth_date'),
+#         )
+#
+#     class Meta:
+#         model = MeccUser
+#         fields = ['status', 'cmp', 'birth_date', ]
+#
+#
+# class UserForm(ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super(UserForm, self).__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.form_tag = False
+#         self.helper.Layout = Layout(
+#             Field('username'),
+#             Field('last_name'),
+#             Field('first_name'),
+#             Field('email'),
+#         )
+#
+#     class Meta:
+#         model = User
+#         fields = ['username', 'last_name', 'first_name', 'email']
 
 
 # class ECIForm(forms.ModelForm):

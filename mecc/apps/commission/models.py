@@ -1,30 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from ..institute.models import Institute
 from django.core.exceptions import ValidationError
-from ..adm.models import MeccUser
 from django.contrib.auth.models import User
-
-
-class MemberManager(models.Manager):
-    def create_member(self, d):
-        user = User.objects.create(
-            username=d['username'], first_name=d['first_name'],
-            last_name=d['last_name'],email = d['email']
-            )
-        meccuser = MeccUser.objects.create(user=user, status=d['status'])
-        member = self.create(user=meccuser)
-        member.status = d['status']
-        # member = self.create(member_type=d['member_type'])
-        # member.institute = d['institute']
-        # member.member_type = d['member_type']
-        # member.meccuser.status = d['status']
-        # member.meccuser.user.username = d['id_member']
-        # member.meccuser.user.last_name = d['last_name']
-        # member.meccuser.user.first_name = d['first_name']
-        # member.meccuser.user.email = d['mail']
-
-        return member
 
 
 class ECICommissionMember(models.Model):
@@ -37,33 +14,20 @@ class ECICommissionMember(models.Model):
         ('supply', _('Etudiant CFVU suppléant')),
     )
 
-    # id_member = models.CharField(
-    #     _('ID Membre'), max_length=35, unique=True
-    # )
+    username = models.CharField(
+        _('ID Membre'), max_length=35, unique=True)
+    last_name = models.CharField(_('Nom'), max_length=35)
+    first_name = models.CharField(_('Prénom'), max_length=35)
+    member_type = models.CharField(
+        _('Type'), blank=False, choices=MEMBER_TYPE_CHOICES, max_length=20)
 
-    # last_name = models.CharField(_('Nom'), max_length=35)
+    email = models.CharField(_('Mail'), max_length=256)
 
-    # first_name = models.CharField(_('Prénom'), max_length=35)
-
-    member_type = models.CharField(_('Type'), blank=False,
-                                   choices=MEMBER_TYPE_CHOICES, max_length=20)
-
-    # mail = models.CharField(_('Mail'), max_length=256)
-    #
-    # status = models.CharField(
-    #     _('Statut'), blank=False, max_length=15)
-
-    # institute = models.CharField(_('Composante'), max_length=25)
-
-    user = models.OneToOneField(MeccUser, on_delete=models.CASCADE)
-    #
-    # def __str__(self):
-    #     return '%s %s' % (self.name, self.firstname)
+    def __str__(self):
+        return '%s %s' % (self.name, self.firstname)
 
     class Meta:
         permissions = (
             ('can_view_eci_commission_member',
              _('Peut voir les membres de la commission ECI')),
         )
-
-    objects = MemberManager()

@@ -14,7 +14,7 @@
          <div class="modal-body">
             <div id='error'></div>
             <div class="input-group">
-               <input type="text" class="form-control" placeholder="ID Membre ou Nom" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+               <input type="text" class="form-control" placeholder="{% trans 'Nom' %}" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
                <span class="input-group-btn">
                <button class="btn btn-default" type="button" onclick="searchMember()">
                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -24,16 +24,11 @@
             <table>
             </table>
             <!-- /input-group -->
-            <div id="load-wrap" style="display:none">
-               <div class="circle"></div>
-               <div class="circle"></div>
-               <div class="circle"></div>
-               <div class="circle"></div>
-            </div>
+
             <br>
             <div class="table-responsive" style="display:none" id="table-resp">
 
-            <table class="table results order-table" id="table">
+            <table class="table results order-table" >
                <thead id="to-fill">
                   <tr class='table-head'>
                      <th> {% trans 'Nom' %}</th>
@@ -44,9 +39,17 @@
                      <th> {% trans 'ID Membre' %}</th>
                   </tr>
                </thead>
+               <tbody id="table">
+               </tbody>
             </table>
-            </br>
+
          </div>
+            <div id="load-wrap" style="display:none">
+               <div class="circle"></div>
+               <div class="circle"></div>
+               <div class="circle"></div>
+               <div class="circle"></div>
+            </div>
        </div>
       </div>
    </div>
@@ -64,9 +67,8 @@
          <div class="modal-body" style="padding-bottom:0">
            <form method="post" action="" class="">
 
-             {% crispy form_user %}
-             {% crispy form_meccuser %}
-            {% crispy form_eci %}
+
+            {% crispy form %}
             <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
             <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
           </form>
@@ -80,6 +82,10 @@
 <script type="text/javascript">
 var last_search = null
    function searchMember(){
+     var new_tbody = document.createElement('tbody');
+      old_tbody = document.getElementById('table')
+      new_tbody.setAttribute("id", "table");
+      old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
      search = document.getElementById("to-search").value;
      if (search != last_search){
        last_search = search;
@@ -123,6 +129,7 @@ var last_search = null
 
 $(".hit").click(function(){
 $('#selectedMember').modal('show');
+$('#searchMember').modal('hide');
 var last_name=$(this).closest('tr').children('td:first');
 var first_name = $(last_name).next('td');
 var status = $(first_name).next('td');
