@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from ..institute.models import Institute
 
+
 class MeccUser(models.Model):
         STATUS_CHOICES = (
             ('STU', _('Étudiant')),
@@ -39,5 +40,3 @@ class MeccUser(models.Model):
 # To manually add depending on selected input
         profile = models.CharField(
             _("Profil"), max_length=10, choices=PROFILE_CHOICES, blank=False)
-
-        

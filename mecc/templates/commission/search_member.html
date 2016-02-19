@@ -11,7 +11,8 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
          </div>
-         <div class="modal-body" style="padding-bottom:0">
+         <div class="modal-body">
+            <div id='error'></div>
             <div class="input-group">
                <input type="text" class="form-control" placeholder="ID Membre ou Nom" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
                <span class="input-group-btn">
@@ -61,7 +62,14 @@
             <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
          </div>
          <div class="modal-body" style="padding-bottom:0">
-            {% crispy form %}
+           <form method="post" action="" class="">
+
+             {% crispy form_user %}
+             {% crispy form_meccuser %}
+            {% crispy form_eci %}
+            <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
+            <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+          </form>
          </div>
       </div>
    </div>
@@ -83,13 +91,16 @@ var last_search = null
           member: search,
         },
         success: function(data) {
+            document.getElementById('load-wrap').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
           if (data.message) {
             document.getElementById('confirm').style.display = 'none';
             $('#error').html("<div class='alert alert-warning fade in'>" +
               "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
               data.message + "</div>");
+              document.getElementById('error').style.display = '';
+
           } else {
-            document.getElementById('load-wrap').style.display = 'none';
             document.getElementById('table-resp').style.display = '';
             parent_table = document.getElementById('table');
             for (var i = 0; i < data.pple.length; i++){
@@ -118,12 +129,12 @@ var status = $(first_name).next('td');
 var institute = $(first_name).next('td').next('td');
 var mail = $(institute).next('td');
 var id = $(mail).next('td');
-document.getElementById('id_id_member').value = id.text().replace(/\s+/g, '');
-document.getElementById('id_mail').value = mail.text().replace(/\s+/g, '');
+document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
 document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
 document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
-document.getElementById('id_institute').value = institute.text().replace(/\s+/g, '');
 document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
+document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
 });
         }}
       })

@@ -102,28 +102,27 @@ def get_pple(val):
                             if int(student['registration_year']) >= last_year and student['comp'] != "DES":
                                 extra = {
                                     "institute": student['comp'],
-                                    "status": "Étudiant",
+                                    "status": "STU",
                                     "mail": e['mail'],
                                     "username": e['username']
                                 }
                                 person.update(extra)
-
                                 if person not in result:
                                     result.append(person)
-                        for employee in i['employee_states']:
 
+                        for employee in i['employee_states']:
                             if employee['end_date'] is None or datetime.strptime(employee['end_date'], "%Y-%m-%d") >= current_date:
                                 extra = {
                                     "institute": employee['affiliation'],
-                                    "status": employee['type'],
+                                    "status": 'ADM' if employee['type'] == 'Administratif' else 'PROF',
                                     "mail": e['mail'],
                                     "username": e['username']
                                 }
                                 person.update(extra)
                                 if person not in result:
                                     result.append(person)
-
     return result
+
 
 def ask_camelot(val):
 
