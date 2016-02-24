@@ -32,7 +32,6 @@ def create_client(name, token, spore, base_url):
 
 
 def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
-
     if employee_type not in['Enseignant', 'Administratif']:
         raise Exception(_('Mauvais type pour get_list_from_cmp'))
     client = create_client(
@@ -53,14 +52,15 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
                     person = {
                         "last_name": i['last_name'],
                         "birth_name": i['birth_name'],
-                        "first_name": i['first_name'],
+                        "first_name": i['first_name'].title(),
                         "status": employee_type,
                         "cmp": cmp,
                         "birth_date": i['birth_date'],
                         "id_member": e['username'],
                         "mail": e['mail'],
                     }
-                    if person not in result and '@etu.unistra.fr' not in person['mail']:
+                    if person not in result and '@etu.unistra.fr' \
+                       not in person['mail'] and person[("status")] == employee_type:
                         result.append(person)
 
     if r['next'] != None:
@@ -71,43 +71,41 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
 
 
 def get_from_ldap(val):
-    print(settings.LDAP_TOKEN)
-    print(settings.LDAP_SPORE)
-    print(settings.LDAP_BASE_URL)
+
+    def process_stuff(ask):
+        result = []
+        r = json.loads(ask.text)
+        for e in r:
+            if e['is_active']:
+                if e['primary_affiliation'] == 'student':
+                    affiliation = _('Étudiant')
+                    cmp = e['main_registration_code'] if e['main_registration_code'] != None else _('Non renseigné')
+                else:
+                    cmp = e['main_affectation_code'] if e['main_affectation_code'] != None else _('Non renseigné')
+                    if e['primary_affiliation'] == 'employee':
+                        affiliation = _('Administratif')
+                    else:
+                        affiliation = _('Enseignant')
+                    person = {
+                        "last_name": e['last_name'],
+                        "first_name": e['first_name'].title(),
+                        "status": affiliation,
+                        "institute": cmp,
+                        "birth_date": e['birth_date'],
+                        "username": e['username'],
+                        "mail": e['mail'],
+                        }
+                    result.append(person)
+        return result
+
     client = create_client('ldap_client', settings.LDAP_TOKEN,
                            settings.LDAP_SPORE, settings.LDAP_BASE_URL)
 
-    ask = client.list_users(
+    ask = client.list_accounts(
         format='json', establishment='UDS', last_or_birth_name=val
     )
 
-    result = []
-    r = json.loads(ask.text)
-    for e in r:
-        if e['is_active']:
-            if e['primary_affiliation'] == 'student':
-                affiliation = _('Étudiant')
-                cmp = e['main_registration_code'] if e['main_registration_code'] != None else _('Non renseigné')
-            else:
-                cmp = e['main_affectation_code'] if e['main_affectation_code'] != None else _('Non renseigné')
-                if e['primary_affiliation'] == 'employee':
-                    affiliation = _('Administratif')
-                else:
-                    affiliation = _('Enseignant')
-                print(cmp)
-                person = {
-                    "last_name": e['last_name'],
-                    "first_name": e['first_name'],
-                    "status": affiliation,
-                    "institute": cmp,
-                    "birth_date": e['birth_date'],
-                    "username": e['username'],
-                    "mail": e['mail'],
-                    }
-                result.append(person)
-    print(result)
-    return result
-
+    return process_stuff(ask)
 
 def get_pple(val):
 
@@ -181,7 +179,7 @@ def ask_camelot(val):
             for i in r['results']:
 
                 a = {
-                    "first_name": i['first_name'],
+                    "first_name": i['first_name'].title(),
                     "last_name": i['last_name'],
                 }
                 mails = []

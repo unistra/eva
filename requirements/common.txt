@@ -1,4 +1,5 @@
 Django>1.8,<1.9
+django-cas-sso
 britney-utils
 britney
 django-crispy-forms

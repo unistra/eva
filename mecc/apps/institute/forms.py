@@ -11,33 +11,37 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class InstituteForm(forms.ModelForm):
-    field = forms.ModelChoiceField(queryset=AcademicField.objects.all(),
-                                   required=True, label=_('Domaine'))
+    field = forms.ModelChoiceField(
+        queryset=AcademicField.objects.all(),
+        required=True, label=_('Domaine'))
 
-    # dircomp = forms.ChoiceField(choices=[], label=_('Directeur de composante'),
-    #                             required=False,)
-    #
-    # rac = forms.ChoiceField(choices=[], label=_('Responsable administratif'),
-    #                         required=False,)
-    #
-    # diretu = forms.ChoiceField(choices=[], label=("Directeurs d\'études"),
-    #                            required=False,)
-    #
-    # scol_manager = forms.ChoiceField(choices=[], label=("Gestionnaires de scolarité"),
-    #                                  required=False)
+    id_dircomp = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'input_prof',
+            'readonly': 'readonly'
+        }),
+        label=_('Directeur de composante'))
+
+    id_rac = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'input_adm',
+            'readonly': 'readonly'
+        }),
+        label=_('Responsable administratif'))
 
     helper = FormHelper()
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
     helper.label_class = 'col-lg-5'
     helper.field_class = 'col-lg-6'
+    helper.form_tag = False
     helper.layout = Layout(
             Field('code'),
             Field('is_on_duty'),
             Field('label'),
             Field('field'),
-            Field('dircomp'),
-            Field('rac'),
+            Field('id_dircomp'),
+            Field('id_rac'),
             Field('diretu'),
             Field('scol_manager'),
 
@@ -45,4 +49,4 @@ class InstituteForm(forms.ModelForm):
 
     class Meta:
         model = Institute
-        exclude = ()
+        exclude = ('rac', 'dircomp')

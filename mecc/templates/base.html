@@ -3,6 +3,7 @@
 {% load dipstrapfiles %}
 {% load i18n %}
 
+
 <html>
 <head>
     <title>{% block title %}MECC{% endblock %}</title>
@@ -24,6 +25,7 @@
 
 
 <body>
+
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
         <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
@@ -39,6 +41,13 @@
 
          <div id="sidebar-wrapper">
              <ul class="sidebar-nav">
+               <li>
+                   <a href="/admin"
+                   {% if 'admin' in request.path %}
+                      class="item-selected"
+                   {% endif %}>{% trans 'Administration' %}</a>
+
+               </li>
                  <li>
                      <a href="/"
                      {% if 'board' in request.path %}

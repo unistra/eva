@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load dipstrapfiles %}
 {% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+<script src="{% static 'js/srtable.js' %}"></script>
 
 <!-- Modal -->
 <div class="modal fade" id="searchMember" role="dialog" style="z-index: 1400;">
@@ -28,7 +32,7 @@
             <br>
             <div class="table-responsive" style="display:none" id="table-resp">
 
-            <table class="table results order-table" >
+            <table class="table results order-table sortable"  id="sortabletable" >
                <thead id="to-fill">
                   <tr class='table-head'>
                      <th> {% trans 'Nom' %}</th>
@@ -69,9 +73,11 @@
 
 
             {% crispy form %}
+            <div class="modal-footer">
             <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
             <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
           </form>
+        </div>
          </div>
       </div>
    </div>

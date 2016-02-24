@@ -34,8 +34,8 @@ def home(request, template='commission/home.html'):
 
 def delete_member(request):
     if request.method == 'POST':
-        id_member = request.POST.get('id_member', '')
-        member = ECICommissionMember.objects.get(id_member=id_member)
+        username = request.POST.get('username', '')
+        member = ECICommissionMember.objects.get(username=username)
         member.delete()
         return redirect('commission:home')
     return render(request)

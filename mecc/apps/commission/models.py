@@ -24,7 +24,7 @@ class ECICommissionMember(models.Model):
     email = models.CharField(_('Mail'), max_length=256)
 
     def __str__(self):
-        return '%s %s' % (self.name, self.firstname)
+        return '%s %s' % (self.last_name, self.first_name)
 
     class Meta:
         permissions = (

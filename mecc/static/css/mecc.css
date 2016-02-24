@@ -1,3 +1,4 @@
+
 .font-color-grey{
   color:grey;
 }
@@ -165,8 +166,8 @@ label[for=id_is_on_duty]{margin-top: 0.6em;}
 #form-comp #div_id_code + div{order:3; display: none} /*Adjacent sibling selectors used with a '+'*/
 #form-comp #div_id_label{order:4;}
 #form-comp #div_id_field{order:5;}
-#form-comp #div_id_dircomp{order:7;}
-#form-comp #div_id_rac{order:8;}
+#form-comp #div_id_id_dircomp{order:7;}
+#form-comp #div_id_id_rac{order:8;}
 #form-comp #div_id_diretu{order:10;}
 #form-comp #div_id_scol_manager{order:12;}
 #form-comp #hr1{order:6;}

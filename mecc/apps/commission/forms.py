@@ -1,3 +1,4 @@
+from django import forms
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field
@@ -10,6 +11,16 @@ from django.contrib.auth.models import User
 
 
 class ECIForm(ModelForm):
+
+    MEMBER_TYPE_CHOICES = (
+        ('commission', _('Commission ECI')),
+        ('tenured', _('Etudiant CFVU titulaire')),
+        ('supply', _('Etudiant CFVU suppléant')),
+    )
+
+    member_type = forms.ChoiceField(choices=MEMBER_TYPE_CHOICES,
+        label=_('Type de membre'))
+
     def __init__(self, *args, **kwargs):
         super(ECIForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()

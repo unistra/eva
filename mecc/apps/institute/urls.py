@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from . import views
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
-    InstituteListView,  get_list
+    InstituteListView,  get_list, edit_insitute
 from django.views.generic.list import ListView
 from .models import Institute
 
@@ -19,6 +19,8 @@ urlpatterns = [
         name='create'),
     url(r'^details/(?P<code>\w+)', InstituteUpdate.as_view(),
         name='edit'),
+    # url(r'^details/(?P<code>\w+)', edit_insitute,
+    #     name='edit'),
     url(r'^delete/(?P<code>\w+)', InstituteDelete.as_view(),
         name='delete'),
     url(r'^ressources/(?P<employee_type>|prof|adm|stud)/(?P<pk>[a-zA-Z]{3})',

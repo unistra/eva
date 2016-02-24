@@ -14,8 +14,8 @@
 
 {% block content %}
 
-{# <link rel="stylesheet" href="{% static 'css/easy-autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<script src="{% static 'js/autocomplete.js' %}"></script>#}
+<link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/autocomplete.js' %}"></script>
 
 <div class='flex-container'>
 <form action="" method="post" id='form-comp'>
@@ -109,6 +109,130 @@
    {% trans 'Fermer la fiche' %}
  </a>
 
+ <input id="input_prof_id_member" placeholder="Prof_id" />
+ <input id="input_prof_last_name" placeholder="Prof_last_name" />
+ <input id="input_prof_first_name" placeholder="Prof_first_name" />
+ <input id="input_prof_mail" placeholder="Prof_mail" >
+ <input id="input_prof_status" placeholder="Prof_status"/>
+
+</br>
+ <input id="input_adm_id_member" placeholder="adm_id" />
+ <input id="input_adm_last_name" placeholder="adm_last_name" />
+ <input id="input_adm_first_name" placeholder="adm_first_name" />
+ <input id="input_adm_mail" placeholder="adm_mail" >
+ <input id="input_adm_status" placeholder="adm_status"/>
+
+ <script type="text/javascript">
+ // Get cmp code in order to search people
+code_cmp = document.getElementById("id_code").value
+var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
+var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+ $(document).ready(function () {
+
+
+$.getJSON(url_prof, function (data) {
+ var options = {
+   data: data,
+   getValue: function (element) {
+     return element.last_name + " " + element.first_name + " ";
+
+   },
+   template: {
+		type: "description",
+		fields: {
+			description: "id_member"
+		}
+	},
+   list: {
+		showAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+
+		hideAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+   		match: {
+   			enabled: true
+   		},
+      onSelectItemEvent: function() {
+        var username = $(".input_prof").getSelectedItemData().id_member;
+        var last_name = $(".input_prof").getSelectedItemData().last_name;
+        var first_name = $(".input_prof").getSelectedItemData().first_name;
+        var email = $(".input_prof").getSelectedItemData().mail;
+        var status = $(".input_prof").getSelectedItemData().status;
+
+        $("#input_prof_id_member").val(username).trigger("change");
+        $("#input_prof_last_name").val(last_name).trigger("change");
+        $("#input_prof_first_name").val(first_name).trigger("change");
+        $("#input_prof_mail").val(email).trigger("change");
+        $("#input_prof_status").val(status).trigger("change");
+      },
+   	}
+  };
+ $(".input_prof").easyAutocomplete(options);
+ $(".input_prof").prop('readonly', false);
+
+});
+
+
+
+
+   $.getJSON(url_adm, function (data) {
+    var options = {
+      data: data,
+      getValue: function (element) {
+        return element.last_name + " " + element.first_name + " ";
+      },
+      template: {
+        type: "description",
+    		fields: {
+    			description: "id_member"
+   		}
+   	},
+       list: {
+		showAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+
+		hideAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+      		match: {
+      			enabled: true
+      		},
+         onSelectItemEvent: function() {
+           var username = $(".input_adm").getSelectedItemData().id_member;
+           var last_name = $(".input_adm").getSelectedItemData().last_name;
+           var first_name = $(".input_adm").getSelectedItemData().first_name;
+           var email = $(".input_adm").getSelectedItemData().mail;
+           var status = $(".input_adm").getSelectedItemData().status;
+
+           $("#input_adm_id_member").val(username).trigger("change");
+           $("#input_adm_last_name").val(last_name).trigger("change");
+           $("#input_adm_first_name").val(first_name).trigger("change");
+           $("#input_adm_mail").val(email).trigger("change");
+           $("#input_adm_status").val(status).trigger("change");      },
+      	}
+     };
+    $(".input_adm").easyAutocomplete(options);
+    $(".input_adm").prop('readonly', false);
+
+   });
+
+
+
+
+});
+
+ </script>
 </div>
 </div>
 <script>
@@ -121,63 +245,7 @@ id_code.appendChild(check_box)
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
-//
-// // $.getJSON(url_prof, function(data) {
-// //     var options = {
-// //         data: data
-// //         , getValue: function(element) {
-// //             return element.last_name + " " + element.first_name
-// //         }
-// //         , list: {
-// //             match: {
-// //                 enabled: true
-// //             }
-// //         }
-// //     , };
-// //     $("#id_label").easyAutocomplete(options);
-// // });
-// //
-// // $.getJSON(url_adm, function(data) {
-// //     var options = {
-// //         data: data
-// //         , getValue: function(element) {
-// //             return element.last_name + " " + element.first_name
-// //         }
-// //         , list: {
-// //             match: {
-// //                 enabled: true
-// //             }
-// //         }
-// //     , };
-// //     $("#id_code").easyAutocomplete(options);
-// // });
-// //
-// // $("#id_label").autocomplete({
-// //     source: function (request, response) {
-// //         $.ajax({
-// //             url: url_adm,
-// //             data: { query: request.term },
-// //             success: function (data) {
-// //                 var transformed = $.map(data, function (el) {
-// //                     return {
-// //                         label: el.phrase,
-// //                         id: el.id
-// //                     };
-// //                 });
-// //                 response(transformed);
-// //             },
-// //             error: function () {
-// //                 response([]);
-// //             }
-// //         });
-// //     }});
-//
-// $('#id_label').autocomplete({
-//     serviceUrl: url_adm,
-//     onSelect: function (suggestion) {
-//         alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-//     }
-// });
+
 
 </script>
 {% endblock %}

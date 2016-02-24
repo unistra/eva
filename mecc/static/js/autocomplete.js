@@ -1,7 +1,1635 @@
-/**
-*  Ajax Autocomplete for jQuery, version 1.2.24
-*
-*  Ajax Autocomplete for jQuery is freely distributable under the terms of an MIT-style license.
-*  For details, see the web site: https://github.com/devbridge/jQuery-Autocomplete
-*/
-!function(a){"use strict";"function"==typeof define&&define.amd?define(["jquery"],a):a("object"==typeof exports&&"function"==typeof require?require("jquery"):jQuery)}(function(a){"use strict";function b(c,d){var e=function(){},f=this,g={ajaxSettings:{},autoSelectFirst:!1,appendTo:document.body,serviceUrl:null,lookup:null,onSelect:null,width:"auto",minChars:1,maxHeight:300,deferRequestBy:0,params:{},formatResult:b.formatResult,delimiter:null,zIndex:9999,type:"GET",noCache:!1,onSearchStart:e,onSearchComplete:e,onSearchError:e,preserveInput:!1,containerClass:"autocomplete-suggestions",tabDisabled:!1,dataType:"text",currentRequest:null,triggerSelectOnValidInput:!0,preventBadQueries:!0,lookupFilter:function(a,b,c){return-1!==a.value.toLowerCase().indexOf(c)},paramName:"query",transformResult:function(b){return"string"==typeof b?a.parseJSON(b):b},showNoSuggestionNotice:!1,noSuggestionNotice:"No results",orientation:"bottom",forceFixPosition:!1};f.element=c,f.el=a(c),f.suggestions=[],f.badQueries=[],f.selectedIndex=-1,f.currentValue=f.element.value,f.intervalId=0,f.cachedResponse={},f.onChangeInterval=null,f.onChange=null,f.isLocal=!1,f.suggestionsContainer=null,f.noSuggestionsContainer=null,f.options=a.extend({},g,d),f.classes={selected:"autocomplete-selected",suggestion:"autocomplete-suggestion"},f.hint=null,f.hintValue="",f.selection=null,f.initialize(),f.setOptions(d)}var c=function(){return{escapeRegExChars:function(a){return a.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&")},createNode:function(a){var b=document.createElement("div");return b.className=a,b.style.position="absolute",b.style.display="none",b}}}(),d={ESC:27,TAB:9,RETURN:13,LEFT:37,UP:38,RIGHT:39,DOWN:40};b.utils=c,a.Autocomplete=b,b.formatResult=function(a,b){var d="("+c.escapeRegExChars(b)+")";return a.value.replace(new RegExp(d,"gi"),"<strong>$1</strong>").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/&lt;(\/?strong)&gt;/g,"<$1>")},b.prototype={killerFn:null,initialize:function(){var c,d=this,e="."+d.classes.suggestion,f=d.classes.selected,g=d.options;d.element.setAttribute("autocomplete","off"),d.killerFn=function(b){0===a(b.target).closest("."+d.options.containerClass).length&&(d.killSuggestions(),d.disableKillerFn())},d.noSuggestionsContainer=a('<div class="autocomplete-no-suggestion"></div>').html(this.options.noSuggestionNotice).get(0),d.suggestionsContainer=b.utils.createNode(g.containerClass),c=a(d.suggestionsContainer),c.appendTo(g.appendTo),"auto"!==g.width&&c.width(g.width),c.on("mouseover.autocomplete",e,function(){d.activate(a(this).data("index"))}),c.on("mouseout.autocomplete",function(){d.selectedIndex=-1,c.children("."+f).removeClass(f)}),c.on("click.autocomplete",e,function(){d.select(a(this).data("index"))}),d.fixPositionCapture=function(){d.visible&&d.fixPosition()},a(window).on("resize.autocomplete",d.fixPositionCapture),d.el.on("keydown.autocomplete",function(a){d.onKeyPress(a)}),d.el.on("keyup.autocomplete",function(a){d.onKeyUp(a)}),d.el.on("blur.autocomplete",function(){d.onBlur()}),d.el.on("focus.autocomplete",function(){d.onFocus()}),d.el.on("change.autocomplete",function(a){d.onKeyUp(a)}),d.el.on("input.autocomplete",function(a){d.onKeyUp(a)})},onFocus:function(){var a=this;a.fixPosition(),0===a.options.minChars&&0===a.el.val().length&&a.onValueChange()},onBlur:function(){this.enableKillerFn()},abortAjax:function(){var a=this;a.currentRequest&&(a.currentRequest.abort(),a.currentRequest=null)},setOptions:function(b){var c=this,d=c.options;a.extend(d,b),c.isLocal=a.isArray(d.lookup),c.isLocal&&(d.lookup=c.verifySuggestionsFormat(d.lookup)),d.orientation=c.validateOrientation(d.orientation,"bottom"),a(c.suggestionsContainer).css({"max-height":d.maxHeight+"px",width:d.width+"px","z-index":d.zIndex})},clearCache:function(){this.cachedResponse={},this.badQueries=[]},clear:function(){this.clearCache(),this.currentValue="",this.suggestions=[]},disable:function(){var a=this;a.disabled=!0,clearInterval(a.onChangeInterval),a.abortAjax()},enable:function(){this.disabled=!1},fixPosition:function(){var b=this,c=a(b.suggestionsContainer),d=c.parent().get(0);if(d===document.body||b.options.forceFixPosition){var e=b.options.orientation,f=c.outerHeight(),g=b.el.outerHeight(),h=b.el.offset(),i={top:h.top,left:h.left};if("auto"===e){var j=a(window).height(),k=a(window).scrollTop(),l=-k+h.top-f,m=k+j-(h.top+g+f);e=Math.max(l,m)===l?"top":"bottom"}if("top"===e?i.top+=-f:i.top+=g,d!==document.body){var n,o=c.css("opacity");b.visible||c.css("opacity",0).show(),n=c.offsetParent().offset(),i.top-=n.top,i.left-=n.left,b.visible||c.css("opacity",o).hide()}"auto"===b.options.width&&(i.width=b.el.outerWidth()-2+"px"),c.css(i)}},enableKillerFn:function(){var b=this;a(document).on("click.autocomplete",b.killerFn)},disableKillerFn:function(){var b=this;a(document).off("click.autocomplete",b.killerFn)},killSuggestions:function(){var a=this;a.stopKillSuggestions(),a.intervalId=window.setInterval(function(){a.visible&&(a.el.val(a.currentValue),a.hide()),a.stopKillSuggestions()},50)},stopKillSuggestions:function(){window.clearInterval(this.intervalId)},isCursorAtEnd:function(){var a,b=this,c=b.el.val().length,d=b.element.selectionStart;return"number"==typeof d?d===c:document.selection?(a=document.selection.createRange(),a.moveStart("character",-c),c===a.text.length):!0},onKeyPress:function(a){var b=this;if(!b.disabled&&!b.visible&&a.which===d.DOWN&&b.currentValue)return void b.suggest();if(!b.disabled&&b.visible){switch(a.which){case d.ESC:b.el.val(b.currentValue),b.hide();break;case d.RIGHT:if(b.hint&&b.options.onHint&&b.isCursorAtEnd()){b.selectHint();break}return;case d.TAB:if(b.hint&&b.options.onHint)return void b.selectHint();if(-1===b.selectedIndex)return void b.hide();if(b.select(b.selectedIndex),b.options.tabDisabled===!1)return;break;case d.RETURN:if(-1===b.selectedIndex)return void b.hide();b.select(b.selectedIndex);break;case d.UP:b.moveUp();break;case d.DOWN:b.moveDown();break;default:return}a.stopImmediatePropagation(),a.preventDefault()}},onKeyUp:function(a){var b=this;if(!b.disabled){switch(a.which){case d.UP:case d.DOWN:return}clearInterval(b.onChangeInterval),b.currentValue!==b.el.val()&&(b.findBestHint(),b.options.deferRequestBy>0?b.onChangeInterval=setInterval(function(){b.onValueChange()},b.options.deferRequestBy):b.onValueChange())}},onValueChange:function(){var b=this,c=b.options,d=b.el.val(),e=b.getQuery(d);return b.selection&&b.currentValue!==e&&(b.selection=null,(c.onInvalidateSelection||a.noop).call(b.element)),clearInterval(b.onChangeInterval),b.currentValue=d,b.selectedIndex=-1,c.triggerSelectOnValidInput&&b.isExactMatch(e)?void b.select(0):void(e.length<c.minChars?b.hide():b.getSuggestions(e))},isExactMatch:function(a){var b=this.suggestions;return 1===b.length&&b[0].value.toLowerCase()===a.toLowerCase()},getQuery:function(b){var c,d=this.options.delimiter;return d?(c=b.split(d),a.trim(c[c.length-1])):b},getSuggestionsLocal:function(b){var c,d=this,e=d.options,f=b.toLowerCase(),g=e.lookupFilter,h=parseInt(e.lookupLimit,10);return c={suggestions:a.grep(e.lookup,function(a){return g(a,b,f)})},h&&c.suggestions.length>h&&(c.suggestions=c.suggestions.slice(0,h)),c},getSuggestions:function(b){var c,d,e,f,g=this,h=g.options,i=h.serviceUrl;if(h.params[h.paramName]=b,d=h.ignoreParams?null:h.params,h.onSearchStart.call(g.element,h.params)!==!1){if(a.isFunction(h.lookup))return void h.lookup(b,function(a){g.suggestions=a.suggestions,g.suggest(),h.onSearchComplete.call(g.element,b,a.suggestions)});g.isLocal?c=g.getSuggestionsLocal(b):(a.isFunction(i)&&(i=i.call(g.element,b)),e=i+"?"+a.param(d||{}),c=g.cachedResponse[e]),c&&a.isArray(c.suggestions)?(g.suggestions=c.suggestions,g.suggest(),h.onSearchComplete.call(g.element,b,c.suggestions)):g.isBadQuery(b)?h.onSearchComplete.call(g.element,b,[]):(g.abortAjax(),f={url:i,data:d,type:h.type,dataType:h.dataType},a.extend(f,h.ajaxSettings),g.currentRequest=a.ajax(f).done(function(a){var c;g.currentRequest=null,c=h.transformResult(a,b),g.processResponse(c,b,e),h.onSearchComplete.call(g.element,b,c.suggestions)}).fail(function(a,c,d){h.onSearchError.call(g.element,b,a,c,d)}))}},isBadQuery:function(a){if(!this.options.preventBadQueries)return!1;for(var b=this.badQueries,c=b.length;c--;)if(0===a.indexOf(b[c]))return!0;return!1},hide:function(){var b=this,c=a(b.suggestionsContainer);a.isFunction(b.options.onHide)&&b.visible&&b.options.onHide.call(b.element,c),b.visible=!1,b.selectedIndex=-1,clearInterval(b.onChangeInterval),a(b.suggestionsContainer).hide(),b.signalHint(null)},suggest:function(){if(0===this.suggestions.length)return void(this.options.showNoSuggestionNotice?this.noSuggestions():this.hide());var b,c=this,d=c.options,e=d.groupBy,f=d.formatResult,g=c.getQuery(c.currentValue),h=c.classes.suggestion,i=c.classes.selected,j=a(c.suggestionsContainer),k=a(c.noSuggestionsContainer),l=d.beforeRender,m="",n=function(a,c){var d=a.data[e];return b===d?"":(b=d,'<div class="autocomplete-group"><strong>'+b+"</strong></div>")};return d.triggerSelectOnValidInput&&c.isExactMatch(g)?void c.select(0):(a.each(c.suggestions,function(a,b){e&&(m+=n(b,g,a)),m+='<div class="'+h+'" data-index="'+a+'">'+f(b,g)+"</div>"}),this.adjustContainerWidth(),k.detach(),j.html(m),a.isFunction(l)&&l.call(c.element,j),c.fixPosition(),j.show(),d.autoSelectFirst&&(c.selectedIndex=0,j.scrollTop(0),j.children("."+h).first().addClass(i)),c.visible=!0,void c.findBestHint())},noSuggestions:function(){var b=this,c=a(b.suggestionsContainer),d=a(b.noSuggestionsContainer);this.adjustContainerWidth(),d.detach(),c.empty(),c.append(d),b.fixPosition(),c.show(),b.visible=!0},adjustContainerWidth:function(){var b,c=this,d=c.options,e=a(c.suggestionsContainer);"auto"===d.width&&(b=c.el.outerWidth()-2,e.width(b>0?b:300))},findBestHint:function(){var b=this,c=b.el.val().toLowerCase(),d=null;c&&(a.each(b.suggestions,function(a,b){var e=0===b.value.toLowerCase().indexOf(c);return e&&(d=b),!e}),b.signalHint(d))},signalHint:function(b){var c="",d=this;b&&(c=d.currentValue+b.value.substr(d.currentValue.length)),d.hintValue!==c&&(d.hintValue=c,d.hint=b,(this.options.onHint||a.noop)(c))},verifySuggestionsFormat:function(b){return b.length&&"string"==typeof b[0]?a.map(b,function(a){return{value:a,data:null}}):b},validateOrientation:function(b,c){return b=a.trim(b||"").toLowerCase(),-1===a.inArray(b,["auto","bottom","top"])&&(b=c),b},processResponse:function(a,b,c){var d=this,e=d.options;a.suggestions=d.verifySuggestionsFormat(a.suggestions),e.noCache||(d.cachedResponse[c]=a,e.preventBadQueries&&0===a.suggestions.length&&d.badQueries.push(b)),b===d.getQuery(d.currentValue)&&(d.suggestions=a.suggestions,d.suggest())},activate:function(b){var c,d=this,e=d.classes.selected,f=a(d.suggestionsContainer),g=f.find("."+d.classes.suggestion);return f.find("."+e).removeClass(e),d.selectedIndex=b,-1!==d.selectedIndex&&g.length>d.selectedIndex?(c=g.get(d.selectedIndex),a(c).addClass(e),c):null},selectHint:function(){var b=this,c=a.inArray(b.hint,b.suggestions);b.select(c)},select:function(a){var b=this;b.hide(),b.onSelect(a)},moveUp:function(){var b=this;if(-1!==b.selectedIndex)return 0===b.selectedIndex?(a(b.suggestionsContainer).children().first().removeClass(b.classes.selected),b.selectedIndex=-1,b.el.val(b.currentValue),void b.findBestHint()):void b.adjustScroll(b.selectedIndex-1)},moveDown:function(){var a=this;a.selectedIndex!==a.suggestions.length-1&&a.adjustScroll(a.selectedIndex+1)},adjustScroll:function(b){var c=this,d=c.activate(b);if(d){var e,f,g,h=a(d).outerHeight();e=d.offsetTop,f=a(c.suggestionsContainer).scrollTop(),g=f+c.options.maxHeight-h,f>e?a(c.suggestionsContainer).scrollTop(e):e>g&&a(c.suggestionsContainer).scrollTop(e-c.options.maxHeight+h),c.options.preserveInput||c.el.val(c.getValue(c.suggestions[b].value)),c.signalHint(null)}},onSelect:function(b){var c=this,d=c.options.onSelect,e=c.suggestions[b];c.currentValue=c.getValue(e.value),c.currentValue===c.el.val()||c.options.preserveInput||c.el.val(c.currentValue),c.signalHint(null),c.suggestions=[],c.selection=e,a.isFunction(d)&&d.call(c.element,e)},getValue:function(a){var b,c,d=this,e=d.options.delimiter;return e?(b=d.currentValue,c=b.split(e),1===c.length?a:b.substr(0,b.length-c[c.length-1].length)+a):a},dispose:function(){var b=this;b.el.off(".autocomplete").removeData("autocomplete"),b.disableKillerFn(),a(window).off("resize.autocomplete",b.fixPositionCapture),a(b.suggestionsContainer).remove()}},a.fn.autocomplete=a.fn.devbridgeAutocomplete=function(c,d){var e="autocomplete";return 0===arguments.length?this.first().data(e):this.each(function(){var f=a(this),g=f.data(e);"string"==typeof c?g&&"function"==typeof g[c]&&g[c](d):(g&&g.dispose&&g.dispose(),g=new b(this,c),f.data(e,g))})}});
+/*
+ * easy-autocomplete
+ * jQuery plugin for autocompletion
+ *
+ * @author Łukasz Pawełczak (http://github.com/pawelczak)
+ * @version 1.3.4
+ * Copyright MIT License: https://github.com/pawelczak/easy-autocomplete/blob/master/LICENSE.txt
+ */
+
+/*
+ * EasyAutocomplete - Configuration
+ */
+var EasyAutocomplete = (function(scope){
+
+	scope.Configuration = function Configuration(options) {
+		var defaults = {
+			data: "list-required",
+			url: "list-required",
+			dataType: "json",
+
+			listLocation: function(data) {
+				return data;
+			},
+
+			xmlElementName: "",
+
+			getValue: function(element) {
+				return element;
+			},
+
+			autocompleteOff: true,
+
+			placeholder: false,
+
+			ajaxCallback: function() {},
+
+			matchResponseProperty: false,
+
+			list: {
+				sort: {
+					enabled: false,
+					method: function(a, b) {
+						a = defaults.getValue(a);
+						b = defaults.getValue(b);
+						if (a < b) {
+							return -1;
+						}
+						if (a > b) {
+							return 1;
+						}
+						return 0;
+					}
+				},
+
+				maxNumberOfElements: 6,
+
+				hideOnEmptyPhrase: true,
+
+				match: {
+					enabled: false,
+					caseSensitive: false,
+					method: function(element, phrase) {
+
+						if (element.search(phrase) > -1) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				},
+
+				showAnimation: {
+					type: "normal", //normal|slide|fade
+					time: 400,
+					callback: function() {}
+				},
+
+				hideAnimation: {
+					type: "normal",
+					time: 400,
+					callback: function() {}
+				},
+
+				/* Events */
+				onClickEvent: function() {},
+				onSelectItemEvent: function() {},
+				onLoadEvent: function() {},
+				onChooseEvent: function() {},
+				onKeyEnterEvent: function() {},
+				onMouseOverEvent: function() {},
+				onMouseOutEvent: function() {},
+				onShowListEvent: function() {},
+				onHideListEvent: function() {}
+			},
+
+			highlightPhrase: true,
+
+			theme: "",
+
+			cssClasses: "",
+
+			minCharNumber: 0,
+
+			requestDelay: 0,
+
+			adjustWidth: true,
+
+			ajaxSettings: {},
+
+			preparePostData: function(data, inputPhrase) {return data;},
+
+			loggerEnabled: true,
+
+			template: "",
+
+			categoriesAssigned: false,
+
+			categories: [{
+				maxNumberOfElements: 4
+			}]
+
+		};
+
+
+		this.get = function(propertyName) {
+			return defaults[propertyName];
+		};
+
+		this.equals = function(name, value) {
+			if (isAssigned(name)) {
+				if (defaults[name] === value) {
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		this.checkDataUrlProperties = function() {
+			if (defaults.url === "list-required" && defaults.data === "list-required") {
+				return false;
+			}
+			return true;
+		};
+		this.checkRequiredProperties = function() {
+			for (var propertyName in defaults) {
+				if (defaults[propertyName] === "required") {
+					logger.error("Option " + propertyName + " must be defined");
+					return false;
+				}
+			}
+			return true;
+		};
+
+		this.printPropertiesThatDoesntExist = function(consol, optionsToCheck) {
+			printPropertiesThatDoesntExist(consol, optionsToCheck);
+		};
+
+
+		prepareDefaults();
+
+		mergeOptions();
+
+		if (defaults.loggerEnabled === true) {
+			printPropertiesThatDoesntExist(console, options);
+		}
+
+		addAjaxSettings();
+
+		processAfterMerge();
+		function prepareDefaults() {
+
+			if (options.dataType === "xml") {
+
+				if (!options.getValue) {
+
+					options.getValue = function(element) {
+						return $(element).text();
+					};
+				}
+
+
+				if (!options.list) {
+
+					options.list = {};
+				}
+
+				if (!options.list.sort) {
+					options.list.sort = {};
+				}
+
+
+				options.list.sort.method = function(a, b) {
+					a = options.getValue(a);
+					b = options.getValue(b);
+					if (a < b) {
+						return -1;
+					}
+					if (a > b) {
+						return 1;
+					}
+					return 0;
+				};
+
+				if (!options.list.match) {
+					options.list.match = {};
+				}
+
+				options.list.match.method = function(element, phrase) {
+
+					if (element.search(phrase) > -1) {
+						return true;
+					} else {
+						return false;
+					}
+				};
+
+			}
+			if (options.categories !== undefined && options.categories instanceof Array) {
+
+				var categories = [];
+
+				for (var i = 0, length = options.categories.length; i < length; i += 1) {
+
+					var category = options.categories[i];
+
+					for (var property in defaults.categories[0]) {
+
+						if (category[property] === undefined) {
+							category[property] = defaults.categories[0][property];
+						}
+					}
+
+					categories.push(category);
+				}
+
+				options.categories = categories;
+			}
+		}
+
+		function mergeOptions() {
+
+			defaults = mergeObjects(defaults, options);
+
+			function mergeObjects(source, target) {
+				var mergedObject = source || {};
+
+				for (var propertyName in source) {
+					if (target[propertyName] !== undefined && target[propertyName] !== null) {
+
+						if (typeof target[propertyName] !== "object" ||
+								target[propertyName] instanceof Array) {
+							mergedObject[propertyName] = target[propertyName];
+						} else {
+							mergeObjects(source[propertyName], target[propertyName]);
+						}
+					}
+				}
+
+				/* If data is an object */
+				if (target.data !== undefined && target.data !== null && typeof target.data === "object") {
+					mergedObject.data = target.data;
+				}
+
+				return mergedObject;
+			}
+		}
+
+
+		function processAfterMerge() {
+
+			if (defaults.url !== "list-required" && typeof defaults.url !== "function") {
+				var defaultUrl = defaults.url;
+				defaults.url = function() {
+					return defaultUrl;
+				};
+			}
+
+			if (defaults.ajaxSettings.url !== undefined && typeof defaults.ajaxSettings.url !== "function") {
+				var defaultUrl = defaults.ajaxSettings.url;
+				defaults.ajaxSettings.url = function() {
+					return defaultUrl;
+				};
+			}
+
+			if (typeof defaults.listLocation === "string") {
+				var defaultlistLocation = defaults.listLocation;
+
+				if (defaults.dataType.toUpperCase() === "XML") {
+					defaults.listLocation = function(data) {
+						return $(data).find(defaultlistLocation);
+					};
+				} else {
+					defaults.listLocation = function(data) {
+						return data[defaultlistLocation];
+					};
+				}
+			}
+
+			if (typeof defaults.getValue === "string") {
+				var defaultsGetValue = defaults.getValue;
+				defaults.getValue = function(element) {
+					return element[defaultsGetValue];
+				};
+			}
+
+			if (options.categories !== undefined) {
+				defaults.categoriesAssigned = true;
+			}
+
+		}
+
+		function addAjaxSettings() {
+
+			if (options.ajaxSettings !== undefined && typeof options.ajaxSettings === "object") {
+				defaults.ajaxSettings = options.ajaxSettings;
+			} else {
+				defaults.ajaxSettings = {};
+			}
+
+		}
+
+		function isAssigned(name) {
+			if (defaults[name] !== undefined && defaults[name] !== null) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		function printPropertiesThatDoesntExist(consol, optionsToCheck) {
+
+
+			checkPropertiesIfExist(defaults, optionsToCheck);
+
+			function checkPropertiesIfExist(source, target) {
+				for(var property in target) {
+					if (source[property] === undefined) {
+						consol.log("Property '" + property + "' does not exist in EasyAutocomplete options API.");
+					}
+
+					if (typeof source[property] === "object" && !externalObject(property)) {
+						checkPropertiesIfExist(source[property], target[property]);
+					}
+				}
+			}
+
+			function externalObject(property) {
+				var notTestedObjects = ["ajaxSettings", "template"];
+
+				Array.prototype.contains = function(obj) {
+					var i = this.length;
+				    while (i--) {
+				        if (this[i] === obj) {
+				            return true;
+				        }
+				    }
+				    return false;
+				};
+
+				return notTestedObjects.contains(property);
+			}
+		}
+	};
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+
+/*
+ * EasyAutocomplete - Logger
+ */
+var EasyAutocomplete = (function(scope){
+
+	scope.Logger = function Logger() {
+
+		this.error = function(message) {
+			console.log("ERROR: " + message);
+		};
+
+		this.warning = function(message) {
+			console.log("WARNING: " + message);
+		};
+	};
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+
+/*
+ * EasyAutocomplete - Constans
+ */
+var EasyAutocomplete = (function(scope){
+
+	scope.Constans = function Constans() {
+		var constants = {
+			CONTAINER_CLASS: "easy-autocomplete-container",
+			CONTAINER_ID: "eac-container-",
+
+			WRAPPER_CSS_CLASS: "easy-autocomplete"
+		};
+
+		this.getValue = function(propertyName) {
+			return constants[propertyName];
+		};
+
+	};
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+/*
+ * EasyAutocomplete - ListBuilderService
+ *
+ * @author Łukasz Pawełczak
+ *
+ */
+var EasyAutocomplete = (function(scope) {
+
+	scope.ListBuilderService = function ListBuilderService(configuration, proccessResponseData) {
+
+
+		this.init = function(data) {
+			var listBuilder = [],
+				builder = {};
+
+			builder.data = configuration.get("listLocation")(data);
+			builder.getValue = configuration.get("getValue");
+			builder.maxListSize = configuration.get("list").maxNumberOfElements;
+
+
+			listBuilder.push(builder);
+
+			return listBuilder;
+		};
+
+		this.updateCategories = function(listBuilder, data) {
+
+			if (configuration.get("categoriesAssigned")) {
+
+				listBuilder = [];
+
+				for(var i = 0; i < configuration.get("categories").length; i += 1) {
+
+					var builder = convertToListBuilder(configuration.get("categories")[i], data);
+
+					listBuilder.push(builder);
+				}
+
+			}
+
+			return listBuilder;
+		};
+
+		this.convertXml = function(listBuilder) {
+			if(configuration.get("dataType").toUpperCase() === "XML") {
+
+				for(var i = 0; i < listBuilder.length; i += 1) {
+					listBuilder[i].data = convertXmlToList(listBuilder[i]);
+				}
+			}
+
+			return listBuilder;
+		};
+
+		this.processData = function(listBuilder, inputPhrase) {
+
+			for(var i = 0, length = listBuilder.length; i < length; i+=1) {
+				listBuilder[i].data = proccessResponseData(configuration, listBuilder[i], inputPhrase);
+			}
+
+			return listBuilder;
+		};
+
+		this.checkIfDataExists = function(listBuilders) {
+
+			for(var i = 0, length = listBuilders.length; i < length; i += 1) {
+
+				if (listBuilders[i].data !== undefined && listBuilders[i].data instanceof Array) {
+					if (listBuilders[i].data.length > 0) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		};
+
+
+		function convertToListBuilder(category, data) {
+
+			var builder = {};
+
+			if(configuration.get("dataType").toUpperCase() === "XML") {
+
+				builder = convertXmlToListBuilder();
+			} else {
+
+				builder = convertDataToListBuilder();
+			}
+
+
+			if (category.header !== undefined) {
+				builder.header = category.header;
+			}
+
+			if (category.maxNumberOfElements !== undefined) {
+				builder.maxNumberOfElements = category.maxNumberOfElements;
+			}
+
+			if (configuration.get("list").maxNumberOfElements !== undefined) {
+
+				builder.maxListSize = configuration.get("list").maxNumberOfElements;
+			}
+
+			if (category.getValue !== undefined) {
+
+				if (typeof category.getValue === "string") {
+					var defaultsGetValue = category.getValue;
+					builder.getValue = function(element) {
+						return element[defaultsGetValue];
+					};
+				} else if (typeof category.getValue === "function") {
+					builder.getValue = category.getValue;
+				}
+
+			} else {
+				builder.getValue = configuration.get("getValue");
+			}
+
+
+			return builder;
+
+
+			function convertXmlToListBuilder() {
+
+				var builder = {},
+					listLocation;
+
+				if (category.xmlElementName !== undefined) {
+					builder.xmlElementName = category.xmlElementName;
+				}
+
+				if (category.listLocation !== undefined) {
+
+					listLocation = category.listLocation;
+				} else if (configuration.get("listLocation") !== undefined) {
+
+					listLocation = configuration.get("listLocation");
+				}
+
+				if (listLocation !== undefined) {
+					if (typeof listLocation === "string") {
+						builder.data = $(data).find(listLocation);
+					} else if (typeof listLocation === "function") {
+
+						builder.data = listLocation(data);
+					}
+				} else {
+
+					builder.data = data;
+				}
+
+				return builder;
+			}
+
+
+			function convertDataToListBuilder() {
+
+				var builder = {};
+
+				if (category.listLocation !== undefined) {
+
+					if (typeof category.listLocation === "string") {
+						builder.data = data[category.listLocation];
+					} else if (typeof category.listLocation === "function") {
+						builder.data = category.listLocation(data);
+					}
+				} else {
+					builder.data = data;
+				}
+
+				return builder;
+			}
+		}
+
+		function convertXmlToList(builder) {
+			var simpleList = [];
+
+			if (builder.xmlElementName === undefined) {
+				builder.xmlElementName = configuration.get("xmlElementName");
+			}
+
+
+			$(builder.data).find(builder.xmlElementName).each(function() {
+				simpleList.push(this);
+			});
+
+			return simpleList;
+		}
+
+	};
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+
+/*
+ * EasyAutocomplete - Data proccess module
+ *
+ * Process list to display:
+ * - sort
+ * - decrease number to specific number
+ * - show only matching list
+ *
+ */
+var EasyAutocomplete = (function(scope) {
+
+	scope.proccess = function proccessData(config, listBuilder, phrase) {
+
+		scope.proccess.match = match;
+
+		var list = listBuilder.data,
+			inputPhrase = phrase;//TODO REFACTOR
+
+		list = findMatch(list, inputPhrase);
+		list = reduceElementsInList(list);
+		list = sort(list);
+
+		return list;
+
+
+		function findMatch(list, phrase) {
+			var preparedList = [],
+				value = "";
+
+			if (config.get("list").match.enabled) {
+
+				for(var i = 0, length = list.length; i < length; i += 1) {
+
+					value = config.get("getValue")(list[i]);
+
+					if (match(value, phrase)) {
+						preparedList.push(list[i]);
+					}
+
+				}
+
+			} else {
+				preparedList = list;
+			}
+
+			return preparedList;
+		}
+
+		function match(value, phrase) {
+
+			if (!config.get("list").match.caseSensitive) {
+
+				if (typeof value === "string") {
+					value = value.toLowerCase();
+				}
+
+				phrase = phrase.toLowerCase();
+			}
+			if (config.get("list").match.method(value, phrase)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		function reduceElementsInList(list) {
+			if (listBuilder.maxNumberOfElements !== undefined && list.length > listBuilder.maxNumberOfElements) {
+				list = list.slice(0, listBuilder.maxNumberOfElements);
+			}
+
+			return list;
+		}
+
+		function sort(list) {
+			if (config.get("list").sort.enabled) {
+				list.sort(config.get("list").sort.method);
+			}
+
+			return list;
+		}
+
+	};
+
+
+	return scope;
+
+
+})(EasyAutocomplete || {});
+
+
+/*
+ * EasyAutocomplete - Template
+ *
+ *
+ *
+ */
+var EasyAutocomplete = (function(scope){
+
+	scope.Template = function Template(options) {
+
+
+		var genericTemplates = {
+			basic: {
+				type: "basic",
+				method: function(element) { return element; },
+				cssClass: ""
+			},
+			description: {
+				type: "description",
+				fields: {
+					description: "description"
+				},
+				method: function(element) {	return element + " - description"; },
+				cssClass: "eac-description"
+			},
+			iconLeft: {
+				type: "iconLeft",
+				fields: {
+					icon: ""
+				},
+				method: function(element) {
+					return element;
+				},
+				cssClass: "eac-icon-left"
+			},
+			iconRight: {
+				type: "iconRight",
+				fields: {
+					iconSrc: ""
+				},
+				method: function(element) {
+					return element;
+				},
+				cssClass: "eac-icon-right"
+			},
+			links: {
+				type: "links",
+				fields: {
+					link: ""
+				},
+				method: function(element) {
+					return element;
+				},
+				cssClass: ""
+			},
+			custom: {
+				type: "custom",
+				method: function() {},
+				cssClass: ""
+			}
+		},
+
+
+
+		/*
+		 * Converts method with {{text}} to function
+		 */
+		convertTemplateToMethod = function(template) {
+
+
+			var _fields = template.fields,
+				buildMethod;
+
+			if (template.type === "description") {
+
+				buildMethod = genericTemplates.description.method;
+
+				if (typeof _fields.description === "string") {
+					buildMethod = function(elementValue, element) {
+						return elementValue + " - <span>" + element[_fields.description] + "</span>";
+					};
+				} else if (typeof _fields.description === "function") {
+					buildMethod = function(elementValue, element) {
+						return elementValue + " - <span>" + _fields.description(element) + "</span>";
+					};
+				}
+
+				return buildMethod;
+			}
+
+			if (template.type === "iconRight") {
+
+				if (typeof _fields.iconSrc === "string") {
+					buildMethod = function(elementValue, element) {
+						return elementValue + "<img class='eac-icon' src='" + element[_fields.iconSrc] + "' />" ;
+					};
+				} else if (typeof _fields.iconSrc === "function") {
+					buildMethod = function(elementValue, element) {
+						return elementValue + "<img class='eac-icon' src='" + _fields.iconSrc(element) + "' />" ;
+					};
+				}
+
+				return buildMethod;
+			}
+
+
+			if (template.type === "iconLeft") {
+
+				if (typeof _fields.iconSrc === "string") {
+					buildMethod = function(elementValue, element) {
+						return "<img class='eac-icon' src='" + element[_fields.iconSrc] + "' />" + elementValue;
+					};
+				} else if (typeof _fields.iconSrc === "function") {
+					buildMethod = function(elementValue, element) {
+						return "<img class='eac-icon' src='" + _fields.iconSrc(element) + "' />" + elementValue;
+					};
+				}
+
+				return buildMethod;
+			}
+
+			if(template.type === "links") {
+
+				if (typeof _fields.link === "string") {
+					buildMethod = function(elementValue, element) {
+						return "<a href='" + element[_fields.link] + "' >" + elementValue + "</a>";
+					};
+				} else if (typeof _fields.link === "function") {
+					buildMethod = function(elementValue, element) {
+						return "<a href='" + _fields.link(element) + "' >" + elementValue + "</a>";
+					};
+				}
+
+				return buildMethod;
+			}
+
+
+			if (template.type === "custom") {
+
+				return template.method;
+			}
+
+			return genericTemplates.basic.method;
+
+		},
+
+
+		prepareBuildMethod = function(options) {
+			if (!options || !options.type) {
+
+				return genericTemplates.basic.method;
+			}
+
+			if (options.type && genericTemplates[options.type]) {
+
+				return convertTemplateToMethod(options);
+			} else {
+
+				return genericTemplates.basic.method;
+			}
+
+		},
+
+		templateClass = function(options) {
+			var emptyStringFunction = function() {return "";};
+
+			if (!options || !options.type) {
+
+				return emptyStringFunction;
+			}
+
+			if (options.type && genericTemplates[options.type]) {
+				return (function () {
+					var _cssClass = genericTemplates[options.type].cssClass;
+					return function() { return _cssClass;};
+				})();
+			} else {
+				return emptyStringFunction;
+			}
+		};
+
+
+		this.getTemplateClass = templateClass(options);
+
+		this.build = prepareBuildMethod(options);
+
+
+	};
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+
+/*
+ * EasyAutocomplete - jQuery plugin for autocompletion
+ *
+ */
+var EasyAutocomplete = (function(scope) {
+
+
+	scope.main = function Core($input, options) {
+
+		var module = {
+				name: "EasyAutocomplete",
+				shortcut: "eac"
+			};
+
+		var consts = new scope.Constans(),
+			config = new scope.Configuration(options),
+			logger = new scope.Logger(),
+			template = new scope.Template(options.template),
+			listBuilderService = new scope.ListBuilderService(config, scope.proccess),
+			checkParam = config.equals,
+
+			$field = $input,
+			$container = "",
+			elementsList = [],
+			selectedElement = -1,
+			requestDelayTimeoutId;
+
+		scope.consts = consts;
+
+		this.getConstants = function() {
+			return consts;
+		};
+
+		this.getConfiguration = function() {
+			return config;
+		};
+
+		this.getContainer = function() {
+			return $container;
+		};
+
+		this.getSelectedItemIndex = function() {
+			return selectedElement;
+		};
+
+		this.getItems = function () {
+			return elementsList;
+		};
+
+		this.getItemData = function(index) {
+
+			if (elementsList.length < index || elementsList[index] === undefined) {
+				return -1;
+			} else {
+				return elementsList[index];
+			}
+		};
+
+		this.getSelectedItemData = function() {
+			return this.getItemData(selectedElement);
+		};
+
+		this.build = function() {
+			prepareField();
+		};
+
+		this.init = function() {
+			init();
+		};
+		function init() {
+
+			if ($field.length === 0) {
+				logger.error("Input field doesn't exist.");
+				return;
+			}
+
+			if (!config.checkDataUrlProperties()) {
+				logger.error("One of options variables 'data' or 'url' must be defined.");
+				return;
+			}
+
+			if (!config.checkRequiredProperties()) {
+				logger.error("Will not work without mentioned properties.");
+				return;
+			}
+
+
+			prepareField();
+			bindEvents();
+
+		}
+		function prepareField() {
+
+
+			if ($field.parent().hasClass(consts.getValue("WRAPPER_CSS_CLASS"))) {
+				removeContainer();
+				removeWrapper();
+			}
+
+			createWrapper();
+			createContainer();
+
+			$container = $("#" + getContainerId());
+			if (config.get("placeholder")) {
+				$field.attr("placeholder", config.get("placeholder"));
+			}
+
+
+			function createWrapper() {
+				var $wrapper = $("<div>"),
+					classes = consts.getValue("WRAPPER_CSS_CLASS");
+
+
+				if (config.get("theme") && config.get("theme") !== "") {
+					classes += " eac-" + config.get("theme");
+				}
+
+				if (config.get("cssClasses") && config.get("cssClasses") !== "") {
+					classes += " " + config.get("cssClasses");
+				}
+
+				if (template.getTemplateClass() !== "") {
+					classes += " " + template.getTemplateClass();
+				}
+
+
+				$wrapper
+					.addClass(classes);
+				$field.wrap($wrapper);
+
+
+				if (config.get("adjustWidth") === true) {
+					adjustWrapperWidth();
+				}
+
+
+			}
+
+			function adjustWrapperWidth() {
+				var fieldWidth = $field.outerWidth();
+
+				$field.parent().css("width", fieldWidth);
+			}
+
+			function removeWrapper() {
+				$field.unwrap();
+			}
+
+			function createContainer() {
+				var $elements_container = $("<div>").addClass(consts.getValue("CONTAINER_CLASS"));
+
+				$elements_container
+						.attr("id", getContainerId())
+						.prepend($("<ul>"));
+
+
+				(function() {
+
+					$elements_container
+						/* List show animation */
+						.on("show.eac", function() {
+
+							switch(config.get("list").showAnimation.type) {
+
+								case "slide":
+									var animationTime = config.get("list").showAnimation.time,
+										callback = config.get("list").showAnimation.callback;
+
+									$elements_container.find("ul").slideDown(animationTime, callback);
+								break;
+
+								case "fade":
+									var animationTime = config.get("list").showAnimation.time,
+										callback = config.get("list").showAnimation.callback;
+
+									$elements_container.find("ul").fadeIn(animationTime), callback;
+								break;
+
+								default:
+									$elements_container.find("ul").show();
+								break;
+							}
+
+							config.get("list").onShowListEvent();
+
+						})
+						/* List hide animation */
+						.on("hide.eac", function() {
+
+							switch(config.get("list").hideAnimation.type) {
+
+								case "slide":
+									var animationTime = config.get("list").hideAnimation.time,
+										callback = config.get("list").hideAnimation.callback;
+
+									$elements_container.find("ul").slideUp(animationTime, callback);
+								break;
+
+								case "fade":
+									var animationTime = config.get("list").hideAnimation.time,
+										callback = config.get("list").hideAnimation.callback;
+
+									$elements_container.find("ul").fadeOut(animationTime, callback);
+								break;
+
+								default:
+									$elements_container.find("ul").hide();
+								break;
+							}
+
+							config.get("list").onHideListEvent();
+
+						})
+						.on("selectElement.eac", function() {
+							$elements_container.find("ul li").removeClass("selected");
+							$elements_container.find("ul li").eq(selectedElement).addClass("selected");
+
+							config.get("list").onSelectItemEvent();
+						})
+						.on("loadElements.eac", function(event, listBuilders, phrase) {
+
+
+							var $item = "",
+								$listContainer = $elements_container.find("ul");
+
+							$listContainer
+								.empty()
+								.detach();
+
+							elementsList = [];
+							var counter = 0;
+							for(var builderIndex = 0, listBuildersLength = listBuilders.length; builderIndex < listBuildersLength; builderIndex += 1) {
+
+								var listData = listBuilders[builderIndex].data;
+
+								if (listData.length === 0) {
+									continue;
+								}
+
+								if (listBuilders[builderIndex].header !== undefined && listBuilders[builderIndex].header.length > 0) {
+									$listContainer.append("<div class='eac-category' >" + listBuilders[builderIndex].header + "</div>");
+								}
+
+								for(var i = 0, listDataLength = listData.length; i < listDataLength && counter < listBuilders[builderIndex].maxListSize; i += 1) {
+									$item = $("<li><div class='eac-item'></div></li>");
+
+
+									(function() {
+										var j = i,
+											itemCounter = counter,
+											elementsValue = listBuilders[builderIndex].getValue(listData[j]);
+
+										$item.find(" > div")
+											.on("click", function() {
+
+												$field.val(elementsValue).trigger("change");
+
+												selectedElement = itemCounter;
+												selectElement(itemCounter);
+
+												config.get("list").onClickEvent();
+												config.get("list").onChooseEvent();
+											})
+											.mouseover(function() {
+
+												selectedElement = itemCounter;
+												selectElement(itemCounter);
+
+												config.get("list").onMouseOverEvent();
+											})
+											.mouseout(function() {
+												config.get("list").onMouseOutEvent();
+											})
+											.html(template.build(highlight(elementsValue, phrase), listData[j]));
+									})();
+
+									$listContainer.append($item);
+									elementsList.push(listData[i]);
+									counter += 1;
+								}
+							}
+
+							$elements_container.append($listContainer);
+
+							config.get("list").onLoadEvent();
+						});
+
+				})();
+
+				$field.after($elements_container);
+			}
+
+			function removeContainer() {
+				$field.next("." + consts.getValue("CONTAINER_CLASS")).remove();
+			}
+
+			function highlight(string, phrase) {
+
+				if(config.get("highlightPhrase") && phrase !== "") {
+					return highlightPhrase(string, phrase);
+				} else {
+					return string;
+				}
+
+			}
+
+			function escapeRegExp(str) {
+				return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+ 			}
+
+			function highlightPhrase(string, phrase) {
+				var escapedPhrase = escapeRegExp(phrase);
+				return (string + "").replace(new RegExp("(" + escapedPhrase + ")", "gi") , "<b>$1</b>");
+			}
+
+
+
+		}
+		function getContainerId() {
+
+			var elementId = $field.attr("id");
+
+			elementId = consts.getValue("CONTAINER_ID") + elementId;
+
+			return elementId;
+		}
+		function bindEvents() {
+
+			bindAllEvents();
+
+
+			function bindAllEvents() {
+				if (checkParam("autocompleteOff", true)) {
+					removeAutocomplete();
+				}
+
+				bindFocusOut();
+				bindKeyup();
+				bindKeydown();
+				bindKeypress();
+				bindFocus();
+				bindBlur();
+			}
+
+			function bindFocusOut() {
+				$field.focusout(function () {
+
+					var fieldValue = $field.val(),
+						phrase;
+
+					if (!config.get("list").match.caseSensitive) {
+						fieldValue = fieldValue.toLowerCase();
+					}
+
+					for (var i = 0, length = elementsList.length; i < length; i += 1) {
+
+						if (!config.get("list").match.caseSensitive) {
+							phrase = config.get("getValue")(elementsList[i]);
+						}
+
+						if (phrase === fieldValue) {
+							selectedElement = i;
+							selectElement(selectedElement);
+							return;
+						}
+					}
+				});
+			}
+
+			function bindKeyup() {
+				$field
+				.off("keyup")
+				.keyup(function(event) {
+
+					switch(event.keyCode) {
+
+						case 27:
+
+							hideContainer();
+							loseFieldFocus();
+						break;
+
+						case 38:
+
+							event.preventDefault();
+
+							if(elementsList.length > 0 && selectedElement > 0) {
+
+								selectedElement -= 1;
+
+								$field.val(config.get("getValue")(elementsList[selectedElement]));
+
+								selectElement(selectedElement);
+
+							}
+						break;
+
+						case 40:
+
+							event.preventDefault();
+
+							if(elementsList.length > 0 && selectedElement < elementsList.length - 1) {
+
+								selectedElement += 1;
+
+								$field.val(config.get("getValue")(elementsList[selectedElement]));
+
+								selectElement(selectedElement);
+
+							}
+
+						break;
+
+						default:
+
+							if (event.keyCode > 40 || event.keyCode === 8) {
+
+								var inputPhrase = $field.val();
+
+								if (!(config.get("list").hideOnEmptyPhrase === true && event.keyCode === 8 && inputPhrase === "")) {
+
+									if (config.get("requestDelay") > 0) {
+										if (requestDelayTimeoutId !== undefined) {
+											clearTimeout(requestDelayTimeoutId);
+										}
+
+										requestDelayTimeoutId = setTimeout(function () { loadData(inputPhrase);}, config.get("requestDelay"));
+									} else {
+										loadData(inputPhrase);
+									}
+
+								} else {
+									hideContainer();
+								}
+
+							}
+
+
+						break;
+					}
+
+
+					function loadData(inputPhrase) {
+
+
+						if (inputPhrase.length < config.get("minCharNumber")) {
+							return;
+						}
+
+
+						if (config.get("data") !== "list-required") {
+
+							var data = config.get("data");
+
+							var listBuilders = listBuilderService.init(data);
+
+							listBuilders = listBuilderService.updateCategories(listBuilders, data);
+
+							listBuilders = listBuilderService.processData(listBuilders, inputPhrase);
+
+							loadElements(listBuilders, inputPhrase);
+
+							if ($field.parent().find("li").length > 0) {
+								showContainer();
+							} else {
+								hideContainer();
+							}
+
+						}
+
+						var settings = createAjaxSettings();
+
+						if (settings.url === undefined || settings.url === "") {
+							settings.url = config.get("url");
+						}
+
+						if (settings.dataType === undefined || settings.dataType === "") {
+							settings.dataType = config.get("dataType");
+						}
+
+
+						if (settings.url !== undefined && settings.url !== "list-required") {
+
+							settings.url = settings.url(inputPhrase);
+
+							settings.data = config.get("preparePostData")(settings.data, inputPhrase);
+
+							$.ajax(settings)
+								.done(function(data) {
+
+									var listBuilders = listBuilderService.init(data);
+
+									listBuilders = listBuilderService.updateCategories(listBuilders, data);
+
+									listBuilders = listBuilderService.convertXml(listBuilders);
+									if (checkInputPhraseMatchResponse(inputPhrase, data)) {
+
+										listBuilders = listBuilderService.processData(listBuilders, inputPhrase);
+
+										loadElements(listBuilders, inputPhrase);
+
+									}
+
+									if (listBuilderService.checkIfDataExists(listBuilders) && $field.parent().find("li").length > 0) {
+										showContainer();
+									} else {
+										hideContainer();
+									}
+
+									config.get("ajaxCallback")();
+
+								})
+								.fail(function() {
+									logger.warning("Fail to load response data");
+								})
+								.always(function() {
+
+								});
+						}
+
+
+
+						function createAjaxSettings() {
+
+							var settings = {},
+								ajaxSettings = config.get("ajaxSettings") || {};
+
+							for (var set in ajaxSettings) {
+								settings[set] = ajaxSettings[set];
+							}
+
+							return settings;
+						}
+
+						function checkInputPhraseMatchResponse(inputPhrase, data) {
+
+							if (config.get("matchResponseProperty") !== false) {
+								if (typeof config.get("matchResponseProperty") === "string") {
+									return (data[config.get("matchResponseProperty")] === inputPhrase);
+								}
+
+								if (typeof config.get("matchResponseProperty") === "function") {
+									return (config.get("matchResponseProperty")(data) === inputPhrase);
+								}
+
+								return true;
+							} else {
+								return true;
+							}
+
+						}
+
+					}
+
+
+				});
+			}
+
+			function bindKeydown() {
+				$field
+					.on("keydown", function(evt) {
+	        		    evt = evt || window.event;
+	        		    var keyCode = evt.keyCode;
+	        		    if (keyCode === 38) {
+	        		        suppressKeypress = true;
+	        		        return false;
+	        		    }
+		        	})
+					.keydown(function(event) {
+
+						if (event.keyCode === 13 && selectedElement > -1) {
+
+							$field.val(config.get("getValue")(elementsList[selectedElement]));
+
+							config.get("list").onKeyEnterEvent();
+							config.get("list").onChooseEvent();
+
+							selectedElement = -1;
+							hideContainer();
+
+							event.preventDefault();
+						}
+					});
+			}
+
+			function bindKeypress() {
+				$field
+				.off("keypress");
+			}
+
+			function bindFocus() {
+				$field.focus(function() {
+
+					if ($field.val() !== "" && elementsList.length > 0) {
+
+						selectedElement = -1;
+						showContainer();
+					}
+
+				});
+			}
+
+			function bindBlur() {
+				$field.blur(function() {
+					setTimeout(function() {
+
+						selectedElement = -1;
+						hideContainer();
+					}, 250);
+				});
+			}
+
+			function removeAutocomplete() {
+				$field.attr("autocomplete","off");
+			}
+
+		}
+
+		function showContainer() {
+			$container.trigger("show.eac");
+		}
+
+		function hideContainer() {
+			$container.trigger("hide.eac");
+		}
+
+		function selectElement(index) {
+
+			$container.trigger("selectElement.eac", index);
+		}
+
+		function loadElements(list, phrase) {
+			$container.trigger("loadElements.eac", [list, phrase]);
+		}
+
+		function loseFieldFocus() {
+			$field.trigger("blur");
+		}
+
+
+	};
+	scope.eacHandles = [];
+
+	scope.getHandle = function(id) {
+		return scope.eacHandles[id];
+	};
+
+	scope.inputHasId = function(input) {
+
+		if($(input).attr("id") !== undefined && $(input).attr("id").length > 0) {
+			return true;
+		} else {
+			return false;
+		}
+
+	};
+
+	scope.assignRandomId = function(input) {
+
+		var fieldId = "";
+
+		do {
+			fieldId = "eac-" + Math.floor(Math.random() * 10000);
+		} while ($("#" + fieldId).length !== 0);
+
+		elementId = scope.consts.getValue("CONTAINER_ID") + fieldId;
+
+		$(input).attr("id", fieldId);
+
+	};
+
+	scope.setHandle = function(handle, id) {
+		scope.eacHandles[id] = handle;
+	};
+
+
+	return scope;
+
+})(EasyAutocomplete || {});
+
+
+$.fn.easyAutocomplete = function(options) {
+
+	return this.each(function() {
+		var $this = $(this),
+			eacHandle = new EasyAutocomplete.main($this, options);
+
+		if (!EasyAutocomplete.inputHasId($this)) {
+			EasyAutocomplete.assignRandomId($this);
+		}
+
+		eacHandle.init();
+
+		EasyAutocomplete.setHandle(eacHandle, $this.attr("id"));
+
+	});
+};
+
+$.fn.getSelectedItemIndex = function() {
+
+	var inputId = $(this).attr("id");
+
+	if (inputId !== undefined) {
+		return EasyAutocomplete.getHandle(inputId).getSelectedItemIndex();
+	}
+
+	return -1;
+};
+
+$.fn.getItems = function () {
+
+	var inputId = $(this).attr("id");
+
+	if (inputId !== undefined) {
+		return EasyAutocomplete.getHandle(inputId).getItems();
+	}
+
+	return -1;
+};
+
+$.fn.getItemData = function(index) {
+
+	var inputId = $(this).attr("id");
+
+	if (inputId !== undefined && index > -1) {
+		return EasyAutocomplete.getHandle(inputId).getItemData(index);
+	}
+
+	return -1;
+};
+
+$.fn.getSelectedItemData = function() {
+
+	var inputId = $(this).attr("id");
+
+	if (inputId !== undefined) {
+		return EasyAutocomplete.getHandle(inputId).getSelectedItemData();
+	}
+
+	return -1;
+};

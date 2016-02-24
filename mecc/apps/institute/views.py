@@ -26,7 +26,7 @@ def get_list(request, employee_type, pk):
         type_staff = 'Enseignant'
     elif employee_type == 'adm':
         type_staff = 'Administratif'
-    t = get_list_from_cmp(cmp=pk, employee_type=type_staff)
+    t = get_list_from_cmp(cmp=pk, employee_type=type_staff, result=[])
     return JsonResponse(t, safe=False)
 
 
@@ -70,6 +70,24 @@ class InstituteCreate(CreateView):
     form_class = InstituteForm
 
     success_url = '/institute'
+
+
+def edit_insitute(request, template='institute/institute_form.html', code=None):
+    if code:
+        f = Institute.objects.get(code=code)
+    else:
+        f = None
+
+    if request.method == 'POST':
+        form = InstituteForm(request.POST, request.FILES, instance=f)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/') # Redirect after POST
+    else:
+        form = InstituteForm(instance=f)
+
+    return render(request, template, {'form': form})
+
 
 
 class InstituteUpdate(UpdateView):

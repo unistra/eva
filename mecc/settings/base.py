@@ -183,6 +183,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_cas.middleware.CASMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -223,10 +224,12 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     'crispy_forms',
-    'fm'
+    'fm',
+    'django_cas',
 )
 
 LOCAL_APPS = (
+    'mecc.apps.utils',
     'mecc',
     'mecc.apps.commission',
     'mecc.apps.degree',
@@ -304,3 +307,24 @@ LOGGING = {
 
 # ## CRISPY STUFF ## #
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+##################
+# Authentication #
+##################
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend',
+)
+
+############################
+# CAS server configuration #
+############################
+
+CAS_SERVER_URL = 'https://cas.unistra.fr:443/cas/login'
+CAS_LOGOUT_REQUEST_ALLOWED = ('cas-dev1.u-strasbg.fr', 'cas-dev2.u-strasbg.fr')
+CAS_USER_CREATION = True
+
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

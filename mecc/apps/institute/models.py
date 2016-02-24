@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-
+from mecc.apps.adm.models import MeccUser, ScolManager
 
 class AcademicField(models.Model):
     name = models.CharField(_('Domaine'), max_length=70)
@@ -32,10 +32,12 @@ class Institute(models.Model):
     is_on_duty = models.BooleanField(_('En service'))
     label = models.CharField(_('Libellé composante'), max_length=85)
     field = models.ForeignKey(AcademicField, blank=False)
-    dircomp = models.ForeignKey(User, related_name='dircomp', on_delete=models.CASCADE, blank=True, null=True)
-    rac = models.ForeignKey(User, related_name='racs', on_delete=models.CASCADE, blank=True, null=True)
-    diretu = models.ManyToManyField(User, related_name='diretu', blank=True)
-    scol_manager = models.ManyToManyField(User, related_name='scol_managers', blank=True)
+    id_dircomp = models.CharField(_('Directeur de composante'), max_length=65, blank=True)
+    id_rac = models.CharField(_('Responsable administratif'), max_length=65, blank=True)
+    dircomp = models.ForeignKey(MeccUser, related_name='dircomp', on_delete=models.CASCADE, blank=True, null=True)
+    rac = models.ForeignKey(MeccUser, related_name='racs', on_delete=models.CASCADE, blank=True, null=True)
+    diretu = models.ManyToManyField(ScolManager, related_name='diretu', blank=True)
+    scol_manager = models.ManyToManyField(ScolManager, related_name='scol_managers', blank=True)
 
     def clean_fields(self, exclude=None):
         try:

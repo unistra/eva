@@ -57,7 +57,7 @@ class MeccUserInline(admin.StackedInline):
 
 
 class UserAdmin(BaseUserAdmin):
-    inlines = (MeccUserInline, )
+    # inlines = (MeccUserInline, )
 
     form = UserChangeFormWithoutPass
     add_form = UserCreationFormWithoutPass
@@ -68,13 +68,11 @@ class UserAdmin(BaseUserAdmin):
     def get_profile(self, obj):
         return obj.meccuser.profile
 
-    get_status.short_description = _('Statut')
     get_profile.short_description = _('Profil')
 
-    get_status.admin_order_field = 'meccuser__status'
     get_profile.admin_order_field = 'meccuser__profile'
 
-    list_display = ('username', 'is_superuser', 'get_status', 'get_profile')
+    list_display = ('username', 'is_superuser', 'get_profile')
     list_filter = ('is_staff',)
 
     fieldsets = (

@@ -7,7 +7,7 @@
 
 {% block content %}
   {% if commission_staff %}
-  <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">
+  {# <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">#}
 
     <table class="table order-table">
       <thead>
@@ -34,7 +34,7 @@
              </select>
           </td>
           <td>
-             <a href="" class="glyphicon glyphicon-trash" id="{{e.id_member}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+             <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
           </td>
        </tr>
        {% endfor %}
