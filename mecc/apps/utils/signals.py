@@ -23,15 +23,15 @@ def ECI_post_delete(sender, **kwargs):
     user = User.objects.get(username=to_del)
     user.delete()
 
-
-@receiver(pre_delete, sender=User)
-def User_delete(sender, **kwargs):
-    print(kwargs['instance'])
-
-
-@receiver(pre_save, sender=Institute)
-def Institute_pre_save(sender, **kwargs):
-    for e in kwargs:
-        print(e)
-    print(kwargs['instance'])
-    print(kwargs['using'])
+# 
+# @receiver(pre_delete, sender=User)
+# def User_delete(sender, **kwargs):
+#     print(kwargs['instance'])
+#
+#
+# @receiver(pre_save, sender=Institute)
+# def Institute_pre_save(sender, **kwargs):
+#     for e in kwargs:
+#         print(e)
+#     print(kwargs['instance'])
+#     print(kwargs['using'])
