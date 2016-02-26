@@ -23,6 +23,13 @@ class ECICommissionMember(models.Model):
 
     email = models.CharField(_('Mail'), max_length=256)
 
+    def clean_fields(self, exclude=None):
+        if self.username in [e.username for e in ECICommissionMember.objects.all()]:
+            raise ValidationError(
+                {'username': [_("L'identifiant %s est déjà utilisé." \
+                 % self.username), ]}
+            )
+
     def __str__(self):
         return '%s %s' % (self.last_name, self.first_name)
 

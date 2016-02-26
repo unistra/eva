@@ -7,7 +7,7 @@
 {% trans 'Fiche type de diplôme' %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression du type de diplôme " %}{{ object.short_label }} - {{ object.long_label }} ?</p>

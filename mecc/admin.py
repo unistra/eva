@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from .apps.adm.models import MeccUser
 
 
-
 class UserChangeFormWithoutPass(UserChangeForm):
 
     def clean_password(self):
@@ -52,32 +51,40 @@ class MeccUserInline(admin.StackedInline):
     model = MeccUser
     can_delete = False
     fieldsets = (
-        (_('Informations suplémentaires'), {'fields': ('status', "cmp", "birth_date", "profile")}),
+        (_('Informations complémentaires'), {'fields': ('status', "cmp", "profile")}),
     )
 
 
 class UserAdmin(BaseUserAdmin):
-    # inlines = (MeccUserInline, )
+    inlines = (MeccUserInline, )
 
     form = UserChangeFormWithoutPass
     add_form = UserCreationFormWithoutPass
+
+    list_filter = ('is_staff', 'groups', 'groups__name')
+    list_display = ('username', 'is_superuser', 'get_profile', 'get_group')
 
     def get_status(self, obj):
         return obj.meccuser.get_status_display
 
     def get_profile(self, obj):
-        return obj.meccuser.profile
+        return ", ".join([e.label for e in obj.meccuser.profile.all()])
 
+    def get_group(self, obj):
+        """
+        get group, separate by comma, and display empty string if user has no group
+        """
+        return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
+
+    get_group.short_description = _('Groupe')
     get_profile.short_description = _('Profil')
-
     get_profile.admin_order_field = 'meccuser__profile'
 
-    list_display = ('username', 'is_superuser', 'get_profile')
-    list_filter = ('is_staff',)
-
     fieldsets = (
-        (_('Informations générales'), {'fields': ('username', "last_name", "first_name", "email")}),
+        (None, {'fields': ("username", "last_name", "first_name", "email")}),
+        (None, {'fields': ('is_superuser', 'is_staff', 'groups')}),
     )
+
 # Set & Register adm stuff
 
 admin.site.unregister(User)

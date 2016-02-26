@@ -1,40 +1,42 @@
 {% load i18n %}
 <!-- Modal -->
 <div class="modal fade fade" id="deleteMember" role="dialog">
-   <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">{% trans "Supprimer un membre " %}</h4>
-         </div>
-         <div class="modal-body">
-            <span style="margin-bottom:0.2em">{% trans "Êtes vous sûr de vouloir supprimer ce membre ?" %}</span></br>
-            <strong><span id="confirm_name"></span></strong>
-            <span id='confirm_first_name'></span>
-         </div>
-         <div class="modal-footer" id="confirm" style="padding-bottom:1em">
-            <form method="POST" id="delete_form">
-               {% csrf_token %}
-               <input type='hidden' name='username' id="username" value=""/>
-               <input type="submit" value='{% trans "Oui" %}' class="btn btn-primary"/>
-               <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "No" %}</button>
-            </form>
-         </div>
-      </div>
-   </div>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{% trans "Supprimer un membre " %}</h4>
+            </div>
+            <div class="modal-body">
+                <span style="margin-bottom:0.2em">{% trans "Êtes vous sûr de vouloir supprimer ce membre ?" %}</span></br>
+                <strong><span id="confirm_name"></span></strong>
+                <span id='confirm_first_name'></span>
+            </div>
+            <div class="modal-footer" id="confirm" style="padding-bottom:1em">
+                <form method="POST" id="delete_form">
+                    {% csrf_token %}
+                    <input type='hidden' name='username' id="username" value="" />
+                    <input type="submit" value='{% trans "Oui" %}' class="btn btn-primary" />
+                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "No" %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 <script>
-   function fillModal($this, value){
+function fillModal($this, value) {
     var member_type = $($this).closest('td').prev('td');
     var username = $(member_type).prev('td');
     console.log(username);
-    var first_name=$(username).prev('td').prev('td').prev('td');
-    var  last_name= $(first_name).prev('td');
+    var first_name = $(username).prev('td').prev('td').prev('td');
+    var last_name = $(first_name).prev('td');
 
-     document.getElementById("username").value = username.text() ;
-     document.getElementById("confirm_name").textContent = last_name.text() ;
-     document.getElementById("confirm_first_name").textContent = first_name.text() ;
-     document.getElementById("delete_form").action = "/commission/delete/" ;
-   }
+    document.getElementById("username").value = username.text();
+    document.getElementById("confirm_name").textContent = last_name.text();
+    document.getElementById("confirm_first_name").textContent = first_name.text();
+    document.getElementById("delete_form").action = "/commission/delete/";
+}
 </script>

@@ -7,6 +7,7 @@ from mecc.apps.utils.ws import ask_camelot, get_pple, get_from_ldap
 from .models import ECICommissionMember
 from .forms import ECIForm
 from ..adm.models import MeccUser
+from django.contrib.auth.models import User
 
 
 def home(request, template='commission/home.html'):
@@ -46,7 +47,7 @@ def get_list_of_pple(request):
     if request.is_ajax():
         x = request.GET.get('member', '')
         if len(x) > 1:
-            data['pple'] = get_from_ldap(x)
+            data['pple'] = [e for e in get_from_ldap(x) if e['username'] not in [e.username for e in ECICommissionMember.objects.all()]]
             return JsonResponse(data)
         else:
             return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})

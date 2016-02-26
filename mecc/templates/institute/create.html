@@ -5,7 +5,7 @@
 {% trans 'Fiche composante' %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
 ID Composante (auto) : {{latest_id}}
 <form action="{% url 'institute:home' %}" method="post">
    {% csrf_token %}

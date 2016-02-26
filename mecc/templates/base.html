@@ -48,6 +48,12 @@
                    {% endif %}>{% trans 'Administration' %}</a>
 
                </li>
+               <li>
+                   <a href="/"
+                   {% if 'rules' in request.path %}
+                      class="item-selected"
+                   {% endif %}>{% trans "Usurpation d'identité" %}</a>
+               </li>
                  <li>
                      <a href="/"
                      {% if 'board' in request.path %}
@@ -142,10 +148,13 @@
                    {% endblock %}
                </div>
                </div>
-                       {% block content %}
-                       Page d'accueil de mecc
-                       {% endblock %}
+               {% block app_content %}
+               {% endblock %}
 
+             </div>
+             <div>
+               {% block admin_content %}
+               {% endblock %}
              </div>
          </div>
          <!-- /#page-content-wrapper -->

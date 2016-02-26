@@ -2,156 +2,152 @@
 {% load dipstrapfiles %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
+<script src="{% static 'js/srtable.js' %}">
 
-
-<script src="{% static 'js/srtable.js' %}"></script>
+</script>
 
 <!-- Modal -->
 <div class="modal fade" id="searchMember" role="dialog" style="z-index: 1400;">
-   <div class="modal-dialog modal-90" >
-      <!-- Modal content-->
-      <div class="modal-content select-pple">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
-         </div>
-         <div class="modal-body">
-            <div id='error'></div>
-            <div class="input-group">
-               <input type="text" class="form-control" placeholder="{% trans 'Nom' %}" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
-               <span class="input-group-btn">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content select-pple">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
+            </div>
+            <div class="modal-body">
+                <div id='error'></div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="{% trans 'Nom' %}" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+                    <span class="input-group-btn">
                <button class="btn btn-default" type="button" onclick="searchMember()">
                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-               </button>
-               </span>
+                    </button>
+                    </span>
+                </div>
+                <table>
+                </table>
+                <!-- /input-group -->
+
+                <div class="table-responsive" style="display:none" id="table-resp">
+                <br>
+                    <table class="table results order-table sortable" id="sortabletable">
+                        <thead id="to-fill">
+                            <tr class='table-head'>
+                                <th> {% trans 'Nom' %}</th>
+                                <th> {% trans 'Prénom' %}</th>
+                                <th> {% trans 'Statut' %}</th>
+                                <th> {% trans 'Composante' %}</th>
+                                <th> {% trans 'Mail' %}</th>
+                                <th> {% trans 'ID Membre' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="load-wrap" style="display:none">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
             </div>
-            <table>
-            </table>
-            <!-- /input-group -->
-
-            <br>
-            <div class="table-responsive" style="display:none" id="table-resp">
-
-            <table class="table results order-table sortable"  id="sortabletable" >
-               <thead id="to-fill">
-                  <tr class='table-head'>
-                     <th> {% trans 'Nom' %}</th>
-                     <th> {% trans 'Prénom' %}</th>
-                     <th> {% trans 'Statut' %}</th>
-                     <th> {% trans 'Composante' %}</th>
-                     <th> {% trans 'Mail' %}</th>
-                     <th> {% trans 'ID Membre' %}</th>
-                  </tr>
-               </thead>
-               <tbody id="table">
-               </tbody>
-            </table>
-
-         </div>
-            <div id="load-wrap" style="display:none">
-               <div class="circle"></div>
-               <div class="circle"></div>
-               <div class="circle"></div>
-               <div class="circle"></div>
-            </div>
-       </div>
-      </div>
-   </div>
+        </div>
+    </div>
 </div>
 
 
 <div class="modal fade fade" id="selectedMember" role="dialog" style="display:none">
-   <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
-         </div>
-         <div class="modal-body" style="padding-bottom:0">
-           <form method="post" action="" class="">
-
-
-            {% crispy form %}
-            <div class="modal-footer">
-            <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
-            <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
-          </form>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0">
+                <form method="post" action="" class="">
+                    {% crispy form %}
+                    <div class="modal-footer">
+                        <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
+                        <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+                </form>
+                </div>
+            </div>
         </div>
-         </div>
-      </div>
-   </div>
+    </div>
 </div>
 
-
-
 <script type="text/javascript">
-var last_search = null
-   function searchMember(){
-     var new_tbody = document.createElement('tbody');
-      old_tbody = document.getElementById('table')
-      new_tbody.setAttribute("id", "table");
-      old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
-     search = document.getElementById("to-search").value;
-     if (search != last_search){
-       last_search = search;
-     document.getElementById('load-wrap').style.display = '';
-     $.ajax({
+
+function searchMember() {
+    var new_tbody = document.createElement('tbody');
+    old_tbody = document.getElementById('table')
+    new_tbody.setAttribute("id", "table");
+    old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
+    search = document.getElementById("to-search").value;
+    document.getElementById('load-wrap').style.display = '';
+    $.ajax({
         url: "{% url 'commission:get_pple'%}",
-        type : "GET",
+        type: "GET",
         data: {
-          member: search,
+            member: search,
         },
         success: function(data) {
             document.getElementById('load-wrap').style.display = 'none';
             document.getElementById('error').style.display = 'none';
-          if (data.message) {
-            document.getElementById('confirm').style.display = 'none';
-            $('#error').html("<div class='alert alert-warning fade in'>" +
-              "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-              data.message + "</div>");
-              document.getElementById('error').style.display = '';
+            if (data.message) {
+                document.getElementById('confirm').style.display = 'none';
+                $('#error').html("<div class='alert alert-warning fade in'>" +
+                    "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                    data.message + "</div>");
+                document.getElementById('error').style.display = '';
 
-          } else {
-            document.getElementById('table-resp').style.display = '';
-            parent_table = document.getElementById('table');
-            for (var i = 0; i < data.pple.length; i++){
-              var tr = document.createElement('tr');
-                tr.appendChild(document.createElement('td'))
-                tr.appendChild(document.createElement('td'))
-                tr.appendChild(document.createElement('td'))
-                tr.appendChild(document.createElement('td'))
-                tr.appendChild(document.createElement('td'))
-                tr.appendChild(document.createElement('td'))
-              tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
-              tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
-              tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
-              tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
-              tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
-              tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
-              tr.className += 'hover-row hit select gen-table'
-              parent_table.appendChild(tr)
+            } else {
+                document.getElementById('table-resp').style.display = '';
+                parent_table = document.getElementById('table');
+                for (var i = 0; i < data.pple.length; i++) {
+                    var tr = document.createElement('tr');
+                    tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
+                    tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
+                    tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
+                    tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
+                    tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
+                    tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
+                    tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
+                    tr.className += 'hover-row hit select gen-table'
+                    parent_table.appendChild(tr)
+                };
+
+                $(".modal").on("hidden.bs.modal", function() {
+                    document.getElementById('table-resp').style.display = 'none';
+                    document.getElementById("to-search").value = "";
+                });
+
+                $(".hit").click(function() {
+                    $('#selectedMember').modal('show');
+                    $('#searchMember').modal('hide');
+                    var last_name = $(this).closest('tr').children('td:first');
+                    var first_name = $(last_name).next('td');
+                    var status = $(first_name).next('td');
+                    var institute = $(first_name).next('td').next('td');
+                    var mail = $(institute).next('td');
+                    var id = $(mail).next('td');
+                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+                    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+                    document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
+                    document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
+                    document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
+                    document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+                });
             }
-
-$(".hit").click(function(){
-$('#selectedMember').modal('show');
-$('#searchMember').modal('hide');
-var last_name=$(this).closest('tr').children('td:first');
-var first_name = $(last_name).next('td');
-var status = $(first_name).next('td');
-var institute = $(first_name).next('td').next('td');
-var mail = $(institute).next('td');
-var id = $(mail).next('td');
-document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
-document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
-document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
-document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
-document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
-});
-        }}
-      })
-    //  location.href = '/commission/search/?member=' + search;
-  };
-     }
+        }
+    })
+}
 </script>

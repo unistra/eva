@@ -6,17 +6,17 @@
 {% trans 'Liste des composantes' %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
 {% if ordered_list %}
 {% regroup ordered_list by field as institute_list %}
 <div class='flex-container' style="flex-direction:column">
 <table class="table" style="order:1">
 <tr class='fixed'>
-   <th style="border-style:none" width=45%></th>
-   <th>{% trans "Directeur" %}</th>
-   <th>{% trans 'Responsable admin' %}</th>
-   <th>{% trans 'Date prév Conseil' %}</th>
-   <th>{% trans 'Date dernière notif MECC' %}</th>
+   <th style="border-style:none" width=40%></th>
+   <th width=23%>{% trans "Directeur" %}</th>
+   <th width=23%>{% trans 'Responsable admin' %}</th>
+   <th width=7%>{% trans 'Date prév Conseil' %}</th>
+   <th width=7%>{% trans 'Date dernière notif MECC' %}</th>
 </tr>
 
 {% for field in institute_list  %}

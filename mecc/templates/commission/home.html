@@ -5,110 +5,66 @@
 {% trans 'Commission ECI et étudiants élus' %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
   {% if commission_staff %}
-  {# <input type="search" class="table-filter" data-table="order-table" placeholder="{% trans 'Filtrer' %}">#}
-
-    <table class="table order-table">
+  <table class="table order-table">
       <thead>
-       <tr class='table-head'>
-         <th> {% trans 'Nom' %}</th>
-         <th> {% trans 'Prénom' %}</th>
-         <th> {% trans 'ID Membre' %}</th>
-         <th> {% trans 'Type' %}</th>
-         <th></th>
-       </tr>
-       <thead>
+          <tr class='table-head'>
+              <th> {% trans 'Nom' %}</th>
+              <th> {% trans 'Prénom' %}</th>
+              <th> {% trans 'ID Membre' %}</th>
+              <th> {% trans 'Type' %}</th>
+              <th></th>
+          </tr>
+          <thead>
 
-       <tbody >
-       {% for e in commission_staff %}
-       <tr class="hover-row">
-          <td>{{e.last_name}}</td>
-          <td>{{e.first_name}}</td>
-          <td>{{e.username}}</td>
-          <td>
-             <select class='select-type'>
-             <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
-             <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
-             <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
-             </select>
-          </td>
-          <td>
-             <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
-          </td>
-       </tr>
-       {% endfor %}
-     </tbody>
-    </table>
-    {% else %}
-    {% trans "Il n'y a aucun membre." %}
-    </br>
+              <tbody>
+                  {% for e in commission_staff %}
+                  <tr class="hover-row">
+                      <td>{{e.last_name}}</td>
+                      <td>{{e.first_name}}</td>
+                      <td>{{e.username}}</td>
+                      <td>
+                          <select class='select-type'>
+               <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
+               <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
+               <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
+               </select>
+                      </td>
+                      <td>
+                          <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+  </table>
+  {% else %} {% trans "Il n'y a aucun membre." %}
+  </br>
   {% endif %}
-<div style='text-align: center;margin-top:2em;'>
-   <a data-toggle="modal" data-target="#searchMember" class="btn btn-primary"> {% trans 'Ajouter un membre' %}</a>
-   {% if commission_staff %}
-   <a href="mailto:{{staff_mails}}" class="btn btn-primary"> {% trans "Envoyer un message" %}</a>
-   {% endif %}
-</div>
+  <div style='text-align: center;margin-top:2em;'>
+      <a data-toggle="modal" data-target="#searchMember" class="btn btn-primary"> {% trans 'Ajouter un membre' %}</a> {% if commission_staff %}
+      <a href="mailto:{{staff_mails}}" class="btn btn-primary"> {% trans "Envoyer un message" %}</a> {% endif %}
+  </div>
+
+
 {% include "commission/search_member.html" %}
 {% include "commission/delete_member.html" %}
 
 <script>
-   $('.select-type').on('change', function() {
-     new_type = this.value;
-     id = $(this).parents('td').prev().text();
-     console.log(id);
-     $.ajax({
-       url: "/commission/",
-       type: "POST",
-       data : {
-         username: id,
-         type_member: new_type,
-         csrfmiddlewaretoken: '{{ csrf_token }}'
-       },
-     });
-   });
-   (function(document) {
-   'use strict';
+$('.select-type').on('change', function() {
+    new_type = this.value;
+    id = $(this).parents('td').prev().text();
+    console.log(id);
+    $.ajax({
+        url: "/commission/",
+        type: "POST",
+        data: {
+            username: id,
+            type_member: new_type,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+    });
+});
 
-   var TableFilter = (function(Arr) {
-
-   var _input;
-
-   function _onInputEvent(e) {
-   	_input = e.target;
-   	var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
-   	Arr.forEach.call(tables, function(table) {
-   		Arr.forEach.call(table.tBodies, function(tbody) {
-   			Arr.forEach.call(tbody.rows, _filter);
-
-   		});
-
-   	});
-   }
-
-   function _filter(row) {
-   	var text = row.childNodes[0].textContent.toLowerCase(), val = _input.value.toLowerCase();
-    console.log(text);
-   	row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
-   }
-
-   return {
-   	init: function() {
-   		var inputs = document.getElementsByClassName('table-filter');
-   		Arr.forEach.call(inputs, function(input) {
-   			input.oninput = _onInputEvent;
-   		});
-   	}
-   };
-   })(Array.prototype);
-
-   document.addEventListener('readystatechange', function() {
-   if (document.readyState === 'complete') {
-   	TableFilter.init();
-   }
-   });
-
-   })(document);
 </script>
 {% endblock %}

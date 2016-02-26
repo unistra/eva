@@ -1,0 +1,51 @@
+[{
+    "model": "adm.profile",
+    "pk": 1,
+    "fields": {
+        "label": "Responsable Formation Scolarit\u00e9",
+        "code": "REFSCOL"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 2,
+    "fields": {
+        "label": "Directeur de la composante",
+        "code": "DIRETU"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 3,
+    "fields": {
+        "label": "Responsable administratif",
+        "code": "GESCOL"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 4,
+    "fields": {
+        "label": "Responsable de formation",
+        "code": "RESPFORM"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 5,
+    "fields": {
+        "label": "Directeur d'\u00e9tudes",
+        "code": "RAC"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 6,
+    "fields": {
+        "label": "Directeur de composante",
+        "code": "DIRCOMP"
+    }
+}, {
+    "model": "adm.profile",
+    "pk": 7,
+    "fields": {
+        "label": "Membre de la commission ECI",
+        "code": "ECI"
+    }
+}
+]

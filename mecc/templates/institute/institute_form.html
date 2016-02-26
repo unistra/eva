@@ -12,11 +12,10 @@
 {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
 
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/autocomplete.js' %}"></script>
-
 <div class='flex-container'>
 <form action="" method="post" id='form-comp'>
 <div id="div_auto_id">
@@ -29,12 +28,9 @@
   <hr id="hr3">
   {% crispy form %}
 
-    <input id="btn-add-composante" class="btn btn-primary btn-lines" type="submit" value=
-  {% if object%}
-  "{% trans 'Éditer la composante' %}"
-  {% else %}
-    "{% trans 'Ajouter une composante' %}"
-  {% endif %}/>
+    <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
+     type="submit" value="{% trans 'Valider et fermer la fiche' %}"
+     onclick="_isDirty=false"/>
 <div id='first'></div>
 </form>
 <div id="comp-right">
@@ -105,9 +101,7 @@
   </div>
 
 
-<a id="comp-right-btn-close"  href="{% url 'institute:home' %}" class="btn btn-primary btn-lines">
-   {% trans 'Fermer la fiche' %}
- </a>
+ <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
 
  <input id="input_prof_id_member" placeholder="Prof_id" />
  <input id="input_prof_last_name" placeholder="Prof_last_name" />
@@ -121,13 +115,35 @@
  <input id="input_adm_first_name" placeholder="adm_first_name" />
  <input id="input_adm_mail" placeholder="adm_mail" >
  <input id="input_adm_status" placeholder="adm_status"/>
-
  <script type="text/javascript">
  // Get cmp code in order to search people
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+   var _isDirty = false;
+   $(':input').change(function () {
+     old_val = this.value;
+     _isDirty = true;
+     console.log(old_val);
+   });
+
+
  $(document).ready(function () {
+
+
+   window.onbeforeunload = function (e) {
+   if (_isDirty === true) {
+   var e = e || window.event;
+
+   // For IE and Firefox
+   if (e) {
+     e.returnValue = 'Des modifications ont été effectuées.';
+   }
+
+   // For Safari
+   return 'Des modifications ont été effectuées.';
+ };
+   };
 
 
 $.getJSON(url_prof, function (data) {

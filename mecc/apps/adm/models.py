@@ -3,6 +3,14 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
+class Profile(models.Model):
+    code = models.CharField(_('Code du profil'), max_length=10)
+    label = models.CharField(_('Libellé du profil'), max_length=30)
+
+    def __str__(self):
+        return self.label
+
+
 class MeccUser(models.Model):
         STATUS_CHOICES = (
             ('STU', _('Étudiant')),
@@ -26,9 +34,18 @@ class MeccUser(models.Model):
         status = models.CharField(
             _('Statut'), max_length=4, choices=STATUS_CHOICES, blank=True)
 
-        profile = models.CharField(
-            _("Profil"), max_length=10, choices=PROFILE_CHOICES, blank=True)
+        profile = models.ManyToManyField(Profile)
 
 
 class ScolManager(MeccUser):
     is_ref_app = models.BooleanField(_("Référent application"))
+
+
+class Group_DES3(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    class Meta:
+        permissions = (
+            ('Can spoof user identity ',
+             _('Peut usurper l\'identité des utilisateurs')),
+        )
