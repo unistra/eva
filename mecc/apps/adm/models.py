@@ -36,7 +36,6 @@ class MeccUser(models.Model):
 
         profile = models.ManyToManyField(Profile)
 
-
 class ScolManager(MeccUser):
     is_ref_app = models.BooleanField(_("Référent application"))
 
@@ -46,6 +45,6 @@ class Group_DES3(models.Model):
 
     class Meta:
         permissions = (
-            ('Can spoof user identity ',
+            ('can_spoof_user',
              _('Peut usurper l\'identité des utilisateurs')),
         )

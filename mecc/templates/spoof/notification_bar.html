@@ -1,0 +1,6 @@
+{% load i18n %}
+<div id="spoof-warning" class="alert" role="alert">
+    {% blocktrans with user=request.user%}Vous êtes en train d'usurper l'identité de {{ user }}.{% endblocktrans %}
+    <a href="todo" type="button" class="btn btn-default btn-sm django-hijack-button-bootstrap">{% blocktrans with user=request.user %}Relacher {{ user }}{% endblocktrans %}</a>
+    <a href="todo" type="button" class="close" data-dismiss="alert">×</a>
+</div>

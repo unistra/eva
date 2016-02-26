@@ -1,6 +1,6 @@
 .breadcrumbs {
     padding-left: 1.5em;
-    background-color: #F5F5F5;
+    background-color: #F5F8FE;
     margin-bottom: 2em;
 }
 .sortoptions{
@@ -38,7 +38,7 @@ a.section{
     margin: 1em 0 1em 0;
     text-align: left;
     font-weight: bold;
-    background: grey;
+    background: #005CA8;
     color: white;
 }
 caption {
@@ -106,7 +106,7 @@ user agent stylesheetli {
     float: left;
     color: #fff;
     padding: .2em 10px;
-    background: #999;
+    background: #0400B5;
 }
 a:link, a:visited {
     text-decoration: none;
@@ -698,7 +698,7 @@ select[multiple]{
     right: 0;
     z-index: 1000;
     width: 10em;
-    background: #f8f8f8;
+    background: #F5F8FE;
     border-left: none;
     margin: 0;
 }

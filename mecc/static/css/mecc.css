@@ -2,6 +2,10 @@
   font-family: "Times New Roman", Times, serif;
 }
 
+#spoof-warning{
+  background: lightgreen;
+  }
+
 .font-color-grey{
   color:grey;
 }
@@ -474,4 +478,36 @@ select{
   border:0;
   padding: 0;
   background-color: #F5F8FE;
+}
+
+.login-page {
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-box-flex-direction: row;
+  -moz-box-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  height: 100%;
+  background-color: #eee;
+}
+.login-form {
+  width: 480px;
+  margin: auto;
+}
+form {
+  width: 100%;
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+}
+.login-form input,
+.login-form button {
+  width: 100%;
+  margin: 5px 0;
 }

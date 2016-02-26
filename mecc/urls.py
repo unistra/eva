@@ -15,6 +15,8 @@ urlpatterns = patterns(
         namespace='degree')),
     url(r'^institute/', include('mecc.apps.institute.urls',
         namespace='institute')),
+    url(r'^spoof/', include('mecc.apps.spoof.urls',
+        namespace='spoof')),
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),

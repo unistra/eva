@@ -26,6 +26,7 @@
 
 <body>
 
+         {% include "spoof/notification_bar.html" %}
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
         <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
@@ -38,9 +39,9 @@
         </div>
     </div>
          <!-- Sidebar -->
-
          <div id="sidebar-wrapper">
              <ul class="sidebar-nav">
+               {% if request.user.is_active and request.user.is_staff %}
                <li>
                    <a href="/admin"
                    {% if 'admin' in request.path %}
@@ -48,12 +49,15 @@
                    {% endif %}>{% trans 'Administration' %}</a>
 
                </li>
+               {% endif %}
+               {% if perms.adm.can_spoof_user %}
                <li>
-                   <a href="/"
-                   {% if 'rules' in request.path %}
+                   <a href="/spoof"
+                   {% if 'spoof' in request.path %}
                       class="item-selected"
                    {% endif %}>{% trans "Usurpation d'identité" %}</a>
                </li>
+               {% endif %}
                  <li>
                      <a href="/"
                      {% if 'board' in request.path %}
