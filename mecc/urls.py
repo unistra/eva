@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
+from django_cas.decorators import login_required
 
 from django.contrib import admin
 admin.autodiscover()
@@ -20,7 +21,6 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),
-    # url(r'^hijack/', include('hijack.urls')),
 
 )
 

@@ -5,7 +5,10 @@ from django.template import RequestContext
 from mecc.apps.years.models import UniversityYear
 from django.core.exceptions import ObjectDoesNotExist
 
+from django_cas.decorators import login_required
 
+
+@login_required
 def home(request):
     try:
         o = UniversityYear.objects.get(is_target_year=True)

@@ -48,21 +48,8 @@
                  <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                </a>
                <div class="page-header" style="margin:0 0 20px">
-      <a href="/accounts/logout" class="btn btn-warning btn-xs pull-right no-print">Déconnexion</a>
-      <button  data-toggle="modal" data-target="#contact_modal" class="btn btn-default btn-xs pull-right no-print">Contact</button>
-    <div class="modal fade" id="contact_modal" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Contact :</h4>
-          </div>
-          <div class="modal-body">
-            <p>Pour toute question liée à ce service en ligne, contacter <a href='mailto:des-support@rt.unistra.fr'>des-support@rt.unistra.fr</a> en indiquant vos nom/prénom et numéro d'étudiant.</p>
-          </div>
-        </div>
+                 {% include "head_button.html"%}
 
-      </div>
     </div>
                <div id='title'>
                    {% block page-header %}

@@ -4,24 +4,19 @@ from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
     InstituteListView,  get_list, edit_insitute
 from django.views.generic.list import ListView
 from .models import Institute
+from django_cas.decorators import login_required
 
 
 urlpatterns = [
-    # url(r'^$', views.home,
-    #     name='home'),
-    # url(r'^(?P<code>\w+)', views.edit,
-    #     name='edit'),
-    # url(r'^create/$', views.create,
-    #     name='create'),
-    url(r'^$', InstituteListView.as_view(),
+    url(r'^$', login_required(InstituteListView.as_view()),
         name='home'),
-    url(r'^new/$', InstituteCreate.as_view(),
+    url(r'^new/$', login_required(InstituteCreate.as_view()),
         name='create'),
-    url(r'^details/(?P<code>\w+)', InstituteUpdate.as_view(),
+    url(r'^details/(?P<code>\w+)', login_required(InstituteUpdate.as_view()),
         name='edit'),
     # url(r'^details/(?P<code>\w+)', edit_insitute,
     #     name='edit'),
-    url(r'^delete/(?P<code>\w+)', InstituteDelete.as_view(),
+    url(r'^delete/(?P<code>\w+)', login_required(InstituteDelete.as_view()),
         name='delete'),
     url(r'^ressources/(?P<employee_type>|prof|adm|stud)/(?P<pk>[a-zA-Z]{3})',
         get_list, name='get_list'),

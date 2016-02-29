@@ -8,7 +8,7 @@ from django_cas.decorators import login_required
 
 
 @login_required
-def home(request, template='adm/home.html'):
+def home(request, template='spoof/form.html'):
     asked_user = request.POST.get('asked_username')
     generic_pass = request.POST.get('pass')
     data = {}

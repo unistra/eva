@@ -9,8 +9,8 @@
 <div>
     <form action=" " class="login-form" method="post" style="width:50%">
       {% csrf_token %}
-      <input name="asked_username" type="text" placeholder="ID utilisateur"/>
-      <input name="pass" type="password" placeholder="mot de passe générique"/>
+      <input name="asked_username" type="text" placeholder='{% trans "ID utilisateur à usurper" %}'/>
+      <input name="pass" type="password" placeholder= '{% trans "mot de passe générique : motdepasse" %}'/>
       <button class="btn btn-primary">Usurper l'identité</button>
     </form>
 </div>
