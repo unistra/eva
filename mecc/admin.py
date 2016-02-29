@@ -108,7 +108,6 @@ def get_admin_urls(urls):
         return my_urls + urls
     return get_urls
 
-admin.site.get_urls = get_admin_urls(admin.site.get_urls())
 
 
 # Set & Register adm stuff
@@ -118,5 +117,6 @@ admin.site.unregister(Site)
 admin.site.register(User, UserAdmin)
 
 
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())
 admin.site.site_header = "Administration"
 admin.site.site_title = 'MECC'

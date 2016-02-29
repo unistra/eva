@@ -2,6 +2,24 @@
   display: none;
 }
 
+
+.errorlist li{
+    background-color: #fcf8e3;
+    width: 50%;
+    padding: 1em;
+    align: center;
+    margin-left: 2.3em;
+}
+
+.success{
+  background-color: #dff0d8;
+  list-style: none;
+  width: 50%;
+  padding: 1em;
+  margin: auto;
+
+
+}
 .inline-related,.object-tools {
   position: relative;
 }
