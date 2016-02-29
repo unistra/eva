@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field, \
     HTML
 from crispy_forms.bootstrap import InlineField, FormActions
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 
 class DegreeTypeForm(forms.ModelForm):

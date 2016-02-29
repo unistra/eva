@@ -25,9 +25,6 @@
 
 
 <body>
-  {% if request.session.is_spoofed_user.%}
-         {% include "spoof/notification_bar.html" %}
-  {% endif %}
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
         <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
@@ -37,9 +34,13 @@
             </div>
              </ul>
                 <span id='nav-right'>{{request.session.current_year}}</span>
+
         </div>
     </div>
          <!-- Sidebar -->
+               {% if request.session.is_spoofed_user%}
+                      {% include "spoof/notification_bar.html" %}
+               {% endif %}
          {% include "sidebar.html" %}
 
          <div id="page-content-wrapper">

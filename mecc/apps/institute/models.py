@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, ScolManager
@@ -52,6 +52,11 @@ class Institute(models.Model):
     def get_absolute_url(self):
         return reverse('institute:home', args=(self.code,))
 
-
     def __str__(self):
         return "%s - %s" % (self.code, self.label)
+
+    class Meta:
+        permissions = (
+            ('can_view_institute',
+             _('Peut voir les composantes')),
+        )

@@ -8,9 +8,14 @@
 {% block app_content %}
 <div>
     <form action=" " class="login-form" method="post" style="width:50%">
+{% if error %}
+      <div class="alert alert-warning" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+{{error}}</div>
+{% endif %}
       {% csrf_token %}
       <input name="asked_username" type="text" placeholder='{% trans "ID utilisateur à usurper" %}'/>
-      <input name="pass" type="password" placeholder= '{% trans "mot de passe générique : motdepasse" %}'/>
+      <input name="pass" type="password" placeholder= '{% trans "mot de passe générique : 123456" %}'/>
       <button class="btn btn-primary">Usurper l'identité</button>
     </form>
 </div>

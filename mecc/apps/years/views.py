@@ -5,7 +5,7 @@ from django.views.generic.list import ListView
 from django.utils import timezone
 from .forms import UniversityYearForm, InstituteYear2Form
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils.encoding import smart_text
 from django.shortcuts import redirect, render
 from fm.views import AjaxCreateView

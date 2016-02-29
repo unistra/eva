@@ -2,9 +2,15 @@
   font-family: "Times New Roman", Times, serif;
 }
 
-#spoof-warning{
-  background: lightgreen;
-  }
+#spoof-alert{
+margin-bottom: 0!important;
+position: fixed;
+display: block;
+z-index: 1000;
+width: 100;
+height:4em;
+right: 0;
+}
 
 .font-color-grey{
   color:grey;

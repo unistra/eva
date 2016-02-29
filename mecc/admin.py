@@ -4,8 +4,9 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from django import forms
-from django.utils.translation import ugettext_lazy as _
-
+from django.utils.translation import ugettext as _
+from django.conf.urls import patterns
+from django.shortcuts import render
 from .apps.adm.models import MeccUser
 
 
@@ -83,6 +84,32 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ("username", "last_name", "first_name", "email")}),
         (None, {'fields': ('is_superuser', 'is_staff', 'groups')}),
     )
+
+
+def editDES3password(request, template='admin/DES3.html'):
+    data = {}
+    if request.user.is_superuser:
+        if request.POST:
+            gen_user, created = User.objects.get_or_create(username='DES3')
+            passw = request.POST.get('pass')
+            gen_user.set_password(passw)
+            gen_user.save()
+            data['message'] = _('Le mot de passe a bien été modifié')
+
+        return render(request, template, data)
+
+
+def get_admin_urls(urls):
+    def get_urls():
+        my_urls = patterns(
+            '',
+            (r'^DES3/$', admin.site.admin_view(editDES3password)),
+        )
+        return my_urls + urls
+    return get_urls
+
+admin.site.get_urls = get_admin_urls(admin.site.get_urls())
+
 
 # Set & Register adm stuff
 

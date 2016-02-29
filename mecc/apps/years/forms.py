@@ -3,7 +3,7 @@ from mecc.apps.years.models import UniversityYear, InstituteYear2
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 
 class UniversityYearForm(forms.ModelForm):

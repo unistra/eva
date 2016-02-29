@@ -1,6 +1,7 @@
 {% load i18n %}
-<div id="spoof-warning" class="alert" role="alert">
-    {% blocktrans with user=request.user%}Vous êtes en train d'usurper l'identité de {{ user }}.{% endblocktrans %}
-    <a href="todo" type="button" class="btn btn-default btn-sm django-hijack-button-bootstrap">{% blocktrans with user=request.user %}Relacher {{ user }}{% endblocktrans %}</a>
-    <a href="todo" type="button" class="close" data-dismiss="alert">×</a>
+<div class="alert alert-danger pull-right" role="alert" id='spoof-alert'>
+<span class="glyphicon-warning-sign glyphicon" aria-hidden="true"></span>
+{% blocktrans with user=request.user%}Vous êtes en train d'usurper l'identité de '{{ user }}'.{% endblocktrans %}
+<a href="{% url 'spoof:release'%}" type="button" class="btn btn-danger btn-xs ">
+  {% trans "Stopper l'usurpation" %}</a>
 </div>

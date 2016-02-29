@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<div>
+  {% if message %}
+  <div class="alert alert-success" role="alert">
+{{message}}</div>
+  {% endif%}
+    <form action="" class="login-form" method="post" style="width:50%">
+      {% csrf_token %}
+      <div class="form-group" id="div_pass">
+         <label class="control-label col-lg-5" for="id_pass">
+      {% trans "Nouveau mot de passe : " %}   </label>
+         <div class="controls col-lg-6">
+           <input type="text" name="pass" id="pass" class="input-xlarge dateinput form-control">
+         </div>
+      </div>
+    <input name="submit" value="{% trans 'Modifier le mot de passe' %}" class="btn btn-primary" id="submit-pass" type="submit">
+    </form>
+</div>
+{% endblock %}
