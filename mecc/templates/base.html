@@ -25,8 +25,9 @@
 
 
 <body>
-
+  {% if request.session.is_spoofed_user.%}
          {% include "spoof/notification_bar.html" %}
+  {% endif %}
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
         <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
@@ -39,90 +40,7 @@
         </div>
     </div>
          <!-- Sidebar -->
-         <div id="sidebar-wrapper">
-             <ul class="sidebar-nav">
-               {% if request.user.is_active and request.user.is_staff %}
-               <li>
-                   <a href="/admin"
-                   {% if 'admin' in request.path %}
-                      class="item-selected"
-                   {% endif %}>{% trans 'Administration' %}</a>
-
-               </li>
-               {% endif %}
-               {% if perms.adm.can_spoof_user %}
-               <li>
-                   <a href="/spoof"
-                   {% if 'spoof' in request.path %}
-                      class="item-selected"
-                   {% endif %}>{% trans "Usurpation d'identité" %}</a>
-               </li>
-               {% endif %}
-                 <li>
-                     <a href="/"
-                     {% if 'board' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Tableau de bord' %}</a>
-
-                 </li>
-                 <li>
-                     <a href="{% url 'commission:home'%}"
-                     {% if 'commission' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Commission ECI' %}</a>
-
-                 </li>
-                 <li>
-                     <a href="{% url 'institute:home'%}"
-                     {% if 'institute' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Composantes' %}</a>
-
-                 </li>
-                 <li>
-                     <a href="{% url 'years:home' %}"
-                     {% if 'year' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Années universitaires' %}</a>
-                 </li>
-                  <li class="dropdown">
-                     <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-                    >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
-                     <ul class="collapse {% if 'degree' in request.path %} in {% endif %} "id="collapseDegree">
-                       <li><a href="{% url 'degree:type' %}"
-                        {% if 'degree/type' in request.path %}
-                          class="item-selected"
-                       {% endif %}>{% trans 'Types de diplômes' %}</a></li>
-                       <li><a href="{% url 'degree:list' %}"
-                         {% if 'degree/list' in request.path %}
-                          class="item-selected"
-                       {% endif %}>{% trans 'Liste des diplômes' %}</a></li>
-
-                    </ul>
-                 </li>
-                 <li>
-                     <a href="#"
-                     {% if 'rules' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Règles générales' %}</a>
-                 </li>
-                 <li style="margin-top:3em">
-                     <a href="#"
-                     {% if 'rules' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
-                 </li>
-                 <li class="bottom" id='hideme'>
-                     <a href="#"
-                     {% if 'rules' in request.path %}
-                        class="item-selected"
-                     {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
-                 </li>
-
-                     <!-- <p class="credit">&copy; DI - UDS - {% now "Y" %}</p> -->
-
-             </ul>
-         </div>
+         {% include "sidebar.html" %}
 
          <div id="page-content-wrapper">
              <div class="container-fluid">
