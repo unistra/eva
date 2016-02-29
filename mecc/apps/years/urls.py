@@ -4,12 +4,6 @@ from .views import UniversityYearUpdate, UniversityYearListView, \
     InstituteYear2ListView, InstituteYear2Create
 
 urlpatterns = [
-    # url(r'^$', views.home,
-    #     name='home'),
-    # url(r'^create/$', views.create,
-    #     name='create'),
-    # url(r'^(?P<code>\d+)', views.edit,
-    #     name='edit'),
     url(r'^(?P<code_year>\d+)', UniversityYearUpdate.as_view(),
         name='edit'),
     url(r'^$', UniversityYearListView.as_view(),

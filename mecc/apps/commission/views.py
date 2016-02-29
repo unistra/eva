@@ -8,8 +8,10 @@ from .models import ECICommissionMember
 from .forms import ECIForm
 from ..adm.models import MeccUser
 from django.contrib.auth.models import User
+from django_cas.decorators import login_required
 
 
+@login_required
 def home(request, template='commission/home.html'):
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username', '')
@@ -26,13 +28,13 @@ def home(request, template='commission/home.html'):
             instance = form_data.save(commit=False)
             instance.save()
 
-
     data['commission_staff'] = ECICommissionMember.objects.all()
     data['staff_mails'] = [e.email for e in data['commission_staff']]
 
     return render(request, template, data)
 
 
+@login_required
 def delete_member(request):
     if request.method == 'POST':
         username = request.POST.get('username', '')
@@ -42,6 +44,7 @@ def delete_member(request):
     return render(request)
 
 
+@login_required
 def get_list_of_pple(request):
     data = {}
     if request.is_ajax():
@@ -51,26 +54,3 @@ def get_list_of_pple(request):
             return JsonResponse(data)
         else:
             return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})
-
-
-def search(request, template='commission/select.html'):
-    pass
-    # if request.method == 'POST':
-    #     form_data = ECIForm(request.POST)
-    #     try:
-    #         instance = form_data.save(commit=False)
-    #         instance.save()
-    #     except ValueError as e:
-    #         return JsonResponse({'message': 'Les donnéees entrées ne\
-    #         permetttent pas de créer un membre.'})
-    #     return redirect('commission:home')
-    #
-    # data = {}
-    # x = request.GET.get('member', '')
-    # print(x)
-    # if x != '':
-    #     data['title'] = _('Résultats pour : "%s"' % x)
-    #     request.session['liste'] = data['liste'] = get_pple(x)
-    #     nb_found = len(data['liste'])
-    #     data['form'] = ECIForm
-    # return render(request, template, data)

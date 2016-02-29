@@ -10,14 +10,13 @@ from django.utils.encoding import smart_text
 from django.shortcuts import redirect, render
 from fm.views import AjaxCreateView
 
+from django_cas.decorators import login_required
 
 class InstituteYear2Create(AjaxCreateView):
     form_class = InstituteYear2Form
 
-
 class InstituteYear2ListView(ListView):
     model = InstituteYear2
-
 
 class UniversityYearDelete(DeleteView):
 
@@ -62,7 +61,7 @@ class UniversityYearListView(ListView):
 
     model = UniversityYear
 
-
+@login_required
 def initialize_year(request, code_year, template='years/initialize.html'):
     data = {}
     try:

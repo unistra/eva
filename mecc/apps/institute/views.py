@@ -20,7 +20,10 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.signals import request_finished
 
+from django_cas.decorators import login_required
 
+
+@login_required
 def get_list(request, employee_type, pk):
     if employee_type == 'prof':
         type_staff = 'Enseignant'
@@ -29,14 +32,6 @@ def get_list(request, employee_type, pk):
     t = get_list_from_cmp(cmp=pk, employee_type=type_staff, result=[])
     return JsonResponse(t, safe=False)
 
-
-def get_dircom_and_rac(request):
-    data = []
-    if request.is_ajax():
-        code = request.GET.get('code_cmp', '')
-        institute = Institute.objects.get(code=code)
-        data['dircomp'] = institute.dircomp
-        data['rac'] = institute.rac
 
 
 class InstituteDelete(DeleteView):
@@ -72,6 +67,7 @@ class InstituteCreate(CreateView):
     success_url = '/institute'
 
 
+@login_required
 def edit_insitute(request, template='institute/institute_form.html', code=None):
     if code:
         f = Institute.objects.get(code=code)
@@ -87,7 +83,6 @@ def edit_insitute(request, template='institute/institute_form.html', code=None):
         form = InstituteForm(instance=f)
 
     return render(request, template, {'form': form})
-
 
 
 class InstituteUpdate(UpdateView):
