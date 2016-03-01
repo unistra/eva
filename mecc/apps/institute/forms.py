@@ -20,14 +20,16 @@ class InstituteForm(forms.ModelForm):
             'class': 'input_prof',
             'readonly': 'readonly'
         }),
-        label=_('Directeur de composante'))
+        label=_('Directeur de composante'),
+        required=False)
 
     id_rac = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'input_adm',
             'readonly': 'readonly'
         }),
-        label=_('Responsable administratif'))
+        label=_('Responsable administratif'),
+        required=False)
 
     helper = FormHelper()
     helper.form_tag = False

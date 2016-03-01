@@ -78,7 +78,7 @@ def edit_insitute(request, template='institute/institute_form.html', code=None):
         form = InstituteForm(request.POST, request.FILES, instance=f)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/') # Redirect after POST
+            return redirect('institute:home') # Redirect after POST
     else:
         form = InstituteForm(instance=f)
 
