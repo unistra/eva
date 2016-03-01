@@ -30,8 +30,7 @@
 function fillModal($this, value) {
     var member_type = $($this).closest('td').prev('td');
     var username = $(member_type).prev('td');
-    console.log(username);
-    var first_name = $(username).prev('td').prev('td').prev('td');
+    var first_name = $(username).prev('td');
     var last_name = $(first_name).prev('td');
 
     document.getElementById("username").value = username.text();
