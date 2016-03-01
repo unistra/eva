@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <div class='flex-container'>
-<form action="" method="post" id='form-comp'>
+<form action="{% url 'institute:modify' object.code%}" method="post" id='form-comp'>
 <div id="div_auto_id">
   <label for="auto_id" class="control-label col-lg-5 requiredField">
                 {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
@@ -27,7 +27,19 @@
   <hr id="hr2">
   <hr id="hr3">
   {% crispy form %}
+  <div style="display:none">
+   <input id="input_prof_id_member" placeholder="Prof_id" />
+   <input id="input_prof_last_name" placeholder="Prof_last_name" />
+   <input id="input_prof_first_name" placeholder="Prof_first_name" />
+   <input id="input_prof_mail" placeholder="Prof_mail" >
+   <input id="input_prof_status" placeholder="Prof_status"/>
 
+   <input id="input_adm_id_member" placeholder="adm_id" />
+   <input id="input_adm_last_name" placeholder="adm_last_name" />
+   <input id="input_adm_first_name" placeholder="adm_first_name" />
+   <input id="input_adm_mail" placeholder="adm_mail" >
+   <input id="input_adm_status" placeholder="adm_status"/>
+  </div>
     <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
      onclick="_isDirty=false"/>
@@ -103,18 +115,6 @@
 
  <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
 
- <input id="input_prof_id_member" placeholder="Prof_id" />
- <input id="input_prof_last_name" placeholder="Prof_last_name" />
- <input id="input_prof_first_name" placeholder="Prof_first_name" />
- <input id="input_prof_mail" placeholder="Prof_mail" >
- <input id="input_prof_status" placeholder="Prof_status"/>
-
-</br>
- <input id="input_adm_id_member" placeholder="adm_id" />
- <input id="input_adm_last_name" placeholder="adm_last_name" />
- <input id="input_adm_first_name" placeholder="adm_first_name" />
- <input id="input_adm_mail" placeholder="adm_mail" >
- <input id="input_adm_status" placeholder="adm_status"/>
  <script type="text/javascript">
  // Get cmp code in order to search people
 code_cmp = document.getElementById("id_code").value
@@ -252,6 +252,7 @@ $.getJSON(url_prof, function (data) {
 </div>
 </div>
 <script>
+
 // Add checkbox next to id_code
 check_box = document.getElementById("div_id_is_on_duty");
 id_code = document.getElementById("id_code").parentNode;

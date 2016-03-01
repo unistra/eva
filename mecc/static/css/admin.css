@@ -2,7 +2,7 @@
   display: none;
 }
 
-
+#add_id_groups{display: none;}
 .errorlist li{
     background-color: #fcf8e3;
     width: 50%;

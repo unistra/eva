@@ -86,16 +86,16 @@ def get_from_ldap(val):
                         affiliation = _('Administratif')
                     else:
                         affiliation = _('Enseignant')
-                    person = {
-                        "last_name": e['last_name'],
-                        "first_name": e['first_name'].title(),
-                        "status": affiliation,
-                        "institute": cmp,
-                        "birth_date": e['birth_date'],
-                        "username": e['username'],
-                        "mail": e['mail'],
-                        }
-                    result.append(person)
+                person = {
+                    "last_name": e['last_name'],
+                    "first_name": e['first_name'].title(),
+                    "status": affiliation,
+                    "institute": cmp,
+                    "birth_date": e['birth_date'],
+                    "username": e['username'],
+                    "mail": e['mail'],
+                    }
+                result.append(person)
         return result
 
     client = create_client('ldap_client', settings.LDAP_TOKEN,

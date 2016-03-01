@@ -20,5 +20,7 @@ urlpatterns = [
         name='delete'),
     url(r'^ressources/(?P<employee_type>|prof|adm|stud)/(?P<pk>[a-zA-Z]{3})',
         get_list, name='get_list'),
+    url(r'^modify/(?P<code>\w+)', edit_insitute,
+        name='modify'),
 
 ]
