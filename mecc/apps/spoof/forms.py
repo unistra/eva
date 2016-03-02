@@ -1,9 +1,7 @@
-from mecc.apps.adm.models import Group_DES3
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field
 from crispy_forms.bootstrap import FormActions
-from mecc.apps.adm.models import Group_DES3
 from django.contrib.auth.models import User
 
 

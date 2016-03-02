@@ -1,6 +1,5 @@
 from django.conf.urls import url
-from .views import DES3Edit, DES3Create, home, release_user
-from mecc.apps.adm.models import Group_DES3
+from .views import home, release_user
 
 
 urlpatterns = [

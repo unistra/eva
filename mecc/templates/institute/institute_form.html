@@ -17,7 +17,11 @@
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <div class='flex-container'>
+{%if object%}
 <form action="{% url 'institute:modify' object.code%}" method="post" id='form-comp'>
+{% else %}
+<form action="" method="post" id='form-comp'>
+{% endif %}
 <div id="div_auto_id">
   <label for="auto_id" class="control-label col-lg-5 requiredField">
                 {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
@@ -28,17 +32,17 @@
   <hr id="hr3">
   {% crispy form %}
   <div style="display:none">
-   <input id="input_prof_id_member" placeholder="Prof_id" />
-   <input id="input_prof_last_name" placeholder="Prof_last_name" />
-   <input id="input_prof_first_name" placeholder="Prof_first_name" />
-   <input id="input_prof_mail" placeholder="Prof_mail" >
-   <input id="input_prof_status" placeholder="Prof_status"/>
+   <input id="input_dircomp_username_member" name="dircomp_username"  />
+   <input id="input_dircomp_last_name" name="dircomp_last_name" />
+   <input id="input_dircomp_first_name" name="dircomp_first_name" />
+   <input id="input_dircomp_mail" name="dircomp_mail" >
+   <input id="input_dircomp_status" name="dircomp_status"/>
 
-   <input id="input_adm_id_member" placeholder="adm_id" />
-   <input id="input_adm_last_name" placeholder="adm_last_name" />
-   <input id="input_adm_first_name" placeholder="adm_first_name" />
-   <input id="input_adm_mail" placeholder="adm_mail" >
-   <input id="input_adm_status" placeholder="adm_status"/>
+   <input id="input_rac_username_member" name="rac_username" />
+   <input id="input_rac_last_name" name="rac_last_name" />
+   <input id="input_rac_first_name" name="rac_first_name" />
+   <input id="input_rac_mail" name="rac_mail" >
+   <input id="input_rac_status" name="rac_status"/>
   </div>
     <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
@@ -122,9 +126,7 @@ var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
    var _isDirty = false;
    $(':input').change(function () {
-     old_val = this.value;
      _isDirty = true;
-     console.log(old_val);
    });
 
 
@@ -145,7 +147,7 @@ var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
  };
    };
 
-
+{% if object %}
 $.getJSON(url_prof, function (data) {
  var options = {
    data: data,
@@ -181,14 +183,18 @@ $.getJSON(url_prof, function (data) {
         var email = $(".input_prof").getSelectedItemData().mail;
         var status = $(".input_prof").getSelectedItemData().status;
 
-        $("#input_prof_id_member").val(username).trigger("change");
-        $("#input_prof_last_name").val(last_name).trigger("change");
-        $("#input_prof_first_name").val(first_name).trigger("change");
-        $("#input_prof_mail").val(email).trigger("change");
-        $("#input_prof_status").val(status).trigger("change");
+        $("#input_dircomp_username_member").val(username).trigger("change");
+        $("#input_dircomp_last_name").val(last_name).trigger("change");
+        $("#input_dircomp_first_name").val(first_name).trigger("change");
+        $("#input_dircomp_mail").val(email).trigger("change");
+        $("#input_dircomp_status").val(status).trigger("change");
+        $("#id_id_dircomp").val(last_name + " " + first_name).trigger("change");
       },
    	}
   };
+ $(".input_prof").click(function () {
+    $(".input_prof").val('');
+ });
  $(".input_prof").easyAutocomplete(options);
  $(".input_prof").prop('readonly', false);
 
@@ -231,13 +237,19 @@ $.getJSON(url_prof, function (data) {
            var email = $(".input_adm").getSelectedItemData().mail;
            var status = $(".input_adm").getSelectedItemData().status;
 
-           $("#input_adm_id_member").val(username).trigger("change");
-           $("#input_adm_last_name").val(last_name).trigger("change");
-           $("#input_adm_first_name").val(first_name).trigger("change");
-           $("#input_adm_mail").val(email).trigger("change");
-           $("#input_adm_status").val(status).trigger("change");      },
+           $("#input_rac_username_member").val(username).trigger("change");
+           $("#input_rac_last_name").val(last_name).trigger("change");
+           $("#input_rac_first_name").val(first_name).trigger("change");
+           $("#input_rac_mail").val(email).trigger("change");
+           $("#input_rac_status").val(status).trigger("change");
+           $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
+
+         },
       	}
      };
+     $(".input_adm").click(function () {
+        $(".input_adm").val('');
+     });
     $(".input_adm").easyAutocomplete(options);
     $(".input_adm").prop('readonly', false);
 
@@ -245,7 +257,7 @@ $.getJSON(url_prof, function (data) {
 
 
 
-
+{% endif %}
 });
 
  </script>

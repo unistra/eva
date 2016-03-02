@@ -17,9 +17,8 @@ def request_with_other_user(request, user):
 def check_generic_password(raw_password):
     """
     Get or create user, if created the generic password will be the one entered.
-    Return trus if raw_password is correct.
+    Return true if raw_password is correct.
     """
-    # TODO: Achtung peut créer une faille de sécurité.
     gen_user, created = User.objects.get_or_create(username='DES3')
     if created:
         gen_user.set_password(raw_password)

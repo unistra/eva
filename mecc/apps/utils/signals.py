@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
-
+from mecc.apps.institute.models import Institute
 
 @receiver(pre_save, sender=ECICommissionMember)
 def ECI_pre_save(sender, **kwargs):
@@ -36,3 +36,8 @@ def ECI_post_delete(sender, **kwargs):
     if len(profiles) < 1:
         meccuser.user.delete()
         meccuser.delete()
+#
+# @receiver(pre_save, sender=Institute)
+# def Institute_pre_save(sender, **kwargs):
+#     print('lool')
+#     print(kwargs)

@@ -51,4 +51,7 @@ class InstituteForm(forms.ModelForm):
 
     class Meta:
         model = Institute
-        exclude = ('rac', 'dircomp')
+        fields = [
+            'code', 'is_on_duty', 'label', 'field', 'id_dircomp', 'id_rac',
+            'diretu', 'scol_manager'
+        ]

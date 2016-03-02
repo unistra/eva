@@ -10,6 +10,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.label
 
+    class Meta:
+        permissions = (
+            ('DES1', _('Donne accès à un large pannel de fonctionnalité')),
+            ('DES2', _('Donne accès à un pannel restreint')),
+            ('DES3', _('Peut usurper l\'identité des utilisateurs')),
+        )
+
 
 class MeccUser(models.Model):
         STATUS_CHOICES = (
@@ -36,15 +43,9 @@ class MeccUser(models.Model):
 
         profile = models.ManyToManyField(Profile)
 
+        def __str__(self):
+            return self.user.username
+
+
 class ScolManager(MeccUser):
     is_ref_app = models.BooleanField(_("Référent application"))
-
-
-class Group_DES3(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    class Meta:
-        permissions = (
-            ('can_spoof_user',
-             _('Peut usurper l\'identité des utilisateurs')),
-        )

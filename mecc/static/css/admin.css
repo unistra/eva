@@ -1,8 +1,11 @@
-#user_form p,.action-checkbox-column .text span,.sortoptions {
-  display: none;
-}
+
+#user_form > p{display: none;}
 
 #add_id_groups{display: none;}
+#id_groups{width: 50%;font-size: 1.1em;}
+.sortoptions{display: none;}
+.field-username .help{display: none;}
+.field-groups .help{width: 50%}
 .errorlist li{
     background-color: #fcf8e3;
     width: 50%;
@@ -17,9 +20,14 @@
   width: 50%;
   padding: 1em;
   margin: auto;
-
-
 }
+
+
+.action-checkbox-column .text span, .sortoptions {
+    display: none;
+}
+
+
 .inline-related,.object-tools {
   position: relative;
 }
@@ -660,6 +668,7 @@ select[multiple] {
   background: #fff;
   overflow: hidden;
 }
+
 
 #changelist-filter {
   position: absolute;

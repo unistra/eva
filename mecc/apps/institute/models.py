@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, ScolManager
 
+
 class AcademicField(models.Model):
     name = models.CharField(_('Domaine'), max_length=70)
 
@@ -34,8 +35,8 @@ class Institute(models.Model):
     field = models.ForeignKey(AcademicField, blank=False)
     id_dircomp = models.CharField(_('Directeur de composante'), max_length=65, blank=True)
     id_rac = models.CharField(_('Responsable administratif'), max_length=65, blank=True)
-    dircomp = models.ForeignKey(MeccUser, related_name='dircomp', on_delete=models.CASCADE, blank=True, null=True)
-    rac = models.ForeignKey(MeccUser, related_name='racs', on_delete=models.CASCADE, blank=True, null=True)
+    dircomp = models.ForeignKey(MeccUser, related_name='dircomp', blank=True, null=True)
+    rac = models.ForeignKey(MeccUser, related_name='racs', blank=True, null=True)
     diretu = models.ManyToManyField(ScolManager, related_name='diretu', blank=True)
     scol_manager = models.ManyToManyField(ScolManager, related_name='scol_managers', blank=True)
 

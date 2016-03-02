@@ -1,7 +1,7 @@
 from django.contrib.sites.models import Site
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserChangeForm
 from django import forms
 from django.utils.translation import ugettext as _
@@ -44,7 +44,6 @@ class UserChangeFormWithoutPass(UserChangeForm):
         return ""
 
 
-
 # Define an inline admin descriptor for Employee model
 # which acts a bit like a singleton
 class MeccUserInline(admin.StackedInline):
@@ -61,11 +60,11 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeFormWithoutPass
     add_form = UserCreationFormWithoutPass
 
-    list_filter = ('is_staff', 'groups', 'groups__name')
-    list_display = ('username', 'is_superuser', 'get_profile', 'get_group')
+    list_filter = ('is_staff', 'groups__name',)
+    list_display = ('username', 'is_superuser', 'get_profile', 'get_group', 'get_cmp')
 
-    def get_status(self, obj):
-        return obj.meccuser.get_status_display
+    def get_cmp(self, obj):
+        return obj.meccuser.cmp
 
     def get_profile(self, obj):
         return ", ".join([e.label for e in obj.meccuser.profile.all()])
@@ -76,6 +75,7 @@ class UserAdmin(BaseUserAdmin):
         """
         return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
 
+    get_cmp.short_description = _('Composante')
     get_group.short_description = _('Groupe')
     get_profile.short_description = _('Profil')
     get_profile.admin_order_field = 'meccuser__profile'
@@ -113,6 +113,7 @@ def get_admin_urls(urls):
 # Set & Register adm stuff
 
 admin.site.unregister(User)
+admin.site.unregister(Group)
 admin.site.unregister(Site)
 admin.site.register(User, UserAdmin)
 

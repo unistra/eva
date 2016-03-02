@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
-from mecc.apps.adm.models import Group_DES3
 from mecc.apps.spoof.forms import UserForm
 from mecc.apps.utils.switch_users import request_with_other_user, \
     check_generic_password
@@ -57,17 +56,3 @@ def release_user(request):
     request.session['is_spoofed_user'] = False
 
     return redirect('/')
-
-
-class DES3Create(CreateView):
-
-        model = Group_DES3
-        form_class = UserForm
-        success_url = '/institute'
-
-
-class DES3Edit(UpdateView):
-
-    model = Group_DES3
-    form_class = UserForm
-    success_url = '/institute'

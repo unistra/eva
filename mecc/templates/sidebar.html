@@ -1,5 +1,6 @@
 {% load i18n %}
 
+{{request.user.profile}}
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
       {% if request.user.is_active and request.user.is_staff %}
@@ -79,8 +80,5 @@
                class="item-selected"
             {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
         </li>
-
-            <!-- <p class="credit">&copy; DI - UDS - {% now "Y" %}</p> -->
-
     </ul>
 </div>
