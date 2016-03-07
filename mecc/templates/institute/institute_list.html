@@ -22,7 +22,7 @@
 {% for field in institute_list  %}
 
         <tr>
-          <th style="border-style:none">{{ field.grouper }}</th>
+          <th style="border-style:none">{{ field.domaine }}</th>
           <td></td>
           <td></td>
           <td></td>
@@ -31,10 +31,10 @@
         {% for item in field.list %}
         <tr class="hover-row">
           <td style="border-style:none;padding-left:2em"><a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></td>
-          <td>{{item.id_dircomp}}</td>
-          <td>{{item.id_rac}}</td>
-          <td></td>
-          <td></td>
+          <td>{{item.dircomp}}</td>
+          <td>{{item.rac}}</td>
+          <td>{{item.date_expected_MECC|date:'d/m/Y'}}</td>
+          <td>{{item.date_last_notif|date:'d/m/Y'}}</td>
         {% endfor %}
 {% endfor %}
 

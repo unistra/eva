@@ -100,6 +100,10 @@ class InstituteCreate(CreateView):
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         context['cadre_gen'] = "xxxxx.pdf"
+        current_year = UniversityYear.objects.get(
+            is_target_year=True).code_year
+        context['university_year'] = UniversityYear.objects.get(
+                code_year=current_year)
         return context
 
     model = Institute
@@ -186,7 +190,6 @@ class InstituteUpdate(UpdateView):
                 is_target_year=True).code_year
             context['institute_year'] = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
-            print(context['institute_year'].date_expected_MECC)
             context['university_year'] = UniversityYear.objects.get(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
@@ -201,21 +204,31 @@ class InstituteUpdate(UpdateView):
     success_url = '/institute'
 
 
+
 class InstituteListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
-        try:
-            context['ordered_list'] = Institute.objects.all().order_by(
-                'field', 'label')
-        except Institute.DoesNotExist:
-            context['ordered_list'] = False
+        institute_list = []
         try:
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
-            context['institute_year'] = InstituteYear.objects.filter(
-                code_year=current_year)
+            ordered_list = Institute.objects.all().order_by('field', 'label')
+
+            for e in ordered_list:
+                iy = InstituteYear.objects.get(code_year=current_year, id_cmp=e.id)
+                field = {
+                    'domaine': e.field,
+                    'label': e.label,
+                    'code': e.code,
+                    'dircomp': e.id_dircomp,
+                    'rac': e.id_rac,
+                    'date_expected_MECC': iy.date_expected_MECC,
+                    'date_last_notif': iy.date_last_notif
+                }
+                institute_list.append(field)
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
-        return context
 
+        context['ordered_list'] = institute_list
+        return context
     model = Institute
