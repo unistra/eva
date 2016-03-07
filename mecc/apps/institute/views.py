@@ -39,7 +39,10 @@ def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
     institute_year = InstituteYear.objects.get(id_cmp=institute.id, code_year=current_year.code_year)
-    institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
+    try:
+        institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
+    except TypeError:
+        institute_year.date_expected_MECC = ''
     data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
     data['form_institute_year'] = DircompInstituteYearForm(instance=institute_year)
     data['cadre_gen'] = "xxxxx.pdf"
