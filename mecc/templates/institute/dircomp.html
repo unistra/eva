@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+{% block page-header %}
+{{label_cmp}}
+{% endblock %}
+
+
+{% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<div class="flex-container">
+
+<form method="post" class='form-comp'>
+  <div id="div_auto_id" class='form-group'>
+    <label for="auto_id" class="control-label col-lg-5 requiredField">
+                  {% trans "ID composante" %} <small> {% trans "(auto)" %}</small></label>
+  <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
+  </div>
+  {% crispy form_institute %}
+</form>
+
+<div class="comp-right">
+  <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
+  <div id="div_cadre_gen">
+    <label for="cadre_gen" class="control-label col-lg-12">
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'>{{cadre_gen}}</a></label>
+  </div>
+  {% crispy form_university_year%}
+  <form method="post">
+{% crispy form_institute_year%}
+
+</form>
+</div>
+
+</div>
+<script>
+// Add checkbox next to id_code
+check_box = document.getElementById("div_id_is_on_duty");
+id_code = document.getElementById("id_code").parentNode;
+id_code.appendChild(check_box);
+
+$('#id_date_expected_MECC').datepicker({
+    language: "fr",
+    todayHighlight: true,
+    autoclose: true,
+});
+</script>
+
+{% endblock %}

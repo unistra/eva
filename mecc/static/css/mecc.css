@@ -7,8 +7,6 @@ margin-bottom: 0!important;
 position: fixed;
 display: block;
 z-index: 1000;
-width: 100;
-height:4em;
 right: 0;
 }
 
@@ -149,45 +147,18 @@ form hr{
 }
 
 .div-flex{flex-direction:column; width:75%; display:flex;}
-#form-comp{
+.form-comp{
   flex-direction:column;
   border-right-width: 0.15em;border-right-color: #358CD3;
   display:flex; border-right-style: solid;height: 100%;
   -webkit-box-shadow: 10px 0 5px -9px #888888;
           box-shadow: 10px 0 5px -9px #888888;
 }
-.div-flex #div_id_code_year{order:1;}
-.div-flex #div_id_label_year{order:2;}
-.div-flex #div_id_is_target_year{order:3;}
-.div-flex #div_id_date_validation{order:4;}
-.div-flex #div_id_date_expected{order:5;}
-.div-flex #hr1{order:6;}
-.div-flex #div_id_pdf_doc{order: 7;}
-.div-flex #upload_doc{order:8;align-self: center;width: 50%}
-.div-flex #hr2{order:9;}
-.div-flex #div_id_is_year_init{order:10;}
-.div-flex #init_years{order:11;align-self: center; width: 60%}
-.div-flex #hr3{order:12;}
-.div-flex #btn-sbmt{align-self:center;order:13;width: 90%}
-
-#form-comp #first{height: 4em;order:-1;}
-#form-comp #div_auto_id{order:1;margin-bottom: 1em;}
-#form-comp #div_id_code{order:2;}
 #id_code{width: 43%; float:left}
 #div_id_is_on_duty{width: 47%; float:right; margin-top:0px}
 label[for=id_is_on_duty]{margin-top: 0.6em;}
-#form-comp #div_id_code + div{order:3; display: none} /*Adjacent sibling selectors used with a '+'*/
-#form-comp #div_id_label{order:4;}
-#form-comp #div_id_field{order:5;}
-#form-comp #div_id_id_dircomp{order:7;}
-#form-comp #div_id_id_rac{order:8;}
-#form-comp #div_id_diretu{order:10;}
-#form-comp #div_id_scol_manager{order:12;}
-#form-comp #hr1{order:6;}
-#form-comp #hr2{order:9;}
-#form-comp #hr3{order:11;}
 
-#comp-right{
+.comp-right{
   display: inline-flex;
   flex-direction: column;
   margin-left: 2em;
@@ -196,10 +167,13 @@ label[for=id_is_on_duty]{margin-top: 0.6em;}
   margin-top: 2em;
 }
 
-#comp-right div{
+.comp-right div{
   margin-bottom: 0.5em;
 }
 
+
+.div-flex #upload_doc{8;align-self: center;width: 50%}
+.div-flex #init_years{align-self: center; width: 60%}
 #comp-right-btn-close{
 margin-top: auto;
 align-self: center;
@@ -223,7 +197,7 @@ align-self: center;
 
 .table-head {background-color: #E4F0FB; color: #004A87;}
 
-#collapseDegree {background-color: #003968; color: #000000;}
+#collapseDegree, #collapseInstitute {background-color: #003968; color: #000000;}
 
 /*******************************************************************************
 /* Hamburger menu */
@@ -280,9 +254,9 @@ align-self: center;
 .toggled #sidebar-wrapper .sidebar-nav .bottom {display: block}
 /*******************************************************************************
 /* Sidebar Styles */
-#collapseDegree {list-style-type: none; padding: 0;}
+#collapseDegree, #collapseInstitute {list-style-type: none; padding: 0;}
 
-#collapseDegree li a {padding-left: 2em;}
+#collapseDegree li a, #collapseInstitute li a {padding-left: 2em;}
 
 .open {background: #00294B;}
 
@@ -487,30 +461,18 @@ select{
 }
 
 .login-page {
-  display: -webkit-box;
-  /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;
-  /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -webkit-flex;
-  /* NEW - Chrome */
-  display: flex;
-  /* NEW, Spec - Opera 12.1, Firefox 20+ */
-  -webkit-box-flex-direction: row;
-  -moz-box-flex-direction: row;
-  -webkit-flex-direction: row;
   flex-direction: row;
   height: 100%;
   background-color: #eee;
 }
 .login-form {
-  width: 480px;
+  width: 10em;
   margin: auto;
 }
+
 form {
-  width: 100%;
+  /*width: 100%;*/
   background: #fff;
-  border-radius: 4px;
-  padding: 20px;
 }
 .login-form input,
 .login-form button {

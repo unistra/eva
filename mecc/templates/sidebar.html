@@ -1,8 +1,46 @@
 {% load i18n %}
+{% load groups%}
 
-{{request.user.profile}}
+
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
+      {% if request.user.meccuser%}
+      {% if request.user.meccuser|is_profile:'DIRCOMP' %}
+        <li class="dropdown">
+           <a href="#collapseInstitute"   class="dropdown-toggle" data-toggle="collapse"
+           aria-expanded="false" aria-controls="collapseInstitute">
+           {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
+           <ul class="collapse {% if 'institute' in request.path %} in {% endif %} "id="collapseInstitute">
+             <li><a href="/institute/dircomp/{{request.user.meccuser.cmp}}"
+              {% if 'institute/dircomp' in request.path %}
+                class="item-selected"
+             {% endif %}>{% trans 'Général' %}</a></li>
+             <li><a href="TODO"
+               {% if 'institute/TODO' in request.path %}
+                class="item-selected"
+             {% endif %}>{% trans 'Validations' %}</a></li>
+
+          </ul>
+       </li>
+      {% endif %}
+      {% if request.user.meccuser|is_profile:'RAC' %}
+        <li class="dropdown">
+           <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+          >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
+           <ul class="collapse {% if 'degree' in request.path %} in {% endif %} "id="collapseDegree">
+             <li><a href="{% url 'degree:type' %}"
+              {% if 'degree/type' in request.path %}
+                class="item-selected"
+             {% endif %}>{% trans 'Types de diplômes' %}</a></li>
+             <li><a href="{% url 'degree:list' %}"
+               {% if 'degree/list' in request.path %}
+                class="item-selected"
+             {% endif %}>{% trans 'Liste des diplômes' %}</a></li>
+
+          </ul>
+       </li>
+      {% endif %}
+      {% endif %}
       {% if request.user.is_active and request.user.is_staff %}
       <li>
           <a href="/admin"
@@ -20,6 +58,8 @@
           {% endif %}>{% trans "Usurpation d'identité" %}</a>
       </li>
       {% endif %}
+      {% if perms.adm.can_spoof_user %}
+
         <li>
             <a href="/"
             {% if 'board' in request.path %}
@@ -27,6 +67,9 @@
             {% endif %}>{% trans 'Tableau de bord' %}</a>
 
         </li>
+        {% endif %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+
         <li>
             <a href="{% url 'commission:home'%}"
             {% if 'commission' in request.path %}
@@ -34,6 +77,11 @@
             {% endif %}>{% trans 'Commission ECI' %}</a>
 
         </li>
+        {% endif %}
+
+        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+
+
         <li>
             <a href="{% url 'institute:home'%}"
             {% if 'institute' in request.path %}
@@ -41,12 +89,20 @@
             {% endif %}>{% trans 'Composantes' %}</a>
 
         </li>
+        {% endif %}
+
+        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+
         <li>
             <a href="{% url 'years:home' %}"
             {% if 'year' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Années universitaires' %}</a>
         </li>
+        {% endif %}
+
+        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+
          <li class="dropdown">
             <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
            >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
@@ -62,15 +118,19 @@
 
            </ul>
         </li>
+        {% endif %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+
         <li>
             <a href="#"
             {% if 'rules' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Règles générales' %}</a>
         </li>
+        {% endif %}
         <li style="margin-top:3em">
             <a href="#"
-            {% if 'rules' in request.path %}
+            {% if 'formation' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>

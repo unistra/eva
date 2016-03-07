@@ -3,11 +3,8 @@ from mecc.apps.institute.models import Institute, AcademicField, Staff, ScolMana
 from django.utils.translation import ugettext as _
 
 from django import forms
-from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,\
-    StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
-from django.utils.translation import ugettext as _
+from crispy_forms.layout import Layout, HTML, Field
 
 
 class InstituteForm(forms.ModelForm):
@@ -35,15 +32,16 @@ class InstituteForm(forms.ModelForm):
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
     helper.label_class = 'col-lg-5'
-    helper.field_class = 'col-lg-6'
-    helper.form_tag = False
+    helper.field_class = 'col-lg-7'
     helper.layout = Layout(
             Field('code'),
             Field('is_on_duty'),
             Field('label'),
             Field('field'),
+            HTML('<hr/>'),
             Field('id_dircomp'),
             Field('id_rac'),
+            HTML('<hr/>'),
             Field('diretu'),
             Field('scol_manager'),
 
@@ -55,3 +53,53 @@ class InstituteForm(forms.ModelForm):
             'code', 'is_on_duty', 'label', 'field', 'id_dircomp', 'id_rac',
             'diretu', 'scol_manager'
         ]
+
+
+class DircompInstituteForm(InstituteForm):
+    def clean_code(self):
+        instance = getattr(self, 'instance', None)
+        if self.instance:
+            return self.instance.code
+        else:
+            return self.cleaned_data['code']
+
+    def clean_is_on_duty(self):
+        instance = getattr(self, 'instance', None)
+        if self.instance:
+            return self.instance.is_on_duty
+        else:
+            return self.cleaned_data['is_on_duty']
+
+    def clean_label(self):
+        instance = getattr(self, 'instance', None)
+        if self.instance:
+            return self.instance.label
+        else:
+            return self.cleaned_data['label']
+
+    def clean_field(self):
+        return self.cleaned_data['field']
+
+    def clean_id_dircomp(self):
+        instance = getattr(self, 'instance', None)
+
+        return self.cleaned_data['id_dircomp']
+
+    def clean_id_rac(self):
+        instance = getattr(self, 'instance', None)
+        if self.instance:
+            return self.instance.id_rac
+        else:
+            return self.cleaned_data['id_rac']
+
+
+    def __init__(self, *args, **kwargs):
+        super(DircompInstituteForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['code'].widget.attrs['readonly'] = True
+            self.fields['is_on_duty'].widget.attrs['disabled'] = True
+            self.fields['label'].widget.attrs['readonly'] = True
+            self.fields['field'].widget.attrs['disabled'] = True
+            self.fields['id_dircomp'].widget.attrs['readonly'] = True
+            self.fields['id_rac'].widget.attrs['readonly'] = True

@@ -16,11 +16,7 @@
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
 <form action="" method="post"  class='div-flex'>
-<hr id="hr1">
-<hr id="hr2">
-<hr id="hr3">
 <a {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years"  {% if not object %} disabled {% endif %}> {% trans 'Initialiser les composantes' %} </a>
-<a href="#" class="btn btn-primary" id="upload_doc">{% trans 'Déposer le document cadre' %} </a>
     {% crispy form %}
     <div id="btn-sbmt">
     <input type="submit" name="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}"
@@ -32,6 +28,11 @@
 </form1>
 
 <script>
+// Add checkbox next to id_code
+a = document.getElementById("init_years");
+b = document.getElementById("id_is_year_init").parentNode.parentNode;
+b.appendChild(a);
+
 $('#id_date_validation, #id_date_expected').datepicker({
     orientation: "bottom auto",
     todayHighlight: true,

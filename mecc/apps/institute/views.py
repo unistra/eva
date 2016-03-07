@@ -10,16 +10,56 @@ from django.dispatch import receiver
 from django.core.signals import request_finished
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django_cas.decorators import login_required, user_passes_test, \
+    permission_required
 
-from django_cas.decorators import login_required
-
-from .models import Institute, AcademicField
-from .forms import InstituteForm
-from ..utils.ws import get_list_from_cmp
-from ..years.models import UniversityYear, InstituteYear
+from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm
+from mecc.apps.years.forms import DircompInstituteYearForm, DircompUniversityYearForm
+from mecc.apps.institute.models import Institute, AcademicField
+from mecc.apps.years.models import InstituteYear
+from mecc.apps.utils.ws import get_list_from_cmp
+from mecc.apps.years.models import UniversityYear, InstituteYear
 from mecc.apps.adm.models import MeccUser, Profile
 
 import json
+from datetime import datetime
+
+
+@user_passes_test(lambda u: True if 'DIRCOMP' in [e.code for e in u.meccuser.profile.all()] else False)
+def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    data['expected_mecc'] = current_year.date_expected
+    data['date_validation'] = current_year.date_validation
+    data['university_year'] = current_year
+    code_cmp = request.user.meccuser.cmp
+    institute = Institute.objects.get(code=code)
+    data['latest_instit_id'] = institute.id
+    data['label_cmp'] = institute.label
+    data['form_institute'] = DircompInstituteForm(instance=institute)
+    institute_year = InstituteYear.objects.get(id_cmp=institute.id, code_year=current_year.code_year)
+    institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
+    data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
+    data['form_institute_year'] = DircompInstituteYearForm(instance=institute_year)
+    data['cadre_gen'] = "xxxxx.pdf"
+    if request.POST:
+        try:
+            expected_mecc = datetime.strptime(request.POST.get('date_expected_MECC', ''), '%d/%m/%Y')
+            institute_year.date_expected_MECC = datetime.strftime(expected_mecc, '%Y-%m-%d')
+            institute_year.save()
+        except ValueError:
+            dircomp_edit_institute(request, code, template='institute/dircomp.html')
+        return redirect('/') # Redirect after POST
+
+    return render(request, template, data)
+
+
+@user_passes_test(lambda u: True if 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def view_institute(request, code, template='institute/rac.html'):
+    data = {}
+    code_cmp = request.user.meccuser.cmp
+    return render(request, template, data)
 
 
 @login_required
@@ -131,6 +171,8 @@ class InstituteUpdate(UpdateView):
     form_class = InstituteForm
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+
         context = super(InstituteUpdate, self).get_context_data(**kwargs)
         try:
             context['latest_instit_id'] = Institute.objects.latest('id').id + 1
@@ -139,9 +181,10 @@ class InstituteUpdate(UpdateView):
         try:
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
-            context['institute_year'] = InstituteYear.objects.filter(
-                code_year=current_year)
-            context['dates'] = UniversityYear.objects.get(
+            context['institute_year'] = InstituteYear.objects.get(
+                code_year=current_year, id_cmp=self.object.id)
+            print(context['institute_year'].date_expected_MECC)
+            context['university_year'] = UniversityYear.objects.get(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')

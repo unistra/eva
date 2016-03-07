@@ -18,18 +18,15 @@
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <div class='flex-container'>
 {%if object%}
-<form action="{% url 'institute:modify' object.code%}" method="post" id='form-comp'>
+<form action="{% url 'institute:modify' object.code%}" method="post" class='form-comp'>
 {% else %}
-<form action="" method="post" id='form-comp'>
+<form action="" method="post" class='form-comp'>
 {% endif %}
-<div id="div_auto_id">
+<div id="div_auto_id"  class='form-group'>
   <label for="auto_id" class="control-label col-lg-5 requiredField">
                 {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
-<div class="controls col-lg-6"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
+<div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
 </div>
-  <hr id="hr1">
-  <hr id="hr2">
-  <hr id="hr3">
   {% crispy form %}
   <div style="display:none">
    <input id="input_dircomp_username_member" name="dircomp_username"  />
@@ -46,12 +43,12 @@
   </div>
     <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
-     onclick="_isDirty=false"/>
+     onclick="_isEdited=false"/>
 <div id='first'></div>
 </form>
-<div id="comp-right">
+<div class="comp-right">
 
-  <h3> {% trans "Année cible" %} {{dates.code_year}}/{{dates.code_year|add:'1'}}</h3>
+  <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
 
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
@@ -63,7 +60,7 @@
       {% trans "Date validation cadre en CFVU" %}
     </label>
     <div class="controls col-lg-4">
-      <input class=" form-control" value="{{dates.date_validation|date:'d/m/Y'}}" readonly="True">
+      <input class=" form-control" value="{{university_year.date_validation|date:'d/m/Y'}}" readonly="True">
     </div>
   </div>
 
@@ -73,7 +70,7 @@
     {% trans "Date prévisionnelle CFVU MECC" %}
   </label>
   <div class="controls col-lg-4">
-    <input class=" form-control" value="{{dates.date_expected|date:'d/m/Y'}}" readonly="True">
+    <input class=" form-control" value="{{university_year.date_expected|date:'d/m/Y'}}" readonly="True">
   </div>
 </div>
 
@@ -84,7 +81,7 @@
     {% trans "Date prévisionnelle Conseil comp. MECC" %}
   </label>
   <div class="controls col-lg-4">
-    <input class=" form-control" value="{{dates.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
+    <input class=" form-control" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
   </div>
 </div>
   <div>
@@ -92,7 +89,7 @@
       {% trans "Date dernière notification MECC" %}
     </label>
     <div class="controls col-lg-4">
-      <input class=" form-control" value="{{dates.date_last_notif|date:'d/m/Y'}}" readonly="True">
+      <input class=" form-control" value="{{institute_year.date_last_notif|date:'d/m/Y'}}" readonly="True">
     </div>
   </div>
 
@@ -124,9 +121,9 @@
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
-   var _isDirty = false;
+   var _isEdited = false;
    $(':input').change(function () {
-     _isDirty = true;
+     _isEdited = true;
    });
 
 
@@ -134,7 +131,7 @@ var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
 
 
    window.onbeforeunload = function (e) {
-   if (_isDirty === true) {
+   if (_isEdited === true) {
    var e = e || window.event;
 
    // For IE and Firefox
