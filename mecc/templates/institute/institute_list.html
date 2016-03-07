@@ -8,7 +8,7 @@
 
 {% block app_content %}
 {% if ordered_list %}
-{% regroup ordered_list by field as institute_list %}
+{% regroup ordered_list by domaine as institute_list %}
 <div class='flex-container' style="flex-direction:column">
 <table class="table" style="order:1">
 <tr class='fixed'>
@@ -22,7 +22,7 @@
 {% for field in institute_list  %}
 
         <tr>
-          <th style="border-style:none">{{ field.domaine }}</th>
+          <th style="border-style:none">{{ field.grouper }}</th>
           <td></td>
           <td></td>
           <td></td>

@@ -216,8 +216,9 @@ class InstituteListView(ListView):
 
             for e in ordered_list:
                 iy = InstituteYear.objects.get(code_year=current_year, id_cmp=e.id)
+                print(e.field.name)
                 field = {
-                    'domaine': e.field,
+                    'domaine': e.field.name,
                     'label': e.label,
                     'code': e.code,
                     'dircomp': e.id_dircomp,
