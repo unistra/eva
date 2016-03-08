@@ -13,265 +13,40 @@
 {% endblock %}
 
 {% block app_content %}
+<div class="flex-container">
 
-<link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<script src="{% static 'js/autocomplete.js' %}"></script>
-<div class='flex-container'>
-{%if object%}
-<form action="{% url 'institute:modify' object.code%}" method="post" class='form-comp'>
-{% else %}
-<form action="" method="post" class='form-comp'>
-{% endif %}
-<div id="div_auto_id"  class='form-group'>
-  <label for="auto_id" class="control-label col-lg-5 requiredField">
-                {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
-<div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
-</div>
-  {% crispy form %}
-  <div style="display:none">
-   <input id="input_dircomp_username_member" name="dircomp_username"  />
-   <input id="input_dircomp_last_name" name="dircomp_last_name" />
-   <input id="input_dircomp_first_name" name="dircomp_first_name" />
-   <input id="input_dircomp_mail" name="dircomp_mail" >
-   <input id="input_dircomp_status" name="dircomp_status"/>
-
-   <input id="input_rac_username_member" name="rac_username" />
-   <input id="input_rac_last_name" name="rac_last_name" />
-   <input id="input_rac_first_name" name="rac_first_name" />
-   <input id="input_rac_mail" name="rac_mail" >
-   <input id="input_rac_status" name="rac_status"/>
+<form method="post" class='form-comp'>
+  <div id="div_auto_id" class='form-group'>
+    <label for="auto_id" class="control-label col-lg-5 requiredField">
+                  {% trans "ID composante" %} <small> {% trans "(auto)" %}</small></label>
+  <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
   </div>
-    <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
-     type="submit" value="{% trans 'Valider et fermer la fiche' %}"
-     onclick="_isEdited=false"/>
-<div id='first'></div>
+  {% crispy form_institute %}
 </form>
+
 <div class="comp-right">
-
   <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
-
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
         <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'>{{cadre_gen}}</a></label>
   </div>
+  {% crispy form_university_year%}
+{% crispy form_institute_year%}
 
-  <div>
-    <label class="control-label col-lg-8">
-      {% trans "Date validation cadre en CFVU" %}
-    </label>
-    <div class="controls col-lg-4">
-      <input class=" form-control" value="{{university_year.date_validation|date:'d/m/Y'}}" readonly="True">
-    </div>
-  </div>
-
-
-<div>
-  <label class="control-label col-lg-8">
-    {% trans "Date prévisionnelle CFVU MECC" %}
-  </label>
-  <div class="controls col-lg-4">
-    <input class=" form-control" value="{{university_year.date_expected|date:'d/m/Y'}}" readonly="True">
-  </div>
 </div>
 
-<div></br></div>
-
-<div>
-  <label class="control-label col-lg-8">
-    {% trans "Date prévisionnelle Conseil comp. MECC" %}
-  </label>
-  <div class="controls col-lg-4">
-    <input class=" form-control" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
-  </div>
-</div>
-  <div>
-    <label class="control-label col-lg-8">
-      {% trans "Date dernière notification MECC" %}
-    </label>
-    <div class="controls col-lg-4">
-      <input class=" form-control" value="{{institute_year.date_last_notif|date:'d/m/Y'}}" readonly="True">
-    </div>
-  </div>
-
-  <div></br></div>
-
-  <div>
-    <label class="control-label col-lg-12">
-      {% trans "Lettre de présentation" %}
-    </label>
-    <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
-    </div>
-  </div>
-
-  <div>
-    <label class="control-label col-lg-12">
-      {% trans "Autres documents" %}
-    </label>
-    <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
-    </div>
-  </div>
-
-
- <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
-
- <script type="text/javascript">
- // Get cmp code in order to search people
-code_cmp = document.getElementById("id_code").value
-var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
-var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
-   var _isEdited = false;
-   $(':input').change(function () {
-     _isEdited = true;
-   });
-
-
- $(document).ready(function () {
-
-
-   window.onbeforeunload = function (e) {
-   if (_isEdited === true) {
-   var e = e || window.event;
-
-   // For IE and Firefox
-   if (e) {
-     e.returnValue = 'Des modifications ont été effectuées.';
-   }
-
-   // For Safari
-   return 'Des modifications ont été effectuées.';
- };
-   };
-
-{% if object %}
-$.getJSON(url_prof, function (data) {
- var options = {
-   data: data,
-   getValue: function (element) {
-     return element.last_name + " " + element.first_name + " ";
-
-   },
-   template: {
-		type: "description",
-		fields: {
-			description: "id_member"
-		}
-	},
-   list: {
-		showAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-
-		hideAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-   		match: {
-   			enabled: true
-   		},
-      onSelectItemEvent: function() {
-        var username = $(".input_prof").getSelectedItemData().id_member;
-        var last_name = $(".input_prof").getSelectedItemData().last_name;
-        var first_name = $(".input_prof").getSelectedItemData().first_name;
-        var email = $(".input_prof").getSelectedItemData().mail;
-        var status = $(".input_prof").getSelectedItemData().status;
-
-        $("#input_dircomp_username_member").val(username).trigger("change");
-        $("#input_dircomp_last_name").val(last_name).trigger("change");
-        $("#input_dircomp_first_name").val(first_name).trigger("change");
-        $("#input_dircomp_mail").val(email).trigger("change");
-        $("#input_dircomp_status").val(status).trigger("change");
-        $("#id_id_dircomp").val(last_name + " " + first_name).trigger("change");
-      },
-   	}
-  };
- $(".input_prof").click(function () {
-    $(".input_prof").val('');
- });
- $(".input_prof").easyAutocomplete(options);
- $(".input_prof").prop('readonly', false);
-
-});
-
-
-
-
-   $.getJSON(url_adm, function (data) {
-    var options = {
-      data: data,
-      getValue: function (element) {
-        return element.last_name + " " + element.first_name + " ";
-      },
-      template: {
-        type: "description",
-    		fields: {
-    			description: "id_member"
-   		}
-   	},
-       list: {
-		showAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-
-		hideAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-      		match: {
-      			enabled: true
-      		},
-         onSelectItemEvent: function() {
-           var username = $(".input_adm").getSelectedItemData().id_member;
-           var last_name = $(".input_adm").getSelectedItemData().last_name;
-           var first_name = $(".input_adm").getSelectedItemData().first_name;
-           var email = $(".input_adm").getSelectedItemData().mail;
-           var status = $(".input_adm").getSelectedItemData().status;
-
-           $("#input_rac_username_member").val(username).trigger("change");
-           $("#input_rac_last_name").val(last_name).trigger("change");
-           $("#input_rac_first_name").val(first_name).trigger("change");
-           $("#input_rac_mail").val(email).trigger("change");
-           $("#input_rac_status").val(status).trigger("change");
-           $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
-
-         },
-      	}
-     };
-     $(".input_adm").click(function () {
-        $(".input_adm").val('');
-     });
-    $(".input_adm").easyAutocomplete(options);
-    $(".input_adm").prop('readonly', false);
-
-   });
-
-
-
-{% endif %}
-});
-
- </script>
-</div>
 </div>
 <script>
-
 // Add checkbox next to id_code
 check_box = document.getElementById("div_id_is_on_duty");
 id_code = document.getElementById("id_code").parentNode;
-id_code.appendChild(check_box)
+id_code.appendChild(check_box);
 
-// ////////// ************ Let's do some AJAX
-code_cmp = document.getElementById("id_code").value
-var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
-var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
-
-
+$('#id_date_expected_MECC').datepicker({
+    language: "fr",
+    todayHighlight: true,
+    autoclose: true,
+});
 </script>
+
 {% endblock %}

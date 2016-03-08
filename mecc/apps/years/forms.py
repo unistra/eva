@@ -40,9 +40,6 @@ class DircompInstituteYearForm(forms.ModelForm):
 
 
 class DircompUniversityYearForm(forms.ModelForm):
-    # pdf_doc = forms.CharField(
-    #     widget=forms.Textarea(attrs={'rows':4, 'cols':40}),
-    #     label=_('Documents pdf'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(DircompUniversityYearForm, self).__init__(*args, **kwargs)
@@ -134,8 +131,8 @@ class InstituteYearForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-7'
-        self.helper.field_class = 'col-lg-5'
+        self.helper.label_class = 'col-lg-8'
+        self.helper.field_class = 'col-lg-4'
         self.helper.layout = Layout(
             Field('date_expected_MECC'),
             Field('date_last_notif')
@@ -147,6 +144,17 @@ class InstituteYearForm(forms.ModelForm):
             'date_expected_MECC',
             'date_last_notif',
         ]
+
+
+class RacInstituteYearForm(InstituteYearForm):
+    def __init__(self, *args, **kwargs):
+        super(RacInstituteYearForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+
+        if instance and instance.pk:
+            self.fields['date_expected_MECC'].widget.attrs['readonly'] = True
+            self.fields['date_last_notif'].widget.attrs['readonly'] = True
+
 
 class InstituteYear2Form(forms.ModelForm):
     class Meta:

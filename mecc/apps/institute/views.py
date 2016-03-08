@@ -13,8 +13,8 @@ from django.contrib.auth.models import User
 from django_cas.decorators import login_required, user_passes_test, \
     permission_required
 
-from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm
-from mecc.apps.years.forms import DircompInstituteYearForm, DircompUniversityYearForm
+from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, RacInstituteForm
+from mecc.apps.years.forms import DircompInstituteYearForm, DircompUniversityYearForm, RacInstituteYearForm
 from mecc.apps.institute.models import Institute, AcademicField
 from mecc.apps.years.models import InstituteYear
 from mecc.apps.utils.ws import get_list_from_cmp
@@ -31,8 +31,6 @@ def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
-    data['expected_mecc'] = current_year.date_expected
-    data['date_validation'] = current_year.date_validation
     data['university_year'] = current_year
     code_cmp = request.user.meccuser.cmp
     institute = Institute.objects.get(code=code)
@@ -63,8 +61,23 @@ def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
 def view_institute(request, code, template='institute/rac.html'):
     institute = Institute.objects.get(code=code)
     data = {}
-    form = InstituteForm(instance=institute)
-    return render(request, template, {'form': form})
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    try:
+        institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
+    except TypeError:
+        institute_year.date_expected_MECC = ''
+    data['university_year'] = current_year
+
+    data['form_institute'] = RacInstituteForm(instance=institute)
+    data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
+    data['form_institute_year'] = RacInstituteYearForm(instance=institute_year)
+    data['cadre_gen'] = "xxxxx.pdf"
+
+    data['latest_instit_id'] = institute.id
+    return render(request, template, data)
 
 
 @login_required

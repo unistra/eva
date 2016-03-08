@@ -103,3 +103,13 @@ class DircompInstituteForm(InstituteForm):
             self.fields['field'].widget.attrs['disabled'] = True
             self.fields['id_dircomp'].widget.attrs['readonly'] = True
             self.fields['id_rac'].widget.attrs['readonly'] = True
+
+
+class RacInstituteForm(DircompInstituteForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RacInstituteForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['diretu'].widget.attrs['readonly'] = True
+            self.fields['scol_manager'].widget.attrs['disabled'] = True

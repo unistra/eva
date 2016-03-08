@@ -28,14 +28,14 @@
            <a href="#collapseDegreeRAC"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
           > {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
            <ul class="collapse {% if 'degree' in request.path %} in {% endif %} slump"id="collapseDegreeRAC">
-             <li><a href="{% url 'degree:type' %}"
+             <li><a href="/institute/rac/{{request.user.meccuser.cmp}}"
               {% if 'degree/type' in request.path %}
                 class="item-selected"
-             {% endif %}>{% trans 'Types de diplômes' %}</a></li>
-             <li><a href="{% url 'degree:list' %}"
+             {% endif %}>{% trans 'Général' %}</a></li>
+             <li><a href="#"
                {% if 'degree/list' in request.path %}
                 class="item-selected"
-             {% endif %}>{% trans 'Liste des diplômes' %}</a></li>
+             {% endif %}>{% trans 'Validation' %}</a></li>
 
           </ul>
        </li>
