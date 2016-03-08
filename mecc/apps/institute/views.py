@@ -25,6 +25,7 @@ import json
 from datetime import datetime
 
 
+
 @user_passes_test(lambda u: True if 'DIRCOMP' in [e.code for e in u.meccuser.profile.all()] else False)
 def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
     data = {}
@@ -60,9 +61,10 @@ def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
 
 @user_passes_test(lambda u: True if 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def view_institute(request, code, template='institute/rac.html'):
+    institute = Institute.objects.get(code=code)
     data = {}
-    code_cmp = request.user.meccuser.cmp
-    return render(request, template, data)
+    form = InstituteForm(instance=institute)
+    return render(request, template, {'form': form})
 
 
 @login_required

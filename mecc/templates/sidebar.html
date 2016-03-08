@@ -7,16 +7,16 @@
       {% if request.user.meccuser%}
       {% if request.user.meccuser|is_profile:'DIRCOMP' %}
         <li class="dropdown">
-           <a href="#collapseInstitute"   class="dropdown-toggle" data-toggle="collapse"
-           aria-expanded="false" aria-controls="collapseInstitute">
+           <a href="#collapseInstituteDIRCOMP"   class="dropdown-toggle slump" data-toggle="collapse"
+           aria-expanded="false" aria-controls="collapseInstituteDIRCOMP">
            {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
-           <ul class="collapse {% if 'institute' in request.path %} in {% endif %} "id="collapseInstitute">
+           <ul class="collapse {% if 'institute' in request.path %} in {% endif %} slump"id="collapseInstituteDIRCOMP">
              <li><a href="/institute/dircomp/{{request.user.meccuser.cmp}}"
               {% if 'institute/dircomp' in request.path %}
                 class="item-selected"
              {% endif %}>{% trans 'Général' %}</a></li>
-             <li><a href="TODO"
-               {% if 'institute/TODO' in request.path %}
+             <li><a href=""
+               {% if 'institute/---' in request.path %}
                 class="item-selected"
              {% endif %}>{% trans 'Validations' %}</a></li>
 
@@ -25,9 +25,9 @@
       {% endif %}
       {% if request.user.meccuser|is_profile:'RAC' %}
         <li class="dropdown">
-           <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-          >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
-           <ul class="collapse {% if 'degree' in request.path %} in {% endif %} "id="collapseDegree">
+           <a href="#collapseDegreeRAC"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+          > {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
+           <ul class="collapse {% if 'degree' in request.path %} in {% endif %} slump"id="collapseDegreeRAC">
              <li><a href="{% url 'degree:type' %}"
               {% if 'degree/type' in request.path %}
                 class="item-selected"
@@ -106,7 +106,7 @@
          <li class="dropdown">
             <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
            >{% trans 'Diplômes de référence' %} <span class="caret"></span></a>
-            <ul class="collapse {% if 'degree' in request.path %} in {% endif %} "id="collapseDegree">
+            <ul class="collapse {% if 'degree' in request.path %} in {% endif %} slump"id="collapseDegree">
               <li><a href="{% url 'degree:type' %}"
                {% if 'degree/type' in request.path %}
                  class="item-selected"

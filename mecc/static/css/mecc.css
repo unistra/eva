@@ -197,7 +197,6 @@ align-self: center;
 
 .table-head {background-color: #E4F0FB; color: #004A87;}
 
-#collapseDegree, #collapseInstitute {background-color: #003968; color: #000000;}
 
 /*******************************************************************************
 /* Hamburger menu */
@@ -254,9 +253,14 @@ align-self: center;
 .toggled #sidebar-wrapper .sidebar-nav .bottom {display: block}
 /*******************************************************************************
 /* Sidebar Styles */
-#collapseDegree, #collapseInstitute {list-style-type: none; padding: 0;}
+.slump {
+  list-style-type: none;
+  padding: 0;
+  background-color: #003968;
+  color: #000000;
+}
 
-#collapseDegree li a, #collapseInstitute li a {padding-left: 2em;}
+.slump li a {padding-left: 2em;}
 
 .open {background: #00294B;}
 

@@ -17,7 +17,17 @@ def home(request, template='spoof/form.html'):
     """ Default spoof page.
 
     """
-    if request.user.has_perm('adm.can_spoof_user'):
+
+    if request.user.has_perm('adm.can_spoof_user') or \
+            'DES3' in request.user.groups.values_list('name', flat=True):
+
+        try:
+            if request.session['is_spoofed_user'] == False:
+                request.session['real_username'] = request.user.username
+        except KeyError:
+            request.session['is_spoofed_user'] = False
+            request.session['real_username'] = request.user.username
+
         data = {}
         if request.POST:
             asked_user = request.POST.get('asked_username')
@@ -34,14 +44,14 @@ def home(request, template='spoof/form.html'):
                 return render(request, template, data)
 
             if check_generic_password(generic_pass):
-                real_username = request.user.username
+
+                real_username = request.session['real_username']
                 r = request_with_other_user(request, new_user)
-                request.session['is_spoofed_user'] = True
-                request.session['real_username'] = real_username
+                r.session['real_username'] = real_username
+                r.session['is_spoofed_user'] = True
                 return redirect("/", request=r)
             else:
                 data['error'] = _('Le mot de passe est érroné.')
-
         return render(request, template, data)
 
     return HttpResponseForbidden("<h1>Forbidden</h1>You do not have permission \
