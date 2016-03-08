@@ -32,7 +32,7 @@
           <td style="border-style:none;padding-left:2em"><a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></td>
           <td>{{item.dircomp}}</td>
           <td>{{item.rac}}</td>
-          <td>{{item.date_expected_MECC|date:'d/m/Y'}}</td>
+          <td><font color="{% if item.is_late %} red {% endif %}">{{item.date_expected_MECC|date:'d/m/Y'}}</font></td>
           <td>{{item.date_last_notif|date:'d/m/Y'}}</td>
         {% endfor %}
 {% endfor %}

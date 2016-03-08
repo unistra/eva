@@ -69,7 +69,7 @@
   <label class="control-label col-lg-8">
     {% trans "Date prévisionnelle CFVU MECC" %}
   </label>
-  <div class="controls col-lg-4">
+  <div class="controls col-lg-4 ">
     <input class=" form-control" value="{{university_year.date_expected|date:'d/m/Y'}}" readonly="True">
   </div>
 </div>
@@ -81,7 +81,7 @@
     {% trans "Date prévisionnelle Conseil comp. MECC" %}
   </label>
   <div class="controls col-lg-4">
-    <input class=" form-control" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
+    <input class=" form-control {% if is_expected_date_late %} input-red {% endif %}" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
   </div>
 </div>
   <div>

@@ -50,7 +50,7 @@
 
       </li>
       {% endif %}
-      {% if perms.adm.can_spoof_user %}
+      {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
       <li>
           <a href="/spoof"
           {% if 'spoof' in request.path %}
@@ -128,17 +128,25 @@
             {% endif %}>{% trans 'Règles générales' %}</a>
         </li>
         {% endif %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP'%}
+
         <li style="margin-top:3em">
             <a href="#"
             {% if 'formation' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>
+        {% endif %}
+
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP'%}
+
         <li class="bottom" id='hideme'>
             <a href="#"
             {% if 'rules' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
         </li>
+        {% endif %}
+
     </ul>
 </div>

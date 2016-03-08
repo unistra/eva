@@ -190,8 +190,9 @@ class InstituteUpdate(UpdateView):
         try:
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
-            context['institute_year'] = InstituteYear.objects.get(
+            context['institute_year'] = a = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
+            context['is_expected_date_late'] = a.is_expected_date_late()
             context['university_year'] = UniversityYear.objects.get(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
@@ -206,7 +207,6 @@ class InstituteUpdate(UpdateView):
     success_url = '/institute'
 
 
-
 class InstituteListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
@@ -215,7 +215,6 @@ class InstituteListView(ListView):
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
             ordered_list = Institute.objects.all().order_by('field', 'label')
-
             for e in ordered_list:
                 iy = InstituteYear.objects.get(code_year=current_year, id_cmp=e.id)
                 field = {
@@ -225,7 +224,8 @@ class InstituteListView(ListView):
                     'dircomp': e.id_dircomp,
                     'rac': e.id_rac,
                     'date_expected_MECC': iy.date_expected_MECC,
-                    'date_last_notif': iy.date_last_notif
+                    'date_last_notif': iy.date_last_notif,
+                    'is_late': iy.is_expected_date_late,
                 }
                 institute_list.append(field)
         except UniversityYear.DoesNotExist:

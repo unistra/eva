@@ -10,6 +10,10 @@ z-index: 1000;
 right: 0;
 }
 
+.input-red{
+  border-color:red;
+  color: red;
+}
 .font-color-grey{
   color:grey;
 }

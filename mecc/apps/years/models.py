@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from ..institute.models import Institute
 import re
+import datetime
 
 
 class InstituteYear(models.Model):
@@ -15,6 +16,15 @@ class InstituteYear(models.Model):
     date_last_notif = models.DateField(
         _('Date dernière notification MECC'), blank=True, null=True
     )
+
+    def is_expected_date_late(self):
+        if isinstance(self.date_expected_MECC, datetime.date):
+            current = UniversityYear.objects.get(is_target_year=True)
+            print("--------DAte expected in years-------")
+            print(current.date_expected)
+            if isinstance(current.date_expected, datetime.date):
+                return True if current.date_expected <= self.date_expected_MECC else False
+        return None
 
 
 class UniversityYear(models.Model):
@@ -46,6 +56,8 @@ class UniversityYear(models.Model):
 
     def __str__(self):
         return self.label_year
+
+
 
     def clean_fields(self, exclude=None):
 
