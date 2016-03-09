@@ -47,7 +47,7 @@ class DegreeTypeForm(forms.ModelForm):
                     css_class="row"
                 ),
                 Div(
-                    Div(Field('ROF_code', readonly=True),
+                    Div(Field('ROF_code'),
                         css_class='col-md-12'),
                     css_class="row"
                 ),

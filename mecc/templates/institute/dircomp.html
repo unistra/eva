@@ -10,7 +10,6 @@
 
 
 {% block app_content %}
-{% include "institute/add_diretu_gescol.html" %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
@@ -23,6 +22,7 @@
   <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
   </div>
   {% crispy form_institute %}
+  {% include "institute/add_diretu_gescol.html" %}
 </form>
 
 <div class="comp-right">

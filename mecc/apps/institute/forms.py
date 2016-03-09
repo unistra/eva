@@ -12,6 +12,7 @@ class InstituteForm(forms.ModelForm):
         queryset=AcademicField.objects.all(),
         required=True, label=_('Domaine'))
 
+
     id_dircomp = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'input_prof',
@@ -38,13 +39,13 @@ class InstituteForm(forms.ModelForm):
             Field('is_on_duty'),
             Field('label'),
             Field('field'),
+            Field('ROF_code'),
             HTML('<hr/>'),
             Field('id_dircomp'),
             Field('id_rac'),
             HTML('<hr/>'),
             Field('diretu'),
             Field('scol_manager'),
-            Field('ROF_code'),
 
     )
 
@@ -52,7 +53,7 @@ class InstituteForm(forms.ModelForm):
         model = Institute
         fields = [
             'code', 'is_on_duty', 'label', 'field', 'id_dircomp', 'id_rac',
-            'diretu', 'scol_manager', 'ROF_code'
+            'ROF_code'
         ]
 
 
@@ -104,13 +105,4 @@ class DircompInstituteForm(InstituteForm):
             self.fields['field'].widget.attrs['disabled'] = True
             self.fields['id_dircomp'].widget.attrs['readonly'] = True
             self.fields['id_rac'].widget.attrs['readonly'] = True
-
-
-class RacInstituteForm(DircompInstituteForm):
-
-    def __init__(self, *args, **kwargs):
-        super(RacInstituteForm, self).__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
-            self.fields['diretu'].widget.attrs['readonly'] = True
-            self.fields['scol_manager'].widget.attrs['disabled'] = True
+            self.fields['ROF_code'].widget.attrs['readonly'] = True

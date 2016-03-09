@@ -26,9 +26,9 @@ class Institute(models.Model):
     rac = models.ForeignKey(MeccUser, related_name='racs', blank=True, null=True)
     diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
     scol_manager = models.ManyToManyField(ScolManager, related_name='scol_managers', blank=True)
-    ROF_code = models.CharField(_('Code RNE'), max_length=10)
+    ROF_code = models.CharField(_('Code RNE'), max_length=10, blank=True, null=True)
 
-    
+
     def clean_fields(self, exclude=None):
         try:
             temp = Institute.objects.get(code=self.code)

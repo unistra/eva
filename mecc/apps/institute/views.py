@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django_cas.decorators import login_required, user_passes_test, \
     permission_required
 
-from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, RacInstituteForm
+from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, DircompInstituteForm
 from mecc.apps.years.forms import DircompInstituteYearForm, DircompUniversityYearForm, RacInstituteYearForm
 from mecc.apps.institute.models import Institute, AcademicField
 from mecc.apps.years.models import InstituteYear
@@ -58,7 +58,7 @@ def dircomp_edit_institute(request, code, template='institute/dircomp.html'):
 
 
 @user_passes_test(lambda u: True if 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
-def view_institute(request, code, template='institute/rac.html'):
+def view_institute(request, code, template='institute/dircomp.html'):
     institute = Institute.objects.get(code=code)
     data = {}
     current_year = list(UniversityYear.objects.filter(
@@ -71,7 +71,7 @@ def view_institute(request, code, template='institute/rac.html'):
         institute_year.date_expected_MECC = ''
     data['university_year'] = current_year
 
-    data['form_institute'] = RacInstituteForm(instance=institute)
+    data['form_institute'] = DircompInstituteForm(instance=institute)
     data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
     data['form_institute_year'] = RacInstituteYearForm(instance=institute_year)
     data['cadre_gen'] = "xxxxx.pdf"
