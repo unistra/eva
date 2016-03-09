@@ -15,7 +15,7 @@
       <th>{% trans 'Libellé court' %}</th>
       <th>{% trans 'Libellé long' %}</th>
       <th>{% trans 'En service' %}</th>
-      <th>{% trans 'Catégorie MECC' %}</th>
+      <th>{% trans 'Correspondance ROF' %}</th>
       <th></th>
       <th></th>
    </tr>
@@ -32,7 +32,7 @@
       {% trans "non" %}
       {% endif %}</td>
       </td>
-      <td>{{e.mecc_cat}}</td>
+      <td>{{e.ROF_code}}</td>
       <td>
          <a href="{% url 'degree:type_edit' id=e.id %}" class=" glyphicon glyphicon-pencil"></a>
       </td>

@@ -47,7 +47,7 @@ class DegreeTypeForm(forms.ModelForm):
                     css_class="row"
                 ),
                 Div(
-                    Div(Field('mecc_cat', readonly=True),
+                    Div(Field('ROF_code', readonly=True),
                         css_class='col-md-12'),
                     css_class="row"
                 ),
@@ -69,4 +69,4 @@ class DegreeTypeForm(forms.ModelForm):
     class Meta:
         model = DegreeType
         fields = ['is_in_use', 'id', 'display_order', 'short_label',
-                  'long_label', 'mecc_cat']
+                  'long_label', 'ROF_code']

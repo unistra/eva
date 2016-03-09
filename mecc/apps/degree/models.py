@@ -9,7 +9,7 @@ class DegreeType(models.Model):
     is_in_use = models.BooleanField(_('En service'))
     short_label = models.CharField(_('Libellé court'), max_length=40)
     long_label = models.CharField(_('Libellé long'), max_length=70)
-    mecc_cat = models.CharField(_('Catégorie MECC'), max_length=25, blank=True, null=True)
+    ROF_code = models.CharField(_('Correspondance ROF'), max_length=2, blank=True, null=True)
 
     def __str__(self):
         return self.short_label

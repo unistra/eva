@@ -4,7 +4,7 @@
             , "short_label": "DAEU"
             , "long_label": "Diplôme d'accès aux études universitaires"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 1
@@ -15,7 +15,7 @@
             , "short_label": "Capacité (Droit)"
             , "long_label": "Capacité"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 2
@@ -25,7 +25,7 @@
             , "short_label": "DUT"
             , "long_label": "Diplôme Universitaire de Technologie"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 3
@@ -35,7 +35,7 @@
             , "short_label": "DEUST"
             , "long_label": "Diplôme d'Etudes Universitaires Scientifiques et Techniques"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 4
@@ -45,7 +45,7 @@
             , "short_label": "Licence"
             , "long_label": "Licence"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 5
@@ -55,7 +55,7 @@
             , "short_label": "Licence professionnelle"
             , "long_label": "Licence professionnelle"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 6
@@ -65,7 +65,7 @@
             , "short_label": "Master"
             , "long_label": "Master"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 7
@@ -75,7 +75,7 @@
             , "short_label": "DU - Diplôme d'Université"
             , "long_label": "Diplôme d'Université"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 8
@@ -85,7 +85,7 @@
             , "short_label": "ECOLE - Diplôme d'ingénieur"
             , "long_label": "Diplôme d'ingénieur"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 9
@@ -95,7 +95,7 @@
             , "short_label": "ECOLE - Diplôme IEP"
             , "long_label": "Diplôme de l'Institut d'Etudes Politiques"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 10
@@ -105,7 +105,7 @@
             , "short_label": "ECOLE - Diplôme Grande Ecole"
             , "long_label": "Diplôme Grande Ecole"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 11
@@ -115,7 +115,7 @@
             , "short_label": "PREPA - Préparation Ecole Ingénieur"
             , "long_label": "Préparation Ecole d'ingénieur"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 12
@@ -125,7 +125,7 @@
             , "short_label": "PREPA - Préparation aux concours "
             , "long_label": "Préparation aux concours"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 13
@@ -135,7 +135,7 @@
             , "short_label": "SANTE - PACES"
             , "long_label": "Première Année Commune des Etudes de Santé"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 14
@@ -145,7 +145,7 @@
             , "short_label": "SANTE - DFGS"
             , "long_label": "Diplôme de Formation Générale en Santé"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 15
@@ -155,7 +155,7 @@
             , "short_label": "SANTE - DFAS"
             , "long_label": "Diplôme de Formation Approfondie en Santé"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 16
@@ -165,7 +165,7 @@
             , "short_label": "SANTE - Diplôme d'Etat en Pharmacie"
             , "long_label": "Diplôme d'Etat de Docteur en Pharmacie"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 17
@@ -175,7 +175,7 @@
             , "short_label": "SANTE - Diplôme d'Etat en Dentaire"
             , "long_label": "Diplôme d'Etat de Docteur en Dentaire"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 18
@@ -185,7 +185,7 @@
             , "short_label": "SANTE - Diplôme d'Etat en Médecine"
             , "long_label": "Diplôme d'Etat de Docteur en Médecine"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 19
@@ -195,7 +195,7 @@
             , "short_label": "SANTE - DFMS"
             , "long_label": "Diplôme de Formation Médicale Spécialisée"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 20
@@ -205,7 +205,7 @@
             , "short_label": "SANTE - DFMSA"
             , "long_label": "Diplôme de  Formation Médicale Spécialisée Approfondie"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 21
@@ -215,7 +215,7 @@
             , "short_label": "SANTE - CECS (CECSMO)"
             , "long_label": "Certificat d'études cliniques spécialisées"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 22
@@ -225,7 +225,7 @@
             , "short_label": "SANTE - Capacité Santé"
             , "long_label": "Capacité"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 23
@@ -235,7 +235,7 @@
             , "short_label": "SANTE - CES dentaire"
             , "long_label": "Certificat d'Etudes Supérieures dentaire"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 24
@@ -245,7 +245,7 @@
             , "short_label": "SANTE - CES médecine"
             , "long_label": "Certificat d'Etudes Supérieures médecine"
             , "is_in_use": true
-            , "mecc_cat": ""
+            , "ROF_code": ""
         }
         , "model": "degree.degreetype"
         , "pk": 25

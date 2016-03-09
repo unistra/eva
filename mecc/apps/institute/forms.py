@@ -44,6 +44,7 @@ class InstituteForm(forms.ModelForm):
             HTML('<hr/>'),
             Field('diretu'),
             Field('scol_manager'),
+            Field('ROF_code'),
 
     )
 
@@ -51,7 +52,7 @@ class InstituteForm(forms.ModelForm):
         model = Institute
         fields = [
             'code', 'is_on_duty', 'label', 'field', 'id_dircomp', 'id_rac',
-            'diretu', 'scol_manager'
+            'diretu', 'scol_manager', 'ROF_code'
         ]
 
 
