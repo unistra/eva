@@ -1,37 +1,38 @@
 {% load i18n %}
+{% load staticfiles %}
+
+<script src="{% static 'js/autocomplete.js' %}"></script>
 
 <div id="table-diretu" class="table-editable">
   <table class="table">
     <tr>
-      <th>{% trans "Directeurs d'études" %}</th>
-      <th></th>
-      <th></th>
-      <th> <span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
+      <th width="95%" colspan="3">{% trans "Directeurs d'études" %}</th>
+      <th width="5%"> <span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
     </tr>
-    <!-- This is our clonable table line -->
+    <!-- This is the clonable table line -->
     <tr class="hide">
-      <td width="50%" contenteditable="true"></td>
-      <td width="30%" class="first_name">Prénom</td>
-      <td width="10%"> <span class="table-remove glyphicon glyphicon-trash"></span>
-      <td width="10%"></td>
+      <td width="40%" contenteditable="true" placeholder="{% trans 'Rechercher' %}" ></td>
+      <td width="40%" class="first_name"></td>
+      <td width="15%"> <span class="table-remove glyphicon glyphicon-trash pull-right"></span>
+      <td width="5%"></td>
       </td>
     </tr>
   </table>
 </div>
+<br>
 <div id="table-gescol" class="table-editable">
   <table class="table">
     <tr>
-      <th>{% trans "Gestionnaire de scolarité" %}</th>
-      <th></th>
-      <td><small>référent app</small></td>
-      <th><span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
+      <th width="80%" colspan="2">{% trans "Gestionnaire de scolarité" %}</th>
+      <th width="15%"><small>référent app</small></th>
+      <th width="5%"><span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
     </tr>
-    <!-- This is our clonable table line -->
+    <!-- This is the clonable table line -->
     <tr class="hide">
-      <td width="50%" contenteditable="true"></td>
-      <td width="30%" class="first_name">Prénom</td>
-      <td width="10%"><input type="checkbox" name="rafapp" value="true"><br></td>
-      <td width="10%"> <span class="table-remove glyphicon glyphicon-trash pull-right"></span>
+      <td width="40%" >    <input class="lf_adm" name="gescol" placeholder='Rechercher'  /></td>
+      <td width="40%" class="first_name"  contenteditable="true"></td>
+      <td width="15%"><input type="checkbox" name="rafapp" value="true" class='pull-right'><br></td>
+      <td width="5%"><span class="table-remove glyphicon glyphicon-trash pull-right"></span>
       </td>
     </tr>
   </table>
@@ -46,7 +47,27 @@ $('.table-add').click(function () {
 $('.table-remove').click(function () {
   $(this).parents('tr').detach();
 });
+
+code_cmp = document.getElementById("id_code").value
+var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
+var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+
+$.getJSON(url_adm, function (data) {
+  var options ={
+    data: data,
+    getValue: function (element) {
+      return element.last_name;
+
+    }
+};
+$(".lf_adm").easyAutocomplete(options);
+})
+
 </script>
+
+
+
+
 
 <style>
 .table-editable {
@@ -62,6 +83,11 @@ $('.table-remove').click(function () {
   &:hover {
     color: #f00;
   }
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
 }
 
 .table-add {
