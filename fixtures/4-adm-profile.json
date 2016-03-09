@@ -9,14 +9,14 @@
     "model": "adm.profile",
     "pk": 2,
     "fields": {
-        "label": "Directeur de la composante",
+        "label": "Directeur d'\u00e9tudes",
         "code": "DIRETU"
     }
 }, {
     "model": "adm.profile",
     "pk": 3,
     "fields": {
-        "label": "Responsable administratif",
+        "label": "Gestionnaire de scolarité",
         "code": "GESCOL"
     }
 }, {
@@ -30,7 +30,7 @@
     "model": "adm.profile",
     "pk": 5,
     "fields": {
-        "label": "Directeur d'\u00e9tudes",
+        "label": "Responsable administratif",
         "code": "RAC"
     }
 }, {
@@ -47,5 +47,4 @@
         "label": "Membre de la commission ECI",
         "code": "ECI"
     }
-}
-]
+}]

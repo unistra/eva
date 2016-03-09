@@ -894,20 +894,6 @@
     },
     "model": "contenttypes.contenttype"
 }, {
-    "pk": 15,
-    "fields": {
-        "app_label": "institute",
-        "model": "staff"
-    },
-    "model": "contenttypes.contenttype"
-}, {
-    "pk": 16,
-    "fields": {
-        "app_label": "institute",
-        "model": "scolmanager"
-    },
-    "model": "contenttypes.contenttype"
-}, {
     "pk": 17,
     "fields": {
         "app_label": "institute",
@@ -1094,14 +1080,6 @@
     "fields": {
         "name": "Can add site",
         "codename": "add_site",
-        "content_type": 6
-    },
-    "model": "auth.permission"
-}, {
-    "pk": 17,
-    "fields": {
-        "name": "Can change site",
-        "codename": "change_site",
         "content_type": 6
     },
     "model": "auth.permission"
@@ -1311,38 +1289,6 @@
         "name": "Can change academic field",
         "codename": "change_academicfield",
         "content_type": 14
-    },
-    "model": "auth.permission"
-}, {
-    "pk": 44,
-    "fields": {
-        "name": "Can delete academic field",
-        "codename": "delete_academicfield",
-        "content_type": 14
-    },
-    "model": "auth.permission"
-}, {
-    "pk": 45,
-    "fields": {
-        "name": "Can add staff",
-        "codename": "add_staff",
-        "content_type": 15
-    },
-    "model": "auth.permission"
-}, {
-    "pk": 46,
-    "fields": {
-        "name": "Can change staff",
-        "codename": "change_staff",
-        "content_type": 15
-    },
-    "model": "auth.permission"
-}, {
-    "pk": 47,
-    "fields": {
-        "name": "Can delete staff",
-        "codename": "delete_staff",
-        "content_type": 15
     },
     "model": "auth.permission"
 }, {

@@ -54,7 +54,6 @@
 $('.select-type').on('change', function() {
     new_type = this.value;
     id = $(this).parents('td').prev().text();
-    console.log(id);
     $.ajax({
         url: "/commission/",
         type: "POST",

@@ -13,19 +13,6 @@ class AcademicField(models.Model):
         return self.name
 
 
-class Staff(models.Model):
-    _lastname = models.CharField(_('Nom'), max_length=35)
-    _firstname = models.CharField(_('Prénom'), max_length=35)
-    _mail = models.EmailField(_('Email'))
-
-    def __str__(self):
-        return "%s %s" % (self._firstname, self._lastname)
-
-
-class ScolManager(Staff):
-    is_ref_app = models.BooleanField(_("Référent application"))
-
-
 class Institute(models.Model):
     field_choice = AcademicField.objects.all()
 
@@ -37,7 +24,7 @@ class Institute(models.Model):
     id_rac = models.CharField(_('Responsable administratif'), max_length=65, blank=True)
     dircomp = models.ForeignKey(MeccUser, related_name='dircomp', blank=True, null=True)
     rac = models.ForeignKey(MeccUser, related_name='racs', blank=True, null=True)
-    diretu = models.ManyToManyField(ScolManager, related_name='diretu', blank=True)
+    diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
     scol_manager = models.ManyToManyField(ScolManager, related_name='scol_managers', blank=True)
 
     def clean_fields(self, exclude=None):

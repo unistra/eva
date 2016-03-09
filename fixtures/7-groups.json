@@ -1,0 +1,24 @@
+[
+ {
+      "pk": 1,
+      "fields": {
+          "name": "DES1",
+          "permissions": [67]
+      },
+      "model": "auth.group"
+  }, {
+      "pk": 2,
+      "fields": {
+          "name": "DES2",
+          "permissions": [68]
+      },
+      "model": "auth.group"
+  }, {
+      "pk": 3,
+      "fields": {
+          "name": "DES3",
+          "permissions": [69]
+      },
+      "model": "auth.group"
+  }
+]

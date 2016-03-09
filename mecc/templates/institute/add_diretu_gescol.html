@@ -1,0 +1,72 @@
+{% load i18n %}
+
+<div id="table-diretu" class="table-editable">
+  <table class="table">
+    <tr>
+      <th>{% trans "Directeurs d'études" %}</th>
+      <th></th>
+      <th></th>
+      <th> <span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
+    </tr>
+    <!-- This is our clonable table line -->
+    <tr class="hide">
+      <td width="50%" contenteditable="true"></td>
+      <td width="30%" class="first_name">Prénom</td>
+      <td width="10%"> <span class="table-remove glyphicon glyphicon-trash"></span>
+      <td width="10%"></td>
+      </td>
+    </tr>
+  </table>
+</div>
+<div id="table-gescol" class="table-editable">
+  <table class="table">
+    <tr>
+      <th>{% trans "Gestionnaire de scolarité" %}</th>
+      <th></th>
+      <td><small>référent app</small></td>
+      <th><span class="table-add glyphicon glyphicon-plus pull-right"></span></th>
+    </tr>
+    <!-- This is our clonable table line -->
+    <tr class="hide">
+      <td width="50%" contenteditable="true"></td>
+      <td width="30%" class="first_name">Prénom</td>
+      <td width="10%"><input type="checkbox" name="rafapp" value="true"><br></td>
+      <td width="10%"> <span class="table-remove glyphicon glyphicon-trash pull-right"></span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<script>
+$('.table-add').click(function () {
+  var $clone = $(this).parents('div').find($(this).parents('tr').next()).clone(true).removeClass('hide table-line');
+  $(this).parents('div').find(  $(this).parents('table')).append($clone);
+});
+
+$('.table-remove').click(function () {
+  $(this).parents('tr').detach();
+});
+</script>
+
+<style>
+.table-editable {
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.table-remove {
+  color: red;
+  cursor: pointer;
+
+  &:hover {
+    color: #f00;
+  }
+}
+
+.table-add {
+  color: #070;
+  cursor: pointer;
+}
+
+</style>

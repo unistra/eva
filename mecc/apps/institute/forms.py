@@ -1,5 +1,5 @@
 from django import forms
-from mecc.apps.institute.models import Institute, AcademicField, Staff, ScolManager
+from mecc.apps.institute.models import Institute, AcademicField
 from django.utils.translation import ugettext as _
 
 from django import forms

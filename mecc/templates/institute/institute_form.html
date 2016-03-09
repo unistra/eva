@@ -41,6 +41,7 @@
    <input id="input_rac_mail" name="rac_mail" >
    <input id="input_rac_status" name="rac_status"/>
   </div>
+
     <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
      onclick="_isEdited=false"/>
@@ -115,7 +116,6 @@
 
 
  <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
-
  <script type="text/javascript">
  // Get cmp code in order to search people
 code_cmp = document.getElementById("id_code").value
