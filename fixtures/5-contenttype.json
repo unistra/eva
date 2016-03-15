@@ -112,13 +112,6 @@
       },
       "model": "contenttypes.contenttype"
   }, {
-      "pk": 20,
-      "fields": {
-          "app_label": "years",
-          "model": "instituteyear2"
-      },
-      "model": "contenttypes.contenttype"
-  }, {
       "pk": 21,
       "fields": {
           "app_label": "adm",

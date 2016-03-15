@@ -1,9 +1,9 @@
-from .models import UniversityYear, InstituteYear, InstituteYear2
+from .models import UniversityYear, InstituteYear
 from ..institute.models import Institute
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.utils import timezone
-from .forms import UniversityYearForm, InstituteYear2Form
+from .forms import UniversityYearForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from django.utils.encoding import smart_text
@@ -12,11 +12,6 @@ from fm.views import AjaxCreateView
 
 from django_cas.decorators import login_required
 
-class InstituteYear2Create(AjaxCreateView):
-    form_class = InstituteYear2Form
-
-class InstituteYear2ListView(ListView):
-    model = InstituteYear2
 
 class UniversityYearDelete(DeleteView):
 

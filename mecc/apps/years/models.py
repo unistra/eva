@@ -20,8 +20,6 @@ class InstituteYear(models.Model):
     def is_expected_date_late(self):
         if isinstance(self.date_expected_MECC, datetime.date):
             current = UniversityYear.objects.get(is_target_year=True)
-            print("--------DAte expected in years-------")
-            print(current.date_expected)
             if isinstance(current.date_expected, datetime.date):
                 return True if current.date_expected <= self.date_expected_MECC else False
         return None
@@ -57,8 +55,6 @@ class UniversityYear(models.Model):
     def __str__(self):
         return self.label_year
 
-
-
     def clean_fields(self, exclude=None):
 
         if self.code_year in set([e.code_year for e in InstituteYear.objects.all()]):
@@ -83,15 +79,3 @@ class UniversityYear(models.Model):
 
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
-
-
-class InstituteYear2(models.Model):
-    id_cmp = models.ForeignKey(Institute, verbose_name=_('Composante'))
-    year = models.ForeignKey(UniversityYear,
-                             verbose_name=_('Année universitaire'))
-    date_expected_MECC = models.DateField(
-        _('Date prévisionnelle comp. MECC'), blank=True, null=True
-    )
-    date_last_notif = models.DateField(
-        _('Date dernière notification MECC'), blank=True, null=True
-    )

@@ -29,7 +29,10 @@
         </tr>
         {% for item in field.list %}
         <tr class="hover-row">
-          <td style="border-style:none;padding-left:2em"><a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.label }}</a></td>
+          <td style="border-style:none;padding-left:2em">
+              <a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.labelled }} 
+              </a>
+          </td>
           <td>{{item.dircomp}}</td>
           <td>{{item.rac}}</td>
           <td><font color="{% if item.is_late %} red {% endif %}">{{item.date_expected_MECC|date:'d/m/Y'}}</font></td>

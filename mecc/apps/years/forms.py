@@ -1,5 +1,5 @@
 from django import forms
-from mecc.apps.years.models import UniversityYear, InstituteYear2, InstituteYear
+from mecc.apps.years.models import UniversityYear, InstituteYear
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
@@ -154,9 +154,3 @@ class RacInstituteYearForm(InstituteYearForm):
         if instance and instance.pk:
             self.fields['date_expected_MECC'].widget.attrs['readonly'] = True
             self.fields['date_last_notif'].widget.attrs['readonly'] = True
-
-
-class InstituteYear2Form(forms.ModelForm):
-    class Meta:
-        model = InstituteYear2
-        exclude = ()

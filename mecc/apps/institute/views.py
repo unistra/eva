@@ -25,7 +25,6 @@ import json
 from datetime import datetime
 
 
-
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def granted_edit_institute(request, code, template='institute/granted.html'):
     data = {}
@@ -55,29 +54,6 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         return redirect('/') # Redirect after POST
 
     return render(request, template, data)
-#
-#
-# @user_passes_test(lambda u: True if 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
-# def view_institute(request, code, template='institute/dircomp.html'):
-#     institute = Institute.objects.get(code=code)
-#     data = {}
-#     current_year = list(UniversityYear.objects.filter(
-#         Q(is_target_year=True))).pop(0)
-#     institute_year = InstituteYear.objects.get(
-#         id_cmp=institute.id, code_year=current_year.code_year)
-#     try:
-#         institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
-#     except TypeError:
-#         institute_year.date_expected_MECC = ''
-#     data['university_year'] = current_year
-#
-#     data['form_institute'] = DircompInstituteForm(instance=institute)
-#     data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
-#     data['form_institute_year'] = DircompInstituteYearForm(instance=institute_year)
-#     data['cadre_gen'] = "xxxxx.pdf"
-#
-#     data['latest_instit_id'] = institute.id
-#     return render(request, template, data)
 
 
 @login_required
@@ -203,9 +179,8 @@ class InstituteUpdate(UpdateView):
         try:
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
-            context['institute_year'] = a = InstituteYear.objects.get(
+            context['institute_year'] = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
-            context['is_expected_date_late'] = a.is_expected_date_late()
             context['university_year'] = UniversityYear.objects.get(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
@@ -232,8 +207,8 @@ class InstituteListView(ListView):
                 iy = InstituteYear.objects.get(code_year=current_year, id_cmp=e.id)
                 field = {
                     'domaine': e.field.name,
-                    'label': e.label,
                     'code': e.code,
+                    'labelled': "%s - %s" % (e.label, e.ROF_code) if e.ROF_code not in ['', ' ', None] else e.label,
                     'dircomp': e.id_dircomp,
                     'rac': e.id_rac,
                     'date_expected_MECC': iy.date_expected_MECC,

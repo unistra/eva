@@ -1,7 +1,6 @@
 from django.conf.urls import url
 from .views import UniversityYearUpdate, UniversityYearListView, \
-    UniversityYearCreate, UniversityYearDelete, initialize_year, \
-    InstituteYear2ListView, InstituteYear2Create
+    UniversityYearCreate, UniversityYearDelete, initialize_year
 from django_cas.decorators import login_required
 
 

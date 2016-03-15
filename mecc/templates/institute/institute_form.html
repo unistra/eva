@@ -82,7 +82,7 @@
     {% trans "Date prévisionnelle Conseil comp. MECC" %}
   </label>
   <div class="controls col-lg-4">
-    <input class=" form-control {% if is_expected_date_late %} input-red {% endif %}" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
+    <input class=" form-control {% if institute_year.is_expected_date_late %} input-red {% endif %}" value="{{institute_year.date_expected_MECC|date:'d/m/Y'}}" readonly="True">
   </div>
 </div>
   <div>
@@ -268,9 +268,6 @@ id_code = document.getElementById("id_code").parentNode;
 id_code.appendChild(check_box)
 
 // ////////// ************ Let's do some AJAX
-code_cmp = document.getElementById("id_code").value
-var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
-var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
 
 
 </script>

@@ -194,7 +194,7 @@ align-self: center;
 
 #count-row {float: right; color: #D3D7DA; line-height: 1.75em; margin-right: 0.5em;}
 
-.hover-row:hover {background: #F5F8FE;}
+.hover-row:hover, .hover-row:focus {background: #F5F8FE;}
 
 .select {cursor: pointer;
 }
@@ -302,7 +302,7 @@ align-self: center;
     color: #FFFFFF;
 }
 
-.sidebar-nav li a:hover, .item-selected{
+.sidebar-nav li a:hover, .item-selected, .sidebar-nav li a:focus{
     text-decoration: none;
     background: #00294B;
     color : #FFFFFF;
@@ -313,7 +313,7 @@ align-self: center;
 }
 
 
-li:hover .sub-level {
+li:hover .sub-level, li:focus {
     display: block;
     list-style: none;
 }

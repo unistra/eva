@@ -40,6 +40,19 @@
 
 </div>
 <script>
+// Add color red if selected date >= expected date
+function checkIfRed(){
+  var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+  var expected_date = new Date($('#id_date_expected').val().replace(pattern, '$3-$2-$1'));
+  var new_date = new Date($('#id_date_expected_MECC').val().replace(pattern, '$3-$2-$1'));
+  if (new_date >= expected_date ){
+    document.getElementById("id_date_expected_MECC").className += " input-red"
+  } else {
+    document.getElementById("id_date_expected_MECC").className = "datepicker textinput textInput form-control"
+  }
+
+};
+
 // Add checkbox next to id_code
 check_box = document.getElementById("div_id_is_on_duty");
 id_code = document.getElementById("id_code").parentNode;
@@ -50,17 +63,9 @@ $('#id_date_expected_MECC').datepicker({
     todayHighlight: true,
     autoclose: true,
 });
-// Add color red if selected date >= expected date
-$("#id_date_expected_MECC").change(function(){
-  var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-  var expected_date = new Date($('#id_date_expected').val().replace(pattern, '$3-$2-$1'));
-  var new_date = new Date($(this).val().replace(pattern, '$3-$2-$1'));
-  if (new_date >= expected_date ){
-    document.getElementById("id_date_expected_MECC").className += " input-red"
-  } else {
-    document.getElementById("id_date_expected_MECC").className = "datepicker textinput textInput form-control"
-  }
-});
+$("#id_date_expected_MECC").change(checkIfRed);
+window.onload = checkIfRed
+
 </script>
 
 {% endblock %}
