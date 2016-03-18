@@ -14,6 +14,22 @@
         </button>
       </th>
     </tr>
+    {% for e in institute.diretu.all %}
+    <tr>
+      <td width="40%" >{{e.user.last_name}}</td>
+      <td width="40%" class="first_name">{{e.user.first_name}}</td>
+      <td class="id_member">{{e.user.username}}</td>
+      <td class="type">DIRETU</td>
+      <td width="15%"></td>
+      <td width="5%">
+        <button type="button" class="btn btn-default table-remove pull-right btn-xs">
+          <span class="glyphicon glyphicon-trash">
+        </button>
+      </span>
+      </td>    </tr>
+
+    {% endfor %}
+    <br>
     <!-- This is the clonable table line -->
     <tr class="hide clone">
       <td width="40%" >
@@ -21,6 +37,7 @@
       </td>
       <td width="40%" class="first_name"></td>
       <td class="id_member"></td>
+      <td class="type">DIRETU</td>
       <td width="15%"></td>
       <td width="5%">
         <button type="button" class="btn btn-default new_diretu pull-right btn-xs">
@@ -46,6 +63,21 @@
         </button>
       </th>
     </tr>
+    {% for e in institute.scol_manager.all %}
+    <tr>
+      <td width="40%" >{{e.user.last_name}}</td>
+      <td width="40%" class="first_name">{{e.user.first_name}}</td>
+      <td class="id_member">{{e.user.username}}</td>
+      <td class="type">GESCOL</td>
+      <td width="15%">{{e.is_ref_app}}</td>
+      <td width="5%">
+        <button type="button" class="btn btn-default table-remove pull-right btn-xs">
+          <span class="glyphicon glyphicon-trash">
+        </button>
+      </span>
+      </td>    </tr>
+
+    {% endfor %}
     <!-- This is the clonable table line -->
     <tr class="hide clone">
       <td width="40%" >
@@ -53,6 +85,7 @@
       </td>
       <td width="40%" class="first_name"></td>
       <td class="id_member"></td>
+      <td class="type">GESCOL</td>
       <td width="15%"><input type="checkbox" name="refapp" ></td>
       <td width="5%">
         <button type="button" class="btn btn-default new_gescol pull-right btn-xs">
@@ -67,15 +100,30 @@
 
   </table>
 </div>
+{{instiute}}
+
 <script>
-
-$('.table-remove').click(function () {
-  $(this).parents('tr').detach();
-});
-
 var code_cmp = document.getElementById("id_code").value
 var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+
+$('.table-remove').click(function () {
+  var username = $('td:first',$(this).parents('tr')).next().next();
+  var type = username.next();
+  console.log(type.text());
+  $.ajax({
+    url: "{% url 'institute:remove_pple' %}",
+    type: "POST",
+    data: {
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      username: username.text(),
+      code_cmp: code_cmp,
+      type: type.text(),
+    },
+  });
+  $(this).parents('tr').detach();
+});
+
 
 
 function do_stuff (data, add_first, add_new, type) {
@@ -120,7 +168,7 @@ function do_stuff (data, add_first, add_new, type) {
           var last_name = input.val();
           var first_name = first_cell.next().text();
           var username = first_cell.next().next().text();
-          var refapp = first_cell.next().next().next().find('input');
+          var refapp = first_cell.next().next().next().next().find('input');
           input.addClass('hidden');
           if (last_name != null) {
             first_cell[0].innerHTML = last_name;
@@ -140,6 +188,7 @@ function do_stuff (data, add_first, add_new, type) {
                   username: username,
                   code_cmp: code_cmp,
                   type: type,
+                  is_ref_app: refapp.is(":checked")
               },
             });
             console.log(last_name);
@@ -193,7 +242,7 @@ $.getJSON(url_prof, function (data) {
   color: #070;
   cursor: pointer;
 }
-.table-add{
+.table-add, .type{
   display: none;
 }
 </style>

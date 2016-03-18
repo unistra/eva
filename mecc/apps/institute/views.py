@@ -29,6 +29,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['university_year'] = current_year
     code_cmp = request.user.meccuser.cmp
     institute = Institute.objects.get(code=code)
+    data['institute'] = institute
     data['latest_instit_id'] = institute.id
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
@@ -62,7 +63,8 @@ def add_pple(request):
         email = request.POST.get('email')
         try:
             user = User.objects.create_user(username, email)
-        except IntegrityError:
+        except IntegrityError as e:
+            print(e)
             user = User.get(username=username)
         user.last_name = request.POST.get('last_name')
         user.first_name = request.POST.get('first_name')
@@ -75,21 +77,38 @@ def add_pple(request):
 
         profile = Profile.objects.get(code=request.POST.get('type').upper())
         meccuser.profile.add(profile)
+        print('all profiles -------------')
+        print(meccuser.profile.all())
         meccuser.cmp = request.POST.get('code_cmp')
         meccuser.save()
 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.add(meccuser)
+            institute.save()
+        else:
+            print("hello")
+            meccuser.is_ref_app = request.POST.get('is_ref_app')
+            print(request.POST.get('is_ref_app'))
+            meccuser.save()
+            institute.scol_manager.add(meccuser)
+            institute.save()
 
-        print('done ! (will not work yet i guess)')
+@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def remove_pple(request):
+    """
+    Process remove diretu/gescol ajax querries
+    """
+    if request.is_ajax() and request.method == 'POST':
+        username = request.POST.get('username')
+        meccuser = MeccUser.objects.get(user__username=username)
+        profile = Profile.objects.get(code=request.POST.get('type'))
+        meccuser.profile.remove(profile)
+        if len(meccuser.profile.all()) < 1:
+            meccuser.user.delete()
+            meccuser.delete()
 
 
-
-        username = request.POST.get('username', '')
-        code_cmp = request.POST.get('code_cmp', '')
-        print(code_cmp)
-        return JsonResponse(None)
 
 @login_required
 def get_list(request, employee_type, pk):
