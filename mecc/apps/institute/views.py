@@ -1,28 +1,24 @@
 from django.utils.translation import ugettext as _
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.core import serializers
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-from django.core.signals import request_finished
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django_cas.decorators import login_required, user_passes_test, \
-    permission_required
+from django_cas.decorators import login_required, user_passes_test
 
 from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, DircompInstituteForm
-from mecc.apps.years.forms import DircompInstituteYearForm, DircompUniversityYearForm, RacInstituteYearForm
-from mecc.apps.institute.models import Institute, AcademicField
-from mecc.apps.years.models import InstituteYear
+from mecc.apps.years.forms import DircompInstituteYearForm, \
+ DircompUniversityYearForm
+from mecc.apps.institute.models import Institute
+from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp
-from mecc.apps.years.models import UniversityYear, InstituteYear
 from mecc.apps.adm.models import MeccUser, Profile
 
-import json
 from datetime import datetime
+
+from django.db import IntegrityError
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -56,8 +52,48 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     return render(request, template, data)
 
 
+@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def add_pple(request):
+    """
+    Process add diretu / gescol ajax querries
+    """
+    if request.is_ajax() and request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        try:
+            user = User.objects.create_user(username, email)
+        except IntegrityError:
+            user = User.get(username=username)
+        user.last_name = request.POST.get('last_name')
+        user.first_name = request.POST.get('first_name')
+        user.save()
+
+        try:
+            meccuser = MeccUser.objects.get(user__username=username)
+        except ObjectDoesNotExist:
+            meccuser = MeccUser.objects.create(user=user)
+
+        profile = Profile.objects.get(code=request.POST.get('type').upper())
+        meccuser.profile.add(profile)
+        meccuser.cmp = request.POST.get('code_cmp')
+        meccuser.save()
+
+        institute = Institute.objects.get(code=request.POST.get('code_cmp'))
+        if request.POST.get('type') in ['diretu', 'DIRETU']:
+            institute.diretu.add(meccuser)
+
+        print('done ! (will not work yet i guess)')
+
+
+
+        username = request.POST.get('username', '')
+        code_cmp = request.POST.get('code_cmp', '')
+        print(code_cmp)
+        return JsonResponse(None)
+
 @login_required
 def get_list(request, employee_type, pk):
+
     if employee_type == 'prof':
         type_staff = 'Enseignant'
     elif employee_type == 'adm':
@@ -67,7 +103,6 @@ def get_list(request, employee_type, pk):
 
 
 class InstituteDelete(DeleteView):
-
     model = Institute
 
     slug_field = 'code'

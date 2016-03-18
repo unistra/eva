@@ -42,10 +42,7 @@ class MeccUser(models.Model):
             _('Statut'), max_length=4, choices=STATUS_CHOICES, blank=True)
 
         profile = models.ManyToManyField(Profile)
+        is_ref_app = models.BooleanField(_("Référent application"), default=False)
 
         def __str__(self):
             return self.user.username
-
-
-class ScolManager(MeccUser):
-    is_ref_app = models.BooleanField(_("Référent application"))

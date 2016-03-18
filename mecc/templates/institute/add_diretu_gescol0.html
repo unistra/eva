@@ -1,0 +1,211 @@
+{% load i18n %}
+{% load staticfiles %}
+
+<script src="{% static 'js/autocomplete.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<div id="table-diretu" class="table-editable">
+  <table class="table">
+    <tr>
+      <th width="95%" colspan="3">{% trans "Directeurs d'études" %}</th>
+      <th width="5%"> <span class="table-add glyphicon glyphicon-plus pull-right" id='add_diretu'></span></th>
+    </tr>
+    <!-- This is the clonable table line -->
+    <tr class="hide">
+      <td width="40%" >    <input class="lf" name="diretu" placeholder='Rechercher'  /></td>
+
+      <td width="40%" contenteditable="true" placeholder="{% trans 'Rechercher' %}" ></td>
+      <td width="40%" class="first_name"></td>
+      <td width="15%"> <span class="table-remove glyphicon glyphicon-trash pull-right"></span>
+      <td width="5%"></td>
+      </td>
+    </tr>
+  </table>
+</div>
+<br>
+<div id="table-gescol" class="table-editable">
+  <table class="table">
+    <tr>
+      <th width="80%" colspan="2">{% trans "Gestionnaire de scolarité" %}</th>
+      <th width="15%"><small>référent app</small></th>
+      <th width="5%"><span class="table-add glyphicon glyphicon-plus pull-right" id="add_gescol"></span></th>
+    </tr>
+    <!-- This is the clonable table line -->
+    <tr class="hide">
+      {# <td width="40%" contenteditable="true" placeholder="{% trans 'Rechercher' %}" class='lf_adm' ></td>#}
+      <td width="40%" >    <input class="lf" name="gescol" placeholder='Rechercher'  /></td>
+      <td width="40%" class="first_name"  contenteditable="true"></td>
+      <td width="15%"><input type="checkbox" name="rafapp" value="true" class='pull-right'><br></td>
+      <td width="5%"><span class="table-remove glyphicon glyphicon-trash pull-right"></span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<script>
+
+
+$('.table-remove').click(function () {
+  $(this).parents('tr').detach();
+});
+
+code_cmp = document.getElementById("id_code").value
+var url_prof = "/institute/ressources/prof/" + code_cmp + ".json"
+var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+
+
+$.getJSON(url_prof, function (data) {
+  var options ={
+    data: data,
+    getValue: function (element) {
+      return element.last_name;
+
+    }
+};
+  document.getElementById("add_diretu").style.display = "block";
+
+$("#add_diretu").click(function () {
+  var clone = $(this).parents('div').find($(this).parents('tr').next()).clone(true).removeClass('hide table-line');
+  var g_table =   $(this).parents('div').find(  $(this).parents('table'));
+  a = clone.find('.lf')
+  g_table.append(clone);
+  g_table.find(a).easyAutocomplete(options);
+
+});
+});
+
+
+
+code_cmp = document.getElementById("id_code").value
+
+var url_adm = "/institute/ressources/adm/" + code_cmp + ".json"
+
+   $.getJSON(url_adm, function (data) {
+    var options = {
+      data: data,
+      getValue: function (element) {
+        return element.last_name + " " + element.first_name + " ";
+      },
+      template: {
+        type: "description",
+    		fields: {
+    			description: "id_member"
+   		}
+   	},
+       list: {
+		showAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+
+		hideAnimation: {
+			type: "slide", //normal|slide|fade
+			time: 400,
+			callback: function() {}
+		},
+      		match: {
+      			enabled: true
+      		},
+         onSelectItemEvent: function() {
+           var username = $(".input_adm").getSelectedItemData().id_member;
+           var last_name = $(".input_adm").getSelectedItemData().last_name;
+           var first_name = $(".input_adm").getSelectedItemData().first_name;
+           var email = $(".input_adm").getSelectedItemData().mail;
+           var status = $(".input_adm").getSelectedItemData().status;
+
+           $("#input_rac_username_member").val(username).trigger("change");
+           $("#input_rac_last_name").val(last_name).trigger("change");
+           $("#input_rac_first_name").val(first_name).trigger("change");
+           $("#input_rac_mail").val(email).trigger("change");
+           $("#input_rac_status").val(status).trigger("change");
+           $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
+
+         },
+      	}
+     };
+    //  //////////////////bin/
+    document.getElementById("add_diretu").style.display = "block";
+
+  $("#add_diretu").click(function () {
+    var clone = $(this).parents('div').find($(this).parents('tr').next()).clone(true).removeClass('hide table-line');
+    var g_table =   $(this).parents('div').find(  $(this).parents('table'));
+    a = clone.find('.lf')
+    g_table.append(clone);
+    g_table.find(a).easyAutocomplete(options);
+
+
+   });
+
+
+
+$.getJSON(url_adm, function (data) {
+  var options ={
+    data: data,
+    getValue: function (element) {
+      return element.last_name;
+
+    }
+};
+  document.getElementById("add_gescol").style.display = "block";
+
+$("#add_gescol").click(function () {
+  var clone = $(this).parents('div').find($(this).parents('tr').next()).clone(true).removeClass('hide table-line');
+  var g_table =   $(this).parents('div').find(  $(this).parents('table'));
+  a = clone.find('.lf')
+  g_table.append(clone);
+  $(function(){
+
+  g_table.find(a).autocomplete({
+    source:data,
+    select: function( event, ui ) {
+        g_table.find(a).val(ui.item.last_name);
+        return false;
+    }
+  })
+  .autocomplete( "instance" )._renderItem = function( ul, item ) {
+  return $( "<li>" )
+    .append( "<a>" + item.last_name + "</a>" )
+    .appendTo( ul );
+};
+  })
+
+});
+});
+
+
+</script>
+
+
+
+
+
+<style>
+.table-editable {
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.table-remove {
+  color: red;
+  cursor: pointer;
+
+  &:hover {
+    color: #f00;
+  }
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
+.table-add {
+  color: #070;
+  cursor: pointer;
+  display: none;
+}
+
+</style>

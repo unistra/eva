@@ -36,8 +36,3 @@ def ECI_post_delete(sender, **kwargs):
     if len(profiles) < 1:
         meccuser.user.delete()
         meccuser.delete()
-#
-# @receiver(pre_save, sender=Institute)
-# def Institute_pre_save(sender, **kwargs):
-#     print('lool')
-#     print(kwargs)

@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from . import views
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
-    InstituteListView,  get_list, edit_insitute, granted_edit_institute
+    InstituteListView,  get_list, edit_insitute, granted_edit_institute, \
+    add_pple
 from django.views.generic.list import ListView
 from .models import Institute
 from django_cas.decorators import login_required
@@ -22,5 +23,7 @@ urlpatterns = [
         get_list, name='get_list'),
     url(r'^modify/(?P<code>\w+)', edit_insitute,
         name='modify'),
+    url(r'^add_pple/$', add_pple,
+        name="add_pple")
 
 ]

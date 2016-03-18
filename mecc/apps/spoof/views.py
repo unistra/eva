@@ -14,8 +14,8 @@ from django.http import HttpResponseForbidden
 
 @login_required
 def home(request, template='spoof/form.html'):
-    """ Default spoof page.
-
+    """
+     Default spoof page.
     """
 
     if request.user.has_perm('adm.can_spoof_user') or \

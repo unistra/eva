@@ -1,7 +1,9 @@
 .admin{
   font-family: "Times New Roman", Times, serif;
 }
-
+td.id_member{
+  display: none;
+}
 #spoof-alert{
 margin-bottom: 0!important;
 position: fixed;
