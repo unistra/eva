@@ -44,8 +44,7 @@ class InstituteForm(forms.ModelForm):
             Field('id_dircomp'),
             Field('id_rac'),
             HTML('<hr/>'),
-            Field('diretu'),
-            Field('scol_manager'),
+
 
     )
 

@@ -241,7 +241,7 @@ def edit_insitute(request, template='institute/institute_form.html', code=None):
     else:
         form = InstituteForm(instance=institute)
 
-    return render(request, template, {'form': form})
+    return render(request, template, {'form': form, 'institute':institute})
 
 
 class InstituteUpdate(UpdateView):
@@ -265,10 +265,10 @@ class InstituteUpdate(UpdateView):
                 code_year=current_year, id_cmp=self.object.id)
             context['university_year'] = UniversityYear.objects.get(
                 code_year=current_year)
+            context['institute'] = self.object
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         context['cadre_gen'] = "xxxxx.pdf"
-
         return context
 
     slug_field = 'code'
