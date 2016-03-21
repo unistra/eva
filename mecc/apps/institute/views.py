@@ -61,14 +61,14 @@ def add_pple(request):
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
+
         try:
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
             user = User.objects.create_user(username, email)
-        except IntegrityError as e:
-            print(e)
-            user = User.get(username=username)
-        user.last_name = request.POST.get('last_name')
-        user.first_name = request.POST.get('first_name')
-        user.save()
+            user.last_name = request.POST.get('last_name')
+            user.first_name = request.POST.get('first_name')
+            user.save()
 
         try:
             meccuser = MeccUser.objects.get(user__username=username)
@@ -77,39 +77,67 @@ def add_pple(request):
 
         profile = Profile.objects.get(code=request.POST.get('type').upper())
         meccuser.profile.add(profile)
-        print('all profiles -------------')
-        print(meccuser.profile.all())
         meccuser.cmp = request.POST.get('code_cmp')
         meccuser.save()
 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
+
         if request.POST.get('type') in ['diretu', 'DIRETU']:
+            if meccuser in institute.diretu.all():
+                return JsonResponse({
+                    'message': _("%s %s est déjà directeur de scolarité" % (
+                    request.POST.get('last_name'), request.POST.get('first_name'))
+                    )
+                })
             institute.diretu.add(meccuser)
             institute.save()
         else:
-            print("hello")
-            meccuser.is_ref_app = request.POST.get('is_ref_app')
-            print(request.POST.get('is_ref_app'))
+            if meccuser in institute.scol_manager.all():
+                return JsonResponse({
+                    'message': _("%s %s est déjà gestionnaire de scolarité" % (
+                    request.POST.get('last_name'), request.POST.get('first_name')))
+
+                })
+
+            meccuser.is_ref_app = False if request.POST.get('is_ref_app') == 'false' else True
             meccuser.save()
             institute.scol_manager.add(meccuser)
             institute.save()
 
+        return JsonResponse({
+            'success': _("%s %s a bien été ajouté" % (
+            request.POST.get('last_name'), request.POST.get('first_name')))
+
+        })
+
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def remove_pple(request):
     """
-    Process remove diretu/gescol ajax querries
+    Process remove diretu/gescol ajax querriessc
     """
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         meccuser = MeccUser.objects.get(user__username=username)
+
+        institute = Institute.objects.get(code=request.POST.get('code_cmp'))
+        if request.POST.get('type') in ['diretu', 'DIRETU']:
+            institute.diretu.remove(meccuser)
+            institute.save()
+        else:
+            institute.scol_manager.remove(meccuser)
+            institute.save()
+
         profile = Profile.objects.get(code=request.POST.get('type'))
         meccuser.profile.remove(profile)
         if len(meccuser.profile.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()
 
+        return JsonResponse({
+            'success': _("%s %s a bien été supprimé" % (
+            meccuser.user.last_name, meccuser.user.first_name))
 
-
+        })
 @login_required
 def get_list(request, employee_type, pk):
 

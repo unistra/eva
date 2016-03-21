@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
 
 <div id="table-diretu" class="table-editable">
+  <div id='message'></div>
+
   <table class="table">
     <tr>
       <th width="95%" colspan="3">{% trans "Directeurs d'études" %}</th>
@@ -27,7 +29,6 @@
         </button>
       </span>
       </td>    </tr>
-
     {% endfor %}
     <br>
     <!-- This is the clonable table line -->
@@ -69,7 +70,7 @@
       <td width="40%" class="first_name">{{e.user.first_name}}</td>
       <td class="id_member">{{e.user.username}}</td>
       <td class="type">GESCOL</td>
-      <td width="15%">{{e.is_ref_app}}</td>
+      <td width="15%"><input type="checkbox" name="refapp" {%if e.is_ref_app%} checked="true" {%endif%} disabled="true"></td>
       <td width="5%">
         <button type="button" class="btn btn-default table-remove pull-right btn-xs">
           <span class="glyphicon glyphicon-trash">
@@ -120,6 +121,15 @@ $('.table-remove').click(function () {
       code_cmp: code_cmp,
       type: type.text(),
     },
+    success: function(data) {
+      if (data.success){
+        console.log(data.success);
+        $('#message').html("<div class='alert alert-danger fade in'>" +
+            "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+            data.success + "</div>");
+        document.getElementById('message').style.display = '';
+      }
+    }
   });
   $(this).parents('tr').detach();
 });
@@ -137,6 +147,7 @@ function do_stuff (data, add_first, add_new, type) {
       g_table.append(clone);
       $(this).next().removeClass('hidden ');
       $(this).addClass(' hidden');
+
       var auto_comp = g_table.find(a);
       var options = {
         data: data,
@@ -163,7 +174,8 @@ function do_stuff (data, add_first, add_new, type) {
       };
       auto_comp.easyAutocomplete(options);
       $(add_new).one('click', function(e){
-          var first_cell = $('td:first',$(this).parents('tr'));
+          var tr = $(this).parents('tr');
+          var first_cell = $('td:first', tr);
           var input = first_cell.find('input')
           var last_name = input.val();
           var first_name = first_cell.next().text();
@@ -190,11 +202,23 @@ function do_stuff (data, add_first, add_new, type) {
                   type: type,
                   is_ref_app: refapp.is(":checked")
               },
+              success: function(data) {
+                if (data.message) {
+                  $('#message').html("<div class='alert alert-warning fade in'>" +
+                      "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                      data.message + "</div>");
+                  document.getElementById('message').style.display = '';
+                  tr.detach();
+                };
+                if (data.success) {
+                  $('#message').html("<div class='alert alert-success fade in'>" +
+                      "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                      data.success + "</div>");
+                  document.getElementById('message').style.display = '';
+                }
+
+              }
             });
-            console.log(last_name);
-            console.log(first_name);
-            console.log(username);
-            console.log(refapp.is(":checked"));
           }
 
       });
