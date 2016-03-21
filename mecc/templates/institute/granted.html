@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
+{% load groups%}
 
 
 {% block page-header %}
@@ -23,7 +24,11 @@
   <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
   </div>
   {% crispy form_institute %}
+  {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFSCOL"%}
   {% include "institute/add_diretu_gescol.html" with institute=institute%}
+  {% else %}
+  {% include "institute/view_diretu_gescol.html" with institute=institute%}
+  {%endif%}
 </form>
 
 <div class="comp-right">
@@ -33,10 +38,14 @@
         <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'>{{cadre_gen}}</a></label>
   </div>
   {% crispy form_university_year%}
+  {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC"%}
   <form method="post">
 {% crispy form_institute_year%}
 
 </form>
+  {% else %}
+  {% crispy disabled_institute_year%}
+  {%endif%}
 </div>
 
 </div>
@@ -58,12 +67,14 @@ function checkIfRed(){
 check_box = document.getElementById("div_id_is_on_duty");
 id_code = document.getElementById("id_code").parentNode;
 id_code.appendChild(check_box);
+{% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC"%}
 
 $('#id_date_expected_MECC').datepicker({
     language: "fr",
     todayHighlight: true,
     autoclose: true,
 });
+{% endif %}
 $("#id_date_expected_MECC").change(checkIfRed);
 window.onload = checkIfRed
 

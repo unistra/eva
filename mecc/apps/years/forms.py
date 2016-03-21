@@ -146,9 +146,9 @@ class InstituteYearForm(forms.ModelForm):
         ]
 
 
-class RacInstituteYearForm(InstituteYearForm):
+class DisabledInstituteYearForm(InstituteYearForm):
     def __init__(self, *args, **kwargs):
-        super(RacInstituteYearForm, self).__init__(*args, **kwargs)
+        super(DisabledInstituteYearForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
 
         if instance and instance.pk:

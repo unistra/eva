@@ -1,0 +1,36 @@
+
+{% load i18n %}
+{% load staticfiles %}
+<div style="padding-left: 15px; padding-right: 15px;">
+<table class="table" >
+  <tr>
+    <th width="100%" colspan="3">{% trans "Directeurs d'études" %}</th>
+    </th>
+  </tr>
+  {% for e in institute.diretu.all %}
+  <tr>
+    <td width="40%" >{{e.user.last_name}}</td>
+    <td width="40%" class="first_name">{{e.user.first_name}}</td>
+    <td width="20%"></td>
+  </tr>
+  {% endfor %}
+
+</table>
+</br>
+<table class="table">
+  <tr>
+    <th width="80%" colspan="2">{% trans "Gestionnaires de scolarité" %}</th>
+    <th width="20%"><small>référent app</small></th>
+    </th>
+  </tr>
+  {% for e in institute.scol_manager.all %}
+  <tr>
+    <td width="40%" >{{e.user.last_name}}</td>
+    <td width="40%" class="first_name">{{e.user.first_name}}</td>
+    <td width="20%"><input type="checkbox" name="refapp" {%if e.is_ref_app%} checked="true" {%endif%} disabled="true"></td>
+ </tr>
+
+  {% endfor %}
+
+</table>
+</div>

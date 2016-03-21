@@ -5,7 +5,7 @@
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
       {% if request.user.meccuser%}
-      {% if request.user.meccuser|is_profile:'DIRCOMP' %}
+      {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFSCOL"%}
         <li class="dropdown">
            <a href="#collapseInstituteDIRCOMP"   class="dropdown-toggle slump" data-toggle="collapse"
            aria-expanded="false" aria-controls="collapseInstituteDIRCOMP">
@@ -23,19 +23,19 @@
           </ul>
        </li>
       {% endif %}
-      {% if request.user.meccuser|is_profile:'RAC' %}
+      {% if request.user.meccuser|is_profile:"DIRETU" or request.user.meccuser|is_profile:"GESCOL"%}
         <li class="dropdown">
-           <a href="#collapseDegreeRAC"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+           <a href="#collapse2"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
           > {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
-           <ul class="collapse {% if 'degree' in request.path %} in {% endif %} slump"id="collapseDegreeRAC">
-             <li><a href="/institute/granted/{{request.user.meccuser.cmp}}"
+           <ul class="collapse {% if 'degree' in request.path %} in {% endif %} slump"id="collapse2">
+             <li><a href="/institute/details/{{request.user.meccuser.cmp}}"
               {% if 'degree/type' in request.path %}
                 class="item-selected"
              {% endif %}>{% trans 'Général' %}</a></li>
              <li><a href="#"
                {% if 'degree/list' in request.path %}
                 class="item-selected"
-             {% endif %}>{% trans 'Validation' %}</a></li>
+             {% endif %}>{% trans 'Documents' %}</a></li>
 
           </ul>
        </li>
