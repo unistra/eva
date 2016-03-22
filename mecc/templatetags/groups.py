@@ -16,3 +16,13 @@ def has_group(user, group_name):
 def is_profile(meccuser, profile_code):
     profile = Profile.objects.get(code=profile_code)
     return True if profile in meccuser.profile.all() else False
+
+#
+# @register.filter(name='in_list_profile')
+# def in_list_profile(meccuser, list_profile):
+#     profiles = meccuser.profile.all()
+#     for e in list_profile:
+#         profile = Profile.objects.get(code=e)
+#         if profile in profiles:
+#             return True
+#     return False

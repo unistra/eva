@@ -5,7 +5,7 @@
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
       {% if request.user.meccuser%}
-      {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFSCOL"%}
+      {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
         <li class="dropdown">
            <a href="#collapseInstituteDIRCOMP"   class="dropdown-toggle slump" data-toggle="collapse"
            aria-expanded="false" aria-controls="collapseInstituteDIRCOMP">
@@ -128,7 +128,7 @@
             {% endif %}>{% trans 'Règles générales' %}</a>
         </li>
         {% endif %}
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP'%}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
         <li style="margin-top:3em">
             <a href="#"
@@ -138,8 +138,7 @@
         </li>
         {% endif %}
 
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP'%}
-
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
         <li class="bottom" id='hideme'>
             <a href="#"
             {% if 'rules' in request.path %}

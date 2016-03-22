@@ -101,7 +101,7 @@ def add_pple(request):
 
             meccuser.is_ref_app = False if request.POST.get('is_ref_app') == 'false' else True
             if meccuser.is_ref_app:
-                profile = Profile.objects.get(code='REFSCOL')
+                profile = Profile.objects.get(code='REFAPP')
             institute.scol_manager.add(meccuser)
             institute.save()
         meccuser.profile.add(profile)
@@ -133,8 +133,7 @@ def remove_pple(request):
             institute.scol_manager.remove(meccuser)
             institute.save()
             if meccuser.is_ref_app:
-                print('crap')
-                profile = Profile.objects.get(code='REFSCOL')
+                profile = Profile.objects.get(code='REFAPP')
 
         meccuser.profile.remove(profile)
         if len(meccuser.profile.all()) < 1:

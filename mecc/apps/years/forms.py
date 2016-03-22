@@ -122,7 +122,7 @@ class UniversityYearForm(forms.ModelForm):
 
 class InstituteYearForm(forms.ModelForm):
     date_expected_MECC = forms.DateField(
-        widget=forms.TextInput(attrs={'class': 'datepicker'})
+        label=_('Date prévisionnelle Conseil comp. MECC')
     )
 
     def __init__(self, *args, **kwargs):

@@ -29,6 +29,7 @@ class MeccUser(models.Model):
             ('ECI', _('Membre de la commission ECI')),
             ('DIRCOMP', _('Directeur de composante')),
             ('RAC', _('Responsable administratif')),
+            ('REFAPP', _('Référent application')),
             ('REFSCOL', _('Responsable Formation Scolarité')),
             ('DIRETU', _('Directeur d\'études')),
             ('GESCOL', _('Gestionnaire de scolarité')),

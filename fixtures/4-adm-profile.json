@@ -47,4 +47,11 @@
         "label": "Membre de la commission ECI",
         "code": "ECI"
     }
+}, {
+    "model": "adm.profile",
+    "pk": 8,
+    "fields": {
+        "label": "Réferent application",
+        "code": "REFAPP"
+    }
 }]
