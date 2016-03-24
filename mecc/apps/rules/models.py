@@ -18,14 +18,14 @@ class Rule(models.Model):
         ('X', _('Nouvelle')),
     )
 
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
+    display_order = models.CharField(_('Numéro ordre affichage'), unique=False, max_length=5)
     code_year = models.IntegerField(_("Code année"))
     label = models.CharField(_("Libellé"), max_length=75)
     is_in_use = models.BooleanField(_('En service'))
     is_edited = models.CharField(_('Modifiée'), max_length=4,
         choices=EDITED_CHOICES, default='X')
     is_eci = models.BooleanField(_('ECI'), default=False)
-    is_ccct = models.BooleanField(_('CCCT'), default=False)
+    is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField(DegreeType)
 
     def __str__(self):
@@ -44,7 +44,7 @@ class Paragraph(models.Model):
         l'alinée dérogatoire (ou de composante)"))
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"))
-    impact = models.ManyToManyField(Impact, null=True, blanck=True)
+    impact = models.ManyToManyField(Impact)
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk

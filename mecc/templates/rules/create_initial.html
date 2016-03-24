@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block page-header %}
+{% trans "Fiche détaillée d'une règle générale" %}
+{% endblock %}
+
+
+<form action="" method="post">
+  <div class="line">
+    <div class="group">
+      <span>
+      <label class="">{% trans "ID règle" %} <small>(auto)</small> : </label>
+      000041 </span>
+    </div>
+    <div class="group">
+      <label class="">{% trans "Année universitaire : " %}</label>
+      <span> 2015/2016 </span>
+    </div>
+    <div class="group go-right">
+      <label class="">{% trans "En service" %} <small>(auto)</small> : </label>
+      <span> me </span>
+    </div>
+  </div>
+  <div class="line">
+    <div class="group" style="width:100%">
+      <label class=""style="width:20%">{% trans "Libellé de règle :" %}</label>
+      <input class="" style="width:79%" placeholder="{% trans 'Saisir ici le libellé de la nouvelle règle'%}"></input>
+    </div>
+  </div>
+  <div class="line">
+    <div class="group" style="width:100%">
+      <label class="">{% trans "Régime(s) concerné(s) : " %}</label>
+      <label class="">{% trans "ECI : " %}
+      <input type="checkbox" class=""></input>
+      </label>
+      <label class="">{% trans "CC/CT : " %}
+      <input type="checkbox"class=""></input>
+      </label>
+    </div>
+
+  </div>
+  <div class="line">
+    <div class="group" style="width:100%">
+      <label class="" style="width:27%">{% trans "N° d'ordre d'affichage :" %}</label>
+      <input class="" style="width:8%"></input>
+      <label class="" style="width:35%">{% trans "La règle a-t-elle été modifiée ?" %}</label>
+      <input class="" style="width:15%"></input>
+      <button style="width:10%;text-align:center" class="btn btn-primary btn-sm">{% trans "Valider" %}</button>
+    </div>
+  </div>
+</form>
+
+
+{% block app_content %}
+
+<div class="upper-part">
+        <div class="container-rule">
+            <div class="row">
+                <div class="col-xs-4">
+                  <span>
+                  <label class="">{% trans "ID règle" %} <small>(auto)</small> : </label>
+                  000041 </span>
+                </div>
+                <div class="col-xs-5">
+                  <label class="">{% trans "Année universitaire : " %}</label>
+                  <span> 2015/2016 </span>
+                </div>
+                <div class="col-xs-3">
+                  <div class="pull-right">
+                  <label class="">{% trans "En service :" %} </label>
+                  <span> m </span>
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                  <label class="" style="width:20%;">{% trans "Libellé de règle :" %}</label>
+                  <input class="" style="width:78%" placeholder="{% trans 'Saisir ici le libellé de la nouvelle règle'%}"></input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                  <label class="">{% trans "Régime(s) concerné(s) : " %}</label>
+                  <label class="">{% trans "ECI : " %}
+                  <input type="checkbox" class=""></input>
+                  </label>
+                  <label class="">{% trans "CC/CT : " %}
+                  <input type="checkbox"class=""></input>
+                  </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                  <label class="" >{% trans "N° d'ordre d'affichage :" %}</label>
+                  <input class="" style="width:2em"></input>
+                </div>
+                <div class="col-xs-6">
+                  <label class="" >{% trans "La règle a-t-elle été modifiée ?" %}</label>
+                  <input class="" style="width:6em"></input>
+                </div>
+                <div class="col-xs-2">
+                  <button class="btn btn-primary btn-sm pull-right"  >{% trans "Valider" %}</button>
+
+                </div>
+            </div>
+        </div>
+
+
+      <div class="up-right-part">
+      </div>
+</div>
+
+
+<style media="screen">
+.up-right-part{
+  width: 30%;
+}
+
+.upper-part {
+  display: flex;
+  border-bottom-style: solid;
+  border-bottom-color: #358CD3;
+  padding-bottom: 1em;
+  border-bottom-width: 0.15em;
+  -webkit-box-shadow: 0 10px 5px -9px #888888;
+          box-shadow: 0 10px 5px -9px #888888;
+}
+.go-rigth{
+  align-self: flex-end;
+}
+.container-rule{
+  width:70%;
+  display: flex;
+  flex-direction: column;
+  border-right-style: solid;
+  border-right-color: #358CD3;
+  border-right-width: 0.15em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  -webkit-box-shadow: 10px 0 5px -9px #888888;
+          box-shadow: 10px 0 5px -9px #888888;
+}
+.line{
+  display: flex;
+  align-items: center;
+}
+.group{
+  margin: 0.5em;
+}
+</style>
+
+{% endblock %}
+.form-group, init {
+  display: flex;
+}
+label[for=id_is_in_use] {
+  position:relative;
+  top:0;
+}
+
+.a {
+  display: flex;
+  border-bottom-style: solid;
+  border-bottom-color: #358CD3;
+  padding-bottom: 1em;
+  border-bottom-width: 0.15em;
+  -webkit-box-shadow: 0 10px 5px -9px #888888;
+          box-shadow: 0 10px 5px -9px #888888;
+}
+.b{
+  display: flex;
+  flex-direction: column;
+
+  width: 70%;
+  border-right-style: solid;
+  border-right-color: #358CD3;
+  border-right-width: 0.15em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  -webkit-box-shadow: 10px 0 5px -9px #888888;
+          box-shadow: 10px 0 5px -9px #888888;
+}

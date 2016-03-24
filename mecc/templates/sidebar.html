@@ -122,7 +122,7 @@
         {% if request.user|has_group:'DES1' or request.user.is_superuser%}
 
         <li>
-            <a href="#"
+            <a href="{% url 'rules:list' %}"
             {% if 'rules' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Règles générales' %}</a>
@@ -141,7 +141,7 @@
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
         <li class="bottom" id='hideme'>
             <a href="#"
-            {% if 'rules' in request.path %}
+            {% if 'gen' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
         </li>

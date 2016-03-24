@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block page-header %}
+{% trans "Fiche détaillée d'une règle générale" %}
+{% endblock %}
+
+
+{% block app_content %}
+
+<div class="upper-part">
+
+{% include "rules/create/top-left.html" with current_year=current_year%}
+
+      <div class="up-right-part">
+{% include "rules/create/top-right.html" %}
+      </div>
+</div>
+<div class="rule-bottom-part">
+{% include "rules/create/bottom.html" %}
+</div>
+
+<style media="screen">
+.rule-bottom-part{
+  display: flex;
+}
+.button-bottom{
+  min-height: 100vh;
+}
+.up-right-part{
+  width: 30%;
+}
+
+.upper-part {
+  display: flex;
+  border-bottom-style: solid;
+  border-bottom-color: #358CD3;
+  padding-bottom: 1em;
+  border-bottom-width: 0.15em;
+  -webkit-box-shadow: 0 10px 5px -9px #888888;
+          box-shadow: 0 10px 5px -9px #888888;
+}
+
+.container-rule{
+  width:70%;
+  display: flex;
+  flex-direction: column;
+  border-right-style: solid;
+  border-right-color: #358CD3;
+  border-right-width: 0.15em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  -webkit-box-shadow: 10px 0 5px -9px #888888;
+          box-shadow: 10px 0 5px -9px #888888;
+}
+.line{
+  display: flex;
+  align-items: center;
+}
+.group{
+  margin: 0.5em;
+}
+.grey-font{
+  color:grey;
+}
+</style>
+
+{% endblock %}

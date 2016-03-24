@@ -18,6 +18,8 @@ urlpatterns = patterns(
         namespace='institute')),
     url(r'^spoof/', include('mecc.apps.spoof.urls',
         namespace='spoof')),
+    url(r'^rules/', include('mecc.apps.rules.urls',
+        namespace='rules')),
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),
