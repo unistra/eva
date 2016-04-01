@@ -519,5 +519,13 @@
          "content_type": 21
      },
      "model": "auth.permission"
+ }, {
+     "pk": 70,
+     "fields": {
+         "name": "Appratient au groupe VP",
+         "codename": "VP",
+         "content_type": 21
+     },
+     "model": "auth.permission"
  }
 ]

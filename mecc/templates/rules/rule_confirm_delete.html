@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+
+{% block page-header %}
+{% trans 'Fiche type de diplôme' %}
+{% endblock %}
+
+{% block app_content %}
+<form action="" method="post" >
+  {% csrf_token %}
+    <p> {% trans "Confirmer la suppression de la règle : " %}{{ object.label }} ?</p>
+    <input type="submit" value="{% trans 'Oui'%}" class="btn btn-primary"/>
+    <a href="{% url 'rules:list' %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
+</form>
+{% endblock %}

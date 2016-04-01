@@ -7,13 +7,22 @@
 
 {% block app_content %}
   {% if commission_staff %}
-  <table class="table order-table">
+  <table class="table order-table" id="commission-member">
       <thead>
           <tr class='table-head'>
               <th> {% trans 'Nom' %}</th>
               <th> {% trans 'Prénom' %}</th>
               <th> {% trans 'ID Membre' %}</th>
-              <th> {% trans 'Type' %}</th>
+              <th>
+
+                <select id='filterText' onchange='filterCol(this)'>
+                    <option disabled="true"selected>{% trans 'Type' %}</option>
+                    <option value='all'>{% trans "Tous" %}</option>
+                    <option value='commission'>{% trans "Commission ECI" %}</option>
+                    <option value='supply'>{% trans "Étudiant CFVU suppléant" %}</option>
+                    <option value='tenured'>{% trans "Étudiant CFVU titulaire" %}</option
+                </select>
+              </th>
               <th></th>
           </tr>
           <thead>
@@ -25,7 +34,7 @@
                       <td>{{e.first_name}}</td>
                       <td>{{e.username}}</td>
                       <td>
-                          <select class='select-type'>
+                          <select class='select-type' id="val">
                <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
                <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
                <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
@@ -65,5 +74,20 @@ $('.select-type').on('change', function() {
     });
 });
 
+function filterCol(selected) {
+  var a = selected.value
+$('#commission-member tr').each(function() {
+    var b = $(this).find("#val");
+    if (a === b.val()) {
+      b.parent().parent().show();
+    } else {
+      b.parent().parent().hide();
+    }
+    if (a === 'all'){
+      console.log('hello!');
+      b.parent().parent().show();
+    }
+ });
+}
 </script>
 {% endblock %}

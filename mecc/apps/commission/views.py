@@ -50,7 +50,8 @@ def get_list_of_pple(request):
     if request.is_ajax():
         x = request.GET.get('member', '')
         if len(x) > 1:
-            data['pple'] = [e for e in get_from_ldap(x) if e['username'] not in [e.username for e in ECICommissionMember.objects.all()]]
+            ppl = [e for e in get_from_ldap(x) if e['username'] not in [e.username for e in ECICommissionMember.objects.all()]]
+            data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
             return JsonResponse(data)
         else:
             return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})

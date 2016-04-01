@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
+from django.core.urlresolvers import reverse
 
 class Impact(models.Model):
     code = models.IntegerField(_("Code impact"), unique=True)
@@ -18,7 +19,7 @@ class Rule(models.Model):
         ('X', _('Nouvelle')),
     )
 
-    display_order = models.CharField(_('Numéro ordre affichage'), unique=False, max_length=5)
+    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
     code_year = models.IntegerField(_("Code année"))
     label = models.CharField(_("Libellé"), max_length=75)
     is_in_use = models.BooleanField(_('En service'))
@@ -31,6 +32,11 @@ class Rule(models.Model):
     def __str__(self):
         return self.label
 
+    def get_absolute_url(self):
+        return reverse('rules:list')
+
+    class Meta:
+        ordering = ['display_order']
 
 class Paragraph(models.Model):
     code_year = models.IntegerField(_("Code année"))

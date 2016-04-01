@@ -71,7 +71,6 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
 
 
 def get_from_ldap(val):
-
     def process_stuff(ask):
         result = []
         r = json.loads(ask.text)
@@ -87,7 +86,7 @@ def get_from_ldap(val):
                     else:
                         affiliation = _('Enseignant')
                 person = {
-                    "last_name": e['last_name'],
+                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize()!= e['last_name'] else e['last_name'],
                     "first_name": e['first_name'].title(),
                     "status": affiliation,
                     "institute": cmp,
@@ -104,7 +103,6 @@ def get_from_ldap(val):
     ask = client.list_accounts(
         format='json', establishment='UDS', last_or_birth_name=val
     )
-
     return process_stuff(ask)
 
 def get_pple(val):

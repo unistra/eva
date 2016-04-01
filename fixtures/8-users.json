@@ -1,69 +1,205 @@
 [{
+    "model": "auth.user",
     "pk": 1,
     "fields": {
-        "is_superuser": true,
-        "password": "pbkdf2_sha256$20000$WVqQ9yArATgx$q6e7jV/8E0cXXbuNFzHggSeGm09lEA/d6ctGZ2yHPaA=",
-        "date_joined": "2016-03-01T11:52:40.697Z",
-        "username": "ibis.ismail",
-        "is_staff": true,
-        "is_active": true,
-        "email": "",
         "first_name": "",
-        "last_login": "2016-03-02T10:46:07.591Z",
-        "groups": [],
-        "user_permissions": [],
-        "last_name": ""
-    },
-    "model": "auth.user"
+        "password": "pbkdf2_sha256$20000$WVqQ9yArATgx$q6e7jV/8E0cXXbuNFzHggSeGm09lEA/d6ctGZ2yHPaA=",
+        "last_login": "2016-03-30T08:51:26.763Z",
+        "user_    permissions": [],
+        "username": "ibis.ismail",
+        "date_joined": "2016-03-01T11:52:40.697Z",
+        "is_active": true,
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_superuser": true,
+        "groups": []
+    }
 }, {
+    "model": "auth.user",
     "pk": 2,
     "fields": {
-        "is_superuser": false,
+        "first_name": "",
         "password": "pbkdf2_sha256$20000$At8sgieDnzxX$ZeWi7+ni0/T+1tyjP/FumqL4ZDAu8Exmj2Mg6H/90Ms=",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "DE    S3",
         "date_joined": "2016-03-01T11:56:15.208Z",
-        "username": "DES3",
-        "is_staff": false,
         "is_active": true,
+        "last_name": "",
         "email": "",
-        "first_name": "",
-        "last_login": null,
-        "groups": [3],
-        "user_permissions": [],
-        "last_name": ""
-    },
-    "model": "auth.user"
-}, {
-    "pk": 3,
-    "fields": {
+        "is_staff": false,
         "is_superuser": false,
-        "password": "pbkdf2_sha256$20000$EtOrrKWyekFd$nH0gotvMNYrkaoG2USKBdVkKgH+VPxDixS/YY0XnHNc=",
-        "date_joined": "2016-03-01T11:56:37.409Z",
-        "username": "test",
-        "is_staff": false,
-        "is_active": true,
-        "email": "",
-        "first_name": "",
-        "last_login": null,
-        "groups": [],
-        "user_permissions": [],
-        "last_name": ""
-    },
-    "model": "auth.user"
+        "groups": [3]
+    }
 }, {
+    "model": "auth.user",
     "pk": 4,
     "fields": {
-        "is_superuser": true,
+        "fir    st_name": "",
         "password": "pbkdf2_sha256$20000$TgNUKBElggwO$XQsDFLudGvq9qQvGDzA/U9sJB/UJHEb8nFXkZa/tDCQ=",
-        "date_joined": "2016-03-01T12:00:08.149Z",
-        "username": "weible",
-        "is_staff": true,
-        "is_active": true,
-        "email": "",
-        "first_name": "",
         "last_login": null,
-        "groups": [],
         "user_permissions": [],
-        "last_name": ""
-    },
-    "model": "auth.user"
+        "username": "weible",
+        "date_joined": "2016-03-01T12:    00:08.149Z",
+        "is_active": true,
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_superuser": true,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "first_name": "Nathalie",
+        "password": "",
+        "last_login": "2016-03-30T08:51:15.556Z",
+        "user_permissions": [],
+        "username": "grout",
+        "date_joined": "2016-03-30T08:38:26.847Z",
+        "is_active": true,
+        "last_name": "GROUT",
+        "email": "grout@unistra.fr",
+        "is    _staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 6,
+    "fields": {
+        "first_name": "Pierre",
+        "password": "",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "plitzler    ",
+        "date_joined": "2016-03-30T08:38:27.577Z",
+        "is_active": true,
+        "last_name": "LITZLER",
+        "email": "plitzler@unistra.fr",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "    pk": 7,
+    "fields": {
+        "first_name": "Brigitte",
+        "password": "",
+        "last_login": "2016-03-30T08:41:36.734Z",
+        "user_permissions": [],
+        "username": "brigitte.got",
+        "date_joined": "2016-03-30T08:41:13.925Z",
+        "is_a    ctive": true,
+        "last_name": "GOT",
+        "email": "brigitte.got@unistra.fr",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 8,
+    "fields": {
+        "first_name": "Jean-Marc",
+        "pass    word": "",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "planeix",
+        "date_joined": "2016-03-30T08:41:14.681Z",
+        "is_active": true,
+        "last_name": "PLANEIX",
+        "email": "planeix@unistra.fr",
+        "is_staf    f": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 9,
+    "fields": {
+        "first_name": "Bertrand",
+        "password": "!gfHxaH9Ey3mY2ig21KhVk9OfhyZMfIAqoTyVPyAb",
+        "last_login": null,
+        "user_p    ermissions": [],
+        "username": "b.pinard",
+        "date_joined": "2016-03-30T08:41:56.924Z",
+        "is_active": true,
+        "last_name": "PINARD",
+        "email": "",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "mode    l": "auth.user",
+    "pk": 10,
+    "fields": {
+        "first_name": "Agnes",
+        "password": "!hi1TS3nIgYyvgAjjFggo7OMY7CVgEfzW0pqgbVla",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "agnes.vogt",
+        "date_joined": "2016-03-30T08:42:10.779Z",
+        "is_active": true,
+        "last_name": "VOGT",
+        "email": "",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 11,
+    "fields": {
+        "first_name": "Natha    lie",
+        "password": "!TTLqbTeahbuwtjK02XmgkZ5VGop2gTIBWw094zmt",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "nathalie.rueff",
+        "date_joined": "2016-03-30T08:42:23.151Z",
+        "is_active": true,
+        "las    t_name": "RUEFF",
+        "email": "",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 12,
+    "fields": {
+        "first_name": "Jeanine",
+        "password": "!KFwYLbQ67CJytfLojTPlDtSCdtfC5B7    8WxqnlCZ7",
+        "last_login": null,
+        "user_permissions": [],
+        "username": "jeanine.birkel",
+        "date_joined": "2016-03-30T08:42:32.417Z",
+        "is_active": true,
+        "last_name": "BIRKEL",
+        "email": "",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
+}, {
+    "model": "auth.user",
+    "pk": 13,
+    "fields": {
+        "first_name": "Jean-Pierre",
+        "password": "!vIeFh9nvJCuehMdnNDZsQOFm34rdmPKtdAWML2Eq",
+        "last_login": null,
+        "user_permissi    ons": [],
+        "username": "leny",
+        "date_joined": "2016-03-30T08:42:49.950Z",
+        "is_active": true,
+        "last_name": "LE NY",
+        "email": "",
+        "is_staff": false,
+        "is_superuser": false,
+        "groups": []
+    }
 }]

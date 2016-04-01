@@ -30,14 +30,14 @@
 
   <tr class="hover-row">
      <td class='font-color-grey' width="10%">{{e.id}}</td>
-     <td><a href="details/{{e.id}}" width="35%">{{e.label}}</a></td>
+     <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
      <td width="10%"> <strong>{{e.display_order}}</strong></td>
      <td width="10%"></td>
      <td width="10%">{% if e.is_edited == 'O'%}{%else%}modifiée{%endif%}</td>
      <td width="10%">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="10%">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%">
-        <a href="delete/{{e.id}}_" class="glyphicon glyphicon-trash pull-right"></a>
+        <a href="{% url 'rules:rule_delete' id=e.id %}" class="glyphicon glyphicon-trash pull-right"></a>
       </td>
   </tr>
   {% endfor %}

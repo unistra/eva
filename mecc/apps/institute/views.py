@@ -306,7 +306,10 @@ class InstituteListView(ListView):
                 }
                 institute_list.append(field)
         except UniversityYear.DoesNotExist:
-            context['institute_year'] = _('Aucune année selectionnée')
+            context['institute_year'] = _('Aucune année selectionnée.')
+        except InstituteYear.DoesNotExist:
+            context['institute_year'] = _("L'initialisation des composantes \
+            pour l'année selectionnée n'a pas encore été effectuée.")
 
         context['ordered_list'] = institute_list
         return context
