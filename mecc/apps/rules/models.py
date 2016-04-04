@@ -2,6 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
+from mecc.apps.years.models import  UniversityYear
+from django.db.models import Q
 
 class Impact(models.Model):
     code = models.IntegerField(_("Code impact"), unique=True)
@@ -19,10 +22,10 @@ class Rule(models.Model):
         ('X', _('Nouvelle')),
     )
 
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
+    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False,default=0)
     code_year = models.IntegerField(_("Code année"))
     label = models.CharField(_("Libellé"), max_length=75)
-    is_in_use = models.BooleanField(_('En service'))
+    is_in_use = models.BooleanField(_('En service'), default=True)
     is_edited = models.CharField(_('Modifiée'), max_length=4,
         choices=EDITED_CHOICES, default='X')
     is_eci = models.BooleanField(_('ECI'), default=False)
@@ -35,6 +38,14 @@ class Rule(models.Model):
     def get_absolute_url(self):
         return reverse('rules:list')
 
+
+    def clean_fields(self, exclude=None):
+        self.code_year = list(UniversityYear.objects.filter(
+                Q(is_target_year=True))).pop(0).code_year
+        if self.display_order < 0:
+            raise ValidationError({'display_order': [
+                _('L\'ordre d\'affichage doit être positif.'),
+                    ]})
     class Meta:
         ordering = ['display_order']
 

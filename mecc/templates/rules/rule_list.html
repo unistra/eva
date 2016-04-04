@@ -32,8 +32,8 @@
      <td class='font-color-grey' width="10%">{{e.id}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
      <td width="10%"> <strong>{{e.display_order}}</strong></td>
-     <td width="10%"></td>
-     <td width="10%">{% if e.is_edited == 'O'%}{%else%}modifiée{%endif%}</td>
+     <td width="10%">{%if not e.is_in_use%}Hors service{%endif%}</td>
+     <td width="10%">{% if e.is_edited == 'O'%}<span class="red"><strong>modifiée</strong></span>{%else%}{%endif%}</td>
      <td width="10%">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="10%">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%">

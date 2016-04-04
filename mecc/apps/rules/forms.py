@@ -6,6 +6,12 @@ from crispy_forms.bootstrap import InlineCheckboxes, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Fieldset, Button, Submit
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
+
+class AddDegreeTypeToRule(forms.ModelForm):
+    class Meta:
+        model = Rule
+        fields = ['degree_type']
 
 class RuleFormInit(forms.ModelForm):
     EDITED_CHOICES = (
@@ -20,7 +26,6 @@ class RuleFormInit(forms.ModelForm):
     label = forms.CharField(label=('Libellé de règle'),
         widget=forms.TextInput(attrs={'placeholder': _('Saisir ici le libellé de la nouvelle règle') }))
 
-    is_in_use = forms.BooleanField(initial=True, label=_('En service'))
 
     display_order = forms.IntegerField(initial=0, label=_("N° d'ordre d'affichage"))
 
@@ -83,10 +88,13 @@ class RuleFormInit(forms.ModelForm):
                     ),
                 css_class='parent last-line'
             ),
-        HTML("""
-
-        """)
         )
+
+    def clean(self):
+        if (self.cleaned_data.get('is_ccct') or self.cleaned_data.get('is_eci')) is False:
+            raise ValidationError(_("Veuillez selectionner un régime."))
+
+        return self.cleaned_data
 
     class Meta:
         model = Rule
@@ -96,7 +104,7 @@ class RuleFormInit(forms.ModelForm):
             'is_eci',
             'is_ccct',
             'display_order',
-            'is_edited'
+            'is_edited',
         ]
 
 

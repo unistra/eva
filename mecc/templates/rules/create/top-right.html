@@ -1,31 +1,30 @@
 {% load i18n %}
-<div class="col-xs-12">
 
+<div class="col-xs-12">
 <table class = "table table-striped" style="white-space: nowrap">
    <caption>{% trans "Types de dipômes concernés :" %}</caption>
-   <tbody>
-      <tr >
-         <td >1</td>
+      <tr>
+        <td>
+          <select name="select-degreetype" class='select-type' >
+          <option disabled="true" selected>{% trans "Ajouter un type de diplôme" %}</option>
+          {% for e in available_degreetype%}
+          <option value="{{e.id}}">
+            {{e.short_label}}
+          </option>
+          {%endfor%}
+        </select>
+      </td>
       </tr>
-      <tr  >
-         <td>Ajouter un type de diplôme</td>
-      </tr>      <tr  >
-               <td>2</td>
-            </tr>      <tr  >
-                     <td>2</td>
-                  </tr>  <tr  >
-                       <td>2</td>
-                    </tr>      <tr  >
-                             <td>2</td>
-                          </tr>      <tr  >
-                                   <td>2</td>
-                                </tr>  <tr  >
-                                     <td>2</td>
-                                  </tr>      <tr  >
-                                           <td>2</td>
-                                        </tr>      <tr  >
-                                                 <td>2</td>
-                                              </tr>
+   <tbody class="overflow">
+  {% for e in rule_degreetype%}
+  <tr>
+     <td width=90%>{{e}}
+     </td>
+     <td width=10%>
+      <a id="{{e.id}}" class="glyphicon glyphicon-trash " onclick="delete_degreetype(this.id);"></a>
+     </td>
+  </tr>
+  {%endfor%}
 
    </tbody>
 
@@ -33,11 +32,14 @@
 </div>
 
 <style media="screen">
-  tbody{
+.table{
+  width: 22vw;
+
+}
+  tbody.overflow{
     overflow: auto;
     height: 100px;
     display:block;
-    width: 100%;
   }
 caption{
   padding-top: 0;
@@ -45,4 +47,40 @@ caption{
 td{
   width: 100vw;
 }
+.table>tbody>tr>td {
+  padding: 0.15em;
+}
 </style>
+
+<script type="text/javascript">
+
+
+function delete_degreetype(id){
+  console.log(id);
+
+  $.ajax({
+      url: "{% url 'rules:manage_degreetype'%}",
+      type: "POST",
+      data: {
+          todo: 'del',
+          val: id,
+          rule_id: {{latest_id}},
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+  });
+}
+$('.select-type').on('change', function() {
+    var val = this.value;
+    var rule_id = {{latest_id}};
+    $.ajax({
+        url: "{% url 'rules:manage_degreetype'%}",
+        type: "POST",
+        data: {
+            todo: 'add',
+            val: val,
+            rule_id: rule_id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+    });
+});
+</script>

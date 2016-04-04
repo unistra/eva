@@ -9,21 +9,23 @@
 {% endblock %}
 
 {% block app_content %}
+
 <div class="upper-part">
 
   <div class="parent-rule">
 
-  <form class="" action="{% url 'rules:new'%}" method="post">
-  {% crispy form_base %}
+  <form class="" action="" method="post">
+    {% crispy form %}
+
   </form>
   </div>
 
       <div class="up-right-part">
-{% include "rules/create/top-right.html" with old=old%}
+{% include "rules/create/top-right.html" with  rule_id=latest_id%}
       </div>
 </div>
 <div class="rule-bottom-part">
-{% include "rules/create/bottom.html" with old=old %}
+{% include "rules/create/bottom.html" with creating='creating' rule_id='latest_id'%}
 </div>
 
 {%endblock%}
