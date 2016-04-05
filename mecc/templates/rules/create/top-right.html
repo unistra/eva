@@ -1,12 +1,12 @@
 {% load i18n %}
 
 <div class="col-xs-12">
-<table class = "table table-striped" style="white-space: nowrap">
+<table class = "table table-striped" style="white-space: nowrap" id='degreeTable'>
    <caption>{% trans "Types de dipômes concernés :" %}</caption>
       <tr>
         <td>
-          <select name="select-degreetype" class='select-type' >
-          <option disabled="true" selected>{% trans "Ajouter un type de diplôme" %}</option>
+          <select {%if not editing%}disabled{%endif%}  name="select-degreetype" class='select-type' id='selectDegree'>
+          <option selected value="default">{% trans "Ajouter un type de diplôme" %}</option>
           {% for e in available_degreetype%}
           <option value="{{e.id}}">
             {{e.short_label}}
@@ -15,13 +15,13 @@
         </select>
       </td>
       </tr>
-   <tbody class="overflow">
+   <tbody class="overflow" id='tbodyDegree'>
   {% for e in rule_degreetype%}
-  <tr>
-     <td width=90%>{{e}}
+  <tr id='row-{{e.id}}'>
+     <td width=95%>{{e}}
      </td>
-     <td width=10%>
-      <a id="{{e.id}}" class="glyphicon glyphicon-trash " onclick="delete_degreetype(this.id);"></a>
+     <td width=5% >
+      <a id="{{e.id}}" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>
      </td>
   </tr>
   {%endfor%}
@@ -38,7 +38,7 @@
 }
   tbody.overflow{
     overflow: auto;
-    height: 100px;
+    height: 77px;
     display:block;
   }
 caption{
@@ -48,7 +48,7 @@ td{
   width: 100vw;
 }
 .table>tbody>tr>td {
-  padding: 0.15em;
+  padding: 0.2em;
 }
 </style>
 
@@ -56,8 +56,7 @@ td{
 
 
 function delete_degreetype(id){
-  console.log(id);
-
+  var x = document.getElementById("selectDegree");
   $.ajax({
       url: "{% url 'rules:manage_degreetype'%}",
       type: "POST",
@@ -67,9 +66,19 @@ function delete_degreetype(id){
           rule_id: {{latest_id}},
           csrfmiddlewaretoken: '{{ csrf_token }}'
       },
+      success: function(data){
+        var opt = document.createElement('option');
+        opt.value = data.degree_id;
+        opt.innerHTML = data.degree;
+        x.appendChild(opt);
+        var rowId = 'row-' + data.degree_id;
+        var row = document.getElementById(rowId);
+        row.parentNode.removeChild(row);
+      }
   });
 }
 $('.select-type').on('change', function() {
+    var x = document.getElementById("selectDegree");
     var val = this.value;
     var rule_id = {{latest_id}};
     $.ajax({
@@ -81,6 +90,16 @@ $('.select-type').on('change', function() {
             rule_id: rule_id,
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
+        success: function(data) {
+          x.remove(x.selectedIndex);
+          var tbody = document.getElementById('tbodyDegree');
+          var row = tbody.insertRow(0);
+          row.id = 'row-' + data.degree_id
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          cell1.innerHTML = data.degree;
+          cell2.innerHTML =   '<a id=" '+ data.degree_id +'" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>';
+        }
     });
 });
 </script>

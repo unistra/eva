@@ -48,21 +48,21 @@ def get_list_of_pple(request):
         else:
             return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})
 
-# TODO: faire en sort
 def manage_degreetype(request):
     data = {}
     if request.is_ajax() and request.method == 'POST':
         rule = Rule.objects.get(id=request.POST.get('rule_id'))
         degree_type = DegreeType.objects.get(id=request.POST.get('val'))
         todo = request.POST.get('todo')
+        data['degree'] = degree_type.short_label
+        data['degree_id'] = degree_type.id
         if todo == 'add':
             rule.degree_type.add(degree_type)
-
-            return JsonResponse({'message': _('%s a bien été ajouté à %s.' % (degree_type.short_label, rule.label)) })
+            return JsonResponse(data)
 
         elif todo == 'del':
             rule.degree_type.remove(degree_type)
-            return JsonResponse({'message': _('%s a bien été supprimé de %s.' % (degree_type.short_label, rule.label)) })
+            return JsonResponse(data)
 
 
 def edit_rule(request, id=None, template='rules/create/base.html'):

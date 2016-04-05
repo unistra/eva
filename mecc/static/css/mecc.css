@@ -198,7 +198,7 @@ align-self: center;
 
 .hover-row:hover, .hover-row:focus {background: #F5F8FE;}
 
-.select {cursor: pointer;
+.select {cursor: pointer; cursor:hand;
 }
 
 .table-head {background-color: #E4F0FB; color: #004A87;}
