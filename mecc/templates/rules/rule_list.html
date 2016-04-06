@@ -35,7 +35,7 @@
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
      <td width="10%"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="10%">{%if not e.is_in_use%}Hors service{%endif%}</td>
-     <td width="10%">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifée" %}</span>{%elif e.is_edited == 'X'%}<span class="red">{% trans "Nouvelle" %}</span>{%endif%}</td>
+     <td width="10%">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="red">{% trans "Nouvelle" %}</span>{%endif%}</td>
      <td width="10%">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="10%">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%">
