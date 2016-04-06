@@ -28,4 +28,35 @@
 {% include "rules/create/bottom.html" with creating='creating' rule_id='latest_id'%}
 </div>
 
+
+
+<script type="text/javascript">
+
+var _isEdited = false;
+$(':input').change(function () {
+  console.log("is changed:!");
+  _isEdited = true;
+});
+
+
+$(document).ready(function () {
+
+
+window.onbeforeunload = function (e) {
+if (_isEdited === true) {
+var e = e || window.event;
+
+// For IE and Firefox
+if (e) {
+  e.returnValue = 'Des modifications ont été effectuées.';
+}
+
+// For Safari
+return 'Des modifications ont été effectuées.';
+};
+};
+});
+
+</script>
+
 {%endblock%}

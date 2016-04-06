@@ -83,7 +83,7 @@ class RuleFormInit(forms.ModelForm):
                 'is_edited',
                     Div(
                         FormActions(
-                            Submit('add', _('Valider'),css_class="btn-xs"),
+                            Submit('add', _('Valider'),css_class="btn-xs",  onclick="_isEdited=false"),
                         ), css_class='on-right',
                     ),
                 css_class='parent last-line'

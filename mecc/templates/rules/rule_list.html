@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load field_name %}
+{% load staticfiles %}
 
 {% block page-header %}
 {% trans 'Règles générales' %}
@@ -9,31 +10,32 @@
 
 
 {% block app_content %}
+<script src="{% static 'js/srtable.js' %}"></script>
 <div class="table_list">
   {% if object_list %}
-     <tr class='table-head'>
+  <table class="table" id="rule-table">
+    <thead>
+     <tr>
 
-  <table class="table ">
         <th width="10%">{% trans 'N° de règle' %}</th>
-        <th  width="35%">{% trans "Libellé de règle" %}</th>
-        <th width="10%">{% trans 'N° Aff' %}</th>
+        <th width="35%">{% trans "Libellé de règle" %}</th>
+        <th width="10%" class='sort-default'>{% trans 'N° Aff' %}</th>
         <th width="10%"></th>
         <th width="10%"></th>
         <th width="10%"></th>
         <th width="10%"></th>
         <th width="5%"></th>
      </tr>
-   </table>
-       <div class="overflow">
-   <table class="table">
+   </thead>
+   <tbody class="overflow" >
   {%for e in object_list%}
 
   <tr class="hover-row">
      <td class='font-color-grey' width="10%">{{e.id}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
-     <td width="10%"> <strong>{{e.display_order}}</strong></td>
+     <td width="10%"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="10%">{%if not e.is_in_use%}Hors service{%endif%}</td>
-     <td width="10%">{% if e.is_edited == 'O'%}<span class="red"><strong>modifiée</strong></span>{%else%}{%endif%}</td>
+     <td width="10%">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifée" %}</span>{%elif e.is_edited == 'X'%}<span class="red">{% trans "Nouvelle" %}</span>{%endif%}</td>
      <td width="10%">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="10%">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%">
@@ -41,8 +43,8 @@
       </td>
   </tr>
   {% endfor %}
+</tbody>
 </table>
-</div>
 
    </table>
 {% endif %}
@@ -55,28 +57,102 @@
 </div>
 
 <style media="screen">
+  span.red{
+    color: red;
+    font-weight: bold;
+  }
+  input
+  {
+      background: transparent;
+      border: none;
 
-  .buttons_list{
-    text-align: center;
-    width: 100%;
+      width: 50%
   }
-  .table_list{
-    border-bottom-style: solid;
-    border-bottom-color: #358CD3;
-    height: 77vh;
-    padding-bottom: 1em;
-    margin-bottom: 1em;
-    border-bottom-width: 0.15em;
-    -webkit-box-shadow: 0 10px 5px -9px #888888;
-            box-shadow: 0 10px 5px -9px #888888;
+  input:focus{
+    border: solid;
+    border-color: #358CD3;
+    border-width: 0.1em;
   }
-  .overflow{
-    overflow: auto;
-    height: 65vh;
-
-  }
-  tr{
-  }
+.buttons_list{
+  text-align: center;
+  width: 100%;
+}
+.table_list{
+  border-bottom-style: solid;
+  border-bottom-color: #358CD3;
+  height: 75vh;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  border-bottom-width: 0.15em;
+  -webkit-box-shadow: 0 10px 5px -9px #888888;
+          box-shadow: 0 10px 5px -9px #888888;
+}
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+table thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+table tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow: auto;
+}
+table tbody tr {
+  width: 100%;
+}
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
 </style>
 
+<script>
+
+  var sort = new Tablesort(document.getElementById('rule-table'));
+$('.display-order').on('change', function() {
+  var _input = this
+  var rule_id = this.id.replace('display-', '');
+  var hidden_id = 'hidden-display-' + rule_id;
+  var hidden_span = document.getElementById(hidden_id);
+  var display_order = this.value;
+  $.ajax({
+      url: "{% url 'rules:update_display_order'%}",
+      type: "POST",
+      data: {
+          rule_id: rule_id,
+          display_order: display_order,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function(data){
+        hidden_span.innerHTML = data.display_order
+        _input.value = data.display_order
+        sort.refresh();
+
+      }
+  });
+});
+
+$('.disp').on('change', function() {
+    new_type = this.value;
+    id = $(this).parents('td').prev().text();
+    $.ajax({
+        url: "/commission/",
+        type: "POST",
+        data: {
+            username: id,
+            type_member: new_type,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+    });
+});
+</script>
 {% endblock %}

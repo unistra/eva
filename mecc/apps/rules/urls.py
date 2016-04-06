@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import RulesListView, RuleCreate, create_rule, RuleDelete, \
-    edit_rule, play_with_rule, manage_degreetype
+    edit_rule, play_with_rule, manage_degreetype, update_display_order
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
         name='play'),
     url(r'^manage-degreetype/', manage_degreetype,
         name='manage_degreetype'),
+    url(r'^update-display-order/', update_display_order,
+        name='update_display_order'),
 ]

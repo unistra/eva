@@ -64,6 +64,16 @@ def manage_degreetype(request):
             rule.degree_type.remove(degree_type)
             return JsonResponse(data)
 
+def update_display_order(request):
+    data = {}
+    if request.is_ajax() and request.method == 'POST':
+        rule = Rule.objects.get(id=request.POST.get('rule_id'))
+        display_order = request.POST.get('display_order')
+        rule. display_order = display_order if display_order.isdigit() else 0
+        rule.save()
+        data['message'] = _("Le numéro d'affichage de la règle a bien été mis à jour.")
+        data['display_order'] = rule.display_order
+        return JsonResponse(data)
 
 def edit_rule(request, id=None, template='rules/create/base.html'):
     data = {}

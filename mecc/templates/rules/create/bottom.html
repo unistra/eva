@@ -1,3 +1,10 @@
+{% load i18n %}
+
 <h2 style="font-size:1.2em;">
-  Alinéas
+  {% trans "Alinéas" %}
+  {%if not editing%}disabled{%else%}{%endif%}
 </h2>
+<p>{% trans "Aucun alinéa pour cette règle" %}</p>
+<a href="new">
+<span class="glyphicon glyphicon-plus" aria-hidden="true">{% trans " Ajouter un alinéa" %}</span>
+</a>

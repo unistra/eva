@@ -1,319 +1,282 @@
-/*
-Table sorting script  by Joost de Valk, check it out at http://www.joostdevalk.nl/code/sortable-table/.
-Based on a script from http://www.kryogenix.org/code/browser/sorttable/.
-Distributed under the MIT license: http://www.kryogenix.org/code/browser/licence.html .
+;(function() {
+  function Tablesort(el, options) {
+    if (!(this instanceof Tablesort)) return new Tablesort(el, options);
 
-Copyright (c) 1997-2007 Stuart Langridge, Joost de Valk.
+    if (!el || el.tagName !== 'TABLE') {
+      throw new Error('Element must be a table');
+    }
+    this.init(el, options || {});
+  }
 
-Version 1.5.7
-*/
+  var sortOptions = [];
 
-/* You can change these values */
-var europeandate = true;
-var alternate_row_colors = true;
+  var createEvent = function(name) {
+    var evt;
 
-/* Don't change anything below this unless you know what you're doing */
-addEvent(window, "load", sortables_init);
+    if (!window.CustomEvent || typeof window.CustomEvent !== 'function') {
+      evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent(name, false, false, undefined);
+    } else {
+      evt = new CustomEvent(name);
+    }
 
-var SORT_COLUMN_INDEX;
-var thead = false;
+    return evt;
+  };
 
-function sortables_init() {
-	// Find all tables with class sortable and make them sortable
-	if (!document.getElementsByTagName) return;
-	tbls = document.getElementsByTagName("table");
-	for (ti=0;ti<tbls.length;ti++) {
-		thisTbl = tbls[ti];
-		if (((' '+thisTbl.className+' ').indexOf("sortable") != -1) && (thisTbl.id)) {
-			ts_makeSortable(thisTbl);
-		}
-	}
-}
+  var getInnerText = function(el) {
+    return el.getAttribute('data-sort') || el.textContent || el.innerText || '';
+  };
 
-function ts_makeSortable(t) {
-	if (t.rows && t.rows.length > 0) {
-		if (t.tHead && t.tHead.rows.length > 0) {
-			var firstRow = t.tHead.rows[t.tHead.rows.length-1];
-			thead = true;
-		} else {
-			var firstRow = t.rows[0];
-		}
-	}
-	if (!firstRow) return;
+  // Default sort method if no better sort method is found
+  var caseInsensitiveSort = function(a, b) {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
 
-	// We have a first row: assume it's the header, and make its contents clickable links
-	for (var i=0;i<firstRow.cells.length;i++) {
-		var cell = firstRow.cells[i];
-		var txt = ts_getInnerText(cell);
-		if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-			cell.innerHTML = '<a href="#" class="sortheader" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp</span></a>';
-		}
-	}
-	if (alternate_row_colors) {
-		alternate(t);
-	}
-}
+    if (a === b) return 0;
+    if (a < b) return 1;
 
-function ts_getInnerText(el) {
-	if (typeof el == "string") return el;
-	if (typeof el == "undefined") { return el };
-	if (el.innerText) return el.innerText;	//Not needed but it is faster
-	var str = "";
+    return -1;
+  };
 
-	var cs = el.childNodes;
-	var l = cs.length;
-	for (var i = 0; i < l; i++) {
-		switch (cs[i].nodeType) {
-			case 1: //ELEMENT_NODE
-				str += ts_getInnerText(cs[i]);
-				break;
-			case 3:	//TEXT_NODE
-				str += cs[i].nodeValue;
-				break;
-		}
-	}
-	return str;
-}
+  // Stable sort function
+  // If two elements are equal under the original sort function,
+  // then there relative order is reversed
+  var stabilize = function(sort, antiStabilize) {
+    return function(a, b) {
+      var unstableResult = sort(a.td, b.td);
 
-function ts_resortTable(lnk, clid) {
-	var span;
-	for (var ci=0;ci<lnk.childNodes.length;ci++) {
-		if (lnk.childNodes[ci].tagName && lnk.childNodes[ci].tagName.toLowerCase() == 'span') span = lnk.childNodes[ci];
-	}
-	var spantext = ts_getInnerText(span);
-	var td = lnk.parentNode;
-	var column = clid || td.cellIndex;
-	var t = getParent(td,'TABLE');
-	// Work out a type for the column
-	if (t.rows.length <= 1) return;
-	var itm = "";
-	var i = 0;
-	while (itm == "" && i < t.tBodies[0].rows.length) {
-		var itm = ts_getInnerText(t.tBodies[0].rows[i].cells[column]);
-		itm = trim(itm);
-		if (itm.substr(0,4) == "<!--" || itm.length == 0) {
-			itm = "";
-		}
-		i++;
-	}
-	if (itm == "") return;
-	sortfn = ts_sort_caseinsensitive;
-	if (itm.match(/^\d\d[\/\.-][a-zA-z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
-	if (itm.match(/^\d\d[\/\.-]\d\d[\/\.-]\d\d\d{2}?$/)) sortfn = ts_sort_date;
-	if (itm.match(/^-?[£$Û¢Ž]\d/)) sortfn = ts_sort_numeric;
-	if (itm.match(/^-?(\d+[,\.]?)+(E[-+][\d]+)?%?$/)) sortfn = ts_sort_numeric;
-	SORT_COLUMN_INDEX = column;
-	var firstRow = new Array();
-	var newRows = new Array();
-	for (k=0;k<t.tBodies.length;k++) {
-		for (i=0;i<t.tBodies[k].rows[0].length;i++) {
-			firstRow[i] = t.tBodies[k].rows[0][i];
-		}
-	}
-	for (k=0;k<t.tBodies.length;k++) {
-		if (!thead) {
-			// Skip the first row
-			for (j=1;j<t.tBodies[k].rows.length;j++) {
-				newRows[j-1] = t.tBodies[k].rows[j];
-			}
-		} else {
-			// Do NOT skip the first row
-			for (j=0;j<t.tBodies[k].rows.length;j++) {
-				newRows[j] = t.tBodies[k].rows[j];
-			}
-		}
-	}
-	newRows.sort(sortfn);
-	if (span.getAttribute("sortdir") == 'down') {
-			ARROW = "&nbsp;&nbsp;&darr;";
-			newRows.reverse();
-			span.setAttribute('sortdir','up');
-	} else {
-			ARROW = '&nbsp;&nbsp;&uarr;';
-			span.setAttribute('sortdir','down');
-	}
-    // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
-    // don't do sortbottom rows
-    for (i=0; i<newRows.length; i++) {
-		if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) {
-			t.tBodies[0].appendChild(newRows[i]);
-		}
-	}
-    // do sortbottom rows only
-    for (i=0; i<newRows.length; i++) {
-		if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1))
-			t.tBodies[0].appendChild(newRows[i]);
-	}
-	// Delete any other arrows there may be showing
-	var allspans = document.getElementsByTagName("span");
-	for (var ci=0;ci<allspans.length;ci++) {
-		if (allspans[ci].className == 'sortarrow') {
-			if (getParent(allspans[ci],"table") == getParent(lnk,"table")) { // in the same table as us?
-				allspans[ci].innerHTML = '&nbsp;&nbsp;&darr;';
-			}
-		}
-	}
-	span.innerHTML = ARROW;
-	alternate(t);
-}
+      if (unstableResult === 0) {
+        if (antiStabilize) return b.index - a.index;
+        return a.index - b.index;
+      }
 
-function getParent(el, pTagName) {
-	if (el == null) {
-		return null;
-	} else if (el.nodeType == 1 && el.tagName.toLowerCase() == pTagName.toLowerCase()) {
-		return el;
-	} else {
-		return getParent(el.parentNode, pTagName);
-	}
-}
+      return unstableResult;
+    };
+  };
 
-function sort_date(date) {
-	// y2k notes: two digit years less than 50 are treated as 20XX, greater than 50 are treated as 19XX
-	dt = "00000000";
-	if (date.length == 11) {
-		mtstr = date.substr(3,3);
-		mtstr = mtstr.toLowerCase();
-		switch(mtstr) {
-			case "jan": var mt = "01"; break;
-			case "feb": var mt = "02"; break;
-			case "mar": var mt = "03"; break;
-			case "apr": var mt = "04"; break;
-			case "may": var mt = "05"; break;
-			case "jun": var mt = "06"; break;
-			case "jul": var mt = "07"; break;
-			case "aug": var mt = "08"; break;
-			case "sep": var mt = "09"; break;
-			case "oct": var mt = "10"; break;
-			case "nov": var mt = "11"; break;
-			case "dec": var mt = "12"; break;
-			// default: var mt = "00";
-		}
-		dt = date.substr(7,4)+mt+date.substr(0,2);
-		return dt;
-	} else if (date.length == 10) {
-		if (europeandate == false) {
-			dt = date.substr(6,4)+date.substr(0,2)+date.substr(3,2);
-			return dt;
-		} else {
-			dt = date.substr(6,4)+date.substr(3,2)+date.substr(0,2);
-			return dt;
-		}
-	} else if (date.length == 8) {
-		yr = date.substr(6,2);
-		if (parseInt(yr) < 50) {
-			yr = '20'+yr;
-		} else {
-			yr = '19'+yr;
-		}
-		if (europeandate == true) {
-			dt = yr+date.substr(3,2)+date.substr(0,2);
-			return dt;
-		} else {
-			dt = yr+date.substr(0,2)+date.substr(3,2);
-			return dt;
-		}
-	}
-	return dt;
-}
+  Tablesort.extend = function(name, pattern, sort) {
+    if (typeof pattern !== 'function' || typeof sort !== 'function') {
+      throw new Error('Pattern and sort must be a function');
+    }
 
-function ts_sort_date(a,b) {
-	dt1 = sort_date(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]));
-	dt2 = sort_date(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]));
+    sortOptions.push({
+      name: name,
+      pattern: pattern,
+      sort: sort
+    });
+  };
 
-	if (dt1==dt2) {
-		return 0;
-	}
-	if (dt1<dt2) {
-		return -1;
-	}
-	return 1;
-}
-function ts_sort_numeric(a,b) {
-	var aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-	aa = clean_num(aa);
-	var bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-	bb = clean_num(bb);
-	return compare_numeric(aa,bb);
-}
-function compare_numeric(a,b) {
-	var a = parseFloat(a);
-	a = (isNaN(a) ? 0 : a);
-	var b = parseFloat(b);
-	b = (isNaN(b) ? 0 : b);
-	return a - b;
-}
-function ts_sort_caseinsensitive(a,b) {
-	aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).toLowerCase();
-	bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).toLowerCase();
-	if (aa==bb) {
-		return 0;
-	}
-	if (aa<bb) {
-		return -1;
-	}
-	return 1;
-}
-function ts_sort_default(a,b) {
-	aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-	bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-	if (aa==bb) {
-		return 0;
-	}
-	if (aa<bb) {
-		return -1;
-	}
-	return 1;
-}
-function addEvent(elm, evType, fn, useCapture)
-// addEvent and removeEvent
-// cross-browser event handling for IE5+,	NS6 and Mozilla
-// By Scott Andrew
-{
-	if (elm.addEventListener){
-		elm.addEventListener(evType, fn, useCapture);
-		return true;
-	} else if (elm.attachEvent){
-		var r = elm.attachEvent("on"+evType, fn);
-		return r;
-	} else {
-		alert("Handler could not be removed");
-	}
-}
-function clean_num(str) {
-	str = str.replace(new RegExp(/[^-?0-9.]/g),"");
-	return str;
-}
-function trim(s) {
-	return s.replace(/^\s+|\s+$/g, "");
-}
-function alternate(table) {
-	// Take object table and get all it's tbodies.
-	var tableBodies = table.getElementsByTagName("tbody");
-	// Loop through these tbodies
-	for (var i = 0; i < tableBodies.length; i++) {
-		// Take the tbody, and get all it's rows
-		var tableRows = tableBodies[i].getElementsByTagName("tr");
-		// Loop through these rows
-		// Start at 1 because we want to leave the heading row untouched
-		for (var j = 0; j < tableRows.length; j++) {
-			// Check if j is even, and apply classes for both possible results
-			if ( (j % 2) == 0  ) {
-				if ( !(tableRows[j].className.indexOf('odd') == -1) ) {
-					tableRows[j].className = tableRows[j].className.replace('odd', 'even');
-				} else {
-					if ( tableRows[j].className.indexOf('even') == -1 ) {
-						tableRows[j].className += " even";
-					}
-				}
-			} else {
-				if ( !(tableRows[j].className.indexOf('even') == -1) ) {
-					tableRows[j].className = tableRows[j].className.replace('even', 'odd');
-				} else {
-					if ( tableRows[j].className.indexOf('odd') == -1 ) {
-						tableRows[j].className += " odd";
-					}
-				}
-			}
-		}
-	}
-}
+  Tablesort.prototype = {
+
+    init: function(el, options) {
+      var that = this,
+          firstRow,
+          defaultSort,
+          i,
+          cell;
+
+      that.table = el;
+      that.thead = false;
+      that.options = options;
+
+      if (el.rows && el.rows.length > 0) {
+        if (el.tHead && el.tHead.rows.length > 0) {
+          firstRow = el.tHead.rows[el.tHead.rows.length - 1];
+          that.thead = true;
+        } else {
+          firstRow = el.rows[0];
+        }
+      }
+
+      if (!firstRow) return;
+
+      var onClick = function() {
+        if (that.current && that.current !== this) {
+          that.current.classList.remove('sort-up');
+          that.current.classList.remove('sort-down');
+        }
+
+        that.current = this;
+        that.sortTable(this);
+      };
+
+      // Assume first row is the header and attach a click handler to each.
+      for (i = 0; i < firstRow.cells.length; i++) {
+        cell = firstRow.cells[i];
+        if (!cell.classList.contains('no-sort')) {
+          cell.classList.add('sort-header');
+          cell.tabindex = 0;
+          cell.addEventListener('click', onClick, false);
+
+          if (cell.classList.contains('sort-default')) {
+            defaultSort = cell;
+          }
+        }
+      }
+
+      if (defaultSort) {
+        that.current = defaultSort;
+        that.sortTable(defaultSort);
+      }
+    },
+
+    sortTable: function(header, update) {
+      var that = this,
+          column = header.cellIndex,
+          sortFunction = caseInsensitiveSort,
+          item = '',
+          items = [],
+          i = that.thead ? 0 : 1,
+          sortDir,
+          sortMethod = header.getAttribute('data-sort-method'),
+          sortOrder = header.getAttribute('data-sort-order');
+
+      that.table.dispatchEvent(createEvent('beforeSort'));
+
+      // If updating an existing sort `sortDir` should remain unchanged.
+      if (update) {
+        sortDir = header.classList.contains('sort-up') ? 'sort-up' : 'sort-down';
+      } else {
+        if (header.classList.contains('sort-up')) {
+          sortDir = 'sort-down';
+        } else if (header.classList.contains('sort-down')) {
+          sortDir = 'sort-up';
+        } else if (sortOrder === 'asc') {
+          sortDir = 'sort-down';
+        } else if (sortOrder === 'desc') {
+          sortDir = 'sort-up';
+        } else {
+          sortDir = that.options.descending ? 'sort-up' : 'sort-down';
+        }
+
+        header.classList.remove(sortDir === 'sort-down' ? 'sort-up' : 'sort-down');
+        header.classList.add(sortDir);
+      }
+
+      if (that.table.rows.length < 2) return;
+
+      // If we force a sort method, it is not necessary to check rows
+      if (!sortMethod) {
+        while (items.length < 3 && i < that.table.tBodies[0].rows.length) {
+          item = getInnerText(that.table.tBodies[0].rows[i].cells[column]);
+          item = item.trim();
+
+          if (item.length > 0) {
+            items.push(item);
+          }
+
+          i++;
+        }
+
+        if (!items) return;
+      }
+
+      for (i = 0; i < sortOptions.length; i++) {
+        item = sortOptions[i];
+
+        if (sortMethod) {
+          if (item.name === sortMethod) {
+            sortFunction = item.sort;
+            break;
+          }
+        } else if (items.every(item.pattern)) {
+          sortFunction = item.sort;
+          break;
+        }
+      }
+
+      that.col = column;
+
+      for (i = 0; i < that.table.tBodies.length; i++) {
+        var newRows = [],
+            noSorts = {},
+            j,
+            totalRows = 0,
+            noSortsSoFar = 0;
+
+        if (that.table.tBodies[i].rows.length < 2) continue;
+
+        for (j = 0; j < that.table.tBodies[i].rows.length; j++) {
+          item = that.table.tBodies[i].rows[j];
+          if (item.classList.contains('no-sort')) {
+            // keep no-sorts in separate list to be able to insert
+            // them back at their original position later
+            noSorts[totalRows] = item;
+          } else {
+            // Save the index for stable sorting
+            newRows.push({
+              tr: item,
+              td: getInnerText(item.cells[that.col]),
+              index: totalRows
+            });
+          }
+          totalRows++;
+        }
+        // Before we append should we reverse the new array or not?
+        // If we reverse, the sort needs to be `anti-stable` so that
+        // the double negatives cancel out
+        if (sortDir === 'sort-down') {
+          newRows.sort(stabilize(sortFunction, true));
+          newRows.reverse();
+        } else {
+          newRows.sort(stabilize(sortFunction, false));
+        }
+
+        // append rows that already exist rather than creating new ones
+        for (j = 0; j < totalRows; j++) {
+          if (noSorts[j]) {
+            // We have a no-sort row for this position, insert it here.
+            item = noSorts[j];
+            noSortsSoFar++;
+          } else {
+            item = newRows[j - noSortsSoFar].tr;
+          }
+
+          // appendChild(x) moves x if already present somewhere else in the DOM
+          that.table.tBodies[i].appendChild(item);
+        }
+      }
+
+      that.table.dispatchEvent(createEvent('afterSort'));
+    },
+
+    refresh: function() {
+      if (this.current !== undefined) {
+        this.sortTable(this.current, true);
+      }
+    }
+  };
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Tablesort;
+  } else {
+    window.Tablesort = Tablesort;
+  }
+})();
+
+(function(){
+  var cleanNumber = function(i) {
+    return i.replace(/[^\-?0-9.]/g, '');
+  },
+
+  compareNumber = function(a, b) {
+    a = parseFloat(a);
+    b = parseFloat(b);
+
+    a = isNaN(a) ? 0 : a;
+    b = isNaN(b) ? 0 : b;
+
+    return a - b;
+  };
+
+  Tablesort.extend('number', function(item) {
+    return item.match(/^-?[£\x24Û¢´€]?\d+\s*([,\.]\d{0,2})/) || // Prefixed currency
+      item.match(/^-?\d+\s*([,\.]\d{0,2})?[£\x24Û¢´€]/) || // Suffixed currency
+      item.match(/^-?(\d)*-?([,\.]){0,1}-?(\d)+([E,e][\-+][\d]+)?%?$/); // Number
+  }, function(a, b) {
+    a = cleanNumber(a);
+    b = cleanNumber(b);
+
+    return compareNumber(b, a);
+  });
+}());
