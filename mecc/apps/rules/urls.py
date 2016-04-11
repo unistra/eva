@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from .views import RulesListView, RuleCreate, create_rule, RuleDelete, \
-    edit_rule, play_with_rule, manage_degreetype, update_display_order
+    edit_rule, play_with_rule, manage_degreetype, update_display_order, \
+    create_paragraph
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -18,4 +19,6 @@ urlpatterns = [
         name='manage_degreetype'),
     url(r'^update-display-order/', update_display_order,
         name='update_display_order'),
+    url(r'^new-paragraph/(?P<rule_id>\d+)', create_paragraph,
+        name='create_paragraph'),
 ]

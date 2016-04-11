@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load field_name %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page-header %}
+{% trans "Fiche détaillée d'un alinéa de règle générale" %}
+{% endblock %}
+
+
+
+{% block app_content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/rules/create.css' %}" />
+<!--- Rule recap--->
+<div class="has-bottom-border disabled">
+<div class="parent ">
+  <div class="item item-3 grey-font"> <label >ID règle <small>(auto)</small> : </label> <span id="rule_id"> {{rule.id}}</span> </div>
+  <div class="item item-3 grey-font"> <label >{% trans "Année universitaire :" %}</label> <span id="rule_date"> {{current_year}} </span> </div>
+  <div class="item">
+      <div class="form-group">
+          <div id="div_id_is_in_use" class="checkbox"> <label for="id_is_in_use" class=""> <input disabled {% if rule.is_in_use%}checked{%endif%} class="checkboxinput" id="id_is_in_use" name="is_in_use" type="checkbox" />
+            {% trans "En service" %}
+              </label> </div>
+      </div>
+  </div>
+</div>
+<div class="parent ">
+  <div class="item-100">
+      <div id="div_id_label" class="form-group">
+        <label for="id_label" class="control-label  requiredField"  style="width:17%">
+              {% trans "Libellé de règle" %}
+        </label>
+          <div class="controls "> <input class="textinput textInput form-control" id="id_label" name="label" disabled value="{{rule.label}}" /> </div>
+      </div>
+  </div>
+</div>
+</div>
+<!--- Rule recap--->
+<form method="post">
+{%crispy paragraph_form%}
+</form>
+<style media="screen">
+
+</style>
+
+{%endblock%}

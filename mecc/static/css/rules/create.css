@@ -16,8 +16,8 @@ label{
   margin-bottom: 0;
 }
 .form-control {
-  height: 1.4em;
-  padding: 0 0 0 0;
+  height: 1.5em;
+  padding: 0 0 0 0.3em;
   font-size: 1em;
 
 }
@@ -52,22 +52,42 @@ label{
 .item-100, .div_is_concerned, .parent{
   width:100%;
 }
- #div_id_display_order, #div_id_is_edited {
+ #div_id_display_order, #div_id_is_edited, #div_id_impact {
    display:flex;
+   width: 100%
  }
+ #div_id_impact > div {
+   width: 100%;
+ }
+ #div_id_impact > label {
+   width:8em;;
+ }
+ .disp #div_id_display_order > label{
+   width: 7em;
+ }
+  #div_id_impact{
+    width:65%;
+  }
 #div_id_label, .last-line{
   display: flex;
   width:100%;
 }
+.is_interaction{
+  width: 35%;
+}
+
 #div_id_label > label {
-  width:25%;
+  width:9em;
 }
 
 #div_id_label > div {
   width: 100%;
 }
-#div_id_display_order{
+.last-line #div_id_display_order{
   width:40%;
+}
+#div_id_display_order {
+  width: 10em;
 }
 #div_id_display_order > div{
   width:15%;
@@ -89,6 +109,22 @@ label{
   display: inline-block;
   flex-grow: 1;
 }
+.item-20{
+  width:20%;
+}
+.item-30{
+  width:30%;
+}
+.item-40{
+  width:40%;
+}
+.item-35{
+  width:35%;
+}
+.item-70{
+  width:70%
+}
+
 .upper-part {
   display: flex;
   border-bottom-style: solid;
@@ -102,15 +138,43 @@ label{
   display: flex;
   flex-direction: row;
   flex-wrap:wrap;
-  margin: 0 0 0 0;
+  margin: 1em 0 1em 0;
   align-items: center;
        -ms-flex-align: center;
        -webkit-align-items: center;
        -webkit-box-align: center;
-  margin-bottom: 1em;
+}
+.flex-start{
+  -webkit-align-self: flex-start;
+align-self: flex-start;
+}
+.flex-end{
+  -webkit-align-self: flex-end;
+align-self: flex-end;
+}
+.flex-center{
+  display: flex;
+  align-items: flex-center;
+  justify-content: flex-center;
+}
+.form-submit-paraph-item{
+  width: 90%;
+  margin: 1% 5% 1% 5%;
+}
+.quarter{
+  width: 40%
 }
 .last-line input, .last-line select{
   margin-left: 0.5em;
+}
+.rtl{
+  flex-direction: row-reverse;
+}
+.paragraph #div_id_display_order > div {
+  width:30%
+}
+.aligned-left #div_id_is_in_use{
+  text-align: left!important;
 }
 .parent-rule{
   width:70%;

@@ -53,15 +53,18 @@ class Paragraph(models.Model):
     code_year = models.IntegerField(_("Code année"))
     rule = models.ManyToManyField(Rule)
     text_standard = models.TextField(_("Texte de l'alinéa standard"))
-    is_in_use = models.BooleanField(_('En service'))
+    is_in_use = models.BooleanField(_('En service'), default=True)
     display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
     is_cmp = models.BooleanField(_('Alinéa de composante'))
     is_interaction = models.BooleanField(_('Interaction'))
     text_derog = models.TextField(_("Texte de consigne pour la saisie de \
-        l'alinée dérogatoire (ou de composante)"))
+        l'alinéa dérogatoire (ou de composante)"))
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"))
     impact = models.ManyToManyField(Impact)
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk
+
+    class Meta:
+        ordering = ['display_order']

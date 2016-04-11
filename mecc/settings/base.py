@@ -235,6 +235,8 @@ THIRD_PARTY_APPS = (
     'crispy_forms',
     'fm',
     'django_cas',
+    'tinymce',
+
 )
 
 LOCAL_APPS = (
@@ -338,3 +340,14 @@ CAS_USER_CREATION = True
 
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+TINYMCE_DEFAULT_CONFIG = {
+'theme': "advanced",
+'theme_advanced_toolbar_location' : "top",
+'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent,separator,undo,redo",
+'spellchecker': 'fr',
+'width': '100%',
+'height': '9em',
+'font-size':'18px'
+}

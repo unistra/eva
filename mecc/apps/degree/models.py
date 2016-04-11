@@ -18,7 +18,7 @@ class DegreeType(models.Model):
         ordering = ['display_order', 'short_label']
         permissions = (
             ('can_view_degree_type',
-             _('Peut voir les types de dipôme')),
+             _('Peut voir les types de diplôme')),
         )
 
     def get_absolute_url(self):

@@ -4,6 +4,28 @@
 td.id_member{
   display: none;
 }
+span.defaultSkin table.mceLayout tbody tr.mceLast td.mceStatusbar {
+    display: none !important;
+}
+
+.paddin-top{
+  padding-top: 1em;
+}
+.disabled{
+  color: gray;
+}
+#id_text_standard_tbl{
+  width:100%;
+}
+.has-bottom-border{
+  border-bottom-style: solid;
+  border-bottom-color: #358CD3;
+  padding-bottom: 0.25em;
+  border-bottom-width: 0.15em;
+  -webkit-box-shadow: 0 10px 5px -9px #888888;
+          box-shadow: 0 10px 5px -9px #888888;
+}
+
 #spoof-alert{
 margin-bottom: 0!important;
 position: fixed;

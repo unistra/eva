@@ -20,11 +20,11 @@
   </form>
   </div>
 
-      <div class="up-right-part">
+      <div class="up-right-part  {%if not editing%}disabled{%else%}{%endif%}">
 {% include "rules/create/top-right.html" with  rule_id=latest_id%}
       </div>
 </div>
-<div class="rule-bottom-part">
+<div class="rule-bottom-part  {%if not editing%}disabled{%else%}{%endif%}">
 {% include "rules/create/bottom.html" with creating='creating' rule_id='latest_id'%}
 </div>
 

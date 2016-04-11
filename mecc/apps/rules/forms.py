@@ -1,12 +1,115 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Rule
+from .models import Rule, Paragraph, Impact
 from crispy_forms.bootstrap import InlineCheckboxes, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Fieldset, Button, Submit
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
+from tinymce.widgets import TinyMCE
+
+class ParagraphForm(forms.ModelForm):
+
+    display_order = forms.IntegerField(initial=0, label=_("N° Affichage"))
+
+    text_standard = forms.CharField(widget=TinyMCE(), label=_("Texte de l'alinéa standard"))
+
+    text_derog = forms.CharField(widget=TinyMCE(), label=_("Texte de \
+        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
+
+    text_motiv = forms.CharField(widget=TinyMCE(), label=_("Texte de consigne \
+        pour la saisie des motivations"))
+
+    impact = forms.ChoiceField(
+        choices=((e.code, e.description) for e in Impact.objects.all()),
+        label=_('Impact TM'))
+
+    def __init__(self, *args, **kwargs):
+        super(ParagraphForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_class = 'form-horizontal'
+
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    HTML("""
+                        <div class="grey-font item flex-start">
+                          <label class="">ID alinéa <small>(auto)</small> : </label>
+                          <span id="rule_id"> {{id_paragraph}}</span>
+                        </div>
+                    """),
+                    Div(
+
+                        'display_order',
+                        css_class="item disp flex-start"
+                    ),
+                    Div(
+                        'is_in_use',
+                        css_class="item aligned-left flex-start"
+                    ),
+                    Div(
+                        'is_cmp',
+                        Div(
+                            Div('is_interaction', css_class="is_interaction"),
+                            Field('impact', css_class="item flex-end"),
+                            css_class="parent"
+                        ),
+                        css_class="item item-35 paraph-cmp",
+                    ),
+
+                    css_class="parent"
+                ),
+
+                css_class="has-bottom-border"
+            ),
+            Div(
+                'text_standard',
+                css_class="paddin-top"
+            ),
+            Div(
+                'text_derog',
+                css_class="paddin-top"
+            ),
+            Div(
+                Div(
+                    'text_motiv',
+                    css_class=" item-70 item"
+                ),
+                Div(
+                    FormActions(
+                        Div(
+
+                        Submit(
+                            'add', _('Valider et retourner à la règle'),
+                            css_class="form-submit-paraph-item btn-lines",
+                            style=""),
+                        Button(
+                            'cancel', ('Annuler et retourner à la règle'),
+                            onclick='history.go(-1);',
+                            css_class='form-submit-paraph-item  btn-lines'),
+                        )
+                    ),
+                    css_class='item item-30 flex-center'
+                ),
+                css_class='parent paddin-top'
+            )
+        )
+
+
+    class Meta:
+        model = Paragraph
+        fields =[
+            'display_order',
+            'is_in_use',
+            'is_cmp',
+            'is_interaction',
+            'impact',
+            'text_standard',
+            'text_derog',
+            'text_motiv',
+        ]
 
 class AddDegreeTypeToRule(forms.ModelForm):
     class Meta:
@@ -48,6 +151,8 @@ class RuleFormInit(forms.ModelForm):
                     </div>
                 """),
                 Div(
+
+
                 'is_in_use',
                 css_class='item'
                 ),
@@ -79,7 +184,7 @@ class RuleFormInit(forms.ModelForm):
                 css_class='parent'
             ),
             Div(
-                'display_order',
+                Field('display_order'),
                 'is_edited',
                     Div(
                         FormActions(

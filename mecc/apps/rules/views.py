@@ -1,7 +1,7 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
-from .models import Rule
-from .forms import RuleFormInit, AddDegreeTypeToRule
+from .models import Rule, Paragraph
+from .forms import RuleFormInit, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from mecc.apps.years.models import  UniversityYear
@@ -10,6 +10,8 @@ from django.core.urlresolvers import reverse
 from mecc.apps.degree.models import DegreeType
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
+
+from django.shortcuts import get_object_or_404
 
 class RulesListView(ListView):
     model = Rule
@@ -36,6 +38,42 @@ class RuleCreate(CreateView):
 
         return context
 
+
+def create_paragraph(request, rule_id, template='rules/create_paragraph.html'):
+    data = {}
+
+
+
+    rule = get_object_or_404(Rule, id=rule_id)
+    data['rule'] = rule
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
+
+    if request.POST:
+        parag = Paragraph.objects.create(
+            code_year=current_year.code_year,
+            text_standard=request.POST.get('text_standard'),
+            is_in_use=True if request.POST.get('is_in_use') == 'on' else False,
+            display_order=request.POST.get('text_standard'),
+            is_cmp=True if request.POST.get('is_cmp') == 'on' else False,
+            is_interaction=True if request.POST.get('is_interaction') == 'on' else False,
+            text_derog=request.POST.get('text_derog'),
+            text_motiv=request.POST.get('text_motiv'),
+            # impact= ,
+        )
+        parag.save()
+        return redirect('/rules/list') # Redirect after POST
+
+    data['paragraph_form'] = ParagraphForm
+
+    try:
+        data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
+    except ObjectDoesNotExist:
+        data['id_paragraph'] = 1
+
+
+    return render(request, template, data)
 
 def get_list_of_pple(request):
     data = {}
