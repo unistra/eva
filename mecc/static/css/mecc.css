@@ -223,7 +223,7 @@ align-self: center;
 .select {cursor: pointer; cursor:hand;
 }
 
-.table-head {background-color: #E4F0FB; color: #004A87;}
+.table-head {background-color: #E1F1FE; color: #004A87;}
 
 
 /*******************************************************************************
@@ -242,6 +242,11 @@ align-self: center;
   top: 1em;
   left:-4em;
 }
+.disabled-event *{
+  pointer-events: none;
+  color: #BBBBBB;
+}
+
 
 /*******************************************************************************
 /* Toggle Styles */

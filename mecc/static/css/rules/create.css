@@ -65,9 +65,7 @@ label{
  .disp #div_id_display_order > label{
    width: 7em;
  }
-  #div_id_impact{
-    width:65%;
-  }
+
 #div_id_label, .last-line{
   display: flex;
   width:100%;

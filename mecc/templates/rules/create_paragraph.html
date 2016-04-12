@@ -41,8 +41,33 @@
 <form method="post">
 {%crispy paragraph_form%}
 </form>
-<style media="screen">
+<script type="text/javascript">
+$('#id_is_cmp').on('change', function() {
+    if (this.checked) {
+      document.getElementById("id_is_interaction").checked = true;
+      $("#text_motiv").removeClass("disabled-event")
+      $("#text_derog").removeClass("disabled-event")
+      $("#div_id_impact").parent().removeClass("disabled-event")
+    } else {
+      document.getElementById("id_is_interaction").checked = false;
+      $("#text_motiv").addClass("disabled-event")
+      $("#text_derog").addClass("disabled-event")
+      $("#div_id_impact").parent().addClass("disabled-event")
+    }
+})
 
-</style>
+$('#id_is_interaction').on('change', function() {
+  if (this.checked){
+    $("#text_motiv").removeClass("disabled-event")
+    $("#text_derog").removeClass("disabled-event")
+    $("#div_id_impact").parent().removeClass("disabled-event")
+  } else {
+    $("#div_id_impact").parent().addClass("disabled-event")
+    $("#text_motiv").addClass("disabled-event")
+    $("#text_derog").addClass("disabled-event")
+  }
+});
+
+</script>
 
 {%endblock%}

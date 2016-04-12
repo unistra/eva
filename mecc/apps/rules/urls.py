@@ -21,4 +21,8 @@ urlpatterns = [
         name='update_display_order'),
     url(r'^new-paragraph/(?P<rule_id>\d+)', create_paragraph,
         name='create_paragraph'),
+    url(r'^edit-paragraph/(?P<parag_id>\d+)', create_paragraph,
+            name='paragraph_edit'),
+    url(r'^delete-paragraph/(?P<id>\d+)', login_required(RuleDelete.as_view()),
+        name='paragraph_delete'),
 ]

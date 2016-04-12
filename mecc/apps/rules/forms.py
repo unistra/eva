@@ -18,7 +18,7 @@ class ParagraphForm(forms.ModelForm):
     text_derog = forms.CharField(widget=TinyMCE(), label=_("Texte de \
         consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
 
-    text_motiv = forms.CharField(widget=TinyMCE(), label=_("Texte de consigne \
+    text_motiv = forms.CharField(widget=TinyMCE(attrs={'contenteditable':'false'}), label=_("Texte de consigne \
         pour la saisie des motivations"))
 
     impact = forms.ChoiceField(
@@ -53,7 +53,7 @@ class ParagraphForm(forms.ModelForm):
                         'is_cmp',
                         Div(
                             Div('is_interaction', css_class="is_interaction"),
-                            Field('impact', css_class="item flex-end"),
+                            Div(Field('impact', css_class="flex-end "),css_class=" item disabled-event "),
                             css_class="parent"
                         ),
                         css_class="item item-35 paraph-cmp",
@@ -70,12 +70,12 @@ class ParagraphForm(forms.ModelForm):
             ),
             Div(
                 'text_derog',
-                css_class="paddin-top"
+                css_class="paddin-top disabled-event ", id="text_derog"
             ),
             Div(
                 Div(
                     'text_motiv',
-                    css_class=" item-70 item"
+                    css_class=" item-70 item disabled-event", id="text_motiv"
                 ),
                 Div(
                     FormActions(
@@ -87,7 +87,7 @@ class ParagraphForm(forms.ModelForm):
                             style=""),
                         Button(
                             'cancel', ('Annuler et retourner à la règle'),
-                            onclick='history.go(-1);',
+                            action='history.go(-1);',
                             css_class='form-submit-paraph-item  btn-lines'),
                         )
                     ),

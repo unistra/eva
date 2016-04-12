@@ -55,15 +55,16 @@ def create_paragraph(request, rule_id, template='rules/create_paragraph.html'):
             code_year=current_year.code_year,
             text_standard=request.POST.get('text_standard'),
             is_in_use=True if request.POST.get('is_in_use') == 'on' else False,
-            display_order=request.POST.get('text_standard'),
+            display_order=request.POST.get('display_order'),
             is_cmp=True if request.POST.get('is_cmp') == 'on' else False,
             is_interaction=True if request.POST.get('is_interaction') == 'on' else False,
             text_derog=request.POST.get('text_derog'),
             text_motiv=request.POST.get('text_motiv'),
             # impact= ,
         )
+        parag.rule.add(rule)
         parag.save()
-        return redirect('/rules/list') # Redirect after POST
+        return edit_rule(request, id=rule.id, redir=True) # Redirect after POST
 
     data['paragraph_form'] = ParagraphForm
 
@@ -113,14 +114,16 @@ def update_display_order(request):
         data['display_order'] = rule.display_order
         return JsonResponse(data)
 
-def edit_rule(request, id=None, template='rules/create/base.html'):
+def edit_rule(request, id=None, template='rules/create/base.html', redir=False):
     data = {}
+
     rule = Rule.objects.get(id=id)
+    data['paragraphs'] = Paragraph.objects.filter((Q(rule=rule)))
     data['editing'] = True
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
-    if request.POST:
+    if request.POST and not redir:
         rule.display_order = request.POST.get('display_order')
         rule.label = request.POST.get('label')
         rule.is_in_use = True if request.POST.get('is_in_use') == 'on' else False

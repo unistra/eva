@@ -1,9 +1,163 @@
 {% load i18n %}
 
-<h2 style="font-size:1.2em;">
+<h2 style="font-size:1.2em;font-weight: bold;">
   {% trans "Alinéas" %}
 </h2>
-<p>{% trans "Aucun alinéa pour cette règle" %}</p>
+
+
+
+  {% if paragraphs %}
+<div class="table_list">
+  <table class="table" id="paragrapTable" style="max-width:100%">
+    <thead class="be-blue">
+     <tr>
+
+        <th width="5%" class="centerd">{% trans 'Id auto' %}</th>
+        <th width="20%" class="centerd">{% trans "Texte de l'alinéa" %}</th>
+        <th width="6%" class="centerd">{% trans "En service" %}</th>
+        <th width="7%" class='sort-default centerd'>{% trans 'N° Affichage' %}</th>
+        <th width="6%" class="centerd">{% trans 'Alinéa Cmp' %}</th>
+        <th width="6%" class="centerd">{% trans 'Inter- action' %}</th>
+        <th width="6%" class="centerd">{% trans 'Impact TM' %}</th>
+        <th width="17%" class="centerd">{% trans 'Texte consigne' %}</br>{% trans "Règle dérogatoire (ou de composante)" %}</th>
+        <th width="17%"class="centerd">{% trans 'Texte consigne' %}</br>{% trans "Motivations" %}</th>
+        <th width="4%"class="borderless"></th>
+
+     </tr>
+   </thead>
+   <tbody class="overflow" >
+  {%for e in paragraphs%}
+
+  <tr class="hover-row">
+     <td width="5%" class="centerd">{{e.id}}</td>
+     <td width="20%" >{{e.text_standard | safe | truncatechars_html:120}}</td>
+     <td width="6%" class="centerd">{{e.is_in_use}}</td>
+     <td width="7%" class="centerd">{{e.display_order}}</td>
+     <td width="6%" class="be-blue centerd">{{e.is_cmp}}</td>
+     <td width="6%" class="be-blue centerd">{{e.is_interaction}}</td>
+     <td width="6%" class="centerd"></td>
+     <td width="17%">{{e.text_derog | safe | truncatechars_html:70}}</td>
+     <td width="17%">{{e.text_motiv | safe | truncatechars_html:70}}</td>
+      <td class="centerd" style="border-right-width:0;width:2%;">
+        <a href="{% url 'rules:paragraph_edit' parag_id=e.id %}" class="glyphicon glyphicon-pencil"></a>
+      </td>
+      <td class="centerd" style="border-left-width:0;width:2%;">
+        <a href="{% url 'rules:paragraph_delete' id=e.id %}" class="glyphicon glyphicon-trash"></a>
+      </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+   </table>
+
+</div>
+{% else %}
+  {% trans "Aucun alinéa pour cette règle" %}{%endif%}</p>
+
+  <div class="buttons_list">
+
 <a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:create_paragraph' rule_id=latest_id%}"{%endif%} >
-<span class="glyphicon glyphicon-plus" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
+<span class="glyphicon glyphicon-plus paddin-left" style="padding-right:16%;" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
 </a>
+{% if editing %}
+<a href="" class="btn-primary btn btn-sm">{% trans "Pré-visualiser cette règle" %}</a>
+<a href="" class="btn-primary btn btn-sm" >{% trans "Retourner à la liste des règles" %}</a>
+{% endif %}
+</div>
+<style media="screen">
+.buttons_list{
+  text-align: center;
+  width: 100%;
+}
+.table_list{
+  height: 40vw;
+  margin-bottom: 0.7em;
+
+}
+#paragrapTable  {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+#paragrapTable  thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: 98.5%;
+}
+#paragrapTable  tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#paragrapTable  tbody tr {
+  width: 100%;
+}
+#paragrapTable  thead,
+#paragrapTable  tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+.paddin-left{
+  padding-left: 2em;
+}
+.be-blue{
+  background-color: #E1F1FE;
+}
+
+#paragrapTable .centerd {
+   text-align: center;
+   align-self: center;
+   vertical-align: middle;
+
+}
+p{
+  margin-bottom: 0;
+}
+</style>
+
+<script>
+
+
+  var sort = new Tablesort(document.getElementById('rule-table'));
+$('.display-order').on('change', function() {
+  var _input = this
+  var rule_id = this.id.replace('display-', '');
+  var hidden_id = 'hidden-display-' + rule_id;
+  var hidden_span = document.getElementById(hidden_id);
+  var display_order = this.value;
+  $.ajax({
+      url: "{% url 'rules:update_display_order'%}",
+      type: "POST",
+      data: {
+          rule_id: rule_id,
+          display_order: display_order,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function(data){
+        hidden_span.innerHTML = data.display_order
+        _input.value = data.display_order
+        sort.refresh();
+
+      }
+  });
+});
+
+$('.disp').on('change', function() {
+    new_type = this.value;
+    id = $(this).parents('td').prev().text();
+    $.ajax({
+        url: "/commission/",
+        type: "POST",
+        data: {
+            username: id,
+            type_member: new_type,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+    });
+});
+</script>
