@@ -7,7 +7,12 @@ td.id_member{
 span.defaultSkin table.mceLayout tbody tr.mceLast td.mceStatusbar {
     display: none !important;
 }
+.td-centered {
+   text-align: center;
+   align-self: center;
+   vertical-align: middle;
 
+}
 .paddin-top{
   padding-top: 1em;
 }

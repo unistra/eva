@@ -58,13 +58,14 @@ class Paragraph(models.Model):
     is_cmp = models.BooleanField(_('Alinéa de composante'))
     is_interaction = models.BooleanField(_('Interaction'))
     text_derog = models.TextField(_("Texte de consigne pour la saisie de \
-        l'alinéa dérogatoire (ou de composante)"))
+        l'alinéa dérogatoire (ou de composante)"), blank=True)
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
-        motivations"))
+        motivations"), blank=True)
     impact = models.ManyToManyField(Impact)
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk
-
+    def get_absolute_url(self):
+        return reverse('rules:rule_edit', id=rule.object.all()[0].id)
     class Meta:
         ordering = ['display_order']

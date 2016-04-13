@@ -19,11 +19,11 @@
 
         <th width="10%">{% trans 'N° de règle' %}</th>
         <th width="35%">{% trans "Libellé de règle" %}</th>
-        <th width="10%" class='sort-default'>{% trans 'N° Aff' %}</th>
-        <th width="10%"></th>
-        <th width="10%"></th>
-        <th width="10%"></th>
-        <th width="10%"></th>
+        <th width="6%" class='sort-default'>{% trans 'N° Aff' %}</th>
+        <th width="11%"></th>
+        <th width="11%"></th>
+        <th width="11%"></th>
+        <th width="11%"></th>
         <th width="5%"></th>
      </tr>
    </thead>
@@ -31,14 +31,14 @@
   {%for e in object_list%}
 
   <tr class="hover-row">
-     <td class='font-color-grey' width="10%">{{e.id}}</td>
+     <td class='font-color-grey td-centered' width="10%">{{e.id}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
-     <td width="10%"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
-     <td width="10%">{%if not e.is_in_use%}Hors service{%endif%}</td>
-     <td width="10%">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="red">{% trans "Nouvelle" %}</span>{%endif%}</td>
-     <td width="10%">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
-     <td width="10%">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
-      <td width="5%">
+     <td width="6%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
+     <td width="11%" class="td-centered">{%if not e.is_in_use%}Hors service{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="red">{% trans "Nouvelle" %}</span>{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
+      <td width="5%" >
         <a href="{% url 'rules:rule_delete' id=e.id %}" class="glyphicon glyphicon-trash pull-right"></a>
       </td>
   </tr>
@@ -61,14 +61,13 @@
     color: red;
     font-weight: bold;
   }
-  input
-  {
+  .display-order{
       background: transparent;
       border: none;
-
-      width: 50%
+      width: 100%;
+      text-align: center;
   }
-  input:focus, input:hover{
+  .display-order:focus, .display-order:hover{
     border: solid;
     border-color: #358CD3;
     border-width: 0.1em;
@@ -117,7 +116,8 @@ table tbody tr {
 
 <script>
 
-  var sort = new Tablesort(document.getElementById('rule-table'));
+var sort = new Tablesort(document.getElementById('rule-table'));
+
 $('.display-order').on('change', function() {
   var _input = this
   var rule_id = this.id.replace('display-', '');
@@ -128,7 +128,8 @@ $('.display-order').on('change', function() {
       url: "{% url 'rules:update_display_order'%}",
       type: "POST",
       data: {
-          rule_id: rule_id,
+          'type': 'rule',
+          _id: rule_id,
           display_order: display_order,
           csrfmiddlewaretoken: '{{ csrf_token }}'
       },
@@ -141,18 +142,5 @@ $('.display-order').on('change', function() {
   });
 });
 
-$('.disp').on('change', function() {
-    new_type = this.value;
-    id = $(this).parents('td').prev().text();
-    $.ajax({
-        url: "/commission/",
-        type: "POST",
-        data: {
-            username: id,
-            type_member: new_type,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
-    });
-});
 </script>
 {% endblock %}

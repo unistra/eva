@@ -1,4 +1,7 @@
 {% load i18n %}
+{% load staticfiles %}
+
+<script src="{% static 'js/srtable.js' %}"></script>
 
 <h2 style="font-size:1.2em;font-weight: bold;">
   {% trans "Alinéas" %}
@@ -12,15 +15,15 @@
     <thead class="be-blue">
      <tr>
 
-        <th width="5%" class="centerd">{% trans 'Id auto' %}</th>
-        <th width="20%" class="centerd">{% trans "Texte de l'alinéa" %}</th>
-        <th width="6%" class="centerd">{% trans "En service" %}</th>
-        <th width="7%" class='sort-default centerd'>{% trans 'N° Affichage' %}</th>
-        <th width="6%" class="centerd">{% trans 'Alinéa Cmp' %}</th>
-        <th width="6%" class="centerd">{% trans 'Inter- action' %}</th>
-        <th width="6%" class="centerd">{% trans 'Impact TM' %}</th>
-        <th width="17%" class="centerd">{% trans 'Texte consigne' %}</br>{% trans "Règle dérogatoire (ou de composante)" %}</th>
-        <th width="17%"class="centerd">{% trans 'Texte consigne' %}</br>{% trans "Motivations" %}</th>
+        <th width="5%" class="td-centered">{% trans 'Id auto' %}</th>
+        <th width="20%" class="td-centered">{% trans "Texte de l'alinéa" %}</th>
+        <th width="6%" class="td-centered">{% trans "En service" %}</th>
+        <th width="7%" class='sort-default td-centered'>{% trans 'N° Affichage' %}</th>
+        <th width="6%" class="td-centered">{% trans 'Alinéa Cmp' %}</th>
+        <th width="6%" class="td-centered">{% trans 'Inter- action' %}</th>
+        <th width="6%" class="td-centered">{% trans 'Impact TM' %}</th>
+        <th width="17%" class="td-centered">{% trans 'Texte consigne' %}</br>{% trans "Règle dérogatoire (ou de composante)" %}</th>
+        <th width="17%"class="td-centered">{% trans 'Texte consigne' %}</br>{% trans "Motivations" %}</th>
         <th width="4%"class="borderless"></th>
 
      </tr>
@@ -29,19 +32,34 @@
   {%for e in paragraphs%}
 
   <tr class="hover-row">
-     <td width="5%" class="centerd">{{e.id}}</td>
+     <td width="5%" class="td-centered">{{e.id}}</td>
      <td width="20%" >{{e.text_standard | safe | truncatechars_html:120}}</td>
-     <td width="6%" class="centerd">{{e.is_in_use}}</td>
-     <td width="7%" class="centerd">{{e.display_order}}</td>
-     <td width="6%" class="be-blue centerd">{{e.is_cmp}}</td>
-     <td width="6%" class="be-blue centerd">{{e.is_interaction}}</td>
-     <td width="6%" class="centerd"></td>
+     <td width="6%" class="td-centered">
+       {% if e.is_in_use == True %}
+          O
+       {% else %}
+          N
+       {% endif %}</td>
+     <td width="7%"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
+     <td width="6%" class="be-blue td-centered">
+       {% if e.is_cmp == True %}
+          O
+       {% else %}
+          N
+       {% endif %}</td>
+     <td width="6%" class="be-blue td-centered">
+      {% if e.is_interaction == True %}
+          O
+      {% else %}
+          N
+      {% endif %}</td>
+     <td width="6%" class="td-centered"></td>
      <td width="17%">{{e.text_derog | safe | truncatechars_html:70}}</td>
      <td width="17%">{{e.text_motiv | safe | truncatechars_html:70}}</td>
-      <td class="centerd" style="border-right-width:0;width:2%;">
-        <a href="{% url 'rules:paragraph_edit' parag_id=e.id %}" class="glyphicon glyphicon-pencil"></a>
+      <td class="td-centered" style="border-right-width:0;width:2%;">
+        <a href="" class="glyphicon glyphicon-pencil"></a>
       </td>
-      <td class="centerd" style="border-left-width:0;width:2%;">
+      <td class="td-centered" style="border-left-width:0;width:2%;">
         <a href="{% url 'rules:paragraph_delete' id=e.id %}" class="glyphicon glyphicon-trash"></a>
       </td>
   </tr>
@@ -66,6 +84,20 @@
 {% endif %}
 </div>
 <style media="screen">
+.display-order{
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: center;
+}
+.display-order:focus, .display-order:hover{
+  border: solid;
+  border-color: #358CD3;
+  border-width: 0.1em;
+  text-align: left;
+  width: 60%;
+  margin: 0 20% 0 25%;
+}
 .buttons_list{
   text-align: center;
   width: 100%;
@@ -109,12 +141,6 @@
   background-color: #E1F1FE;
 }
 
-#paragrapTable .centerd {
-   text-align: center;
-   align-self: center;
-   vertical-align: middle;
-
-}
 p{
   margin-bottom: 0;
 }
@@ -123,18 +149,19 @@ p{
 <script>
 
 
-  var sort = new Tablesort(document.getElementById('rule-table'));
+  var sort = new Tablesort(document.getElementById('paragrapTable'));
 $('.display-order').on('change', function() {
-  var _input = this
-  var rule_id = this.id.replace('display-', '');
-  var hidden_id = 'hidden-display-' + rule_id;
+  var _input = this;
+  var _id = this.id.replace('display-', '');
+  var hidden_id = 'hidden-display-' + _id;
   var hidden_span = document.getElementById(hidden_id);
   var display_order = this.value;
   $.ajax({
       url: "{% url 'rules:update_display_order'%}",
       type: "POST",
       data: {
-          rule_id: rule_id,
+          type:'paragraph',
+          _id: _id,
           display_order: display_order,
           csrfmiddlewaretoken: '{{ csrf_token }}'
       },

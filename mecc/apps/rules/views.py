@@ -64,8 +64,8 @@ def create_paragraph(request, rule_id, template='rules/create_paragraph.html'):
         )
         parag.rule.add(rule)
         parag.save()
-        return edit_rule(request, id=rule.id, redir=True) # Redirect after POST
-
+        # return edit_rule(request, id=rule.id, redir=True) # Redirect after POST
+        return redirect('rules:rule_edit', id=rule.id)
     data['paragraph_form'] = ParagraphForm
 
     try:
@@ -106,15 +106,22 @@ def manage_degreetype(request):
 def update_display_order(request):
     data = {}
     if request.is_ajax() and request.method == 'POST':
-        rule = Rule.objects.get(id=request.POST.get('rule_id'))
+        t = request.POST.get('type')
+        if t == 'rule':
+            obj = Rule.objects.get(id=request.POST.get('_id'))
+        else :
+            obj = Paragraph.objects.get(id=request.POST.get('_id'))
         display_order = request.POST.get('display_order')
-        rule. display_order = display_order if display_order.isdigit() else 0
-        rule.save()
-        data['message'] = _("Le numéro d'affichage de la règle a bien été mis à jour.")
-        data['display_order'] = rule.display_order
+        obj.display_order = display_order if display_order.isdigit() else 0
+        obj.save()
+        data['message'] = _("Le numéro d'affichage a bien été mis à jour.")
+        data['display_order'] = obj.display_order
         return JsonResponse(data)
+    else :
+        message = _("L'objet %s n'a pas été mis à jour" % request.POT.get('_id'))
+        return JsonResponse({'status':'false','message':message}, status=500)
 
-def edit_rule(request, id=None, template='rules/create/base.html', redir=False):
+def edit_rule(request, id=None, template='rules/create/base.html'):
     data = {}
 
     rule = Rule.objects.get(id=id)
@@ -123,7 +130,7 @@ def edit_rule(request, id=None, template='rules/create/base.html', redir=False):
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
-    if request.POST and not redir:
+    if request.POST and request.POST.get('label'):
         rule.display_order = request.POST.get('display_order')
         rule.label = request.POST.get('label')
         rule.is_in_use = True if request.POST.get('is_in_use') == 'on' else False
@@ -140,6 +147,11 @@ def edit_rule(request, id=None, template='rules/create/base.html', redir=False):
 
 
     return render(request, template, data)
+
+
+def edit_paragraph(request, id=None, template='rules/create/base.html'):
+    pass
+
 
 def play_with_rule(request, id=None, template='rules/create/base.html'):
     current_year = list(UniversityYear.objects.filter(
@@ -219,6 +231,12 @@ def create_rule(request, template='rules/create/base.html'):
     except ObjectDoesNotExist:
         data['latest_id'] = 1
     return render(request, template, data)
+
+
+class ParagraphDelete(DeleteView):
+    model = Paragraph
+    pk_url_kwarg = 'id'
+    success_url = '/rules/list'
 
 
 class RuleDelete(DeleteView):
