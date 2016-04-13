@@ -23,7 +23,7 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),
-    url(r'^tinymce/', include('tinymce.urls')),
+    # url(r'^tinymce/', include('tinymce.urls')),
 
 )
 

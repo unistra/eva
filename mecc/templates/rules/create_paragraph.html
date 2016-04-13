@@ -4,11 +4,14 @@
 {% load field_name %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load dipstrapfiles %}
 
 {% block page-header %}
 {% trans "Fiche détaillée d'un alinéa de règle générale" %}
 {% endblock %}
 
+
+    <script src="{% dipstrap 'js/vendor/jquery-1.11.0.min.js' %}"></script>
 
 
 {% block app_content %}

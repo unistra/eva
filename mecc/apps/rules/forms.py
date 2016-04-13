@@ -7,19 +7,26 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Fieldset, Button, Submit
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
-from tinymce.widgets import TinyMCE
+# from tinymce.widgets import TinyMCE
+from ckeditor.fields import RichTextField
+
 
 class ParagraphForm(forms.ModelForm):
 
     display_order = forms.IntegerField(initial=0, label=_("N° Affichage"))
 
-    text_standard = forms.CharField(widget=TinyMCE(), label=_("Texte de l'alinéa standard"))
+    # text_standard = forms.CharField(widget=TinyMCE(), label=_("Texte de l'alinéa standard"))
+    #
+    # text_derog = forms.CharField(widget=TinyMCE(), label=_("Texte de \
+    #     consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
+    #
+    # text_motiv = forms.CharField(widget=TinyMCE(attrs={'contenteditable':'false'}), label=_("Texte de consigne \
+    #     pour la saisie des motivations"))
 
-    text_derog = forms.CharField(widget=TinyMCE(), label=_("Texte de \
-        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
 
-    text_motiv = forms.CharField(widget=TinyMCE(attrs={'contenteditable':'false'}), label=_("Texte de consigne \
-        pour la saisie des motivations"))
+    text_standard = RichTextField(config_name='awesome_ckeditor')
+    text_derog = RichTextField(config_name='awesome_ckeditor')
+    text_motiv = RichTextField(config_name='awesome_ckeditor')
 
     impact = forms.ChoiceField(
         choices=((e.code, e.description) for e in Impact.objects.all()),

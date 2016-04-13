@@ -235,7 +235,8 @@ THIRD_PARTY_APPS = (
     'crispy_forms',
     'fm',
     'django_cas',
-    'tinymce',
+    'ckeditor',
+    # 'tinymce',
 
 )
 
@@ -345,11 +346,21 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 TINYMCE_DEFAULT_CONFIG = {
 'theme': "advanced",
 'theme_advanced_toolbar_location' : "top",
-'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent,separator,undo,redo",
+'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent",
 'spellchecker': 'fr',
 'width': '100%',
 'height': '9em',
 'font-size':'18px',
 'plugins': "paste",
-'toolbar': "paste"
+'paste_as_text': 'true',
+'paste_word_valid_elements': "b,strong,i,em,h1,h2"
+}
+
+
+CKEDITOR_CONFIGS = {
+     'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 300,
+    },
 }

@@ -5,3 +5,4 @@ britney
 django-crispy-forms
 django-fm
 django-tinymce
+django-ckeditor
