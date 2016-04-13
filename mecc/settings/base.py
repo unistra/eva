@@ -349,5 +349,7 @@ TINYMCE_DEFAULT_CONFIG = {
 'spellchecker': 'fr',
 'width': '100%',
 'height': '9em',
-'font-size':'18px'
+'font-size':'18px',
+'plugins': "paste",
+'toolbar': "paste"
 }

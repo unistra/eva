@@ -45,18 +45,21 @@
 $('#id_is_cmp').on('change', function() {
     if (this.checked) {
       document.getElementById("id_is_interaction").checked = true;
-      $("#text_motiv").removeClass("disabled-event")
-      $("#text_derog").removeClass("disabled-event")
       $("#div_id_impact").parent().removeClass("disabled-event")
+      $("#text_derog").removeClass("disabled-event")
+      $("#text_motiv").addClass("disabled-event")
     } else {
       document.getElementById("id_is_interaction").checked = false;
       $("#text_motiv").addClass("disabled-event")
-      $("#text_derog").addClass("disabled-event")
       $("#div_id_impact").parent().addClass("disabled-event")
     }
 })
 
 $('#id_is_interaction').on('change', function() {
+  if (document.getElementById("id_is_cmp").checked){
+    this.checked = true;
+    return
+  }
   if (this.checked){
     $("#text_motiv").removeClass("disabled-event")
     $("#text_derog").removeClass("disabled-event")

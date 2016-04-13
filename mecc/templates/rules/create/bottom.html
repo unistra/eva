@@ -80,7 +80,7 @@
 </a>
 {% if editing %}
 <a href="" class="btn-primary btn btn-sm">{% trans "Pré-visualiser cette règle" %}</a>
-<a href="" class="btn-primary btn btn-sm" >{% trans "Retourner à la liste des règles" %}</a>
+<a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm" >{% trans "Retourner à la liste des règles" %}</a>
 {% endif %}
 </div>
 <style media="screen">
