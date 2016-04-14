@@ -236,7 +236,6 @@ THIRD_PARTY_APPS = (
     'fm',
     'django_cas',
     'ckeditor',
-    # 'tinymce',
 
 )
 
@@ -343,24 +342,27 @@ CAS_USER_CREATION = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
-TINYMCE_DEFAULT_CONFIG = {
-'theme': "advanced",
-'theme_advanced_toolbar_location' : "top",
-'theme_advanced_buttons1': "bold,italic,underline,separator,bullist,separator,outdent,indent",
-'spellchecker': 'fr',
-'width': '100%',
-'height': '9em',
-'font-size':'18px',
-'plugins': "paste",
-'paste_as_text': 'true',
-'paste_word_valid_elements': "b,strong,i,em,h1,h2"
-}
-
-
 CKEDITOR_CONFIGS = {
      'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': 300,
+        # 'skin': 'minimalist',
+        'skin': 'office2013',
+        'toolbar_Basic': [
+            ['-', 'Bold', 'Italic']
+        ],
+        'toolbar_Tools': [
+            {'name': 'clipboard', 'items': ['-', 'Undo', 'Redo']},
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'styles', 'items': ['Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+        ],
+        'toolbar': 'Tools',
+        'height': '9em',
+        'width': '100%',
+        'FromWordPromptCleanup': True,
     },
 }

@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 # from tinymce.widgets import TinyMCE
 from ckeditor.fields import RichTextField
+from ckeditor.widgets import CKEditorWidget
 
 
 class ParagraphForm(forms.ModelForm):
@@ -24,9 +25,14 @@ class ParagraphForm(forms.ModelForm):
     #     pour la saisie des motivations"))
 
 
-    text_standard = RichTextField(config_name='awesome_ckeditor')
-    text_derog = RichTextField(config_name='awesome_ckeditor')
-    text_motiv = RichTextField(config_name='awesome_ckeditor')
+    text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
+        l'alinéa standard"))
+
+    text_derog = forms.CharField(widget=CKEditorWidget(),label=_("Texte de \
+        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
+
+    text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
+        consigne pour la saisie des motivations"))
 
     impact = forms.ChoiceField(
         choices=((e.code, e.description) for e in Impact.objects.all()),
