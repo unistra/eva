@@ -31,7 +31,7 @@
   {%for e in object_list%}
 
   <tr class="hover-row">
-     <td class='font-color-grey td-centered' width="10%">{{e.id}}</td>
+     <td class='disabled td-centered' width="10%">{{e.id}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="35%">{{e.label}}</a></td>
      <td width="6%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="11%" class="td-centered">{%if not e.is_in_use%}Hors service{%endif%}</td>

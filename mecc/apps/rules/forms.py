@@ -11,7 +11,9 @@ from ckeditor.widgets import CKEditorWidget
 
 
 class ParagraphForm(forms.ModelForm):
-
+    """
+    Paragraph form
+    """
     display_order = forms.IntegerField(initial=0, label=_("N° Affichage"))
 
     text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
@@ -121,11 +123,18 @@ class ParagraphForm(forms.ModelForm):
         ]
 
 class AddDegreeTypeToRule(forms.ModelForm):
+    """
+    Form for adding degreetype to rule
+    """
     class Meta:
         model = Rule
         fields = ['degree_type']
 
-class RuleFormInit(forms.ModelForm):
+
+class RuleForm(forms.ModelForm):
+    """
+    Rule form
+    """
     EDITED_CHOICES = (
         ('X', _('Nouvelle')),
         ('O', _('Oui')),
@@ -142,7 +151,7 @@ class RuleFormInit(forms.ModelForm):
     display_order = forms.IntegerField(initial=0, label=_("N° d'ordre d'affichage"))
 
     def __init__(self, *args, **kwargs):
-        super(RuleFormInit, self).__init__(*args, **kwargs)
+        super(RuleForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.form_class = 'form-horizontal'
@@ -219,91 +228,4 @@ class RuleFormInit(forms.ModelForm):
             'is_ccct',
             'display_order',
             'is_edited',
-        ]
-
-
-class RuleFormInitOld(forms.ModelForm):
-    EDITED_CHOICES = (
-        ('O', _('Oui')),
-        ('N', _('Non')),
-        ('X', _('Nouvelle')),
-    )
-
-    is_edited = forms.ChoiceField(choices=EDITED_CHOICES,
-        label=_("La règle a-t-elle été modifiée ?"))
-
-    label = forms.CharField(label=('Libellé de règle'))
-
-    def __init__(self, *args, **kwargs):
-        super(RuleFormInit, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.form_class = 'form-horizontal'
-
-        self.helper.layout = Layout(
-        Div(
-            HTML("""
-                <div class="col-xs-4 grey-font">
-                  <label class="">ID règle <small>(auto)</small> : </label>
-                  <span id="rule_id"> {{latest_id}}</span>
-                </div>
-                <div class="col-xs-5 grey-font">
-                  <label class="">Année universitaire :</label>
-                  <span id="rule_date"> {{current_year}} </span>
-                </div>
-            """),
-            Div(
-                Div(
-                'is_in_use', css_class='pull-right col-xs-3'
-                ),
-            ),
-            css_class="row"
-        ),
-        Div(
-            Div(
-                Field('label'),
-                 css_class='col-xs-12'
-            ),
-            css_class='row'
-        ),
-        Div(
-            Div(
-                HTML("""
-                <div class="col-xs-3 grey-font">
-                  <label class="checkbox">Régime(s) concerné(s) : </label>
-                </div>
-                """),
-                Div(
-                    'is_eci',
-                    css_class='col-xs-1'
-                ),
-                Div(
-                    'is_ccct',
-                    css_class='col-xs-1'
-                ),
-            ),
-            css_class='row'
-        ),
-        Div(
-            Div(
-                'display_order',
-                css_class='col-xs-3'
-            ),
-            Div(
-                'is_edited' ,
-                css_class='col-xs-6'
-            ),
-            css_class='row'
-        ),
-        )
-
-    class Meta:
-        model = Rule
-        fields = [
-            'is_in_use',
-            'label',
-            'is_eci',
-            'is_ccct',
-            'display_order',
-            'is_edited'
         ]

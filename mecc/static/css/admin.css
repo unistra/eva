@@ -2,6 +2,10 @@
     display: none;
 }
 
+.admin{
+  font-family: "Times New Roman", Times, serif;
+}
+
 #add_id_groups {
     display: none;
 }

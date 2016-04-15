@@ -7,6 +7,9 @@ from mecc.apps.years.models import  UniversityYear
 from django.db.models import Q
 
 class Impact(models.Model):
+    """
+    Impact model
+    """
     code = models.IntegerField(_("Code impact"), unique=True)
     description = models.CharField(_("Description impact "), max_length=250)
 
@@ -15,7 +18,9 @@ class Impact(models.Model):
 
 
 class Rule(models.Model):
-
+    """
+    Rule model
+    """
     EDITED_CHOICES = (
         ('O', _('Oui')),
         ('N', _('Non')),
@@ -50,6 +55,9 @@ class Rule(models.Model):
         ordering = ['display_order']
 
 class Paragraph(models.Model):
+    """
+    Paragraph model
+    """
     code_year = models.IntegerField(_("Code année"), unique=False)
     rule = models.ManyToManyField(Rule)
     text_standard = models.TextField(_("Texte de l'alinéa standard"))
