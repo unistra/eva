@@ -9,6 +9,9 @@ from django.utils.translation import ugettext as _
 
 
 class DegreeTypeForm(forms.ModelForm):
+    """
+    Degree type form
+    """
     def __init__(self, *args, **kwargs):
         super(DegreeTypeForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -68,5 +71,11 @@ class DegreeTypeForm(forms.ModelForm):
 
     class Meta:
         model = DegreeType
-        fields = ['is_in_use', 'id', 'display_order', 'short_label',
-                  'long_label', 'ROF_code']
+        fields = [
+            'is_in_use',
+            'id',
+            'display_order',
+            'short_label',
+            'long_label',
+            'ROF_code'
+        ]

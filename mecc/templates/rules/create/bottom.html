@@ -57,7 +57,7 @@
      <td width="17%">{{e.text_derog | truncatechars_html:70}}</td>
      <td width="17%">{{e.text_motiv |  truncatechars_html:70}}</td>
       <td class="td-centered" style="border-right-width:0;width:2%;">
-        <a href="" class="glyphicon glyphicon-pencil"></a>
+        <a href="{% url 'rules:paragraph_edit' id=e.id %}" class="glyphicon glyphicon-pencil"></a>
       </td>
       <td class="td-centered" style="border-left-width:0;width:2%;">
         <a href="{% url 'rules:paragraph_delete' id=e.id %}" class="glyphicon glyphicon-trash"></a>
@@ -75,7 +75,7 @@
 
   <div class="buttons_list">
 
-<a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:create_paragraph' rule_id=latest_id%}"{%endif%} >
+<a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:manage_paragraph' rule_id=latest_id%}"{%endif%} >
 <span class="glyphicon glyphicon-plus paddin-left" style="padding-right:16%;" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
 </a>
 {% if editing %}

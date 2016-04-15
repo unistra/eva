@@ -7,7 +7,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Fieldset, Button, Submit
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
-# from tinymce.widgets import TinyMCE
 from ckeditor.fields import RichTextField
 from ckeditor.widgets import CKEditorWidget
 
@@ -16,27 +15,19 @@ class ParagraphForm(forms.ModelForm):
 
     display_order = forms.IntegerField(initial=0, label=_("N° Affichage"))
 
-    # text_standard = forms.CharField(widget=TinyMCE(), label=_("Texte de l'alinéa standard"))
-    #
-    # text_derog = forms.CharField(widget=TinyMCE(), label=_("Texte de \
-    #     consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
-    #
-    # text_motiv = forms.CharField(widget=TinyMCE(attrs={'contenteditable':'false'}), label=_("Texte de consigne \
-    #     pour la saisie des motivations"))
-
-
     text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         l'alinéa standard"))
 
     text_derog = forms.CharField(widget=CKEditorWidget(),label=_("Texte de \
-        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"))
+        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"),
+        required=False)
 
     text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
-        consigne pour la saisie des motivations"))
+        consigne pour la saisie des motivations"), required=False)
 
     impact = forms.ChoiceField(
         choices=((e.code, e.description) for e in Impact.objects.all()),
-        label=_('Impact TM'))
+        label=_('Impact TM'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(ParagraphForm, self).__init__(*args, **kwargs)
@@ -106,10 +97,16 @@ class ParagraphForm(forms.ModelForm):
                     ),
                     css_class='item item-30 flex-center'
                 ),
-                css_class='parent paddin-top'
+                css_class='parent'
             )
         )
 
+
+    def clean(self):
+            if self.cleaned_data.get('is_cmp') is False:
+                raise ValidationError(_("Veuillez selectionner un régime."))
+
+            return self.cleaned_data
 
     class Meta:
         model = Paragraph

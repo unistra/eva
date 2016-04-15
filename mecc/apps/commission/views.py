@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 import re   # ### REGEX
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from mecc.apps.utils.ws import ask_camelot, get_pple, get_from_ldap
+from mecc.apps.utils.ws import ask_camelot,  get_from_ldap
 
 from .models import ECICommissionMember
 from .forms import ECIForm
@@ -13,6 +13,9 @@ from django_cas.decorators import login_required
 
 @login_required
 def home(request, template='commission/home.html'):
+    """
+    Home view
+    """
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username', '')
         type_member = request.POST.get('type_member', '')
@@ -36,6 +39,9 @@ def home(request, template='commission/home.html'):
 
 @login_required
 def delete_member(request):
+    """
+    Delete view
+    """
     if request.method == 'POST':
         username = request.POST.get('username', '')
         member = ECICommissionMember.objects.get(username=username)
@@ -46,6 +52,10 @@ def delete_member(request):
 
 @login_required
 def get_list_of_pple(request):
+    # TODO: NOT A VIEW
+    """
+    Ajax : return list of pple with searched name
+    """
     data = {}
     if request.is_ajax():
         x = request.GET.get('member', '')

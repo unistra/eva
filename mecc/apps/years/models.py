@@ -8,6 +8,9 @@ import datetime
 
 
 class InstituteYear(models.Model):
+    """
+    Institue year model
+    """
     id_cmp = models.IntegerField(_('ID composante'))
     code_year = models.IntegerField(_('Code année'))
     date_expected_MECC = models.DateField(
@@ -56,12 +59,10 @@ class UniversityYear(models.Model):
         return self.label_year
 
     def clean_fields(self, exclude=None):
-
         if self.code_year in set([e.code_year for e in InstituteYear.objects.all()]):
             self.is_year_init = True
         else:
             self.is_year_init = False
-
         reg = re.compile('^\d{4}$')
         if not reg.match(str(self.code_year)):
             raise ValidationError(

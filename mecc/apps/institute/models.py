@@ -7,6 +7,9 @@ from mecc.apps.adm.models import MeccUser
 
 
 class AcademicField(models.Model):
+    """
+    Academic field model
+    """
     name = models.CharField(_('Domaine'), max_length=70)
 
     def __str__(self):
@@ -14,6 +17,9 @@ class AcademicField(models.Model):
 
 
 class Institute(models.Model):
+    """
+    Institute model
+    """
     field_choice = AcademicField.objects.all()
 
     code = models.CharField(_('Code composante'), max_length=3)

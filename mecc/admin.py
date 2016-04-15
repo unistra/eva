@@ -38,12 +38,6 @@ class UserCreationFormWithoutPass(forms.ModelForm):
         return user
 
 
-class UserChangeFormWithoutPass(UserChangeForm):
-
-    def clean_password(self):
-        return ""
-
-
 # Define an inline admin descriptor for Employee model
 # which acts a bit like a singleton
 class MeccUserInline(admin.StackedInline):

@@ -8,6 +8,9 @@ from crispy_forms.layout import Layout, HTML, Field
 
 
 class InstituteForm(forms.ModelForm):
+    """
+    Instiute form
+    """
     field = forms.ModelChoiceField(
         queryset=AcademicField.objects.all(),
         required=True, label=_('Domaine'))
@@ -51,12 +54,20 @@ class InstituteForm(forms.ModelForm):
     class Meta:
         model = Institute
         fields = [
-            'code', 'is_on_duty', 'label', 'field', 'id_dircomp', 'id_rac',
+            'code',
+            'is_on_duty',
+            'label',
+            'field',
+            'id_dircomp',
+            'id_rac',
             'ROF_code'
         ]
 
 
 class DircompInstituteForm(InstituteForm):
+    """
+    Institute Form for dircomp
+    """
     def clean_code(self):
         instance = getattr(self, 'instance', None)
         if self.instance:

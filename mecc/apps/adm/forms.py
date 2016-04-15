@@ -7,15 +7,16 @@ from django.contrib.auth.models import User
 
 
 class MeccUserForm(ModelForm):
+    """
+    Form for custom users with status, institute(cmp) and birth_date
+    """
     def __init__(self, *args, **kwargs):
         super(MeccUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Field('status'),
-            # Field('cmp'),
             Field('birth_date'),
-            # Field('profile')
         )
 
     class Meta:
@@ -24,6 +25,9 @@ class MeccUserForm(ModelForm):
 
 
 class UserForm(ModelForm):
+    """
+    Form for basic user
+    """
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()

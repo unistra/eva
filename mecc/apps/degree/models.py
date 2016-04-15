@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 
 
 class DegreeType(models.Model):
+    """
+    Degree Type model
+    """
     display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
     is_in_use = models.BooleanField(_('En service'))
     short_label = models.CharField(_('Libellé court'), max_length=40)
@@ -32,6 +35,9 @@ class DegreeType(models.Model):
 
 
 class Degree(models.Model):
+    """
+    Degree model
+    """
     import datetime
 
     YEAR_CHOICES = [(y,y) for y in range(1900, datetime.date.today().year+5)]

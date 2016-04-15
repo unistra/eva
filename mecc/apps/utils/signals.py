@@ -9,6 +9,9 @@ from mecc.apps.institute.models import Institute
 
 @receiver(pre_save, sender=ECICommissionMember)
 def ECI_pre_save(sender, **kwargs):
+    """
+    Add corresponding profile to new ECI commission member
+    """
     new_user = kwargs['instance']
     try:
         user = User.objects.create_user(new_user.username, email=new_user.email)
@@ -28,6 +31,9 @@ def ECI_pre_save(sender, **kwargs):
 
 @receiver(post_delete, sender=ECICommissionMember)
 def ECI_post_delete(sender, **kwargs):
+    """
+    Delete profile and if there isn't any other delete user
+    """
     to_del = kwargs['instance'].username
     meccuser = MeccUser.objects.get(user__username=to_del)
     eci = Profile.objects.get(code='ECI')

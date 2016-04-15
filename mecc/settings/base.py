@@ -363,6 +363,6 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'Tools',
         'height': '9em',
         'width': '100%',
-        'FromWordPromptCleanup': True,
+        'entities_latin': 'false'
     },
 }

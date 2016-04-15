@@ -23,6 +23,9 @@ from django.db import IntegrityError
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def granted_edit_institute(request, code, template='institute/granted.html'):
+    """
+    Dispatch forms according to user profile
+    """
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
@@ -147,7 +150,7 @@ def remove_pple(request):
         })
 @login_required
 def get_list(request, employee_type, pk):
-
+    # TODO: NOT A VIEW
     if employee_type == 'prof':
         type_staff = 'Enseignant'
     elif employee_type == 'adm':
@@ -157,6 +160,9 @@ def get_list(request, employee_type, pk):
 
 
 class InstituteDelete(DeleteView):
+    """
+    Delete Institute view
+    """
     model = Institute
 
     slug_field = 'code'
@@ -166,6 +172,9 @@ class InstituteDelete(DeleteView):
 
 
 class InstituteCreate(CreateView):
+    """
+    Create institute view
+    """
     def get_context_data(self, **kwargs):
         context = super(InstituteCreate, self).get_context_data(**kwargs)
         try:
@@ -193,6 +202,7 @@ class InstituteCreate(CreateView):
 
 
 def out(new_username, profile, institute, request, name):
+    # TODO: NOT A VIEW
     inst = {'rac': institute.id_rac, 'dircomp': institute.id_dircomp}
 
     if name == inst[profile]:
@@ -231,6 +241,9 @@ def out(new_username, profile, institute, request, name):
 
 @login_required
 def edit_insitute(request, template='institute/institute_form.html', code=None):
+    """
+    Edit instiute view
+    """
     institute = Institute.objects.get(code=code)
 
     if request.method == 'POST':

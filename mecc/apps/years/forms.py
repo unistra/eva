@@ -7,6 +7,9 @@ from django.utils.translation import ugettext as _
 
 
 class DircompInstituteYearForm(forms.ModelForm):
+    """
+    Institute year form with fields updatable by directors
+    """
     date_expected_MECC = forms.DateField(
         input_formats=['%d/%m/%Y'],
         widget=forms.TextInput(attrs={'class': 'datepicker'}),
@@ -40,7 +43,9 @@ class DircompInstituteYearForm(forms.ModelForm):
 
 
 class DircompUniversityYearForm(forms.ModelForm):
-
+    """
+    University year form with fields updatable by directors
+    """
     def __init__(self, *args, **kwargs):
         super(DircompUniversityYearForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
@@ -68,6 +73,9 @@ class DircompUniversityYearForm(forms.ModelForm):
 
 
 class UniversityYearForm(forms.ModelForm):
+    """
+    University year form
+    """
     is_target_year = forms.TypedChoiceField(
         label=_('Cible courante'),
         choices=((0, "Non"), (1, "OUI")),
@@ -121,6 +129,9 @@ class UniversityYearForm(forms.ModelForm):
 
 
 class InstituteYearForm(forms.ModelForm):
+    """
+    Institute year form
+    """
     date_expected_MECC = forms.DateField(
         label=_('Date prévisionnelle Conseil comp. MECC')
     )
@@ -147,6 +158,9 @@ class InstituteYearForm(forms.ModelForm):
 
 
 class DisabledInstituteYearForm(InstituteYearForm):
+    """
+    Institute year form with disabled fields
+    """
     def __init__(self, *args, **kwargs):
         super(DisabledInstituteYearForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)

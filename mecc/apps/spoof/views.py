@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
-from mecc.apps.spoof.forms import UserForm
 from mecc.apps.utils.switch_users import request_with_other_user, \
     check_generic_password
 from django.contrib.auth.models import User
@@ -59,6 +58,9 @@ def home(request, template='spoof/form.html'):
 
 
 def release_user(request):
+    """
+    Go back to original user
+    """
     real_username = request.session['real_username']
     new_user = User.objects.get(username=real_username)
     r = request_with_other_user(request, new_user)

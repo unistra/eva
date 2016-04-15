@@ -50,7 +50,7 @@ class Rule(models.Model):
         ordering = ['display_order']
 
 class Paragraph(models.Model):
-    code_year = models.IntegerField(_("Code année"))
+    code_year = models.IntegerField(_("Code année"), unique=False)
     rule = models.ManyToManyField(Rule)
     text_standard = models.TextField(_("Texte de l'alinéa standard"))
     is_in_use = models.BooleanField(_('En service'), default=True)

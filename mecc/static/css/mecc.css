@@ -264,7 +264,9 @@ align-self: center;
   pointer-events: none;
   color: #BBBBBB;
 }
-
+.enabled-event *{
+  color : inherit;
+}
 
 /*******************************************************************************
 /* Toggle Styles */

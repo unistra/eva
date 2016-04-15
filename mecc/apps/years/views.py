@@ -14,7 +14,9 @@ from django_cas.decorators import login_required
 
 
 class UniversityYearDelete(DeleteView):
-
+    """
+    Univeristy year delete view
+    """
     model = UniversityYear
 
     slug_field = 'code_year'
@@ -23,12 +25,18 @@ class UniversityYearDelete(DeleteView):
 
 
 class UniversityYearCreate(CreateView):
+    """
+    University year create view
+    """
     model = UniversityYear
     form_class = UniversityYearForm
     success_url = '/years'
 
 
 class UniversityYearUpdate(UpdateView):
+    """
+    University year update view
+    """
     model = UniversityYear
     form_class = UniversityYearForm
 
@@ -39,6 +47,9 @@ class UniversityYearUpdate(UpdateView):
 
 
 class UniversityYearListView(ListView):
+    """
+    University year list view
+    """
     def get_context_data(self, **kwargs):
         context = super(UniversityYearListView, self).get_context_data(**kwargs)
         try:
@@ -58,6 +69,10 @@ class UniversityYearListView(ListView):
 
 @login_required
 def initialize_year(request, code_year, template='years/initialize.html'):
+    """
+    Initialize requested year : create institute year according to
+    university year and instiute
+    """
     data = {}
     try:
         y = UniversityYear.objects.get(code_year=code_year)
