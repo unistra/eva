@@ -1,6 +1,5 @@
 from django.contrib.auth import login, load_backend, BACKEND_SESSION_KEY
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def request_with_other_user(request, user):

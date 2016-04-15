@@ -1,13 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
+from django.shortcuts import render, redirect
 from mecc.apps.utils.switch_users import request_with_other_user, \
     check_generic_password
 from django.contrib.auth.models import User
 from django_cas.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
-from django.contrib.auth import login, load_backend, BACKEND_SESSION_KEY
 from django.http import HttpResponseForbidden
 
 

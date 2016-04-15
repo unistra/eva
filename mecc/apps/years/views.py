@@ -2,14 +2,10 @@ from .models import UniversityYear, InstituteYear
 from ..institute.models import Institute
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from django.utils import timezone
 from .forms import UniversityYearForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
-from django.utils.encoding import smart_text
 from django.shortcuts import redirect, render
-from fm.views import AjaxCreateView
-
 from django_cas.decorators import login_required
 
 

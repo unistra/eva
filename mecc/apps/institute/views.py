@@ -8,17 +8,16 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django_cas.decorators import login_required, user_passes_test
 
-from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, DircompInstituteForm
+from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, \
+    DircompInstituteForm
 from mecc.apps.years.forms import DircompInstituteYearForm, \
- DircompUniversityYearForm, DisabledInstituteYearForm
+    DircompUniversityYearForm, DisabledInstituteYearForm
 from mecc.apps.institute.models import Institute
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp
 from mecc.apps.adm.models import MeccUser, Profile
 
 from datetime import datetime
-
-from django.db import IntegrityError
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -30,28 +29,35 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     data['university_year'] = current_year
-    code_cmp = request.user.meccuser.cmp
     institute = Institute.objects.get(code=code)
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
-    institute_year = InstituteYear.objects.get(id_cmp=institute.id, code_year=current_year.code_year)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
     try:
-        institute_year.date_expected_MECC = datetime.strftime(institute_year.date_expected_MECC, '%d/%m/%Y')
+        institute_year.date_expected_MECC = datetime.strftime(
+            institute_year.date_expected_MECC, '%d/%m/%Y')
     except TypeError:
         institute_year.date_expected_MECC = ''
-    data['form_university_year'] = DircompUniversityYearForm(instance=current_year)
-    data['form_institute_year'] = DircompInstituteYearForm(instance=institute_year)
-    data['disabled_institute_year'] = DisabledInstituteYearForm(instance=institute_year)
+    data['form_university_year'] = DircompUniversityYearForm(
+        instance=current_year)
+    data['form_institute_year'] = DircompInstituteYearForm(
+        instance=institute_year)
+    data['disabled_institute_year'] = DisabledInstituteYearForm(
+        instance=institute_year)
     data['cadre_gen'] = "xxxxx.pdf"
     if request.POST:
         try:
-            expected_mecc = datetime.strptime(request.POST.get('date_expected_MECC', ''), '%d/%m/%Y')
-            institute_year.date_expected_MECC = datetime.strftime(expected_mecc, '%Y-%m-%d')
+            expected_mecc = datetime.strptime(
+                request.POST.get('date_expected_MECC', ''), '%d/%m/%Y')
+            institute_year.date_expected_MECC = datetime.strftime(
+                expected_mecc, '%Y-%m-%d')
             institute_year.save()
         except ValueError:
-            granted_edit_institute(request, code, template='institute/dircomp.html')
+            granted_edit_institute(
+                request, code, template='institute/dircomp.html')
         return redirect('/') # Redirect after POST
 
     return render(request, template, data)
@@ -78,7 +84,6 @@ def add_pple(request):
             meccuser = MeccUser.objects.get(user__username=username)
         except ObjectDoesNotExist:
             meccuser = MeccUser.objects.create(user=user)
-
 
         profile = Profile.objects.get(code=request.POST.get('type').upper())
         meccuser.cmp = request.POST.get('code_cmp')
@@ -110,13 +115,11 @@ def add_pple(request):
         meccuser.profile.add(profile)
         meccuser.save()
 
-
-
         return JsonResponse({
             'success': _("%s %s a bien été ajouté" % (
             request.POST.get('last_name'), request.POST.get('first_name')))
-
         })
+
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def remove_pple(request):
@@ -146,10 +149,14 @@ def remove_pple(request):
         return JsonResponse({
             'success': _("%s %s a bien été supprimé" % (
             meccuser.user.last_name, meccuser.user.first_name))
-
         })
+
+
 @login_required
 def get_list(request, employee_type, pk):
+    """
+    Return list of professor or administration staff
+    """
     # TODO: NOT A VIEW
     if employee_type == 'prof':
         type_staff = 'Enseignant'
@@ -253,19 +260,20 @@ def edit_insitute(request, template='institute/institute_form.html', code=None):
             name = request.POST.get("id_%s" % e)
             out(username, e, institute, request, name)
 
-
         form = InstituteForm(request.POST, request.FILES, instance=institute)
         if form.is_valid():
             form.save()
-            return redirect('institute:home') # Redirect after POST
+            return redirect('institute:home')  # Redirect after POST
     else:
         form = InstituteForm(instance=institute)
 
-    return render(request, template, {'form': form, 'institute':institute})
+    return render(request, template, {'form': form, 'institute': institute})
 
 
 class InstituteUpdate(UpdateView):
-
+    """
+    Institute update view
+    """
     model = Institute
 
     form_class = InstituteForm
@@ -298,6 +306,9 @@ class InstituteUpdate(UpdateView):
 
 
 class InstituteListView(ListView):
+    """
+    Institute List view
+    """
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
         institute_list = []
@@ -305,14 +316,14 @@ class InstituteListView(ListView):
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
             ordered_list = Institute.objects.all().order_by('field', 'label')
-            for e in ordered_list:
-                iy = InstituteYear.objects.get(code_year=current_year, id_cmp=e.id)
+            for institute in ordered_list:
+                iy = InstituteYear.objects.get(code_year=current_year, id_cmp=institute.id)
                 field = {
-                    'domaine': e.field.name,
-                    'code': e.code,
-                    'labelled': "%s - %s" % (e.label, e.ROF_code) if e.ROF_code not in ['', ' ', None] else e.label,
-                    'dircomp': e.id_dircomp,
-                    'rac': e.id_rac,
+                    'domaine': institute.field.name,
+                    'code': institute.code,
+                    'labelled': "%s - %s" % (institute.label, institute.ROF_code) if institute.ROF_code not in ['', ' ', None] else institute.label,
+                    'dircomp': institute.id_dircomp,
+                    'rac': institute.id_rac,
                     'date_expected_MECC': iy.date_expected_MECC,
                     'date_last_notif': iy.date_last_notif,
                     'is_late': iy.is_expected_date_late,

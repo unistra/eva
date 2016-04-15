@@ -1,9 +1,9 @@
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView
 from .models import Rule, Paragraph
 from .forms import RuleFormInit, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from mecc.apps.years.models import  UniversityYear
 from django.db.models import Q
 from django.core.urlresolvers import reverse
@@ -11,7 +11,6 @@ from mecc.apps.degree.models import DegreeType
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 
-from django.shortcuts import get_object_or_404
 
 class RulesListView(ListView):
     model = Rule
@@ -35,41 +34,6 @@ class RuleCreate(CreateView):
         except ObjectDoesNotExist:
             context['latest_id'] = 1
         return context
-
-
-def create_rule(request, template='rules/create/base.html'):
-    current_year = list(UniversityYear.objects.filter(
-            Q(is_target_year=True))).pop(0)
-    data = {}
-    data['form_base'] = RuleFormInit
-
-    if request.POST:
-        display_order = request.POST.get('display_order')
-        label = request.POST.get('label')
-        is_in_use = True if request.POST.get('is_in_use') == 'on' else False
-        is_edited = request.POST.get('is_edited')
-        is_eci = True if request.POST.get('is_eci') == 'on' else False
-        is_ccct = True if request.POST.get('is_ccct') == 'on' else False
-        if is_eci or is_ccct:
-            rule = Rule.objects.create(
-                display_order=display_order,
-                code_year=current_year.code_year,
-                label=label,
-                is_in_use=is_in_use,
-                is_edited=is_edited,
-                is_eci=is_eci,
-                is_ccct=is_ccct
-            )
-            rule.save()
-        return redirect('/rules/list') # Redirect after POST
-
-    current_year = current_year.code_year
-    data['current_year'] = "%s/%s" % (current_year, current_year+1)
-    try:
-        data['latest_id'] = Rule.objects.latest('id').id + 1
-    except ObjectDoesNotExist:
-        data['latest_id'] = 1
-    return render(request, template, data)
 
 
 def manage_paragraph(request, rule_id,

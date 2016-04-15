@@ -3,5 +3,4 @@ django-cas-sso
 britney-utils
 britney
 django-crispy-forms
-django-fm
 django-ckeditor

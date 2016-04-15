@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import RulesListView, RuleCreate, create_rule, RuleDelete, \
+from .views import RulesListView, RuleCreate, RuleDelete, \
     edit_rule, manage_degreetype, update_display_order, \
     manage_paragraph, ParagraphDelete , edit_paragraph
 from django_cas.decorators import login_required
