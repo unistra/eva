@@ -362,6 +362,7 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'Tools',
         'height': '9em',
         'width': '100%',
-        'entities_latin': 'false'
+        'entities_latin': 'false',
+        'entities':'false'
     },
 }
