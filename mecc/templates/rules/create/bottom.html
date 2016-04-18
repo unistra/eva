@@ -54,8 +54,8 @@
           N
       {% endif %}</td>
      <td width="6%" class="td-centered"></td>
-     <td width="17%">{{e.text_derog | truncatechars_html:70}}</td>
-     <td width="17%">{{e.text_motiv |  truncatechars_html:70}}</td>
+     <td width="17%">{{e.text_derog | safe |  truncatechars_html:70}}</td>
+     <td width="17%">{{e.text_motiv | safe |  truncatechars_html:70}}</td>
       <td class="td-centered" style="border-right-width:0;width:2%;">
         <a href="{% url 'rules:paragraph_edit' id=e.id %}" class="glyphicon glyphicon-pencil"></a>
       </td>

@@ -16,7 +16,7 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp
 from mecc.apps.adm.models import MeccUser, Profile
-
+from mecc.apps.utils.institute import manage_dircomp_rac
 from datetime import datetime
 
 
@@ -208,44 +208,6 @@ class InstituteCreate(CreateView):
     success_url = '/institute'
 
 
-def out(new_username, profile, institute, request, name):
-    # TODO: NOT A VIEW
-    inst = {'rac': institute.id_rac, 'dircomp': institute.id_dircomp}
-
-    if name == inst[profile]:
-        return
-
-    user_profile = Profile.objects.get(code=profile.upper())
-    u = MeccUser.objects.filter(
-        Q(cmp__contains=institute.code) &
-        Q(profile__code__contains=profile.upper())
-    )
-
-    old = list(u[:1])
-    if old:
-        old[0].profile.remove(user_profile)
-        profiles = old[0].profile.all()
-        if len(profiles) < 1:
-            old[0].user.delete()
-            old[0].delete()
-
-    if new_username in ['', ' ', None]:
-        return
-
-    user, user_created = User.objects.get_or_create(username=new_username)
-    if user_created:
-        user.first_name = request.POST.get(str(profile) + '_first_name', '')
-        user.last_name = request.POST.get(str(profile) + '_last_name', '')
-        user.email = request.POST.get(str(profile) + '_mail', '')
-        user.save()
-
-    meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
-    meccuser.profile.add(user_profile)
-    meccuser.cmp = institute.code
-
-    meccuser.save()
-
-
 @login_required
 def edit_insitute(request, template='institute/institute_form.html', code=None):
     """
@@ -258,7 +220,7 @@ def edit_insitute(request, template='institute/institute_form.html', code=None):
         for e in go:
             username = request.POST.get("%s_username" % e)
             name = request.POST.get("id_%s" % e)
-            out(username, e, institute, request, name)
+            manage_dircomp_rac(username, e, institute, request, name)
 
         form = InstituteForm(request.POST, request.FILES, instance=institute)
         if form.is_valid():
