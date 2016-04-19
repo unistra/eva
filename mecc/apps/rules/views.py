@@ -53,10 +53,12 @@ def manage_paragraph(request, rule_id,
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
+    data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
 
     if exist:
         parag = get_object_or_404(Paragraph, id=exist)
         p = data['paragraph_form'] = ParagraphForm(instance=parag)
+        data['id_paragraph'] = parag.id
     else:
         data['paragraph_form'] = ParagraphForm
 
@@ -83,10 +85,6 @@ def manage_paragraph(request, rule_id,
         parag.save()
         return redirect('rules:rule_edit', id=rule.id)
 
-    try:
-        data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
-    except ObjectDoesNotExist:
-        data['id_paragraph'] = 1
 
     return render(request, template, data)
 

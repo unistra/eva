@@ -83,19 +83,17 @@ class ParagraphForm(forms.ModelForm):
                     css_class=" item-70 item disabled-event", id="text_motiv"
                 ),
                 Div(
-                    FormActions(
                         Div(
 
                         Submit(
                             'add', _('Valider et retourner à la règle'),
                             css_class="form-submit-paraph-item btn-lines",
                             style=""),
-                        Button(
+                        HTML("""
                             'cancel', ('Annuler et retourner à la règle'),
-                            action='history.go(-1);',
                             css_class='form-submit-paraph-item  btn-lines'),
-                        )
-                    ),
+                            """
+                        ),
                     css_class='item item-30 flex-center'
                 ),
                 css_class='parent'
