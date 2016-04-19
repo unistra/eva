@@ -44,3 +44,4 @@ htmlcov/
 *.sublime-*
 .fab_tasks~
 *.db
+.idea/
