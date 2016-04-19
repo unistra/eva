@@ -1,5 +1,4 @@
 from django import forms
-from django.forms import ModelForm
 
 from .models import Rule, Paragraph, Impact
 from crispy_forms.bootstrap import FormActions
@@ -19,9 +18,9 @@ class ParagraphForm(forms.ModelForm):
     text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         l'alinéa standard"))
 
-    text_derog = forms.CharField(widget=CKEditorWidget(),label=_("Texte de \
+    text_derog = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"),
-        required=False)
+                                 required=False)
 
     text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         consigne pour la saisie des motivations"), required=False)
@@ -58,7 +57,7 @@ class ParagraphForm(forms.ModelForm):
                         'is_cmp',
                         Div(
                             Div('is_interaction', css_class="is_interaction"),
-                            Div(Field('impact', css_class="flex-end "),css_class=" item disabled-event "),
+                            Div(Field('impact', css_class="flex-end "), css_class=" item disabled-event "),
                             css_class="parent"
                         ),
                         css_class="item item-35 paraph-cmp",
@@ -82,34 +81,34 @@ class ParagraphForm(forms.ModelForm):
                     'text_motiv',
                     css_class=" item-70 item disabled-event", id="text_motiv"
                 ),
-                Div(
-                        Div(
+                    Div(
 
                         Submit(
                             'add', _('Valider et retourner à la règle'),
                             css_class="form-submit-paraph-item btn-lines",
                             style=""),
                         HTML("""
-                            'cancel', ('Annuler et retourner à la règle'),
-                            css_class='form-submit-paraph-item  btn-lines'),
-                            """
-                        ),
-                    css_class='item item-30 flex-center'
-                ),
-                css_class='parent'
+                            <a class='btn form-submit-paraph-item btn-default btn-lines'
+                            href={% url 'rules:rule_edit' id=rule.id%} >
+                             Annuler et retourner à la règle
+                             </a>
+                             """),
+                        css_class='item-30'
+                    ),
+                css_class = 'parent '
+
             )
         )
 
-
     def clean(self):
-            if self.cleaned_data.get('is_cmp') is False:
-                raise ValidationError(_("Veuillez selectionner un régime."))
+        if self.cleaned_data.get('is_cmp') is False:
+            raise ValidationError(_("Veuillez selectionner un régime."))
 
-            return self.cleaned_data
+        return self.cleaned_data
 
     class Meta:
         model = Paragraph
-        fields =[
+        fields = [
             'display_order',
             'is_in_use',
             'is_cmp',
@@ -120,10 +119,12 @@ class ParagraphForm(forms.ModelForm):
             'text_motiv',
         ]
 
+
 class AddDegreeTypeToRule(forms.ModelForm):
     """
     Form for adding degreetype to rule
     """
+
     class Meta:
         model = Rule
         fields = ['degree_type']
@@ -140,11 +141,11 @@ class RuleForm(forms.ModelForm):
     )
 
     is_edited = forms.ChoiceField(choices=EDITED_CHOICES,
-        label=_("La règle a-t-elle été modifiée ?"))
+                                  label=_("La règle a-t-elle été modifiée ?"))
 
     label = forms.CharField(label=('Libellé de règle'),
-        widget=forms.TextInput(attrs={'placeholder': _('Saisir ici le libellé de la nouvelle règle') }))
-
+                            widget=forms.TextInput(
+                                attrs={'placeholder': _('Saisir ici le libellé de la nouvelle règle')}))
 
     display_order = forms.IntegerField(initial=0, label=_("N° d'ordre d'affichage"))
 
@@ -168,16 +169,15 @@ class RuleForm(forms.ModelForm):
                 """),
                 Div(
 
-
-                'is_in_use',
-                css_class='item'
+                    'is_in_use',
+                    css_class='item'
                 ),
                 css_class='parent'
             ),
             Div(
                 Div(
-                'label',
-                css_class='item-100'
+                    'label',
+                    css_class='item-100'
                 ),
                 css_class='parent'
             ),
@@ -188,12 +188,12 @@ class RuleForm(forms.ModelForm):
                           <label class="">Régime(s) concerné(s) : </label>
                     """),
                     Div(
-                    'is_eci',
-                    css_class='item item-concerned'
+                        'is_eci',
+                        css_class='item item-concerned'
                     ),
                     Div(
-                    'is_ccct',
-                    css_class='item item-concerned'
+                        'is_ccct',
+                        css_class='item item-concerned'
                     ),
                     css_class='div_is_concerned'
                 ),
@@ -202,11 +202,11 @@ class RuleForm(forms.ModelForm):
             Div(
                 Field('display_order'),
                 'is_edited',
-                    Div(
-                        FormActions(
-                            Submit('add', _('Valider'),css_class="btn-xs",  onclick="_isEdited=false"),
-                        ), css_class='on-right',
-                    ),
+                Div(
+                    FormActions(
+                        Submit('add', _('Valider'), css_class="btn-xs", onclick="_isEdited=false"),
+                    ), css_class='on-right',
+                ),
                 css_class='parent last-line'
             ),
         )

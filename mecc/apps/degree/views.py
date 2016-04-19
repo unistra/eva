@@ -3,8 +3,6 @@ from django.views.generic.list import ListView
 from .models import Degree, DegreeType
 from .forms import DegreeTypeForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
-from django_cas.decorators import login_required
 
 
 class DegreeListView(ListView):

@@ -2,7 +2,6 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser
 
 
@@ -33,7 +32,6 @@ class Institute(models.Model):
     diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
     scol_manager = models.ManyToManyField(MeccUser, related_name='scol_managers', blank=True)
     ROF_code = models.CharField(_('Code RNE'), max_length=10, blank=True, null=True)
-
 
     def clean_fields(self, exclude=None):
         try:

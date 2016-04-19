@@ -1,13 +1,10 @@
 from django.utils.translation import ugettext as _
-import re   # ### REGEX
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render,  redirect
 from django.http import JsonResponse
-from mecc.apps.utils.ws import ask_camelot,  get_from_ldap
+from mecc.apps.utils.ws import  get_from_ldap
 
 from .models import ECICommissionMember
 from .forms import ECIForm
-from ..adm.models import MeccUser
-from django.contrib.auth.models import User
 from django_cas.decorators import login_required
 
 

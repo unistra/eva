@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django_cas.decorators import login_required, user_passes_test
 
-from mecc.apps.institute.forms import InstituteForm, DircompInstituteForm, \
+from mecc.apps.institute.forms import InstituteForm,  \
     DircompInstituteForm
 from mecc.apps.years.forms import DircompInstituteYearForm, \
     DircompUniversityYearForm, DisabledInstituteYearForm

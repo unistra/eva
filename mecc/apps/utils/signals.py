@@ -6,6 +6,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
+
 @receiver(pre_save, sender=ECICommissionMember)
 def ECI_pre_save(sender, **kwargs):
     """

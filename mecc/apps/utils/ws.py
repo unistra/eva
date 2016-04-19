@@ -8,7 +8,6 @@ import urllib
 import json
 
 from django.utils.translation import ugettext as _
-from datetime import  datetime
 
 
 def create_client(name, token, spore, base_url):

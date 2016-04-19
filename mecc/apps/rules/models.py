@@ -3,8 +3,9 @@ from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.years.models import  UniversityYear
+from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
+
 
 class Impact(models.Model):
     """
@@ -27,12 +28,12 @@ class Rule(models.Model):
         ('X', _('Nouvelle')),
     )
 
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False,default=0)
+    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))
     label = models.CharField(_("Libellé"), max_length=75)
     is_in_use = models.BooleanField(_('En service'), default=True)
     is_edited = models.CharField(_('Modifiée'), max_length=4,
-        choices=EDITED_CHOICES, default='X')
+                                 choices=EDITED_CHOICES, default='X')
     is_eci = models.BooleanField(_('ECI'), default=False)
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField(DegreeType)
@@ -43,16 +44,17 @@ class Rule(models.Model):
     def get_absolute_url(self):
         return reverse('rules:list')
 
-
     def clean_fields(self, exclude=None):
         self.code_year = list(UniversityYear.objects.filter(
-                Q(is_target_year=True))).pop(0).code_year
+            Q(is_target_year=True))).pop(0).code_year
         if self.display_order < 0:
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
-                    ]})
+            ]})
+
     class Meta:
         ordering = ['display_order']
+
 
 class Paragraph(models.Model):
     """
@@ -73,7 +75,9 @@ class Paragraph(models.Model):
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk
+
     def get_absolute_url(self):
         return reverse('rules:rule_edit', id=rule.object.all()[0].id)
+
     class Meta:
         ordering = ['display_order']

@@ -15,7 +15,6 @@ class InstituteForm(forms.ModelForm):
         queryset=AcademicField.objects.all(),
         required=True, label=_('Domaine'))
 
-
     id_dircomp = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'input_prof',
@@ -103,7 +102,6 @@ class DircompInstituteForm(InstituteForm):
             return self.instance.id_rac
         else:
             return self.cleaned_data['id_rac']
-
 
     def __init__(self, *args, **kwargs):
         super(DircompInstituteForm, self).__init__(*args, **kwargs)

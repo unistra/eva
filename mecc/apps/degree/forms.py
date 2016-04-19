@@ -1,7 +1,7 @@
 from django import forms
 from .models import DegreeType
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field, \
+from crispy_forms.layout import Layout, Submit, Button, Div, Field, \
     HTML
 from crispy_forms.bootstrap import InlineField, FormActions
 

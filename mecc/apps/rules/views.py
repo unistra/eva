@@ -4,7 +4,7 @@ from .models import Rule, Paragraph
 from .forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
-from mecc.apps.years.models import  UniversityYear
+from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from mecc.apps.degree.models import DegreeType
@@ -34,7 +34,7 @@ class RuleCreate(CreateView):
         context = super(RuleCreate, self).get_context_data(**kwargs)
         current_year = list(UniversityYear.objects.filter(
             Q(is_target_year=True))).pop(0)
-        context['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
+        context['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year + 1)
         try:
             context['latest_id'] = Rule.objects.latest('id').id + 1
         except ObjectDoesNotExist:
@@ -43,7 +43,7 @@ class RuleCreate(CreateView):
 
 
 def manage_paragraph(request, rule_id,
-    template='rules/manage_paragraph.html', exist=None):
+                     template='rules/manage_paragraph.html', exist=None):
     """
     Paragraph manager view : can create and edit paragraph
     """
@@ -52,7 +52,7 @@ def manage_paragraph(request, rule_id,
     data['rule'] = rule
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
-    data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
+    data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year + 1)
     data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
 
     if exist:
@@ -65,13 +65,13 @@ def manage_paragraph(request, rule_id,
     if request.POST:
         if exist:
             parag = get_object_or_404(Paragraph, id=exist)
-            parag.code_year=current_year.code_year
+            parag.code_year = current_year.code_year
         else:
             parag = Paragraph.objects.create(
                 code_year=current_year.code_year,
-                display_order = request.POST.get('display_order'),
-                is_cmp = True if request.POST.get('is_cmp') == 'on' else False,
-                is_interaction = True if request.POST.get('is_interaction') == 'on' else False
+                display_order=request.POST.get('display_order'),
+                is_cmp=True if request.POST.get('is_cmp') == 'on' else False,
+                is_interaction=True if request.POST.get('is_interaction') == 'on' else False
             )
         parag.text_standard = request.POST.get('text_standard')
         parag.is_in_use = True if request.POST.get('is_in_use') == 'on' else False
@@ -85,11 +85,10 @@ def manage_paragraph(request, rule_id,
         parag.save()
         return redirect('rules:rule_edit', id=rule.id)
 
-
     return render(request, template, data)
 
 
-def edit_paragraph(request, id=None,  template='rules/manage_paragraph.html'):
+def edit_paragraph(request, id=None, template='rules/manage_paragraph.html'):
     """
     Edit paragraph view, redirect to paragraph manager
     """
@@ -100,10 +99,10 @@ def edit_paragraph(request, id=None,  template='rules/manage_paragraph.html'):
 
 
 def manage_degreetype(request):
-# TODO: IS NOT A VIEW
+    # TODO: IS NOT A VIEW
     data = {}
     if request.is_ajax() and request.method == 'POST':
-        rule =  get_object_or_404(Rule, id=request.POST.get('rule_id'))
+        rule = get_object_or_404(Rule, id=request.POST.get('rule_id'))
         degree_type = DegreeType.objects.get(id=request.POST.get('val'))
         todo = request.POST.get('todo')
         data['degree'] = degree_type.short_label
@@ -116,6 +115,7 @@ def manage_degreetype(request):
             rule.degree_type.remove(degree_type)
             return JsonResponse(data)
 
+
 def update_display_order(request):
     """
     Edit display with ajax
@@ -125,7 +125,7 @@ def update_display_order(request):
         t = request.POST.get('type')
         if t == 'rule':
             obj = Rule.objects.get(id=request.POST.get('_id'))
-        else :
+        else:
             obj = Paragraph.objects.get(id=request.POST.get('_id'))
         display_order = request.POST.get('display_order')
         obj.display_order = display_order if display_order.isdigit() else 0
@@ -133,9 +133,10 @@ def update_display_order(request):
         data['message'] = _("Le numéro d'affichage a bien été mis à jour.")
         data['display_order'] = obj.display_order
         return JsonResponse(data)
-    else :
+    else:
         message = _("L'objet %s n'a pas été mis à jour" % request.POT.get('_id'))
-        return JsonResponse({'status':'false','message':message}, status=500)
+        return JsonResponse({'status': 'false', 'message': message}, status=500)
+
 
 def edit_rule(request, id=None, template='rules/create/base.html'):
     """
@@ -149,7 +150,7 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     data['editing'] = True
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
-    data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year+1)
+    data['current_year'] = "%s/%s" % (current_year.code_year, current_year.code_year + 1)
     if request.POST and request.POST.get('label'):
         rule.display_order = request.POST.get('display_order')
         rule.label = request.POST.get('label')
@@ -163,7 +164,8 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     data['latest_id'] = rule.id
     data['degreetype_form'] = AddDegreeTypeToRule(instance=rule)
     data['rule_degreetype'] = [e for e in rule.degree_type.all()]
-    data['available_degreetype'] = [e for e in DegreeType.objects.all() if e.id not in [a.id for a in data['rule_degreetype']] ]
+    data['available_degreetype'] = [e for e in DegreeType.objects.all() if
+                                    e.id not in [a.id for a in data['rule_degreetype']]]
 
     return render(request, template, data)
 

@@ -191,7 +191,8 @@ form hr{
 .div-flex{flex-direction:column; width:75%; display:flex;}
 .form-comp{
   flex-direction:column;
-  border-right-width: 0.15em;border-right-color: #358CD3;
+  border-right-width: 0.15em;
+    border-right-color: #358CD3;
   display:flex; border-right-style: solid;height: 100%;
   -webkit-box-shadow: 10px 0 5px -9px #888888;
           box-shadow: 10px 0 5px -9px #888888;

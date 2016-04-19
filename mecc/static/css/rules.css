@@ -40,7 +40,6 @@ label{
       position: relative;
       bottom:0;
       padding-bottom: 0;
-      display: 0;
       left: 0;
     }
 }
@@ -152,8 +151,8 @@ align-self: flex-end;
 }
 .flex-center{
   display: flex;
-  align-items: flex-center;
-  justify-content: flex-center;
+  align-items: center;
+  justify-content: center;
 }
 .form-submit-paraph-item{
   width: 90%;

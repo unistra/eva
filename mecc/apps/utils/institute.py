@@ -3,6 +3,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from django.db.models import Q
 from django.contrib.auth.models import User
 
+
 def manage_dircomp_rac(new_username, profile, institute, request, name):
     """
     Create user if doesn't exist and give required profile anyway.
