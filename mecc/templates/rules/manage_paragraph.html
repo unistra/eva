@@ -41,7 +41,7 @@
 </div>
 </div>
 <!--- Rule recap--->
-<form method="post">
+<form method="post" id="paragraph_form">
 {%crispy paragraph_form%}
 </form>
 {{form.non_field_errors}}
@@ -93,31 +93,40 @@ $('#id_is_interaction').on('change', function() {
 });
 
 $('#submit-id-add').on('click', function(event) {
+  var proceed = true;
   if (CKEDITOR.instances.id_text_standard.getData() == ''){
     event.preventDefault();
-  $("#div_id_text_standard").addClass("all-in-red")
+    $("#div_id_text_standard").addClass("all-in-red");
+    proceed = false;
 }else{
   $("#div_id_text_standard").removeClass("all-in-red")
-  $(this).unbind(event);
 }
+
   if (document.getElementById('id_is_interaction').checked ){
+      console.log(CKEDITOR.instances.id_text_derog.getData())
     if(CKEDITOR.instances.id_text_derog.getData() == ''){
+      console.log('here')
       event.preventDefault();
-      $("#text_derog").addClass("all-in-red")
+      $("#text_derog").addClass("all-in-red");
+      proceed = false;
     }else {
-      $("#text_derog").removeClass("all-in-red")
-      $(this).unbind(event);
+      $("#text_derog").removeClass("all-in-red");
     }
   }
-  if(!document.getElementById('id_is_cmp').checked || document.getElementById('id_is_interaction').checked ){
+
+  if(!document.getElementById('id_is_cmp').checked && document.getElementById('id_is_interaction').checked ){
     if(CKEDITOR.instances.id_text_motiv.getData() == ''){
     event.preventDefault();
-    $("#text_motiv").addClass("all-in-red")
+    $("#text_motiv").addClass("all-in-red");
+    proceed = false;
   }else{
     $("#text_motiv").removeClass("all-in-red")
-    $(this).unbind(event);
   }
   }
+  if (proceed === true){
+    document.getElementById('paragraph_form').submit()
+  }
+
 
 });
 

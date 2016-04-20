@@ -10,6 +10,9 @@
 
 
   {% if paragraphs %}
+<a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:manage_paragraph' rule_id=latest_id%}"{%endif%} >
+<span class="glyphicon glyphicon-plus paddin-left" style="padding-right:16%;" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
+</a>
 <div class="table_list">
   <table class="table" id="paragrapTable" style="max-width:100%">
     <thead class="be-blue">
@@ -54,8 +57,8 @@
           N
       {% endif %}</td>
      <td width="6%" class="td-centered"></td>
-     <td width="17%">{{e.text_derog | safe |  truncatewords_html:8}}</td>
-     <td width="17%">{{e.text_motiv | safe |  truncatewords_html:8}}</td>
+     <td width="17%">{{e.text_derog | safe |  truncatewords_html:11}}</td>
+     <td width="17%">{{e.text_motiv | safe |  truncatewords_html:11}}</td>
       <td class="td-centered" style="border-right-width:0;width:2%;">
         <a href="{% url 'rules:paragraph_edit' id=e.id %}" class="glyphicon glyphicon-pencil"></a>
       </td>
@@ -69,13 +72,13 @@
 
 </div>
 {% else %}
-  {% trans "Aucun alinéa pour cette règle" %}{%endif%}</p>
-
+  {% trans "Aucun alinéa pour cette règle" %}
+  <a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:manage_paragraph' rule_id=latest_id%}"{%endif%} >
+  <span class="glyphicon glyphicon-plus paddin-left" style="padding-right:16%;" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
+</a>
+  {%endif%}
   <div class="buttons_list">
 
-<a {%if not editing%}class="disabled"{%else%} href="{% url 'rules:manage_paragraph' rule_id=latest_id%}"{%endif%} >
-<span class="glyphicon glyphicon-plus paddin-left" style="padding-right:16%;" aria-hidden="true" >{% trans " Ajouter un alinéa" %}</span>
-</a>
 {% if editing %}
 <a href="" class="btn-primary btn btn-sm">{% trans "Pré-visualiser cette règle" %}</a>
 <a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm" >{% trans "Retourner à la liste des règles" %}</a>

@@ -10,13 +10,23 @@ from django.core.urlresolvers import reverse
 from mecc.apps.degree.models import DegreeType
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
+from mecc.apps.years.models import UniversityYear
 
 
 class RulesListView(ListView):
     """
     Rules list view
+
+
     """
     model = Rule
+    def get_queryset(self):
+        qs = super(RulesListView, self).get_queryset()
+        try:
+            current_year = list(UniversityYear.objects.filter(Q(is_target_year=True))).pop(0)
+        except IndexError:
+            return qs.filter(code_year=1)
+        return qs.filter(code_year=current_year.code_year)
 
 
 class RuleCreate(CreateView):
