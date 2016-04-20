@@ -38,6 +38,11 @@ class Rule(models.Model):
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField(DegreeType)
 
+    @property
+    def is_empyt(self):
+        return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
+
+
     def __str__(self):
         return self.label
 
