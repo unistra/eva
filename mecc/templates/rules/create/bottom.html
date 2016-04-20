@@ -33,14 +33,14 @@
 
   <tr class="hover-row">
      <td width="5%" class="td-centered">{{e.id}}</td>
-     <td width="20%" >{{e.text_standard | safe | truncatewords_html:15}}</td>
+     <td width="20%" >{{e.text_standard | safe | truncatewords_html:12}}</td>
      <td width="6%" class="td-centered">
        {% if e.is_in_use == True %}
           O
        {% else %}
           N
        {% endif %}</td>
-     <td width="7%"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
+     <td width="7%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="6%" class="be-blue td-centered">
        {% if e.is_cmp == True %}
           O
@@ -54,8 +54,8 @@
           N
       {% endif %}</td>
      <td width="6%" class="td-centered"></td>
-     <td width="17%">{{e.text_derog | safe |  truncatewords_html:15}}</td>
-     <td width="17%">{{e.text_motiv | safe |  truncatewords_html:15}}</td>
+     <td width="17%">{{e.text_derog | safe |  truncatewords_html:8}}</td>
+     <td width="17%">{{e.text_motiv | safe |  truncatewords_html:8}}</td>
       <td class="td-centered" style="border-right-width:0;width:2%;">
         <a href="{% url 'rules:paragraph_edit' id=e.id %}" class="glyphicon glyphicon-pencil"></a>
       </td>

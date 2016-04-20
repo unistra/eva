@@ -34,7 +34,7 @@ td.id_member{
 .td-centered {
    text-align: center;
    align-self: center;
-   vertical-align: middle;
+   vertical-align: middle!important;
 }
 
 .input-red{
