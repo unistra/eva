@@ -1,3 +1,8 @@
+span.blue{
+  color: #004A87;
+  font-weight: bold;
+}
+
 /*******************************************************************************
 /* CKEDITOR custom css*/
 .django-ckeditor-widget{

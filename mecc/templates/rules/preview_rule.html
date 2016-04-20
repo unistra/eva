@@ -1,0 +1,127 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+<!-- Modal TODO:rajouter les classes modal fade au div preview-->
+<div class="modal fade" id="preview" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header {%if not form.is_in_use.value%}grey-font{%endif%}">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="modal-title">
+                  <div class="flex-container-preview">
+                  <span class="grey-font" style="width:10%">{% trans "ID auto" %} <small>{{latest_id}}</small></span>
+                  <h1 style="font-size:1.7em; display:inline;margin-top:0;width:85%">{{form.label.value}}
+                  </h1>
+                </div>
+                <div class="flex-container-preview" style="width:50%">
+                  <small>{%if form.is_in_use.value%}{% trans "En service" %}{%else%}{% trans "Hors service" %}{%endif%}</small>
+                  <span>
+                    {%if form.is_eci.value %} &#9745; {%else%} &#9744;{%endif%} ECI
+                  </span>
+                    <span>
+                    {%if form.is_ccct.value %} &#9745; {%else%} &#9744;{%endif%} CC/CT
+                  </span>
+                  <span class="blue">
+                     {% if form.is_edited.value == 'X'%} {% trans "NOUVELLE " %} {%elif form.is_edited.value == "O"%} {% trans "Modifiée " %} {% else %}{%endif%}
+                  </span>
+                </div>
+                </div>
+            </div>
+            <div class="modal-body">
+              <!--- MODAL BODY-->
+              <h2 style="font-size:1.1em;margin:  0 0 1.5em 2em ">{% trans "Diplômes concernés :" %}</h2>
+
+              <div style="margin-left:5%;margin-right:5%">
+              <ul class="ul-2">
+                {% for e in rule_degreetype%}
+                <li>{{e}}</li>
+                {%endfor%}
+              </ul>
+            </div>
+            <hr>
+            <h2 style="font-size:1.1em;margin-left:2em;margin-bottom:0.1em ">{% trans "ALINÉAS :" %}</h2>
+            <div style="margin-left:5%;margin-right:5%">
+            {% for e in paragraphs %}
+              <div style="margin-top:1.5em;" class="{% if not e.is_in_use %}grey-font{%endif%}">
+            <span class="grey-font">{{e.id}}</span>
+            {% if e.is_in_use %}
+              {% trans " | En service" %}
+              {%else%}
+              {% trans " | Hors service" %}
+            {% endif %}
+            {% if e.is_cmp %}
+              {% trans " | Alinéa de composante" %}
+            {% endif %}
+            {% if e.is_interaction %}
+              {% trans " | Interaction" %}
+            {%endif%}
+                {%if e.impact.all > 0%}
+                {{e.impact}}
+                {%endif%}
+                {{ e.text_standard | safe }}
+                <ul>
+                {%if e.text_derog %}
+                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.1em ">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
+                {{ e.text_derog | safe }}</li>
+                {%endif%}
+                {%if e.text_motiv%}
+                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.1em ">{% trans "Texte consigne motivations" %}</h3>
+                {{ e.text_motiv | safe }}</li>
+                {%endif%}
+              </ul>
+            </div>
+            {% endfor %}
+              <!-- END MODAL BODY -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style media="screen">
+.other-text{
+  margin-left: 2em;
+}
+.ul-2 {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+
+.flex-container-preview {
+  display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-align-content: center;
+    -ms-flex-line-pack: center;
+    align-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.flex-item:nth-child(1) {
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-flex: 0 1 auto;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+    }
+
+
+</style>

@@ -40,6 +40,9 @@ class Rule(models.Model):
 
     @property
     def is_empyt(self):
+        """
+        Return true if the rule conains any paragraph
+        """
         return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
 
 

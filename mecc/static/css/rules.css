@@ -189,7 +189,7 @@ align-self: flex-end;
   margin: 0.5em;
 }
 .grey-font{
-  color:grey;
+  color:grey!important;
 }
 #div_id_is_edited{
   width:50%;
