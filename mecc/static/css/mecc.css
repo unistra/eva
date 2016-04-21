@@ -220,8 +220,8 @@ label[for=id_is_on_duty]{margin-top: 0.6em;}
 }
 
 
-.div-flex #upload_doc{align-self: center;width: 50%}
-.div-flex #init_years{align-self: center; width: 60%}
+.div-flex #upload_doc{align-self: center;width: 50%;}
+.div-flex #init_years{ width: 50%;margin-left: 25%; margin-top: 1em;}
 #comp-right-btn-close{
 margin-top: auto;
 align-self: center;
