@@ -39,12 +39,19 @@ class Rule(models.Model):
     degree_type = models.ManyToManyField(DegreeType)
 
     @property
-    def is_empyt(self):
+    def is_empty(self):
         """
         Return true if the rule conains any paragraph
         """
         return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
 
+    @property
+    def has_parag_with_derog(self):
+        """
+        Return true if there is at least one derogation in paragraphs concerned
+        by the rule
+        """
+        return True if True in [e.is_interaction for e in Paragrah.objects.filter(rule=self)] else False
 
     def __str__(self):
         return self.label
@@ -59,6 +66,9 @@ class Rule(models.Model):
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
             ]})
+
+        if self.has_parag_with_derog:
+            self.is_in_use = True
 
     class Meta:
         ordering = ['display_order']

@@ -1,6 +1,8 @@
-span.blue{
-  color: #004A87;
-  font-weight: bold;
+.blue{
+  color: #004A87!important;
+}
+.red{
+  color: red;
 }
 
 /*******************************************************************************

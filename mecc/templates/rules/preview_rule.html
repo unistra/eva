@@ -5,37 +5,45 @@
 
 
 <!-- Modal TODO:rajouter les classes modal fade au div preview-->
-<div class="modal fade" id="preview" role="dialog" style="z-index: 1400;">
+<div class="fade modal" id="preview" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
-            <div class="modal-header {%if not form.is_in_use.value%}grey-font{%endif%}">
+            <div class="modal-header ">
                 <button type="button" class="close" data-dismiss="modal"> &times;</button>
-                <div class="modal-title" >
+                <div class="modal-title" style='margin-left:2em;' >
                   <div class="flex-container-preview">
-                  <span class="grey-font" style="width:20%">{% trans "ID auto" %} <small>{{latest_id}}</small></span>
-                  <h1 style="font-size:1.5em; display:inline;margin-top:0;width:80%;">{{form.label.value}}</h1>
+                  <h1 style="font-size:1.5em; display:inline;margin-bottom:0" class="blue">{{form.label.value}}</h1>
                 </div>
+                <div class="flex-container-preview">
+                  <span class="blue" style="width:20%">{% trans "Règle id auto" %} <small>{{latest_id}}</small></span>
+                </div>
+                <div class="flex-container-preview" >
                 <div class="flex-container-preview" style="width:50%">
-                  <small>{%if form.is_in_use.value%}{% trans "En service" %}{%else%}{% trans "Hors service" %}{%endif%}</small>
                   <span>
                     {%if form.is_eci.value %} &#9745; {%else%} &#9744;{%endif%} ECI
                   </span>
                     <span>
                     {%if form.is_ccct.value %} &#9745; {%else%} &#9744;{%endif%} CC/CT
                   </span>
-                  <span class="blue">
+                  <span >
                      {% if form.is_edited.value == 'X'%} {% trans "NOUVELLE " %} {%elif form.is_edited.value == "O"%} {% trans "Modifiée " %} {% else %}{%endif%}
                   </span>
                 </div>
+                <div class="flex-container-preview" style="width:50%;margin-right:3em;flex-direction: row-reverse">
+                <div>
+                  <span{%if form.is_in_use.value%}>{% trans "En service" %}{%else%} class="red">{% trans "Hors service" %}{%endif%}</span>
                 </div>
+              </div>
+                </div>
+              </div>
             </div>
             <div class="modal-body">
               <!--- MODAL BODY-->
-              <h2 style="font-size:1.1em;margin:  0 0 1.5em 2em ">{% trans "Diplômes concernés :" %}</h2>
+              <h2 style="font-size:1.1em;margin:  0 0 1.5em 2em ">{% trans "Types de diplôme concernés :" %}</h2>
 
-              <div style="margin-left:5%;margin-right:5%">
-              <ul class="ul-2">
+              <div style="margin-left:3em;margin-right:3em">
+              <ul {%if rule_degreetype|length > 6%} class="ul-2"{%endif%}>
                 {% for e in rule_degreetype%}
                 <li>{{e}}</li>
                 {%endfor%}
@@ -43,32 +51,36 @@
             </div>
             <hr>
             <h2 style="font-size:1.1em;margin-left:2em;margin-bottom:0.1em ">{% trans "ALINÉAS :" %}</h2>
-            <div style="margin-left:5%;margin-right:5%">
+            <div style="margin-left:3em;margin-right:3em">
             {% for e in paragraphs %}
-              <div style="margin-top:1.5em;" class="{% if not e.is_in_use %}grey-font{%endif%}">
-            <span class="grey-font">{{e.id}}</span>
-            {% if e.is_in_use %}
-              {% trans " | En service" %}
-              {%else%}
-              {% trans " | Hors service" %}
-            {% endif %}
-            {% if e.is_cmp %}
-              {% trans " | Alinéa de composante" %}
-            {% endif %}
+              <div style="margin-top:1.5em">
+                <div class="flex-container-preview "style="margin-bottom:1em;" >
+
+            <span class="blue" >{{e.id}}
+
             {% if e.is_interaction %}
-              {% trans " | Interaction" %}
+            {% if e.is_cmp %}
+              {% trans "| Alinéa de composante" %}
+            {%else%}
+              {% trans "|  Interaction type dérogation" %}
+            {% endif %}
             {%endif%}
                 {%if e.impact.all > 0%}
                 {{e.impact}}
                 {%endif%}
+              </span>
+
+
+            <span{% if e.is_in_use %}>{% trans "En service" %}{%else%} class="red">{% trans "Hors service" %}{% endif %}</span>
+              </div>
                 {{ e.text_standard | safe }}
                 <ul>
                 {%if e.text_derog %}
-                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.1em ">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
+                <li><h3 style="font-size:1.1em;margin-top:1em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
                 {{ e.text_derog | safe }}</li>
                 {%endif%}
                 {%if e.text_motiv%}
-                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.1em ">{% trans "Texte consigne motivations" %}</h3>
+                <li><h3 style="font-size:1.1em;margin-top:1em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne motivations" %}</h3>
                 {{ e.text_motiv | safe }}</li>
                 {%endif%}
               </ul>
