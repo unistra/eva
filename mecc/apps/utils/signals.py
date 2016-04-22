@@ -12,6 +12,8 @@ def ECI_pre_save(sender, **kwargs):
     """
     Add corresponding profile to new ECI commission member
     """
+    if kwargs.get('raw', False):
+        return
     new_user = kwargs['instance']
     try:
         user = User.objects.create_user(new_user.username, email=new_user.email)
@@ -34,6 +36,8 @@ def ECI_post_delete(sender, **kwargs):
     """
     Delete profile and if there isn't any other delete user
     """
+    if kwargs.get('raw', False):
+        return
     to_del = kwargs['instance'].username
     meccuser = MeccUser.objects.get(user__username=to_del)
     eci = Profile.objects.get(code='ECI')

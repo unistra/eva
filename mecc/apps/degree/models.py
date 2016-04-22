@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
+from mecc.apps.institute.models import Institute
 
 class DegreeType(models.Model):
     """
@@ -40,12 +41,19 @@ class Degree(models.Model):
     """
     import datetime
 
-    YEAR_CHOICES = [(y,y) for y in range(1900, datetime.date.today().year+5)]
+    label =models.TextField(_("Libellé réglementaire"))
     degree_type = models.ForeignKey(DegreeType)
-    label_type = models.CharField(_('Libellé type'), max_length=35)
-    spe = models.CharField(_('Spécialité'), max_length=35)
-    parcours = models.CharField(_('Parcours'), max_length=35)
-    label = models.CharField(_('Intitulé'), max_length=35)
     is_in_use = models.BooleanField(_('En service'), default=False)
-    start = models.IntegerField(_('Début'), choices=YEAR_CHOICES)
-    end = models.IntegerField(_('Fin'), choices=YEAR_CHOICES)
+    start_year = models.IntegerField(_('Code année de début de validité'))
+    end_year = models.IntegerField(_('Code année de fin de validité'))
+    ROF_code = models.CharField(_("Référence Programme ROF"), max_length=20)
+    APOGEE_code = models.CharField(_("Référence dans le SI Scolarité (APOGEE)"), max_length=20)
+    institutes = models.ManyToManyField(Institute)
+
+    @property
+    def get_id_type(self):
+        return self.degree_type.id
+
+    @property
+    def get_short_label_type(self):
+        return self.degree_type.short_label
