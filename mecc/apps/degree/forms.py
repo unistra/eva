@@ -7,6 +7,17 @@ from crispy_forms.bootstrap import InlineField, FormActions
 
 from django.utils.translation import ugettext as _
 
+class DegreeForm(forms.ModelForm):
+    """
+    Degree form
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(DegreeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout
+
+
 
 class DegreeTypeForm(forms.ModelForm):
     """

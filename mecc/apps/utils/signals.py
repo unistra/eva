@@ -12,7 +12,7 @@ def ECI_pre_save(sender, **kwargs):
     """
     Add corresponding profile to new ECI commission member
     """
-    if kwargs.get('raw', False):
+    if kwargs.get('raw', False): # Do not proceed if fixture
         return
     new_user = kwargs['instance']
     try:
@@ -36,7 +36,7 @@ def ECI_post_delete(sender, **kwargs):
     """
     Delete profile and if there isn't any other delete user
     """
-    if kwargs.get('raw', False):
+    if kwargs.get('raw', False): #  Usefull for fixtures
         return
     to_del = kwargs['instance'].username
     meccuser = MeccUser.objects.get(user__username=to_del)

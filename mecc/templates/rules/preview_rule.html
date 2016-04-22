@@ -5,7 +5,7 @@
 
 
 <!-- Modal TODO:rajouter les classes modal fade au div preview-->
-<div class="fade modal" id="preview" role="dialog" style="z-index: 1400;">
+<div class="" id="preview" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
@@ -18,12 +18,11 @@
                 <div class="flex-container-preview">
                   <span class="blue" style="width:20%">{% trans "Règle id auto" %} <small>{{latest_id}}</small></span>
                 </div>
-                <div class="flex-container-preview" >
-                <div class="flex-container-preview" style="width:50%">
+                <div class="flex-container-preview" style="margin-top:1em;" >
+                <div class="flex-container-preview" style="width:50%;">
                   <span>
                     {%if form.is_eci.value %} &#9745; {%else%} &#9744;{%endif%} ECI
-                  </span>
-                    <span>
+
                     {%if form.is_ccct.value %} &#9745; {%else%} &#9744;{%endif%} CC/CT
                   </span>
                   <span >
@@ -51,39 +50,45 @@
             </div>
             <hr>
             <h2 style="font-size:1.1em;margin-left:2em;margin-bottom:0.1em ">{% trans "ALINÉAS :" %}</h2>
-            <div style="margin-left:3em;margin-right:3em">
+            <div style="margin-left:1em;margin-right:3em">
+
+
+
             {% for e in paragraphs %}
-              <div style="margin-top:1.5em">
-                <div class="flex-container-preview "style="margin-bottom:1em;" >
+            <div class="flex-right-container">
 
-            <span class="blue" >{{e.id}}
-
-            {% if e.is_interaction %}
-            {% if e.is_cmp %}
-              {% trans "| Alinéa de composante" %}
-            {%else%}
-              {% trans "|  Interaction type dérogation" %}
-            {% endif %}
-            {%endif%}
-                {%if e.impact.all > 0%}
-                {{e.impact}}
-                {%endif%}
-              </span>
+            <span style="margin-bottom:0.5em;"class="{% if e.is_in_use %}">{% trans "En service" %}{%else%}red">{% trans "Hors service" %}{% endif %}</span>
+            </div>
+              <div class ="paragraphs flex-container-preview">
+                    <span class="blue" style="align-self:flex-start;margin-right:1.5em;" >{{e.id |stringformat:"02d"}}|</span>
+                <div style="margin-bottom:1em;" >
 
 
-            <span{% if e.is_in_use %}>{% trans "En service" %}{%else%} class="red">{% trans "Hors service" %}{% endif %}</span>
-              </div>
+
                 {{ e.text_standard | safe }}
+                <div class ="blue" style="margin-top:0.5em;">
+                {% if e.is_interaction %}
+                {% if e.is_cmp %}
+                  {% trans "Alinéa de composante" %}
+                {%else%}
+                  {% trans "Interaction type dérogation" %}
+                {% endif %}
+                {%endif%}
+                    {%if e.impact.all > 0%}
+                    | {{e.impact}}
+                    {%endif%}
+                  </div>
                 <ul>
                 {%if e.text_derog %}
-                <li><h3 style="font-size:1.1em;margin-top:1em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
+                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
                 {{ e.text_derog | safe }}</li>
                 {%endif%}
                 {%if e.text_motiv%}
-                <li><h3 style="font-size:1.1em;margin-top:1em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne motivations" %}</h3>
+                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne motivations" %}</h3>
                 {{ e.text_motiv | safe }}</li>
                 {%endif%}
               </ul>
+              </div>
             </div>
             {% endfor %}
               <!-- END MODAL BODY -->
@@ -102,6 +107,15 @@
   -moz-columns: 2;
 }
 
+.flex-right-container{
+
+display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: row;
+   flex-direction: row;
+   -webkit-justify-content: flex-end;
+   justify-content: flex-end;
+}
 .flex-container-preview {
   display: -ms-flexbox;
     display: -webkit-flex;

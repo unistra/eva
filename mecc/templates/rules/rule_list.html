@@ -19,7 +19,7 @@
 
         <th width="5%"style="color:grey" class="td-center">{% trans 'ID règle (auto)' %}</th>
         <th width="33%">{% trans "Libellé de règle" %}</th>
-        <th width="6%" class='sort-default'>{% trans 'N° Aff' %}</th>
+        <th width="6%" class='sort-default'>{% trans 'N° affichage' %}</th>
         <th width="10%"> </th>
         <th width="11%"></th>
         <th width="11%"></th>
@@ -32,7 +32,7 @@
   {%for e in object_list%}
 
   <tr class="hover-row">
-     <td class='disabled td-centered' width="5%">{{e.id}}</td>
+     <td class='disabled td-centered' width="5%">{{e.id | stringformat:"03d"}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="33%">{{e.label}}</a></td>
      <td width="6%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="10%" class="td-centered "> <span class='red'>{% if e.is_empty%}(vide) {%endif%}</span></td>

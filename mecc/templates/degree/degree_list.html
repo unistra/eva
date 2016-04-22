@@ -6,3 +6,14 @@
 {% block page-header %}
 {% trans 'Liste des diplômes' %}
 {% endblock %}
+
+{% block app_content %}
+{% if object_list %}
+{% else %}
+{% trans "Aucun diplômes" %}
+{%endif%}
+
+<div class='pull-right'>
+   <a href="{% url 'degree:type_create'  %}" class="btn btn-primary"> {% trans 'Ajouter un type de diplôme' %}</a>
+</div>
+{%endblock%}

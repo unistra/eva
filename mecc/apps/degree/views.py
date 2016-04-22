@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 from .models import Degree, DegreeType
-from .forms import DegreeTypeForm
+from .forms import DegreeTypeForm, DegreeForm
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -11,6 +11,33 @@ class DegreeListView(ListView):
     """
     model = Degree
 
+
+class DegreeCreateView(CreateView):
+    """
+    Degree create view
+    """
+    model = Degree
+    form_class = DegreeForm
+    success_url = '/degree/list'
+
+
+class DegreeUpdateView(UpdateView):
+    """
+    Degree update view
+    """
+    model = Degree
+    form_class = DegreeForm
+    pk_url_kwarg = 'id'
+    success_url = '/degree/list'
+
+
+class DegreeDeleteView(DeleteView):
+    """
+    Degree delete view
+    """
+    model = Degree
+    pk_url_kwarg = 'id'
+    success_url = '/degree/list'
 
 class DegreeTypeListView(ListView):
     """
