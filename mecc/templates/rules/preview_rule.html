@@ -4,8 +4,7 @@
 {% load staticfiles %}
 
 
-<!-- Modal TODO:rajouter les classes modal fade au div preview-->
-<div class="" id="preview" role="dialog" style="z-index: 1400;">
+<div class="modal fade" id="preview" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
@@ -59,17 +58,18 @@
 
             <span style="margin-bottom:0.5em;"class="{% if e.is_in_use %}">{% trans "En service" %}{%else%}red">{% trans "Hors service" %}{% endif %}</span>
             </div>
-              <div class ="paragraphs flex-container-preview">
+              <div class ="paragraphs flex-container">
                     <span class="blue" style="align-self:flex-start;margin-right:1.5em;" >{{e.id |stringformat:"02d"}}|</span>
-                <div style="margin-bottom:1em;" >
+                <div style="margin-bottom:1em;">
 
-
-
+                  <span style="align-self:flex-start">
                 {{ e.text_standard | safe }}
+                  </span>
+
                 <div class ="blue" style="margin-top:0.5em;">
                 {% if e.is_interaction %}
                 {% if e.is_cmp %}
-                  {% trans "Alinéa de composante" %}
+                  {% trans "Interaction type alinéa de composante" %}
                 {%else%}
                   {% trans "Interaction type dérogation" %}
                 {% endif %}
