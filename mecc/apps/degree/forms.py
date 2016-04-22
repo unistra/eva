@@ -1,5 +1,5 @@
 from django import forms
-from .models import DegreeType
+from .models import DegreeType, Degree
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Button, Div, Field, \
     HTML
@@ -18,6 +18,20 @@ class DegreeForm(forms.ModelForm):
         self.helper.layout
 
 
+
+    class Meta:
+        model = Degree
+        fields = [
+            'degree_type',
+            'degree_type_label',
+            'label',
+            'is_used',
+            'start_year',
+            'end_year',
+            'ROF_code',
+            'APOGEE_code',
+            'institutes',
+        ]
 
 class DegreeTypeForm(forms.ModelForm):
     """

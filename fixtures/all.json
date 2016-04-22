@@ -1,887 +1,5661 @@
-[{
+[
+{
+    "model": "contenttypes.contenttype",
+    "pk": 1,
+    "fields": {
+        "model": "permission",
+        "app_label": "auth"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 2,
+    "fields": {
+        "model": "group",
+        "app_label": "auth"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 3,
+    "fields": {
+        "model": "user",
+        "app_label": "auth"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 4,
+    "fields": {
+        "model": "contenttype",
+        "app_label": "contenttypes"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 5,
+    "fields": {
+        "model": "session",
+        "app_label": "sessions"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": {
+        "model": "site",
+        "app_label": "sites"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": {
+        "model": "logentry",
+        "app_label": "admin"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": {
+        "model": "tgt",
+        "app_label": "django_cas"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 9,
+    "fields": {
+        "model": "pgtiou",
+        "app_label": "django_cas"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 10,
+    "fields": {
+        "model": "sessionserviceticket",
+        "app_label": "django_cas"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 11,
+    "fields": {
+        "model": "ecicommissionmember",
+        "app_label": "commission"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 12,
+    "fields": {
+        "model": "degreetype",
+        "app_label": "degree"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 13,
+    "fields": {
+        "model": "degree",
+        "app_label": "degree"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 14,
+    "fields": {
+        "model": "academicfield",
+        "app_label": "institute"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 15,
+    "fields": {
+        "model": "institute",
+        "app_label": "institute"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 16,
+    "fields": {
+        "model": "instituteyear",
+        "app_label": "years"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 17,
+    "fields": {
+        "model": "universityyear",
+        "app_label": "years"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 18,
+    "fields": {
+        "model": "profile",
+        "app_label": "adm"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 19,
+    "fields": {
+        "model": "meccuser",
+        "app_label": "adm"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 20,
+    "fields": {
+        "model": "impact",
+        "app_label": "rules"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 21,
+    "fields": {
+        "model": "rule",
+        "app_label": "rules"
+    }
+},
+{
+    "model": "contenttypes.contenttype",
+    "pk": 22,
+    "fields": {
+        "model": "paragraph",
+        "app_label": "rules"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "bco13o4gnjnuut4lvecsbbqqcrm041ep",
+    "fields": {
+        "expire_date": "2016-05-05T12:39:48.710Z",
+        "session_data": "NDgzNmIwODdjMzMxZGMzYzA1MWU5MzA4N2Y5MmU0MjAzYWY4NmI0NTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9oYXNoIjoiYjhmNGRiMGJhM2ZiMzFjODUxODc4ZDc1NmQ1N2RjZWRkYzkxMzlmMyIsImN1cnJlbnRfY29kZV95ZWFyIjoyMDE1LCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2IiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "dn1e2sgxr4ghoaiqwix10429fk7xgpt6",
+    "fields": {
+        "expire_date": "2016-04-13T12:21:45.633Z",
+        "session_data": "ZmZlM2EyMGRjNDdkNjc1NGIxYzMxMDY0NzZlNTU2YWM4NTVmZGEyMzp7ImN1cnJlbnRfeWVhciI6IkFublx1MDBlOWUgdW5pdmVyc2l0YWlyZSAyMDE1LzIwMTYiLCJfYXV0aF91c2VyX2hhc2giOiIyMTUzOTQxMDBiYTc4NDJhMGEwNTZlNTBhNTZjMTdjY2Y0ZGFkZDBiIiwiX2F1dGhfdXNlcl9pZCI6IjQiLCJjdXJyZW50X2NvZGVfeWVhciI6MjAxNSwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "gd971kb8dganr7jble2smw91kgflvqtf",
+    "fields": {
+        "expire_date": "2016-05-05T08:51:06.651Z",
+        "session_data": "NTZkNjA2NjkyNTIwYjA0N2I1ZjA0ZTJhOWExNGVjMzY5ODk5ODkzYzp7Il9hdXRoX3VzZXJfaWQiOiIxIiwicmVhbF91c2VybmFtZSI6ImliaXMuaXNtYWlsIiwiY3VycmVudF95ZWFyIjoiQW5uXHUwMGU5ZSB1bml2ZXJzaXRhaXJlIDIwMTUvMjAxNiIsImN1cnJlbnRfY29kZV95ZWFyIjoyMDE1LCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ29fY2FzLmJhY2tlbmRzLkNBU0JhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJiOGY0ZGIwYmEzZmIzMWM4NTE4NzhkNzU2ZDU3ZGNlZGRjOTEzOWYzIiwiaXNfc3Bvb2ZlZF91c2VyIjpmYWxzZX0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "iisfjiih1nqtg5sgrlf8vinnywjfyy3v",
+    "fields": {
+        "expire_date": "2016-05-06T07:56:33.202Z",
+        "session_data": "ZGQyYzE3MDEzYzlmNzI2NzEwMTAwODNmZDIzODYyNDhmN2QwZWI5Yzp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiY3VycmVudF9jb2RlX3llYXIiOjIwMTUsIl9hdXRoX3VzZXJfaGFzaCI6ImI4ZjRkYjBiYTNmYjMxYzg1MTg3OGQ3NTZkNTdkY2VkZGM5MTM5ZjMiLCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2IiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "jg6ti0gicwpm7jvmvmfgpjv0i6s06xbw",
+    "fields": {
+        "expire_date": "2016-04-29T12:06:17.104Z",
+        "session_data": "OThiOWQ4OGE3OTVkMGQyMTUyNWViNjZmN2RhNjE0Y2ZjMzZjZDFkMjp7ImN1cnJlbnRfY29kZV95ZWFyIjoyMDE1LCJfYXV0aF91c2VyX2hhc2giOiJiOGY0ZGIwYmEzZmIzMWM4NTE4NzhkNzU2ZDU3ZGNlZGRjOTEzOWYzIiwiaXNfc3Bvb2ZlZF91c2VyIjpmYWxzZSwiX2F1dGhfdXNlcl9pZCI6IjEiLCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2IiwicmVhbF91c2VybmFtZSI6ImliaXMuaXNtYWlsIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "l8hinl1yw4yfosfte7x93jij1lweuhz0",
+    "fields": {
+        "expire_date": "2016-04-04T16:00:40.364Z",
+        "session_data": "Y2JkMTQ4NmM4MDE0M2Y0MTNlNWUzMTZlYjNkMDgzNzc4NDhmYmY0ODp7ImN1cnJlbnRfY29kZV95ZWFyIjoyMDE1LCJfYXV0aF91c2VyX2hhc2giOiJiOGY0ZGIwYmEzZmIzMWM4NTE4NzhkNzU2ZDU3ZGNlZGRjOTEzOWYzIiwiX2F1dGhfdXNlcl9pZCI6IjEiLCJpc19zcG9vZmVkX3VzZXIiOmZhbHNlLCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2IiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "oeoidt3mr8309n7s25mflmgycpajuc93",
+    "fields": {
+        "expire_date": "2016-04-13T08:33:49.624Z",
+        "session_data": "MDE5N2ZhZjQ4NmU5MTk1YzczZjQxNGI2MmE5MzExM2Y3NWQ5ZTQ5Nzp7Il9hdXRoX3VzZXJfaGFzaCI6ImI4ZjRkYjBiYTNmYjMxYzg1MTg3OGQ3NTZkNTdkY2VkZGM5MTM5ZjMiLCJpc19zcG9vZmVkX3VzZXIiOmZhbHNlLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nb19jYXMuYmFja2VuZHMuQ0FTQmFja2VuZCIsImN1cnJlbnRfeWVhciI6IkFublx1MDBlOWUgdW5pdmVyc2l0YWlyZSAyMDE1LzIwMTYiLCJjdXJyZW50X2NvZGVfeWVhciI6MjAxNSwicmVhbF91c2VybmFtZSI6ImliaXMuaXNtYWlsIn0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "omewly7amoobk9v81ih7jm8briwpircx",
+    "fields": {
+        "expire_date": "2016-05-02T13:05:23.213Z",
+        "session_data": "MTQyNDdlODAzMjE3OTU5NWYwNGI4OTg4MGZhMGI1YTk4MzExZGY5MDp7ImN1cnJlbnRfY29kZV95ZWFyIjoyMDE1LCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nb19jYXMuYmFja2VuZHMuQ0FTQmFja2VuZCIsIl9hdXRoX3VzZXJfaGFzaCI6ImI4ZjRkYjBiYTNmYjMxYzg1MTg3OGQ3NTZkNTdkY2VkZGM5MTM5ZjMiLCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2In0="
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "wk554k6xp2u886oyfxfq7b9xbx1gefkx",
+    "fields": {
+        "expire_date": "2016-04-13T12:54:39.312Z",
+        "session_data": "MjI0ZmRhZDI1NWI2MGQ1NDY2N2FhMWU0NDgyYTY2N2Y3MThiOGVjMTp7Il9hdXRoX3VzZXJfaGFzaCI6ImI4ZjRkYjBiYTNmYjMxYzg1MTg3OGQ3NTZkNTdkY2VkZGM5MTM5ZjMiLCJjdXJyZW50X3llYXIiOiJBbm5cdTAwZTllIHVuaXZlcnNpdGFpcmUgMjAxNS8yMDE2IiwiY3VycmVudF9jb2RlX3llYXIiOjIwMTUsIl9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvX2Nhcy5iYWNrZW5kcy5DQVNCYWNrZW5kIn0="
+    }
+},
+{
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+        "name": "example.com",
+        "domain": "example.com"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-1425689-bf0eKu1rgT5H5fLHJ4AK-cas1",
+    "fields": {
+        "session_key": "omewly7amoobk9v81ih7jm8briwpircx"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-1493063-1AExWSFGUINr3BhnAoCs-cas1",
+    "fields": {
+        "session_key": "gd971kb8dganr7jble2smw91kgflvqtf"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-1616504-bnwWBsnnESaGrc9EoM2N-cas1",
+    "fields": {
+        "session_key": "iisfjiih1nqtg5sgrlf8vinnywjfyy3v"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-165307-QW6SlcRWCbeevyzezlZA-cas1",
+    "fields": {
+        "session_key": "z3k4ux09pjdrbvhrt0xtms0q66gluzc3"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-165669-1IGn6LSzACi2fTSbLW1g-cas1",
+    "fields": {
+        "session_key": "7v83tk4pwv4l69m59j3p3n8pn1pv01hq"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-173304-ZjQuY52fBMhTs9A7MDr2-cas2",
+    "fields": {
+        "session_key": "pddcjuhks7dyk8gszy6qsqi2xh4wa85e"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-210048-b1fy2xwYZi4dL946pjX2-cas1",
+    "fields": {
+        "session_key": "xu8k96i78b3vcrh71np00y85h85dwff3"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-211599-nEmRvL6Af7SeBtirQZcQ-cas2",
+    "fields": {
+        "session_key": "614o8lgj6hmwpxodfhe6t88bpexrhzyn"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-214405-HDv6re54wUbX9fQl7hTs-cas2",
+    "fields": {
+        "session_key": "9g507m1o0mtnfkqmdxhu66dy78g99fqd"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-277520-pw2BlWhCkyDJ6xQcW66D-cas2",
+    "fields": {
+        "session_key": "v1k8wxrh6h3vc1vmjmbuu3rwzhetgxpm"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-298363-qwxgdv6eDC3yxBrKNKwl-cas2",
+    "fields": {
+        "session_key": "d28yda34hl2fdncmh598m9fnuj6bwch2"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-584774-IkCQxx509FmcMnpkZ6w5-cas2",
+    "fields": {
+        "session_key": "wsaomv6fojnpvsce4had7pb49m3yl9mk"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-587880-Mh1cCRDuPhKXNf1bfheO-cas1",
+    "fields": {
+        "session_key": "wk554k6xp2u886oyfxfq7b9xbx1gefkx"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-598335-arAImNNrpt4C7eyJCwOs-cas1",
+    "fields": {
+        "session_key": "dn1e2sgxr4ghoaiqwix10429fk7xgpt6"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-600573-nZu0zkTNv6AFmc6lAU4p-cas2",
+    "fields": {
+        "session_key": "dxb66ugt3z0rx5czzxet7ye02uvaktek"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-641347-m1n5otzJclF7BCYS6qtO-cas1",
+    "fields": {
+        "session_key": "kv7k5352rk6mhqpfube9u69mq0rfxhom"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-851697-YOGyNZqNaff21YTG4QAk-cas1",
+    "fields": {
+        "session_key": "jg6ti0gicwpm7jvmvmfgpjv0i6s06xbw"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-891233-A655aynbH7Ir1ex5gyKL-cas2",
+    "fields": {
+        "session_key": "bco13o4gnjnuut4lvecsbbqqcrm041ep"
+    }
+},
+{
+    "model": "django_cas.sessionserviceticket",
+    "pk": "ST-895293-T3RFEfWg7n665XyiKQkw-cas1",
+    "fields": {
+        "session_key": "vjp77k7v6wslao57l7ly0o4ja21mrkyo"
+    }
+},
+{
+    "model": "commission.ecicommissionmember",
+    "pk": 1,
+    "fields": {
+        "first_name": "Valerie",
+        "email": "v.fritsch@unistra.fr",
+        "username": "v.fritsch",
+        "last_name": "Fritsch-Noirard",
+        "member_type": "commission"
+    }
+},
+{
+    "model": "commission.ecicommissionmember",
+    "pk": 2,
+    "fields": {
+        "first_name": "Lauriane",
+        "email": "lauriane.kuhn@etu.unistra.fr",
+        "username": "laurianekuhn",
+        "last_name": "Kuhn",
+        "member_type": "tenured"
+    }
+},
+{
+    "model": "commission.ecicommissionmember",
+    "pk": 3,
+    "fields": {
+        "first_name": "Gilles",
+        "email": "gerb@unistra.fr",
+        "username": "gerb",
+        "last_name": "Erb",
+        "member_type": "commission"
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 1,
+    "fields": {
+        "short_label": "DAEU",
+        "ROF_code": "",
+        "display_order": 1,
+        "long_label": "Dipl\u00f4me d'acc\u00e8s aux \u00e9tudes universitaires",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 2,
+    "fields": {
+        "short_label": "Capacit\u00e9 (Droit)",
+        "ROF_code": "",
+        "display_order": 2,
+        "long_label": "Capacit\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 3,
+    "fields": {
+        "short_label": "DUT",
+        "ROF_code": "",
+        "display_order": 3,
+        "long_label": "Dipl\u00f4me Universitaire de Technologie",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 4,
+    "fields": {
+        "short_label": "DEUST",
+        "ROF_code": "",
+        "display_order": 4,
+        "long_label": "Dipl\u00f4me d'Etudes Universitaires Scientifiques et Techniques",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 5,
+    "fields": {
+        "short_label": "Licence",
+        "ROF_code": "",
+        "display_order": 5,
+        "long_label": "Licence",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 6,
+    "fields": {
+        "short_label": "Licence professionnelle",
+        "ROF_code": "",
+        "display_order": 6,
+        "long_label": "Licence professionnelle",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 7,
+    "fields": {
+        "short_label": "Master",
+        "ROF_code": "",
+        "display_order": 7,
+        "long_label": "Master",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 8,
+    "fields": {
+        "short_label": "DU - Dipl\u00f4me d'Universit\u00e9",
+        "ROF_code": "",
+        "display_order": 20,
+        "long_label": "Dipl\u00f4me d'Universit\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 9,
+    "fields": {
+        "short_label": "ECOLE - Dipl\u00f4me d'ing\u00e9nieur",
+        "ROF_code": "",
+        "display_order": 30,
+        "long_label": "Dipl\u00f4me d'ing\u00e9nieur",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 10,
+    "fields": {
+        "short_label": "ECOLE - Dipl\u00f4me IEP",
+        "ROF_code": "",
+        "display_order": 31,
+        "long_label": "Dipl\u00f4me de l'Institut d'Etudes Politiques",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 11,
+    "fields": {
+        "short_label": "ECOLE - Dipl\u00f4me Grande Ecole",
+        "ROF_code": "",
+        "display_order": 32,
+        "long_label": "Dipl\u00f4me Grande Ecole",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 12,
+    "fields": {
+        "short_label": "PREPA - Pr\u00e9paration Ecole Ing\u00e9nieur",
+        "ROF_code": "",
+        "display_order": 40,
+        "long_label": "Pr\u00e9paration Ecole d'ing\u00e9nieur",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 13,
+    "fields": {
+        "short_label": "PREPA - Pr\u00e9paration aux concours ",
+        "ROF_code": "",
+        "display_order": 41,
+        "long_label": "Pr\u00e9paration aux concours",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 14,
+    "fields": {
+        "short_label": "SANTE - PACES",
+        "ROF_code": "",
+        "display_order": 50,
+        "long_label": "Premi\u00e8re Ann\u00e9e Commune des Etudes de Sant\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 15,
+    "fields": {
+        "short_label": "SANTE - DFGS",
+        "ROF_code": "",
+        "display_order": 51,
+        "long_label": "Dipl\u00f4me de Formation G\u00e9n\u00e9rale en Sant\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 16,
+    "fields": {
+        "short_label": "SANTE - DFAS",
+        "ROF_code": "",
+        "display_order": 52,
+        "long_label": "Dipl\u00f4me de Formation Approfondie en Sant\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 17,
+    "fields": {
+        "short_label": "SANTE - Dipl\u00f4me d'Etat en Pharmacie",
+        "ROF_code": "",
+        "display_order": 53,
+        "long_label": "Dipl\u00f4me d'Etat de Docteur en Pharmacie",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 18,
+    "fields": {
+        "short_label": "SANTE - Dipl\u00f4me d'Etat en Dentaire",
+        "ROF_code": "",
+        "display_order": 54,
+        "long_label": "Dipl\u00f4me d'Etat de Docteur en Dentaire",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 19,
+    "fields": {
+        "short_label": "SANTE - Dipl\u00f4me d'Etat en M\u00e9decine",
+        "ROF_code": "",
+        "display_order": 55,
+        "long_label": "Dipl\u00f4me d'Etat de Docteur en M\u00e9decine",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 20,
+    "fields": {
+        "short_label": "SANTE - DFMS",
+        "ROF_code": "",
+        "display_order": 56,
+        "long_label": "Dipl\u00f4me de Formation M\u00e9dicale Sp\u00e9cialis\u00e9e",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 21,
+    "fields": {
+        "short_label": "SANTE - DFMSA",
+        "ROF_code": "",
+        "display_order": 57,
+        "long_label": "Dipl\u00f4me de  Formation M\u00e9dicale Sp\u00e9cialis\u00e9e Approfondie",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 22,
+    "fields": {
+        "short_label": "SANTE - CECS (CECSMO)",
+        "ROF_code": "",
+        "display_order": 58,
+        "long_label": "Certificat d'\u00e9tudes cliniques sp\u00e9cialis\u00e9es",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 23,
+    "fields": {
+        "short_label": "SANTE - Capacit\u00e9 Sant\u00e9",
+        "ROF_code": "",
+        "display_order": 59,
+        "long_label": "Capacit\u00e9",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 24,
+    "fields": {
+        "short_label": "SANTE - CES dentaire",
+        "ROF_code": "",
+        "display_order": 60,
+        "long_label": "Certificat d'Etudes Sup\u00e9rieures dentaire",
+        "is_in_use": true
+    }
+},
+{
+    "model": "degree.degreetype",
+    "pk": 25,
+    "fields": {
+        "short_label": "SANTE - CES m\u00e9decine",
+        "ROF_code": "",
+        "display_order": 61,
+        "long_label": "Certificat d'Etudes Sup\u00e9rieures m\u00e9decine",
+        "is_in_use": true
+    }
+},
+{
     "model": "institute.academicfield",
+    "pk": 1,
     "fields": {
         "name": "Arts, Lettres, Langues"
-    },
-    "pk": 1
-}, {
+    }
+},
+{
     "model": "institute.academicfield",
+    "pk": 2,
     "fields": {
         "name": "Droit, \u00e9conomie, gestion et sciences politiques et sociales"
-    },
-    "pk": 2
-}, {
+    }
+},
+{
     "model": "institute.academicfield",
+    "pk": 3,
     "fields": {
         "name": "Sant\u00e9"
-    },
-    "pk": 3
-}, {
+    }
+},
+{
     "model": "institute.academicfield",
+    "pk": 4,
     "fields": {
         "name": "Sciences humaines et sociales"
-    },
-    "pk": 4
-}, {
+    }
+},
+{
     "model": "institute.academicfield",
+    "pk": 5,
     "fields": {
         "name": "Sciences, Technologies"
-    },
-    "pk": 5
-}, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ART",
-         "rac": null,
-         "label": "Faculté des arts",
-         "field": 1,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 1
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "LVI",
-         "rac": null,
-         "label": "Faculté des langues et des cultures étrangères",
-         "field": 1,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 2
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "LGA",
-         "rac": null,
-         "label": "Faculté des langues et sciences humaines appliquées (LSHA)",
-         "field": 1,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 3
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "LET",
-         "rac": null,
-         "label": "Faculté des lettres",
-         "field": 1,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 4
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "CPI",
-         "rac": null,
-         "label": "Centre d 'études internationales de la propriété intellectuelle (CEIPI)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 5
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "CUJ",
-         "rac": null,
-         "label": "Centre universitaire d'enseignement du journalisme (CUEJ)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 6
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "EMS",
-         "rac": null,
-         "label": "Ecole de management Strasbourg (EM)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 7
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "DRT",
-         "rac": null,
-         "label": "Faculté de droit, de sciences politiques et de gestion",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 8
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "SEG",
-         "rac": null,
-         "label": "Faculté de sciences économiques et de gestion (FSEG)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 9
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "PAG",
-         "rac": null,
-         "label": "Institut de préparation à l'administration générale (IPAG)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 10
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "IEP",
-         "rac": null,
-         "label": "Institut d'études politiques (IEP)",
-         "field": 2,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 11
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ODO",
-         "rac": null,
-         "label": "Faculté de chirurgie dentaire",
-         "field": 3,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 12
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "MED",
-         "rac": null,
-         "label": "Faculté de médecine",
-         "field": 3,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 13
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "PHA",
-         "rac": null,
-         "label": "Faculté de pharmacie",
-         "field": 3,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 14
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "EPE",
-         "rac": null,
-         "label": "Ecole supérieure du professorat et de l'éducation (ESPE)",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 15
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "GEO",
-         "rac": null,
-         "label": "Faculté de géographie et d'aménagement",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 16
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "PLI",
-         "rac": null,
-         "label": "Faculté de philosophie",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 17
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "PSY",
-         "rac": null,
-         "label": "Faculté de psychologie",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 18
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "EDU",
-         "rac": null,
-         "label": "Faculté de sciences de l'éducation",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 19
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "THC",
-         "rac": null,
-         "label": "Faculté de théologie catholique",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 20
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "THP",
-         "rac": null,
-         "label": "Faculté de théologie protestante",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 21
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "APS",
-         "rac": null,
-         "label": "Faculté des sciences du sport",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 22
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "HIS",
-         "rac": null,
-         "label": "Faculté des Sciences Historiques",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 23
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "SOC",
-         "rac": null,
-         "label": "Faculté des sciences sociales",
-         "field": 4,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 24
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "EOT",
-         "rac": null,
-         "label": "Ecole et observatoire des sciences de la Terre (EOST)",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 25
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ECP",
-         "rac": null,
-         "label": "Ecole européenne de chimie, polymères et matériaux (ECPM)",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 26
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ESB",
-         "rac": null,
-         "label": "Ecole supérieure de biotechnologie de Strasbourg (ESBS)",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 27
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "CHM",
-         "rac": null,
-         "label": "Faculté de chimie",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 28
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "VIE",
-         "rac": null,
-         "label": "Faculté des sciences de la vie",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 29
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "IHA",
-         "rac": null,
-         "label": "Institut universitaire de technologie de Haguenau",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 30
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ISC",
-         "rac": null,
-         "label": "Institut universitaire de technologie Louis Pasteur",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 31
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ILL",
-         "rac": null,
-         "label": "Institut universitaire de technologie Robert Schuman",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 32
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "OBS",
-         "rac": null,
-         "label": "Observatoire astronomique de Strasbourg",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 33
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "ESP",
-         "rac": null,
-         "label": "Télécom Physique Strasbourg",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 34
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "MAI",
-         "rac": null,
-         "label": "UFR de Mathématique et d'informatique",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 35
- }, {
-     "model": "institute.institute",
-     "fields": {
-         "code": "PHI",
-         "rac": null,
-         "label": "UFR physique et ingénierie",
-         "field": 5,
-         "dircomp": null,
-         "is_on_duty": true,
-         "scol_manager": [],
-         "diretu": []
-     },
-     "pk": 36
- }, {
-       "fields": {
-           "display_order": 1,
-           "short_label": "DAEU",
-           "long_label": "Diplôme d'accès aux études universitaires",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 1
-   }, {
-       "fields": {
-           "display_order": 2,
-           "short_label": "Capacité (Droit)",
-           "long_label": "Capacité",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 2
-   }, {
-       "fields": {
-           "display_order": 3,
-           "short_label": "DUT",
-           "long_label": "Diplôme Universitaire de Technologie",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 3
-   }, {
-       "fields": {
-           "display_order": 4,
-           "short_label": "DEUST",
-           "long_label": "Diplôme d'Etudes Universitaires Scientifiques et Techniques",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 4
-   }, {
-       "fields": {
-           "display_order": 5,
-           "short_label": "Licence",
-           "long_label": "Licence",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 5
-   }, {
-       "fields": {
-           "display_order": 6,
-           "short_label": "Licence professionnelle",
-           "long_label": "Licence professionnelle",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 6
-   }, {
-       "fields": {
-           "display_order": 7,
-           "short_label": "Master",
-           "long_label": "Master",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 7
-   }, {
-       "fields": {
-           "display_order": 20,
-           "short_label": "DU - Diplôme d'Université",
-           "long_label": "Diplôme d'Université",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 8
-   }, {
-       "fields": {
-           "display_order": 30,
-           "short_label": "ECOLE - Diplôme d'ingénieur",
-           "long_label": "Diplôme d'ingénieur",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 9
-   }, {
-       "fields": {
-           "display_order": 31,
-           "short_label": "ECOLE - Diplôme IEP",
-           "long_label": "Diplôme de l'Institut d'Etudes Politiques",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 10
-   }, {
-       "fields": {
-           "display_order": 32,
-           "short_label": "ECOLE - Diplôme Grande Ecole",
-           "long_label": "Diplôme Grande Ecole",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 11
-   }, {
-       "fields": {
-           "display_order": 40,
-           "short_label": "PREPA - Préparation Ecole Ingénieur",
-           "long_label": "Préparation Ecole d'ingénieur",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 12
-   }, {
-       "fields": {
-           "display_order": 41,
-           "short_label": "PREPA - Préparation aux concours ",
-           "long_label": "Préparation aux concours",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 13
-   }, {
-       "fields": {
-           "display_order": 50,
-           "short_label": "SANTE - PACES",
-           "long_label": "Première Année Commune des Etudes de Santé",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 14
-   }, {
-       "fields": {
-           "display_order": 51,
-           "short_label": "SANTE - DFGS",
-           "long_label": "Diplôme de Formation Générale en Santé",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 15
-   }, {
-       "fields": {
-           "display_order": 52,
-           "short_label": "SANTE - DFAS",
-           "long_label": "Diplôme de Formation Approfondie en Santé",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 16
-   }, {
-       "fields": {
-           "display_order": 53,
-           "short_label": "SANTE - Diplôme d'Etat en Pharmacie",
-           "long_label": "Diplôme d'Etat de Docteur en Pharmacie",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 17
-   }, {
-       "fields": {
-           "display_order": 54,
-           "short_label": "SANTE - Diplôme d'Etat en Dentaire",
-           "long_label": "Diplôme d'Etat de Docteur en Dentaire",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 18
-   }, {
-       "fields": {
-           "display_order": 55,
-           "short_label": "SANTE - Diplôme d'Etat en Médecine",
-           "long_label": "Diplôme d'Etat de Docteur en Médecine",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 19
-   }, {
-       "fields": {
-           "display_order": 56,
-           "short_label": "SANTE - DFMS",
-           "long_label": "Diplôme de Formation Médicale Spécialisée",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 20
-   }, {
-       "fields": {
-           "display_order": 57,
-           "short_label": "SANTE - DFMSA",
-           "long_label": "Diplôme de  Formation Médicale Spécialisée Approfondie",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 21
-   }, {
-       "fields": {
-           "display_order": 58,
-           "short_label": "SANTE - CECS (CECSMO)",
-           "long_label": "Certificat d'études cliniques spécialisées",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 22
-   }, {
-       "fields": {
-           "display_order": 59,
-           "short_label": "SANTE - Capacité Santé",
-           "long_label": "Capacité",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 23
-   }, {
-       "fields": {
-           "display_order": 60,
-           "short_label": "SANTE - CES dentaire",
-           "long_label": "Certificat d'Etudes Supérieures dentaire",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 24
-   },  {
-       "fields": {
-           "display_order": 61,
-           "short_label": "SANTE - CES médecine",
-           "long_label": "Certificat d'Etudes Supérieures médecine",
-           "is_in_use": true,
-           "ROF_code": ""
-       },
-       "model": "degree.degreetype",
-       "pk": 25
-   },{
-       "model": "adm.profile",
-       "pk": 1,
-       "fields": {
-           "label": "Responsable Formation Scolarit\u00e9",
-           "code": "REFSCOL"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 2,
-       "fields": {
-           "label": "Directeur d'\u00e9tudes",
-           "code": "DIRETU"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 3,
-       "fields": {
-           "label": "Gestionnaire de scolarité",
-           "code": "GESCOL"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 4,
-       "fields": {
-           "label": "Responsable de formation",
-           "code": "RESPFORM"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 5,
-       "fields": {
-           "label": "Responsable administratif",
-           "code": "RAC"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 6,
-       "fields": {
-           "label": "Directeur de composante",
-           "code": "DIRCOMP"
-       }
-   }, {
-       "model": "adm.profile",
-       "pk": 7,
-       "fields": {
-           "label": "Membre de la commission ECI",
-           "code": "ECI"
-       }
-   }, {
-        "pk": 1,
-        "fields": {
-            "name": "DES1",
-            "permissions": [67]
-        },
-        "model": "auth.group"
-    }, {
-        "pk": 2,
-        "fields": {
-            "name": "DES2",
-            "permissions": [68]
-        },
-        "model": "auth.group"
-    }, {
-        "pk": 3,
-        "fields": {
-            "name": "DES3",
-            "permissions": [69]
-        },
-        "model": "auth.group"
-    },{
-        "pk": 1,
-        "fields": {
-            "is_superuser": true,
-            "password": "pbkdf2_sha256$20000$WVqQ9yArATgx$q6e7jV/8E0cXXbuNFzHggSeGm09lEA/d6ctGZ2yHPaA=",
-            "date_joined": "2016-03-01T11:52:40.697Z",
-            "username": "ibis.ismail",
-            "is_staff": true,
-            "is_active": true,
-            "email": "",
-            "first_name": "",
-            "last_login": "2016-03-02T10:46:07.591Z",
-            "groups": [],
-            "user_permissions": [],
-            "last_name": ""
-        },
-        "model": "auth.user"
-    }, {
-        "pk": 2,
-        "fields": {
-            "is_superuser": false,
-            "password": "pbkdf2_sha256$20000$At8sgieDnzxX$ZeWi7+ni0/T+1tyjP/FumqL4ZDAu8Exmj2Mg6H/90Ms=",
-            "date_joined": "2016-03-01T11:56:15.208Z",
-            "username": "DES3",
-            "is_staff": false,
-            "is_active": true,
-            "email": "",
-            "first_name": "",
-            "last_login": null,
-            "groups": [3],
-            "user_permissions": [],
-            "last_name": ""
-        },
-        "model": "auth.user"
-    }, {
-        "pk": 3,
-        "fields": {
-            "is_superuser": false,
-            "password": "pbkdf2_sha256$20000$EtOrrKWyekFd$nH0gotvMNYrkaoG2USKBdVkKgH+VPxDixS/YY0XnHNc=",
-            "date_joined": "2016-03-01T11:56:37.409Z",
-            "username": "test",
-            "is_staff": false,
-            "is_active": true,
-            "email": "",
-            "first_name": "",
-            "last_login": null,
-            "groups": [],
-            "user_permissions": [],
-            "last_name": ""
-        },
-        "model": "auth.user"
-    }, {
-        "pk": 4,
-        "fields": {
-            "is_superuser": true,
-            "password": "pbkdf2_sha256$20000$TgNUKBElggwO$XQsDFLudGvq9qQvGDzA/U9sJB/UJHEb8nFXkZa/tDCQ=",
-            "date_joined": "2016-03-01T12:00:08.149Z",
-            "username": "weible",
-            "is_staff": true,
-            "is_active": true,
-            "email": "",
-            "first_name": "",
-            "last_login": null,
-            "groups": [],
-            "user_permissions": [],
-            "last_name": ""
-        },
-        "model": "auth.user"
-    }]
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 1,
+    "fields": {
+        "code": "ART",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672503G",
+        "label": "Facult\u00e9 des arts",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 1,
+        "rac": null,
+        "id_rac": "GROUT Nathalie",
+        "id_dircomp": "LITZLER Pierre"
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 2,
+    "fields": {
+        "code": "LVI",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671874Y",
+        "label": "Facult\u00e9 des langues et des cultures \u00e9trang\u00e8res",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 1,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 3,
+    "fields": {
+        "code": "LGA",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672502F",
+        "label": "Facult\u00e9 des langues et sciences humaines appliqu\u00e9es (LSHA)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 1,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 4,
+    "fields": {
+        "code": "LET",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671875Z",
+        "label": "Facult\u00e9 des lettres",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 1,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 5,
+    "fields": {
+        "code": "CPI",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671551X",
+        "label": "Centre d '\u00e9tudes internationales de la propri\u00e9t\u00e9 intellectuelle (CEIPI)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 6,
+    "fields": {
+        "code": "CUJ",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671881F",
+        "label": "Centre universitaire d'enseignement du journalisme (CUEJ)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 7,
+    "fields": {
+        "code": "EMS",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0673015N",
+        "label": "Ecole de management Strasbourg (EM)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 8,
+    "fields": {
+        "code": "DRT",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671879D",
+        "label": "Facult\u00e9 de droit, de sciences politiques et de gestion",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 9,
+    "fields": {
+        "code": "SEG",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671872W",
+        "label": "Facult\u00e9 de sciences \u00e9conomiques et de gestion (FSEG)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 10,
+    "fields": {
+        "code": "PAG",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670151A",
+        "label": "Institut de pr\u00e9paration \u00e0 l'administration g\u00e9n\u00e9rale (IPAG)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 11,
+    "fields": {
+        "code": "IEP",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670178E",
+        "label": "Institut d'\u00e9tudes politiques (IEP)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 2,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 12,
+    "fields": {
+        "code": "ODO",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671863L",
+        "label": "Facult\u00e9 de chirurgie dentaire",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 3,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 13,
+    "fields": {
+        "code": "MED",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671860H",
+        "label": "Facult\u00e9 de m\u00e9decine",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 3,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 14,
+    "fields": {
+        "code": "PHA",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671862K",
+        "label": "Facult\u00e9 de pharmacie",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 3,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 15,
+    "fields": {
+        "code": "EPE",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0673068W",
+        "label": "Ecole sup\u00e9rieure du professorat et de l'\u00e9ducation (ESPE)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 16,
+    "fields": {
+        "code": "GEO",
+        "dircomp": null,
+        "scol_manager": [
+            33
+        ],
+        "ROF_code": "0671871V",
+        "label": "Facult\u00e9 de g\u00e9ographie et d'am\u00e9nagement",
+        "diretu": [
+            32
+        ],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "BELLAHCENE Abderrahman",
+        "id_dircomp": "ROSIQUE Thierry"
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 17,
+    "fields": {
+        "code": "PLI",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671876A",
+        "label": "Facult\u00e9 de philosophie",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 18,
+    "fields": {
+        "code": "PSY",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671870U",
+        "label": "Facult\u00e9 de psychologie",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 19,
+    "fields": {
+        "code": "EDU",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0673034J",
+        "label": "Facult\u00e9 de sciences de l'\u00e9ducation",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 20,
+    "fields": {
+        "code": "THC",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670147W",
+        "label": "Facult\u00e9 de th\u00e9ologie catholique",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 21,
+    "fields": {
+        "code": "THP",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670148X",
+        "label": "Facult\u00e9 de th\u00e9ologie protestante",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 22,
+    "fields": {
+        "code": "APS",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672070L",
+        "label": "Facult\u00e9 des sciences du sport",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 23,
+    "fields": {
+        "code": "HIS",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671877B",
+        "label": "Facult\u00e9 des Sciences Historiques",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 24,
+    "fields": {
+        "code": "SOC",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671878C",
+        "label": "Facult\u00e9 des sciences sociales",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 4,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 25,
+    "fields": {
+        "code": "EOT",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670176C",
+        "label": "Ecole et observatoire des sciences de la Terre (EOST)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 26,
+    "fields": {
+        "code": "ECP",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672792W",
+        "label": "Ecole europ\u00e9enne de chimie, polym\u00e8res et mat\u00e9riaux (ECPM)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 27,
+    "fields": {
+        "code": "ESB",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672504H",
+        "label": "Ecole sup\u00e9rieure de biotechnologie de Strasbourg (ESBS)",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 28,
+    "fields": {
+        "code": "CHM",
+        "dircomp": null,
+        "scol_manager": [
+            18,
+            19,
+            21,
+            25
+        ],
+        "ROF_code": "0672640F",
+        "label": "Facult\u00e9 de chimie",
+        "diretu": [
+            20
+        ],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "GOT Brigitte",
+        "id_dircomp": "PLANEIX Jean-Marc"
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 29,
+    "fields": {
+        "code": "VIE",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671867R",
+        "label": "Facult\u00e9 des sciences de la vie",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 30,
+    "fields": {
+        "code": "IHA",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672834S",
+        "label": "Institut universitaire de technologie de Haguenau",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 31,
+    "fields": {
+        "code": "ISC",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672462M",
+        "label": "Institut universitaire de technologie Louis Pasteur",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 32,
+    "fields": {
+        "code": "ILL",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671557D",
+        "label": "Institut universitaire de technologie Robert Schuman",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 33,
+    "fields": {
+        "code": "OBS",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0670173Z",
+        "label": "Observatoire astronomique de Strasbourg",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 34,
+    "fields": {
+        "code": "ESP",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0672380Y",
+        "label": "T\u00e9l\u00e9com Physique Strasbourg",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 35,
+    "fields": {
+        "code": "MAI",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0671864M",
+        "label": "UFR de Math\u00e9matique et d'informatique",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "institute.institute",
+    "pk": 36,
+    "fields": {
+        "code": "PHI",
+        "dircomp": null,
+        "scol_manager": [],
+        "ROF_code": "0673024Y",
+        "label": "UFR physique et ing\u00e9nierie",
+        "diretu": [],
+        "is_on_duty": true,
+        "field": 5,
+        "rac": null,
+        "id_rac": "",
+        "id_dircomp": ""
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 1,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 1,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 2,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 2,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 3,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 3,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 4,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 4,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 5,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 5,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 6,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 6,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 7,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 7,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 8,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 8,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 9,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 9,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 10,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 10,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 11,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 11,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 12,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 12,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 13,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 13,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 14,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 14,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 15,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 15,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 16,
+    "fields": {
+        "date_expected_MECC": "2016-06-16",
+        "id_cmp": 16,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 17,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 17,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 18,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 18,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 19,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 19,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 20,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 20,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 21,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 21,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 22,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 22,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 23,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 23,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 24,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 24,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 25,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 25,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 26,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 26,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 27,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 27,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 28,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 28,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 29,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 29,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 30,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 30,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 31,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 31,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 32,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 32,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 33,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 33,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 34,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 34,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 35,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 35,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.instituteyear",
+    "pk": 36,
+    "fields": {
+        "date_expected_MECC": null,
+        "id_cmp": 36,
+        "date_last_notif": null,
+        "code_year": 2015
+    }
+},
+{
+    "model": "years.universityyear",
+    "pk": 1,
+    "fields": {
+        "pdf_doc": "",
+        "code_year": 2015,
+        "date_validation": "2016-01-26",
+        "is_target_year": true,
+        "is_year_init": true,
+        "date_expected": "2016-06-10",
+        "label_year": "Ann\u00e9e universitaire 2015/2016"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 1,
+    "fields": {
+        "code": "REFSCOL",
+        "label": "Responsable Formation Scolarit\u00e9"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 2,
+    "fields": {
+        "code": "DIRETU",
+        "label": "Directeur d'\u00e9tudes"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 3,
+    "fields": {
+        "code": "GESCOL",
+        "label": "Gestionnaire de scolarit\u00e9"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 4,
+    "fields": {
+        "code": "RESPFORM",
+        "label": "Responsable de formation"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 5,
+    "fields": {
+        "code": "RAC",
+        "label": "Responsable administratif"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 6,
+    "fields": {
+        "code": "DIRCOMP",
+        "label": "Directeur de composante"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 7,
+    "fields": {
+        "code": "ECI",
+        "label": "Membre de la commission ECI"
+    }
+},
+{
+    "model": "adm.profile",
+    "pk": 8,
+    "fields": {
+        "code": "REFAPP",
+        "label": "R\u00e9ferent application"
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 1,
+    "fields": {
+        "degree_type": [
+            5,
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en licence",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 2,
+    "fields": {
+        "degree_type": [
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 2,
+        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en master",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 3,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            14,
+            15,
+            16,
+            17,
+            18,
+            25
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 5,
+        "label": "Inscriptions administratives",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 4,
+    "fields": {
+        "degree_type": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19,
+            21,
+            22
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 8,
+        "label": "Inscriptions p\u00e9dagogiques",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 5,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            5,
+            6,
+            7,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 10,
+        "label": "Assiduit\u00e9",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 6,
+    "fields": {
+        "degree_type": [
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 13,
+        "label": "Validation d'acquis",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 7,
+    "fields": {
+        "degree_type": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 14,
+        "label": "Etudes accomplies \u00e0 l'\u00e9tranger",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 8,
+    "fields": {
+        "degree_type": [
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 19,
+        "label": "M\u00e9moire",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 9,
+    "fields": {
+        "degree_type": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 20,
+        "label": "Jurys",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 10,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            5,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 25,
+        "label": "Compensation",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 11,
+    "fields": {
+        "degree_type": [
+            5
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en licence ",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 12,
+    "fields": {
+        "degree_type": [
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en master",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 13,
+    "fields": {
+        "degree_type": [
+            5,
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Calcul de la moyenne g\u00e9n\u00e9rale en licence",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 14,
+    "fields": {
+        "degree_type": [
+            3,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Calcul de la moyenne g\u00e9n\u00e9rale",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 15,
+    "fields": {
+        "degree_type": [
+            3,
+            4,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 31,
+        "label": "Equivalences et mentions",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 16,
+    "fields": {
+        "degree_type": [
+            5,
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 35,
+        "label": "Dipl\u00f4me interm\u00e9diaire de DEUG",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 17,
+    "fields": {
+        "degree_type": [
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 35,
+        "label": "Dipl\u00f4me interm\u00e9diaire de ma\u00eetrise",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 18,
+    "fields": {
+        "degree_type": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 40,
+        "label": "Conservation d'une note d'une ann\u00e9e sur l'autre",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 19,
+    "fields": {
+        "degree_type": [
+            1,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 41,
+        "label": "Capitalisation",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 20,
+    "fields": {
+        "degree_type": [
+            5,
+            6,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 45,
+        "label": "Sessions d'examens",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 21,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 46,
+        "label": "Session de rattrapage",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 22,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 50,
+        "label": "Evaluation continue int\u00e9grale - principes directeurs",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 23,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 51,
+        "label": "Organisation de l'\u00e9valuation continue int\u00e9grale",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 24,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 52,
+        "label": "Nombre d'\u00e9valuations par UE",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 25,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 53,
+        "label": "Modalit\u00e9s de correction des \u00e9valuations et de restitution p\u00e9dagogique aux \u00e9tudiants",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 26,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 54,
+        "label": "Absence aux \u00e9preuves avec convocation",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 27,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 55,
+        "label": "Absence aux \u00e9preuves sans convocation",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 28,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 56,
+        "label": "Session de rattrapage en ECI",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 29,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 71,
+        "label": "Absence aux \u00e9preuves terminales",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 30,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 72,
+        "label": "Absence aux \u00e9preuves de contr\u00f4le continu",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 31,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 74,
+        "label": "Organisation des \u00e9preuves",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 32,
+    "fields": {
+        "degree_type": [
+            7,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 75,
+        "label": "Anonymat des \u00e9preuves",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 33,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 80,
+        "label": "Report de note de la session principale \u00e0 la session de rattrapage",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 34,
+    "fields": {
+        "degree_type": [
+            1
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en DAEU",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 35,
+    "fields": {
+        "degree_type": [
+            3
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s de progression en DUT",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 36,
+    "fields": {
+        "degree_type": [
+            4
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s de progression en DEUST",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 37,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s de progression en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 38,
+    "fields": {
+        "degree_type": [
+            15
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s de progression en DFG",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 39,
+    "fields": {
+        "degree_type": [
+            16
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s de progression en DFA",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 40,
+    "fields": {
+        "degree_type": [
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 1,
+        "label": "Modalit\u00e9s d'acc\u00e8s au dipl\u00f4me d'Etat de Sant\u00e9",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 41,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 6,
+        "label": "Inscriptions administratives en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 42,
+    "fields": {
+        "degree_type": [
+            16
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 6,
+        "label": "Inscriptions administratives en DFA",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 43,
+    "fields": {
+        "degree_type": [
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 6,
+        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en m\u00e9decine",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 44,
+    "fields": {
+        "degree_type": [
+            17
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 6,
+        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en pharmacie",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 45,
+    "fields": {
+        "degree_type": [
+            18
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 6,
+        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en chirurgie dentaire",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 46,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 8,
+        "label": "Inscriptions p\u00e9dagogiques en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 47,
+    "fields": {
+        "degree_type": [
+            1
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 13,
+        "label": "Validation d'acquis en DAEU",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 48,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 16,
+        "label": "Notation des QCM (Questions \u00e0 choix multiples)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 49,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 17,
+        "label": "Notation des QRC (Questions r\u00e9dactionnelles courtes)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 50,
+    "fields": {
+        "degree_type": [
+            14,
+            15
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 18,
+        "label": "Notation des QCD (Questions \u00e0 choix double)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 51,
+    "fields": {
+        "degree_type": [
+            1
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 20,
+        "label": "Jury du DAEU",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 52,
+    "fields": {
+        "degree_type": [
+            16
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 21,
+        "label": "Jurys des certificats de sant\u00e9",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 53,
+    "fields": {
+        "degree_type": [
+            17
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 21,
+        "label": "Th\u00e8se d'exercice en vue du DE de docteur en pharmacie",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 54,
+    "fields": {
+        "degree_type": [
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 21,
+        "label": "Th\u00e8se d'exercice en vue du DE de docteur en m\u00e9decine",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 55,
+    "fields": {
+        "degree_type": [
+            18
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 21,
+        "label": "Th\u00e8se d'exercice en vue du DE de docteur en chirurgie dentaire",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 56,
+    "fields": {
+        "degree_type": [
+            3
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 21,
+        "label": "Jury du DUT",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 57,
+    "fields": {
+        "degree_type": [
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en licence professionnelle",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 58,
+    "fields": {
+        "degree_type": [
+            4
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en DEUST",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 59,
+    "fields": {
+        "degree_type": [
+            1
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en DAEU (r\u00e9gime CC/CT)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 60,
+    "fields": {
+        "degree_type": [
+            1
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en DAEU (r\u00e9gime ECI)",
+        "is_ccct": false
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 61,
+    "fields": {
+        "degree_type": [
+            3
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en DUT",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 62,
+    "fields": {
+        "degree_type": [
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 26,
+        "label": "Compensation en DFG, DFA et DE",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 63,
+    "fields": {
+        "degree_type": [
+            4
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Calcul de la moyenne g\u00e9n\u00e9rale en DEUST",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 64,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Classement et validation en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 65,
+    "fields": {
+        "degree_type": [
+            15
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Valisation du DFG",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 66,
+    "fields": {
+        "degree_type": [
+            16
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Validation du DFA",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 67,
+    "fields": {
+        "degree_type": [
+            17,
+            18,
+            19
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 30,
+        "label": "Validation du dipl\u00f4me de Docteur",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 68,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 40,
+        "label": "Conservation d'une note d'une ann\u00e9e sur l'autre en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 69,
+    "fields": {
+        "degree_type": [
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 41,
+        "label": "Capitalisation en licence professionnelle",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 70,
+    "fields": {
+        "degree_type": [
+            3
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 41,
+        "label": "Capitalisatio en DUT",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 71,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 45,
+        "label": "Session d'examen en PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 72,
+    "fields": {
+        "degree_type": [
+            5,
+            6
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 47,
+        "label": "Epreuves de la session de rattrapage en licence (CC/CT)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 73,
+    "fields": {
+        "degree_type": [
+            4
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": true,
+        "is_edited": "X",
+        "display_order": 46,
+        "label": "Session de rattrapage en DEUST",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 74,
+    "fields": {
+        "degree_type": [
+            1,
+            3,
+            4,
+            7
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 47,
+        "label": "Epreuves de la session de rattrapage (CC/CT)",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 75,
+    "fields": {
+        "degree_type": [
+            14
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 71,
+        "label": "Absence aux \u00e9preuves du concours de PACES",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.rule",
+    "pk": 76,
+    "fields": {
+        "degree_type": [
+            15,
+            16
+        ],
+        "is_in_use": true,
+        "code_year": 2015,
+        "is_eci": false,
+        "is_edited": "X",
+        "display_order": 80,
+        "label": "Report de note de la session principale \u00e0 la session de rattrapage en DFG et DFA",
+        "is_ccct": true
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 3,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            34
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Le DAEU ne peut &ecirc;tre accord&eacute; qu&rsquo;aux &eacute;tudiants ne justifiant pas du baccalaur&eacute;at ou d&rsquo;un titre admis en dispense ou ne b&eacute;n&eacute;ficiant pas de la proc&eacute;dure de validation d&rsquo;acquis institu&eacute;e par le d&eacute;cret du 23 ao&ucirc;t 1985.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 5,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            1
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Tout &eacute;tudiant peut acqu&eacute;rir les unit&eacute;s d&rsquo;enseignement constitutives de son cursus, de mani&egrave;re progressive, ann&eacute;e apr&egrave;s ann&eacute;e, quelle que soit ce nombre d&rsquo;ann&eacute;e.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 8,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            1
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>La progression de l&rsquo;&eacute;tudiant se fait conform&eacute;ment &agrave; la maquette de la formation suivie &agrave; concurrence de 30 cr&eacute;dits ECTS pour chaque semestre.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 9,
+    "fields": {
+        "is_interaction": true,
+        "impact": [],
+        "rule": [
+            1
+        ],
+        "text_motiv": "<p>Merci d&rsquo;indiquer, pour les conseils &eacute;lus, les motifs de votre demande.</p>\r\n",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "<p>Vous souhaitez demander une d&eacute;rogation pour cet alin&eacute;a.&nbsp;</p>\r\n\r\n<p>Merci de reprendre le passage pour le modifier ou y substituer le texte de l&#39;alin&eacute;a que vous souhaitez voir valider pour votre formation. <em>N&rsquo;oubliez pas de d&eacute;tailler, le cas &eacute;ch&eacute;ant, les enseignements auxquels s&rsquo;appliquent votre alin&eacute;a, et les conditions et les crit&egrave;res d&rsquo;application, ou tout autre &eacute;l&eacute;ment pertinent.</em></p>\r\n",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p>Pour acc&eacute;der &agrave; l&rsquo;ann&eacute;e sup&eacute;rieure, l&rsquo;&eacute;tudiant doit avoir valid&eacute; les deux semestres de l&rsquo;ann&eacute;e en cours.</p>\r\n\r\n<p>Toutefois un &eacute;tudiant n&rsquo;ayant pas valid&eacute; son ann&eacute;e, mais <strong>ayant acquis au moins 24 cr&eacute;dits ECTS sur 30 pour chacun des deux semestres,</strong> est autoris&eacute; &agrave; s&rsquo;inscrire en ann&eacute;e sup&eacute;rieure. L&rsquo;acquisition des &eacute;l&eacute;ments en dette dans l&rsquo;ann&eacute;e non valid&eacute;e est prioritaire.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 10,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            1
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 4,
+        "text_standard": "<p>Par d&eacute;rogation aux principes &eacute;nonc&eacute;s ci-dessus, l&rsquo;&eacute;tudiant n&rsquo;ayant pas valid&eacute; son ann&eacute;e peut &ecirc;tre autoris&eacute; &agrave; suivre par anticipation des &eacute;l&eacute;ments p&eacute;dagogiques de l&rsquo;ann&eacute;e sup&eacute;rieure. Il reste exclusivement inscrit dans l&rsquo;ann&eacute;e non valid&eacute;e, et les &eacute;l&eacute;ments p&eacute;dagogiques suivis dans l&rsquo;ann&eacute;e sup&eacute;rieure font l&rsquo;objet d&rsquo;un contrat sign&eacute; par le responsable p&eacute;dagogique et par l&rsquo;&eacute;tudiant. Dans ce cas, la somme totale en ECTS des UE suivies ne pourra pas, par d&eacute;faut, exc&eacute;der 30 ECTS par semestre. Le responsable p&eacute;dagogique informe le service de scolarit&eacute; des contrats &eacute;tablis. Lors de son inscription p&eacute;dagogique, l&rsquo;&eacute;tudiant pr&eacute;sente obligatoirement le contrat p&eacute;dagogique sign&eacute;.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 11,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            1
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 5,
+        "text_standard": "<p>Un &eacute;tudiant ne peut en aucun cas &ecirc;tre inscrit en troisi&egrave;me ann&eacute;e de licence s&rsquo;il n&rsquo;a pas valid&eacute; la premi&egrave;re ann&eacute;e de licence.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 12,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            2
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Tout &eacute;tudiant peut acqu&eacute;rir les unit&eacute;s d&rsquo;enseignement constitutives de son cursus, de mani&egrave;re progressive, ann&eacute;e apr&egrave;s ann&eacute;e, quelle que soit ce nombre d&rsquo;ann&eacute;e.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 13,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            2
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>La progression de l&rsquo;&eacute;tudiant se fait conform&eacute;ment &agrave; la maquette de la formation suivie &agrave; concurrence de 30 cr&eacute;dits ECTS pour chaque semestre.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 14,
+    "fields": {
+        "is_interaction": true,
+        "impact": [],
+        "rule": [
+            2
+        ],
+        "text_motiv": "<p>Merci d&rsquo;indiquer, pour les conseils &eacute;lus, les motifs de votre demande.</p>\r\n",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "<p>Vous souhaitez demander une d&eacute;rogation pour cet alin&eacute;a.</p>\r\n\r\n<p>Merci de reprendre le passage pour le modifier ou y substituer le texte de l&rsquo;alin&eacute;a que vous souhaitez voir valider pour votre formation. <em>N&rsquo;oubliez pas de d&eacute;tailler, le cas &eacute;ch&eacute;ant, les enseignements auxquels s&rsquo;appliquent votre alin&eacute;a, et les conditions et les crit&egrave;res d&rsquo;application, ou tout autre &eacute;l&eacute;ment pertinent.</em></p>\r\n",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p><strong>L&rsquo;&eacute;tudiant n&rsquo;ayant pas valid&eacute; sa premi&egrave;re ann&eacute;e de master peut exceptionnellement &ecirc;tre autoris&eacute; &agrave; suivre des &eacute;l&eacute;ments p&eacute;dagogiques de la deuxi&egrave;me ann&eacute;e. Il reste exclusivement inscrit dans la premi&egrave;re ann&eacute;e non valid&eacute;e. Cette autorisation ne pr&eacute;juge pas de la d&eacute;cision d&rsquo;admission en deuxi&egrave;me ann&eacute;e de master. </strong></p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 15,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            2
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 4,
+        "text_standard": "<p><em>Deux inscriptions sont autoris&eacute;es en premi&egrave;re ann&eacute;e de Master.</em></p>\r\n\r\n<p><em>La limitation &agrave; deux inscriptions n&rsquo;est pas opposable aux &eacute;tudiants qui, ayant obtenu un Master, souhaitent acqu&eacute;rir des comp&eacute;tences compl&eacute;mentaires dans d&rsquo;autres Masters habilit&eacute;s.</em></p>\r\n\r\n<p><em>Lorsqu&rsquo;un &eacute;tudiant est d&eacute;clar&eacute; ajourn&eacute; au Master, le jury de Master peut l&rsquo;autoriser &agrave; se r&eacute;inscrire en deuxi&egrave;me ann&eacute;e de Master. </em></p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 16,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            34
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>L&rsquo;&eacute;tudiant peut acqu&eacute;rir les UE constitutives du DAEU dans un d&eacute;lai ne pouvant exc&eacute;der quatre ann&eacute;es entre la premi&egrave;re inscription au dipl&ocirc;me et l&rsquo;obtention de celui-ci. Pour le calcul de cette dur&eacute;e, les inscriptions prises aupr&egrave;s d&rsquo;universit&eacute;s diff&eacute;rentes se cumulent. Un candidat ne peut s&rsquo;inscrire &agrave; la formation que dans un seul &eacute;tablissement chaque ann&eacute;e.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 17,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            34
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p>Dans le cadre de l&rsquo;examen terminal, lors de sessions annuelles successives, les &eacute;preuves subis avec succ&egrave;s dans le premier &eacute;tablissement sont valid&eacute;es par d&eacute;cision du pr&eacute;sent de l&rsquo;universit&eacute;.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 18,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            34
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 4,
+        "text_standard": "<p>A titre exceptionnel, un d&eacute;lai suppl&eacute;mentaire d&rsquo;une ann&eacute;e peut &ecirc;tre accord&eacute; par le pr&eacute;sident de l&rsquo;universit&eacute;, en cas de demande d&rsquo;inscription &agrave; l&rsquo;Universit&eacute; de Strasbourg</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 19,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            35
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>La validation de chaque UE et de chaque semestre emporte l&rsquo;acquisition des cr&eacute;dits europ&eacute;ens correspondants.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 20,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            35
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>La poursuite d&rsquo;&eacute;tudes dans un nouveau semestre est de droit pour tout &eacute;tudiant &agrave; qui ne manque au maximum que la validation d&rsquo;un seul semestre de son cursus.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 21,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            35
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p style=\"margin-left:1.85pt\"><em>Le redoublement est de droit dans les cas o&ugrave;&nbsp;:</em></p>\r\n\r\n<ul>\r\n\t<li><em>L&rsquo;&eacute;tudiant a obtenu la moyenne g&eacute;n&eacute;rale mais pas une moyenne au moins &eacute;gale &agrave; 8/20 &agrave; chaque UE et/ou la validation des semestres pr&eacute;c&eacute;dents, lorsqu&rsquo;ils existent&nbsp;;</em></li>\r\n\t<li><em>L&rsquo;&eacute;tudiant a b&eacute;n&eacute;fici&eacute; d&rsquo;une compensation gr&acirc;ce &agrave; l&rsquo;un des deux semestres de l&rsquo;ann&eacute;e universitaire pour pouvoir la valider.</em></li>\r\n</ul>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 22,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            35
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 4,
+        "text_standard": "<p>En outre, l&rsquo;&eacute;tudiant peut &ecirc;tre autoris&eacute; &agrave; redoubler par d&eacute;cision du directeur de l&#39;IUT, sur proposition du jury d&rsquo;ann&eacute;e ou du jury de dipl&ocirc;me.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 23,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            35
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 5,
+        "text_standard": "<p style=\"margin-left:1.85pt\">Durant la totalit&eacute; du cursus conduisant &agrave; la d&eacute;livrance du DUT, l&rsquo;&eacute;tudiant ne peut &ecirc;tre autoris&eacute; &agrave; redoubler plus de deux semestres. En cas de force majeur d&ucirc;ment justifi&eacute;e et appr&eacute;ci&eacute;e par le directeur de l&rsquo;IUT, un redoublement suppl&eacute;mentaire peut &ecirc;tre autoris&eacute;.</p>\r\n\r\n<p>La d&eacute;cision d&eacute;finitive refusant l&rsquo;autorisation de redoubler est prise apr&egrave;s avoir entendu l&rsquo;&eacute;tudiant &agrave; sa demande. Elle doit &ecirc;tre motiv&eacute;e et assortie de conseils d&rsquo;orientation.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 24,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            36
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>L&rsquo;inscription en 1&egrave;re ann&eacute;e de DEUST est accord&eacute;e par la commission p&eacute;dagogique de la composante apr&egrave;s s&eacute;lection des candidats. Chaque ann&eacute;e universitaire, celle-ci &eacute;tablit la liste des admis &agrave; s&rsquo;inscrire dans cette formation dans la limite des places disponibles.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 25,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            36
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>Les &eacute;tudiants peuvent prendre au total trois inscriptions annuelles en vue de la validation du dipl&ocirc;me. Une ou, exceptionnellement, deux inscriptions suppl&eacute;mentaires peuvent &ecirc;tre accord&eacute;es par le pr&eacute;sident de l&rsquo;universit&eacute; sur proposition d&rsquo;une commission p&eacute;dagogique constitu&eacute;e &agrave; cet effet.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 26,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            36
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p style=\"margin-left:1.7pt\">La progression de l&rsquo;&eacute;tudiant se fait conform&eacute;ment &agrave; la maquette de la formation suivie &agrave; concurrence de 30 cr&eacute;dits ECTS pour chaque semestre.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 27,
+    "fields": {
+        "is_interaction": true,
+        "impact": [],
+        "rule": [
+            36
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "<p>Veuillez d&eacute;crire les r&egrave;gles de progression en ann&eacute;e sup&eacute;rieure ainsi que les r&egrave;gles pour le redoublement.</p>\r\n",
+        "is_cmp": true,
+        "display_order": 4,
+        "text_standard": "<p>Alin&eacute;a de composante &ndash; Progression en ann&eacute;e sup&eacute;rieure et redoublement</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 28,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            37
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p><span style=\"font-family:arial,helvetica,sans-serif\">Afin d&rsquo;assurer des conditions d&rsquo;&eacute;tudes optimales, la capacit&eacute; d&rsquo;accueil en premi&egrave;re ann&eacute;e commune d&rsquo;&eacute;tudes de sant&eacute; (PACES) est contingent&eacute;e &agrave; l&rsquo;Universit&eacute; de Strasbourg, conform&eacute;ment &agrave; l&rsquo;article L 612-3 du code l&rsquo;&eacute;ducation.</span></p>\r\n\r\n<p><span style=\"font-family:arial,helvetica,sans-serif\">Tous les candidats de l&rsquo;acad&eacute;mie de Strasbourg et ceux dont les parents r&eacute;sident dans les d&eacute;partements du Haut-Rhin et du Bas-Rhin, bacheliers n&rsquo;ayant jamais &eacute;t&eacute; inscrits dans l&rsquo;enseignement sup&eacute;rieur ou futurs bacheliers de l&rsquo;ann&eacute;e, seront admis de droit en premi&egrave;re ann&eacute;e commune des &eacute;tudes de sant&eacute; (PACES).</span></p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 29,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            37
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>Les candidats hors acad&eacute;mie de Strasbourg ou les &eacute;tudiants souhaitant une r&eacute;orientation devront faire une demande de d&eacute;rogation.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 30,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            38
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Hors dispositif pr&eacute;vu par arr&ecirc;t&eacute;, l&rsquo;acc&egrave;s est limit&eacute; par un <em>numerus clausus</em> propre &agrave; chaque fili&egrave;re (m&eacute;decine, pharmacie, odontologie et ma&iuml;eutique).</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 31,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            38
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>Hors dispositif pr&eacute;vu par arr&ecirc;t&eacute;, pour &ecirc;tre admis au dipl&ocirc;me de formation g&eacute;n&eacute;rale (DFG) en sciences pharmaceutiques, m&eacute;dicales, odontologiques ou ma&iuml;eutiques, les candidats doivent figurer en rang utile sur la liste des classements correspondant &agrave; la fili&egrave;re de sant&eacute; choisie.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 32,
+    "fields": {
+        "is_interaction": true,
+        "impact": [],
+        "rule": [
+            38
+        ],
+        "text_motiv": "<p>Merci d&rsquo;indiquer, pour les conseils &eacute;lus, les motifs de votre demande.</p>\r\n",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "<p>Vous souhaitez demander une d&eacute;rogation pour cet alin&eacute;a.</p>\r\n\r\n<p>Merci de reprendre le passage pour le modifier ou y substituer le texte de l&rsquo;alin&eacute;a que vous souhaitez voir valider pour votre formation. <em>N&rsquo;oubliez pas de d&eacute;tailler, le cas &eacute;ch&eacute;ant, les enseignements auxquels s&rsquo;appliquent votre alin&eacute;a, et les conditions et les crit&egrave;res d&rsquo;application, ou tout autre &eacute;l&eacute;ment pertinent. pertinent.</em></p>\r\n",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p>Pour acc&eacute;der &agrave; l&rsquo;ann&eacute;e sup&eacute;rieure, l&rsquo;&eacute;tudiant doit avoir valid&eacute; les deux semestres de l&rsquo;ann&eacute;e en cours et les stages aff&eacute;rents.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 33,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            38
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 4,
+        "text_standard": "<p>Par d&eacute;rogation aux principes &eacute;nonc&eacute;s ci-dessus, l&rsquo;&eacute;tudiant n&rsquo;ayant pas valid&eacute; son ann&eacute;e peut &ecirc;tre autoris&eacute; &agrave; suivre par anticipation des &eacute;l&eacute;ments p&eacute;dagogiques de l&rsquo;ann&eacute;e sup&eacute;rieure. Il reste exclusivement inscrit dans l&rsquo;ann&eacute;e non valid&eacute;e, et les &eacute;l&eacute;ments p&eacute;dagogiques suivis dans l&rsquo;ann&eacute;e sup&eacute;rieure font l&rsquo;objet d&rsquo;un contrat sign&eacute; par le responsable p&eacute;dagogique et par l&rsquo;&eacute;tudiant. Le responsable p&eacute;dagogique informe le service de scolarit&eacute; des contrats &eacute;tablis. Lors de son inscription p&eacute;dagogique, l&rsquo;&eacute;tudiant pr&eacute;sente obligatoirement le contrat p&eacute;dagogique sign&eacute;.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 34,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            39
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Peuvent s&rsquo;inscrire au dipl&ocirc;me de formation approfondie (DFA), les &eacute;tudiants titulaires du dipl&ocirc;me de formation g&eacute;n&eacute;rale (DFG)&nbsp; de la m&ecirc;me fili&egrave;re.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 35,
+    "fields": {
+        "is_interaction": true,
+        "impact": [],
+        "rule": [
+            39
+        ],
+        "text_motiv": "<p>Merci d&rsquo;indiquer, pour les conseils &eacute;lus, les motifs de votre demande.</p>\r\n",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "<p>Vous souhaitez demander une d&eacute;rogation pour cet alin&eacute;a.</p>\r\n\r\n<p>Merci de reprendre le passage pour le modifier ou y substituer le texte de l&rsquo;alin&eacute;a que vous souhaitez voir valider pour votre formation. <em>N&rsquo;oubliez pas de d&eacute;tailler, le cas &eacute;ch&eacute;ant, les enseignements auxquels s&rsquo;appliquent votre alin&eacute;a, et les conditions et les crit&egrave;res d&rsquo;application, ou tout autre &eacute;l&eacute;ment pertinent.</em></p>\r\n",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>Pour acc&eacute;der &agrave; l&rsquo;ann&eacute;e sup&eacute;rieure, l&rsquo;&eacute;tudiant doit avoir valid&eacute; les deux semestres de l&rsquo;ann&eacute;e en cours et les stages aff&eacute;rents.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 36,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            39
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 3,
+        "text_standard": "<p>Par d&eacute;rogation aux principes &eacute;nonc&eacute;s ci-dessus, l&rsquo;&eacute;tudiant n&rsquo;ayant pas valid&eacute; son ann&eacute;e peut &ecirc;tre autoris&eacute; &agrave; suivre par anticipation des &eacute;l&eacute;ments p&eacute;dagogiques de l&rsquo;ann&eacute;e sup&eacute;rieure. Il reste exclusivement inscrit dans l&rsquo;ann&eacute;e non valid&eacute;e, et les &eacute;l&eacute;ments p&eacute;dagogiques suivis dans l&rsquo;ann&eacute;e sup&eacute;rieure font l&rsquo;objet d&rsquo;un contrat sign&eacute; par le responsable p&eacute;dagogique et par l&rsquo;&eacute;tudiant. Le responsable p&eacute;dagogique informe le service de scolarit&eacute; des contrats &eacute;tablis. Lors de son inscription p&eacute;dagogique, l&rsquo;&eacute;tudiant pr&eacute;sente obligatoirement le contrat p&eacute;dagogique sign&eacute;.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 37,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            41
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Nul ne peut &ecirc;tre autoris&eacute; &agrave; prendre plus de deux inscriptions en premi&egrave;re ann&eacute;e commune des &eacute;tudes de sant&eacute; (PACES).</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 38,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            3
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p style=\"margin-left:8.8pt\">Elle consiste &agrave; inscrire un &eacute;tudiant dans l&rsquo;une des formations propos&eacute;es par l&rsquo;universit&eacute;. Ce processus annuel et obligatoire implique la collecte des donn&eacute;es administratives n&eacute;cessaires concernant l&rsquo;&eacute;tudiant, le paiement des droits, la d&eacute;termination du statut de l&rsquo;&eacute;tudiant et de sa situation par rapport &agrave; sa couverture sociale.</p>\r\n\r\n<p style=\"margin-left:8.8pt\">L&rsquo;inscription administrative s&rsquo;effectue conform&eacute;ment au calendrier adopt&eacute; annuellement par le CA apr&egrave;s avis de la CFVU.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 39,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            40
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 1,
+        "text_standard": "<p>Le troisi&egrave;me cycle est accessible aux &eacute;tudiants ayant obtenu le dipl&ocirc;me de formation approfondie de la m&ecirc;me fili&egrave;re.</p>\r\n"
+    }
+},
+{
+    "model": "rules.paragraph",
+    "pk": 40,
+    "fields": {
+        "is_interaction": false,
+        "impact": [],
+        "rule": [
+            41
+        ],
+        "text_motiv": "",
+        "is_in_use": true,
+        "code_year": 2015,
+        "text_derog": "",
+        "is_cmp": false,
+        "display_order": 2,
+        "text_standard": "<p>Une d&eacute;rogation peut &ecirc;tre accord&eacute;e par le pr&eacute;sident de l&rsquo;universit&eacute; sur proposition du directeur de composante.</p>\r\n\r\n<p>Ces d&eacute;rogations ne peuvent exc&eacute;der chaque ann&eacute;e 8 % du nombre de places attribu&eacute;es r&eacute;glementairement &agrave; l&rsquo;&eacute;tablissement, en vue de l&rsquo;admission au dipl&ocirc;me de formation g&eacute;n&eacute;rale en sciences m&eacute;dicales, pharmaceutiques, odontologiques et ma&iuml;eutiques.</p>\r\n"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+        "name": "Can add permission",
+        "codename": "add_permission",
+        "content_type": 1
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+        "name": "Can change permission",
+        "codename": "change_permission",
+        "content_type": 1
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+        "name": "Can delete permission",
+        "codename": "delete_permission",
+        "content_type": 1
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+        "name": "Can add group",
+        "codename": "add_group",
+        "content_type": 2
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+        "name": "Can change group",
+        "codename": "change_group",
+        "content_type": 2
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+        "name": "Can delete group",
+        "codename": "delete_group",
+        "content_type": 2
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+        "name": "Can add user",
+        "codename": "add_user",
+        "content_type": 3
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+        "name": "Can change user",
+        "codename": "change_user",
+        "content_type": 3
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+        "name": "Can delete user",
+        "codename": "delete_user",
+        "content_type": 3
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+        "name": "Can add content type",
+        "codename": "add_contenttype",
+        "content_type": 4
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+        "name": "Can change content type",
+        "codename": "change_contenttype",
+        "content_type": 4
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+        "name": "Can delete content type",
+        "codename": "delete_contenttype",
+        "content_type": 4
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+        "name": "Can add session",
+        "codename": "add_session",
+        "content_type": 5
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+        "name": "Can change session",
+        "codename": "change_session",
+        "content_type": 5
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+        "name": "Can delete session",
+        "codename": "delete_session",
+        "content_type": 5
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+        "name": "Can add site",
+        "codename": "add_site",
+        "content_type": 6
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+        "name": "Can change site",
+        "codename": "change_site",
+        "content_type": 6
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+        "name": "Can delete site",
+        "codename": "delete_site",
+        "content_type": 6
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+        "name": "Can add log entry",
+        "codename": "add_logentry",
+        "content_type": 7
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+        "name": "Can change log entry",
+        "codename": "change_logentry",
+        "content_type": 7
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+        "name": "Can delete log entry",
+        "codename": "delete_logentry",
+        "content_type": 7
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+        "name": "Can add tgt",
+        "codename": "add_tgt",
+        "content_type": 8
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+        "name": "Can change tgt",
+        "codename": "change_tgt",
+        "content_type": 8
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+        "name": "Can delete tgt",
+        "codename": "delete_tgt",
+        "content_type": 8
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+        "name": "Can add pgt iou",
+        "codename": "add_pgtiou",
+        "content_type": 9
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+        "name": "Can change pgt iou",
+        "codename": "change_pgtiou",
+        "content_type": 9
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+        "name": "Can delete pgt iou",
+        "codename": "delete_pgtiou",
+        "content_type": 9
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+        "name": "Can add session service ticket",
+        "codename": "add_sessionserviceticket",
+        "content_type": 10
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+        "name": "Can change session service ticket",
+        "codename": "change_sessionserviceticket",
+        "content_type": 10
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+        "name": "Can delete session service ticket",
+        "codename": "delete_sessionserviceticket",
+        "content_type": 10
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+        "name": "Can add eci commission member",
+        "codename": "add_ecicommissionmember",
+        "content_type": 11
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+        "name": "Can change eci commission member",
+        "codename": "change_ecicommissionmember",
+        "content_type": 11
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+        "name": "Can delete eci commission member",
+        "codename": "delete_ecicommissionmember",
+        "content_type": 11
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+        "name": "Peut voir les membres de la commission ECI",
+        "codename": "can_view_eci_commission_member",
+        "content_type": 11
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+        "name": "Can add degree type",
+        "codename": "add_degreetype",
+        "content_type": 12
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+        "name": "Can change degree type",
+        "codename": "change_degreetype",
+        "content_type": 12
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+        "name": "Can delete degree type",
+        "codename": "delete_degreetype",
+        "content_type": 12
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+        "name": "Peut voir les types de dip\u00f4me",
+        "codename": "can_view_degree_type",
+        "content_type": 12
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+        "name": "Can add degree",
+        "codename": "add_degree",
+        "content_type": 13
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+        "name": "Can change degree",
+        "codename": "change_degree",
+        "content_type": 13
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+        "name": "Can delete degree",
+        "codename": "delete_degree",
+        "content_type": 13
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+        "name": "Can add academic field",
+        "codename": "add_academicfield",
+        "content_type": 14
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+        "name": "Can change academic field",
+        "codename": "change_academicfield",
+        "content_type": 14
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+        "name": "Can delete academic field",
+        "codename": "delete_academicfield",
+        "content_type": 14
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+        "name": "Can add institute",
+        "codename": "add_institute",
+        "content_type": 15
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+        "name": "Can change institute",
+        "codename": "change_institute",
+        "content_type": 15
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+        "name": "Can delete institute",
+        "codename": "delete_institute",
+        "content_type": 15
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+        "name": "Can add scol manager",
+        "codename": "add_scolmanager",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 49,
+    "fields": {
+        "name": "Can change scol manager",
+        "codename": "change_scolmanager",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 50,
+    "fields": {
+        "name": "Can delete scol manager",
+        "codename": "delete_scolmanager",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 51,
+    "fields": {
+        "name": "Can add institute",
+        "codename": "add_institute",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 52,
+    "fields": {
+        "name": "Can change institute",
+        "codename": "change_institute",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 53,
+    "fields": {
+        "name": "Can delete institute",
+        "codename": "delete_institute",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 54,
+    "fields": {
+        "name": "Peut voir les composantes",
+        "codename": "can_view_institute",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 55,
+    "fields": {
+        "name": "Can add institute year",
+        "codename": "add_instituteyear",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 56,
+    "fields": {
+        "name": "Can change institute year",
+        "codename": "change_instituteyear",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 57,
+    "fields": {
+        "name": "Can delete institute year",
+        "codename": "delete_instituteyear",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 58,
+    "fields": {
+        "name": "Can add university year",
+        "codename": "add_universityyear",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 59,
+    "fields": {
+        "name": "Can change university year",
+        "codename": "change_universityyear",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 60,
+    "fields": {
+        "name": "Can delete university year",
+        "codename": "delete_universityyear",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 61,
+    "fields": {
+        "name": "Can add institute year2",
+        "codename": "add_instituteyear2",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 62,
+    "fields": {
+        "name": "Can change institute year2",
+        "codename": "change_instituteyear2",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 63,
+    "fields": {
+        "name": "Can delete institute year2",
+        "codename": "delete_instituteyear2",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 64,
+    "fields": {
+        "name": "Can add profile",
+        "codename": "add_profile",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 65,
+    "fields": {
+        "name": "Can change profile",
+        "codename": "change_profile",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 66,
+    "fields": {
+        "name": "Can delete profile",
+        "codename": "delete_profile",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 67,
+    "fields": {
+        "name": "Donne acc\u00e8s \u00e0 un large pannel de fonctionnalit\u00e9",
+        "codename": "DES1",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 68,
+    "fields": {
+        "name": "Donne acc\u00e8s \u00e0 un pannel restreint",
+        "codename": "DES2",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 69,
+    "fields": {
+        "name": "Peut usurper l'identit\u00e9 des utilisateurs",
+        "codename": "DES3",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 70,
+    "fields": {
+        "name": "Appratient au groupe VP",
+        "codename": "VP",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 71,
+    "fields": {
+        "name": "Can change paragraph",
+        "codename": "change_paragraph",
+        "content_type": 22
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 72,
+    "fields": {
+        "name": "Can delete paragraph",
+        "codename": "delete_paragraph",
+        "content_type": 22
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 73,
+    "fields": {
+        "name": "Peut voir les composantes",
+        "codename": "can_view_institute",
+        "content_type": 15
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 74,
+    "fields": {
+        "name": "Can add institute year",
+        "codename": "add_instituteyear",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 75,
+    "fields": {
+        "name": "Can change institute year",
+        "codename": "change_instituteyear",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 76,
+    "fields": {
+        "name": "Can delete institute year",
+        "codename": "delete_instituteyear",
+        "content_type": 16
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 77,
+    "fields": {
+        "name": "Can add university year",
+        "codename": "add_universityyear",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 78,
+    "fields": {
+        "name": "Can change university year",
+        "codename": "change_universityyear",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 79,
+    "fields": {
+        "name": "Can delete university year",
+        "codename": "delete_universityyear",
+        "content_type": 17
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 80,
+    "fields": {
+        "name": "Can add profile",
+        "codename": "add_profile",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 81,
+    "fields": {
+        "name": "Can change profile",
+        "codename": "change_profile",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 82,
+    "fields": {
+        "name": "Can delete profile",
+        "codename": "delete_profile",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 83,
+    "fields": {
+        "name": "Donne acc\u00e8s \u00e0 un large pannel de fonctionnalit\u00e9",
+        "codename": "DES1",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 84,
+    "fields": {
+        "name": "Donne acc\u00e8s \u00e0 un pannel restreint",
+        "codename": "DES2",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 85,
+    "fields": {
+        "name": "Peut usurper l'identit\u00e9 des utilisateurs",
+        "codename": "DES3",
+        "content_type": 18
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 86,
+    "fields": {
+        "name": "Can add mecc user",
+        "codename": "add_meccuser",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 87,
+    "fields": {
+        "name": "Can change mecc user",
+        "codename": "change_meccuser",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 88,
+    "fields": {
+        "name": "Can delete mecc user",
+        "codename": "delete_meccuser",
+        "content_type": 19
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 89,
+    "fields": {
+        "name": "Can add impact",
+        "codename": "add_impact",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 90,
+    "fields": {
+        "name": "Can change impact",
+        "codename": "change_impact",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 91,
+    "fields": {
+        "name": "Can delete impact",
+        "codename": "delete_impact",
+        "content_type": 20
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 92,
+    "fields": {
+        "name": "Can add rule",
+        "codename": "add_rule",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 93,
+    "fields": {
+        "name": "Can change rule",
+        "codename": "change_rule",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 94,
+    "fields": {
+        "name": "Can delete rule",
+        "codename": "delete_rule",
+        "content_type": 21
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 95,
+    "fields": {
+        "name": "Can add paragraph",
+        "codename": "add_paragraph",
+        "content_type": 22
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "DES1",
+        "permissions": [
+            67
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "DES2",
+        "permissions": [
+            68
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "DES3",
+        "permissions": [
+            69
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+        "name": "VP",
+        "permissions": [
+            70
+        ]
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "email": "",
+        "last_login": "2016-04-21T14:18:44.839Z",
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-03-01T11:52:40.697Z",
+        "is_staff": true,
+        "is_superuser": true,
+        "username": "ibis.ismail",
+        "is_active": true,
+        "first_name": "",
+        "groups": [],
+        "password": "pbkdf2_sha256$20000$WVqQ9yArATgx$q6e7jV/8E0cXXbuNFzHggSeGm09lEA/d6ctGZ2yHPaA="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-03-01T11:56:15.208Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "DES3",
+        "is_active": true,
+        "first_name": "",
+        "groups": [
+            3
+        ],
+        "password": "pbkdf2_sha256$20000$At8sgieDnzxX$ZeWi7+ni0/T+1tyjP/FumqL4ZDAu8Exmj2Mg6H/90Ms="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-03-01T11:56:37.409Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "test",
+        "is_active": true,
+        "first_name": "",
+        "groups": [],
+        "password": "pbkdf2_sha256$20000$EtOrrKWyekFd$nH0gotvMNYrkaoG2USKBdVkKgH+VPxDixS/YY0XnHNc="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "email": "",
+        "last_login": "2016-04-22T07:09:05.384Z",
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-03-01T12:00:08.149Z",
+        "is_staff": true,
+        "is_superuser": true,
+        "username": "weible",
+        "is_active": true,
+        "first_name": "",
+        "groups": [],
+        "password": "pbkdf2_sha256$20000$TgNUKBElggwO$XQsDFLudGvq9qQvGDzA/U9sJB/UJHEb8nFXkZa/tDCQ="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 5,
+    "fields": {
+        "email": "grout@unistra.fr",
+        "last_login": "2016-03-22T08:22:47.066Z",
+        "last_name": "GROUT",
+        "user_permissions": [],
+        "date_joined": "2016-03-21T13:17:42.098Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "grout",
+        "is_active": true,
+        "first_name": "Nathalie",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 7,
+    "fields": {
+        "email": "brigitte.got@unistra.fr",
+        "last_login": "2016-03-23T07:56:20.570Z",
+        "last_name": "GOT",
+        "user_permissions": [],
+        "date_joined": "2016-03-21T13:18:18.186Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "brigitte.got",
+        "is_active": true,
+        "first_name": "Brigitte",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 8,
+    "fields": {
+        "email": "planeix@unistra.fr",
+        "last_login": "2016-03-31T07:44:07.123Z",
+        "last_name": "PLANEIX",
+        "user_permissions": [],
+        "date_joined": "2016-03-21T13:18:18.666Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "planeix",
+        "is_active": true,
+        "first_name": "Jean-Marc",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 18,
+    "fields": {
+        "email": "plitzler@unistra.fr",
+        "last_login": "2016-03-21T15:56:14.642Z",
+        "last_name": "LITZLER",
+        "user_permissions": [],
+        "date_joined": "2016-03-21T15:51:21.975Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "plitzler",
+        "is_active": true,
+        "first_name": "Pierre",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 22,
+    "fields": {
+        "email": "",
+        "last_login": "2016-03-22T09:07:39.363Z",
+        "last_name": "BIRKEL",
+        "user_permissions": [],
+        "date_joined": "2016-03-22T08:26:03.226Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "jeanine.birkel",
+        "is_active": true,
+        "first_name": "Jeanine",
+        "groups": [],
+        "password": "!VIEnrhYqirZjMVL2LNKbnplHkJ26nDOzoM6j3y2q"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 23,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "RUEFF",
+        "user_permissions": [],
+        "date_joined": "2016-03-22T08:26:14.944Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "nathalie.rueff",
+        "is_active": true,
+        "first_name": "Nathalie",
+        "groups": [],
+        "password": "!jNwF6SMpSuJHviWk1gIku2HbbXfUTeW6fKDqp3p9"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 24,
+    "fields": {
+        "email": "",
+        "last_login": "2016-03-23T07:58:37.682Z",
+        "last_name": "LE NY",
+        "user_permissions": [],
+        "date_joined": "2016-03-22T08:30:55.011Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "leny",
+        "is_active": true,
+        "first_name": "Jean-Pierre",
+        "groups": [],
+        "password": "!Bzjvtn27hpWNKTpKnsQCSeBHxWTW1uU26WGI3l7N"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 25,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "VOGT",
+        "user_permissions": [],
+        "date_joined": "2016-03-22T08:31:38.729Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "agnes.vogt",
+        "is_active": true,
+        "first_name": "Agnes",
+        "groups": [],
+        "password": "!OveOOtEPrV8TflMYkNLVbOYYRukt7r4F9jt3eZZB"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 29,
+    "fields": {
+        "email": "",
+        "last_login": "2016-03-23T07:57:46.567Z",
+        "last_name": "PINARD",
+        "user_permissions": [],
+        "date_joined": "2016-03-22T14:49:47.821Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "b.pinard",
+        "is_active": true,
+        "first_name": "Bertrand",
+        "groups": [],
+        "password": "!fpTXgQBmqNTxvc6kuM4aoaFfchVUc7dXIfGDGii6"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 31,
+    "fields": {
+        "email": "v.fritsch@unistra.fr",
+        "last_login": "2016-03-23T12:23:49.186Z",
+        "last_name": "Fritsch-Noirard",
+        "user_permissions": [],
+        "date_joined": "2016-03-23T12:21:08.604Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "v.fritsch",
+        "is_active": true,
+        "first_name": "Valerie",
+        "groups": [],
+        "password": "!71TpCBKkB7Z4KfmRUdIOIO2QIx5SDouJoyUhGZl0"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 32,
+    "fields": {
+        "email": "lauriane.kuhn@etu.unistra.fr",
+        "last_login": null,
+        "last_name": "Kuhn",
+        "user_permissions": [],
+        "date_joined": "2016-03-23T12:23:06.649Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "laurianekuhn",
+        "is_active": true,
+        "first_name": "Lauriane",
+        "groups": [],
+        "password": "!q17KrSdmoEsQ7FTMR6C6SN8zNyYhD7IApn7El66q"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 33,
+    "fields": {
+        "email": "chinetti@unistra.fr",
+        "last_login": "2016-04-05T11:49:44.062Z",
+        "last_name": "Chinetti",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T06:51:56.176Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "chinetti",
+        "is_active": true,
+        "first_name": "Marie-Alexandra",
+        "groups": [
+            1
+        ],
+        "password": "pbkdf2_sha256$20000$yyTTESwb0gJt$fCguwU9IKeKjZvw3oeZqvHqq7H2V4wepaEWcvLJpZ7U="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 34,
+    "fields": {
+        "email": "gerb@unistra.fr",
+        "last_login": "2016-03-30T12:00:08.734Z",
+        "last_name": "Erb",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T08:58:40.190Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "gerb",
+        "is_active": true,
+        "first_name": "Gilles",
+        "groups": [],
+        "password": "!fpSlLh5NQPNYtTcgWGeJr59oe6V80tpPggnXADUt"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 35,
+    "fields": {
+        "email": "abellahcene@unistra.fr",
+        "last_login": null,
+        "last_name": "BELLAHCENE",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T09:04:09.581Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "abellahcene",
+        "is_active": true,
+        "first_name": "Abderrahman",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 36,
+    "fields": {
+        "email": "thierry.rosique@unistra.fr",
+        "last_login": "2016-03-30T09:06:30.345Z",
+        "last_name": "ROSIQUE",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T09:04:10.203Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "thierry.rosique",
+        "is_active": true,
+        "first_name": "Thierry",
+        "groups": [],
+        "password": ""
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 37,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "PIOMBINI",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T09:08:27.956Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "piombini",
+        "is_active": true,
+        "first_name": "Arnaud",
+        "groups": [],
+        "password": "!84VdKaE0utFWpcyiY4ahaB6aVcC7S5IvPjdTZANi"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 38,
+    "fields": {
+        "email": "",
+        "last_login": null,
+        "last_name": "AMETTALSI",
+        "user_permissions": [],
+        "date_joined": "2016-03-30T09:09:11.510Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "azizaamettalsi",
+        "is_active": true,
+        "first_name": "Aziza",
+        "groups": [],
+        "password": "!RJxS7yZw7sd1jJGs14qIzIn466PI7CxOImO6FgfR"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 41,
+    "fields": {
+        "email": "gauer@inci-cnrs.unistra.fr",
+        "last_login": null,
+        "last_name": "Gauer",
+        "user_permissions": [],
+        "date_joined": "2016-04-06T09:34:43.191Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "gauer",
+        "is_active": true,
+        "first_name": "Fran\u00e7ois",
+        "groups": [
+            4
+        ],
+        "password": "pbkdf2_sha256$20000$fXRYjQ13bKFe$FZmfb+o/6urgfjK4ThL1MPtFi0CC5Ot7dxOXFp8ERDA="
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 42,
+    "fields": {
+        "email": "",
+        "last_login": "2016-04-13T11:06:09.415Z",
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-04-13T11:06:09.354Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "WEIBLE",
+        "is_active": true,
+        "first_name": "",
+        "groups": [],
+        "password": "!s2pkTPru4JNXfQVlcwDiRJxt5xwEZFd81PfzbliI"
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 43,
+    "fields": {
+        "email": "",
+        "last_login": "2016-04-18T12:13:25.248Z",
+        "last_name": "",
+        "user_permissions": [],
+        "date_joined": "2016-04-18T12:13:25.171Z",
+        "is_staff": false,
+        "is_superuser": false,
+        "username": "bidon",
+        "is_active": true,
+        "first_name": "",
+        "groups": [],
+        "password": "!UMoSlT45NhS2lZwEd5ySteQAKlG6lzAe2j2ZyoJe"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+        "object_id": "6",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:50:19.015Z",
+        "user": 1,
+        "object_repr": "plitzler",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+        "object_id": "6",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:50:19.204Z",
+        "user": 1,
+        "object_repr": "plitzler",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+        "object_id": "14",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:51:59.732Z",
+        "user": 1,
+        "object_repr": "arnaud.vincent",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+        "object_id": "10",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:00.034Z",
+        "user": 1,
+        "object_repr": "douce",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+        "object_id": "9",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:01.236Z",
+        "user": 1,
+        "object_repr": "ewolf",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+        "object_id": "15",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:01.702Z",
+        "user": 1,
+        "object_repr": "grabocz",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+        "object_id": "11",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:01.946Z",
+        "user": 1,
+        "object_repr": "aghisolfi",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+        "object_id": "13",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:02.162Z",
+        "user": 1,
+        "object_repr": "amiot",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+        "object_id": "16",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:02.341Z",
+        "user": 1,
+        "object_repr": "c.imbert",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+        "object_id": "12",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:02.506Z",
+        "user": 1,
+        "object_repr": "cdaveiga",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+        "object_id": "17",
+        "action_flag": 3,
+        "action_time": "2016-03-21T15:52:02.665Z",
+        "user": 1,
+        "object_repr": "chscherrer",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+        "object_id": "26",
+        "action_flag": 3,
+        "action_time": "2016-03-22T14:46:39.530Z",
+        "user": 1,
+        "object_repr": "b.pinard",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+        "object_id": "28",
+        "action_flag": 3,
+        "action_time": "2016-03-22T14:49:29.068Z",
+        "user": 1,
+        "object_repr": "b.pinard",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+        "object_id": "33",
+        "action_flag": 1,
+        "action_time": "2016-03-30T06:51:56.224Z",
+        "user": 4,
+        "object_repr": "chinetti",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "object_id": "33",
+        "action_flag": 2,
+        "action_time": "2016-03-30T06:52:14.947Z",
+        "user": 4,
+        "object_repr": "chinetti",
+        "change_message": "Modifi\u00e9 last_name, first_name, email et groups.",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+        "object_id": "39",
+        "action_flag": 1,
+        "action_time": "2016-04-05T09:58:02.127Z",
+        "user": 4,
+        "object_repr": "gauer",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+        "object_id": "39",
+        "action_flag": 3,
+        "action_time": "2016-04-05T09:58:21.921Z",
+        "user": 4,
+        "object_repr": "gauer",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+        "object_id": "40",
+        "action_flag": 1,
+        "action_time": "2016-04-06T09:20:42.748Z",
+        "user": 1,
+        "object_repr": "aze",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+        "object_id": "40",
+        "action_flag": 3,
+        "action_time": "2016-04-06T09:20:46.353Z",
+        "user": 1,
+        "object_repr": "aze",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+        "object_id": "41",
+        "action_flag": 1,
+        "action_time": "2016-04-06T09:34:43.242Z",
+        "user": 4,
+        "object_repr": "gauer",
+        "change_message": "",
+        "content_type": 3
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+        "object_id": "41",
+        "action_flag": 2,
+        "action_time": "2016-04-06T09:36:00.821Z",
+        "user": 4,
+        "object_repr": "gauer",
+        "change_message": "Modifi\u00e9 last_name, first_name, email et groups.",
+        "content_type": 3
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 1,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            5
+        ],
+        "cmp": "ART",
+        "user": 5,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 3,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            5
+        ],
+        "cmp": "CHM",
+        "user": 7,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 4,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            6
+        ],
+        "cmp": "CHM",
+        "user": 8,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 14,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            6
+        ],
+        "cmp": "ART",
+        "user": 18,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 18,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            3
+        ],
+        "cmp": "CHM",
+        "user": 22,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 19,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            3
+        ],
+        "cmp": "CHM",
+        "user": 23,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 20,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            2
+        ],
+        "cmp": "CHM",
+        "user": 24,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 21,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            3
+        ],
+        "cmp": "CHM",
+        "user": 25,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 25,
+    "fields": {
+        "is_ref_app": true,
+        "profile": [
+            8
+        ],
+        "cmp": "CHM",
+        "user": 29,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 27,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            7
+        ],
+        "cmp": "",
+        "user": 31,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 28,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            7
+        ],
+        "cmp": "",
+        "user": 32,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 29,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            7
+        ],
+        "cmp": "",
+        "user": 34,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 30,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            5
+        ],
+        "cmp": "GEO",
+        "user": 35,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 31,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            6
+        ],
+        "cmp": "GEO",
+        "user": 36,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 32,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            2
+        ],
+        "cmp": "GEO",
+        "user": 37,
+        "status": ""
+    }
+},
+{
+    "model": "adm.meccuser",
+    "pk": 33,
+    "fields": {
+        "is_ref_app": false,
+        "profile": [
+            3
+        ],
+        "cmp": "GEO",
+        "user": 38,
+        "status": ""
+    }
+}
+]

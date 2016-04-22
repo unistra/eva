@@ -43,7 +43,8 @@ class Degree(models.Model):
 
     label =models.TextField(_("Libellé réglementaire"))
     degree_type = models.ForeignKey(DegreeType)
-    is_in_use = models.BooleanField(_('En service'), default=False)
+    degree_type_label = models.CharField(_('Libellé du type de diplôme'), max_length=120)
+    is_used = models.BooleanField(_('En service'), default=False)
     start_year = models.IntegerField(_('Code année de début de validité'))
     end_year = models.IntegerField(_('Code année de fin de validité'))
     ROF_code = models.CharField(_("Référence Programme ROF"), max_length=20)
