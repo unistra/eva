@@ -15,7 +15,15 @@ class DegreeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DegreeForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Div(
+                'degree_type',
+                'degree_type_label',
+                'label',
+                css_class="has-bottom-border"
+            ),
+        )
 
 
 
@@ -30,7 +38,6 @@ class DegreeForm(forms.ModelForm):
             'end_year',
             'ROF_code',
             'APOGEE_code',
-            'institutes',
         ]
 
 class DegreeTypeForm(forms.ModelForm):

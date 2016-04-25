@@ -42,8 +42,9 @@ class Degree(models.Model):
     import datetime
 
     label =models.TextField(_("Libellé réglementaire"))
-    degree_type = models.ForeignKey(DegreeType)
-    degree_type_label = models.CharField(_('Libellé du type de diplôme'), max_length=120)
+    degree_type = models.ForeignKey(DegreeType, verbose_name=_("Type de diplôme"))
+    degree_type_label = models.CharField(_('Libellé du type de diplôme'),
+        max_length=120)
     is_used = models.BooleanField(_('En service'), default=False)
     start_year = models.IntegerField(_('Code année de début de validité'))
     end_year = models.IntegerField(_('Code année de fin de validité'))

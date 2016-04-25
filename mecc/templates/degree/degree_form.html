@@ -2,17 +2,26 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans 'Fiche Diplôme de réference' %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/rules.css' %}" />
+{% endblock %}
+
+
 {% block app_content %}
   <div class="row">
-     <div class="col-md-10 col-md-offset-1">
         <form action="" method="post">
            {% crispy form %}
         </form>
-     </div>
   </div>
   </div>
-  <script>
-     id_degree_type = document.getElementById("id_degree_type");
-     id_degree_type.value = {% if object%}"{{object.id}}"{%else%}"{{latest_id}}" {%endif%}
-  </script>
+
 {% endblock %}
+<style media="screen">
+  #div_id_label, #div_id_degree_type_label{
+    display: flex;
+  }
+</style>
