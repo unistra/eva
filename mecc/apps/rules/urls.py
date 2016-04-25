@@ -7,7 +7,7 @@ from django_cas.decorators import login_required
 urlpatterns = [
     url(r'^list/$', login_required(RulesListView.as_view()),
         name='list'),
-    url(r'^new/$', RuleCreate.as_view(),
+    url(r'^new/$', login_required(RuleCreate.as_view()),
         name='new'),
     url(r'^delete/(?P<id>\d+)', login_required(RuleDelete.as_view()),
         name='rule_delete'),

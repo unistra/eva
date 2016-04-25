@@ -11,7 +11,7 @@ from mecc.apps.degree.models import DegreeType
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from mecc.apps.years.models import UniversityYear
-
+from django_cas.decorators import login_required
 
 class RulesListView(ListView):
     """
@@ -53,7 +53,7 @@ class RuleCreate(CreateView):
             context['latest_id'] = 1
         return context
 
-
+@login_required
 def manage_paragraph(request, rule_id,
                      template='rules/manage_paragraph.html', exist=None):
     """
@@ -99,7 +99,7 @@ def manage_paragraph(request, rule_id,
 
     return render(request, template, data)
 
-
+@login_required
 def edit_paragraph(request, id=None, template='rules/manage_paragraph.html'):
     """
     Edit paragraph view, redirect to paragraph manager
@@ -109,7 +109,7 @@ def edit_paragraph(request, id=None, template='rules/manage_paragraph.html'):
     _id = paragraph.rule.all()[0].id
     return manage_paragraph(request, rule_id=_id, exist=id)
 
-
+@login_required
 def manage_degreetype(request):
     # TODO: IS NOT A VIEW
     data = {}
@@ -127,7 +127,7 @@ def manage_degreetype(request):
             rule.degree_type.remove(degree_type)
             return JsonResponse(data)
 
-
+@login_required
 def update_display_order(request):
     """
     Edit display with ajax
@@ -149,7 +149,7 @@ def update_display_order(request):
         message = _("L'objet %s n'a pas été mis à jour" % request.POT.get('_id'))
         return JsonResponse({'status': 'false', 'message': message}, status=500)
 
-
+@login_required
 def edit_rule(request, id=None, template='rules/create/base.html'):
     """
     Edit rule view
