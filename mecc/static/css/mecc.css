@@ -37,7 +37,22 @@ right: 0;
 td.id_member{
   display: none;
 }
-
+.centerd{
+  max-width: 50%;
+}
+.parent-centered{
+  height: 100%;
+  width: 100%;
+ padding: 0;
+ margin: 0;
+ display: -webkit-box;
+ display: -moz-box;
+ display: -ms-flexbox;
+ display: -webkit-flex;
+ display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .td-centered {
    text-align: center;
    align-self: center;

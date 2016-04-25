@@ -112,6 +112,12 @@ label{
 .item-30{
   width:30%;
 }
+.item-25{
+  width:25%;
+}
+.item-75{
+  width: 75%;
+}
 .item-40{
   width:40%;
 }
@@ -119,9 +125,17 @@ label{
   width:35%;
 }
 .item-70{
-  width:70%
+  width:70%;
 }
-
+.item-80{
+  width: 80%;
+}
+.width-10em{
+  width: 10em;
+}
+.bottom-2em{
+  margin-bottom: 2em;
+}
 .upper-part {
   display: flex;
   border-bottom-style: solid;
@@ -153,6 +167,12 @@ align-self: flex-end;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.dir-col{
+  flex-direction: column!important;
+}
+.width-50{
+  width:50%;
 }
 .form-submit-paraph-item{
   width: 90%;

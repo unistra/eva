@@ -20,7 +20,7 @@
                 <div class="flex-container-preview" style="margin-top:1em;" >
                 <div class="flex-container-preview" style="width:50%;">
                   <span>
-                    {%if form.is_eci.value %} &#9745; {%else%} &#9744;{%endif%} ECI
+                    {%if form.is_eci.value %} &#9745; {%else%} &#9744;{%endif%} ECI &nbsp;&nbsp;&nbsp;
 
                     {%if form.is_ccct.value %} &#9745; {%else%} &#9744;{%endif%} CC/CT
                   </span>
@@ -48,25 +48,22 @@
               </ul>
             </div>
             <hr>
-            <h2 style="font-size:1.1em;margin-left:2em;margin-bottom:0.1em ">{% trans "ALINÉAS :" %}</h2>
-            <div style="margin-left:1em;margin-right:3em">
+            <h2 style="font-size:1.1em;margin-left:2em;margin-bottom:1em ">{% trans "ALINÉAS :" %}</h2>
+            <div style="margin-left:1em;margin-right:1em">
 
 
 
             {% for e in paragraphs %}
-            <div class="flex-right-container">
 
-            <span style="margin-bottom:0.5em;"class="{% if e.is_in_use %}">{% trans "En service" %}{%else%}red">{% trans "Hors service" %}{% endif %}</span>
-            </div>
               <div class ="paragraphs flex-container">
-                    <span class="blue" style="align-self:flex-start;margin-right:1.5em;" >{{e.id |stringformat:"02d"}}|</span>
-                <div style="margin-bottom:1em;">
+                    <span class="blue" style="align-self:flex-start;width:5%;" >{{e.id |stringformat:"02d"}}|</span>
+                <div style="margin-bottom:1em;width:82%;">
 
-                  <span style="align-self:flex-start">
+                  <span style="align-self:flex-start;">
                 {{ e.text_standard | safe }}
                   </span>
 
-                <div class ="blue" style="margin-top:0.5em;">
+                <div class ="blue" style="margin-top:0.5em;padding-left:2em;">
                 {% if e.is_interaction %}
                 {% if e.is_cmp %}
                   {% trans "Interaction type alinéa de composante" %}
@@ -80,15 +77,17 @@
                   </div>
                 <ul>
                 {%if e.text_derog %}
-                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
+                <li><h3 style="font-size:1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
                 {{ e.text_derog | safe }}</li>
                 {%endif%}
                 {%if e.text_motiv%}
-                <li><h3 style="font-size:1.1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne motivations" %}</h3>
+                <li><h3 style="font-size:1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne motivations" %}</h3>
                 {{ e.text_motiv | safe }}</li>
                 {%endif%}
               </ul>
               </div>
+              <span style="text-align:right;width:13%;" class="{% if e.is_in_use %}blue">{% trans "En service" %}{%else%}red">{% trans "Hors service" %}{% endif %}</span>
+
             </div>
             {% endfor %}
               <!-- END MODAL BODY -->

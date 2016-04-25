@@ -18,10 +18,21 @@ class DegreeForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Div(
-                'degree_type',
-                'degree_type_label',
-                'label',
-                css_class="has-bottom-border"
+                Div(
+                    'degree_type',
+                    'degree_type_label',
+                    'label',
+                    css_class="item-75"
+                ),
+                Div(
+                    FormActions(
+                        Submit('add', _('Créer un dipôme'), css_class="width-10em"),
+                        css_class="item bottom-2em"
+                    ),
+                    Button('rof', _('[Référentiel OF]'), css_class="width-10em"),
+                    css_class='item-25 flex-center dir-col',
+                ),
+                css_class="has-bottom-border parent-centered"
             ),
         )
 

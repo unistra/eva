@@ -67,9 +67,6 @@ class Rule(models.Model):
                 _('L\'ordre d\'affichage doit être positif.'),
             ]})
 
-        if self.has_parag_with_derog:
-            self.is_in_use = True
-
     class Meta:
         ordering = ['display_order']
 
