@@ -9,6 +9,37 @@
 
 {% block app_content %}
 {% if object_list %}
+<table class="table">
+   <tr class='table-head'>
+      <th>{% trans 'Libelé du Type Diplôme' %}</th>
+      <th>{% trans "Intitulé réglementaire" %} <i>{% trans "(Équivalent programme ROF)" %}</i></th>
+      <th>{% trans 'En service' %}</th>
+      <th>{% trans 'Début' %}</th>
+      <th>{% trans 'Fin' %}</th>
+      <th></th>
+      <th></th>
+   </tr>
+   {% for e in object_list %}
+   <tr class="hover-row">
+      <td>{{e.degree_type_label}}</td>
+      <td>{{e.label}}</td>
+      <td>
+      {% if e.is_used == True %}
+      <strong>{% trans "OUI" %}</strong>
+      {% else %}
+      {% trans "non" %}
+      {% endif %}</td>
+      <td>{{e.start_year}}</td>
+      <td>{{e.end_year}}</td>
+      <td>
+         <a href="{% url 'degree:degree_edit' id=e.id %}" class=" glyphicon glyphicon-pencil"></a>
+      </td>
+      <td>
+         <a href="{% url 'degree:degree_delete' id=e.id %}" class="glyphicon glyphicon-trash"></a>
+      </td>
+   </tr>
+   {% endfor %}
+</table>
 {% else %}
 {% trans "Aucun diplômes" %}
 {%endif%}

@@ -48,7 +48,7 @@ label{
   margin-left: auto;
 
 }
-.item-100, .div_is_concerned, .parent{
+.item-100, .div_is_concerned{
   width:100%;
 }
  #div_id_display_order, #div_id_is_edited, #div_id_impact {
@@ -102,40 +102,10 @@ label{
 .up-right-part{
   width: 30%;
 }
-.item{
-  display: inline-block;
-  flex-grow: 1;
-}
-.item-20{
-  width:20%;
-}
-.item-30{
-  width:30%;
-}
-.item-25{
-  width:25%;
-}
-.item-75{
-  width: 75%;
-}
-.item-40{
-  width:40%;
-}
-.item-35{
-  width:35%;
-}
-.item-70{
-  width:70%;
-}
-.item-80{
-  width: 80%;
-}
 .width-10em{
   width: 10em;
 }
-.bottom-2em{
-  margin-bottom: 2em;
-}
+
 .upper-part {
   display: flex;
   border-bottom-style: solid;
@@ -163,14 +133,7 @@ align-self: flex-start;
   -webkit-align-self: flex-end;
 align-self: flex-end;
 }
-.flex-center{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.dir-col{
-  flex-direction: column!important;
-}
+
 .width-50{
   width:50%;
 }

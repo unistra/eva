@@ -112,7 +112,7 @@
                  class="item-selected"
               {% endif %}>{% trans 'Types de diplômes' %}</a></li>
               <li><a href="{% url 'degree:list' %}"
-                {% if 'degree/list' in request.path %}
+                {% if 'degree/list' in request.path or 'degree/create' in request.path %}
                  class="item-selected"
               {% endif %}>{% trans 'Liste des diplômes' %}</a></li>
 

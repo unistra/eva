@@ -20,6 +20,11 @@
 .all-in-red *{
   color: red;
 }
+.border-right{
+  border-right-style: solid;
+  border-right-color: #358CD3;
+  border-right-width: 0.15em;
+}
 /***************************************************
 ****************************
 /* Spoof pannel*/
@@ -33,12 +38,84 @@ right: 0;
 
 /*******************************************************************************
 /* Forms*/
-
+.degree-form-left >div{
+  padding: 0 1em 0 1em;
+}
+.buttons_list{
+  text-align: center;
+  width: 100%;
+}
 td.id_member{
   display: none;
 }
 .centerd{
   max-width: 50%;
+}
+.parent{
+  width:100%;
+}
+
+.item{
+  display: inline-block;
+  flex-grow: 1;
+}
+.item-20{
+  width:20%;
+}
+.item-30{
+  width:30%;
+}
+.item-25{
+  width:25%;
+}
+.item-75{
+  width: 75%;
+}
+.item-40{
+  width:40%;
+}
+.item-35{
+  width:35%;
+}
+.item-70{
+  width:70%;
+}
+.item-65{
+  width: 65%;
+
+
+}
+.item-80{
+  width: 80%;
+}
+.bottom-2em{
+  margin-bottom: 2em;
+}
+.flex-center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dir-col{
+  flex-direction: column!important;
+}
+.disp-flex{
+  display: flex;
+}
+.div-child-disp-flex > div{
+  display: flex;
+}
+.label-child-w2 > div > label{
+  width: 30%;
+}
+.label-child-w2 > div > div{
+  width: 70%;
+}
+.label-child-w1 > div > label{
+  width: 50%;
+}
+.label-child-w1 > div > div{
+  width: 50%;
 }
 .parent-centered{
   height: 100%;
