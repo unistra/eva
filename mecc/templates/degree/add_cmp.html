@@ -3,3 +3,80 @@
 
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
+<!---
+<table style="width:75%">
+  <caption>{% trans "Composantes associées" %}</caption>
+  <tbody>
+    <tr>
+      <td>swdqs
+      </td>
+      <td>sdqd
+      </td>
+      <td>sdqd
+      </td>
+    </tr>
+    {% for e in objects.institute.all %}
+    <tr>
+      <td class="code_cmp">{{e.code}}</td>
+      <td class="label_cmp">{{e.label}}</td>
+      <td class="button_cmp">
+        <button type="button" class="btn btn-default table-remove btn-xs"  style="width:100%;height:100%">
+          <strong>{% trans "Supprimer" %}</strong>
+        </button>
+      </span>
+      </td>
+    </tr>
+    {% endfor %}
+    <tr class="clone">
+      <td class="code_cmp"></td>
+      <td class="label_cmp">
+        <input class="name input-naked" style="width:100%" name="cmp" placeholder={% trans "Rechercher" %} />
+      </td>
+      <td class="button_cmp">
+        <button type="button" class="btn btn-link   btn-xs"  style="width:100%;height:100%">
+          <strong>{% trans "Valider" %}</strong>
+        </button>
+        <button type="button" class="btn btn-link table-remove hidden  btn-xs"  style="width:100%;height:100%">
+          <strong>Supprimer</strong>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+-->
+<script type="text/javascript">
+  var instiutes = $('#id_institutes');
+  console.log(instiutes.val());
+  instiutes.val(['1', '5', '9']);
+  console.log(instiutes.val());
+
+  if ($('#id_degree_type').val() != '8'){
+    document.getElementById('id_degree_type_label').readOnly = true;
+  }
+
+  $('#id_degree_type').on('change', function() {
+    var label = document.getElementById('id_degree_type_label')
+    if (this.value!='8'){
+      label.readOnly = true;
+      $('#id_degree_type_label').val(this.options[this.value].innerHTML);
+    } else{
+      label.readOnly = false;
+      $('#id_degree_type_label').val("");
+
+    }
+  });
+  console.log(document.getElementById('id_institutes'));
+  console.log();
+  var options = {
+    data: ["1"]
+  }
+
+</script>
+
+<style media="screen">
+  .code_cmp, .label_cmp, .button_cmp{
+    border-width: 0.5em;
+    border-style: solid;
+    border-color: #EEEEEE;
+  }
+</style>

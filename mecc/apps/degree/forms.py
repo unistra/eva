@@ -7,6 +7,8 @@ from crispy_forms.bootstrap import InlineField, FormActions
 
 from django.utils.translation import ugettext as _
 
+from mecc.apps.institute.models import Institute
+
 class DegreeForm(forms.ModelForm):
     """
     Degree form
@@ -82,6 +84,7 @@ class DegreeForm(forms.ModelForm):
                         ),
                         css_class="item-35 border-right degree-form-left"
                     ),
+                    Div('institutes', style="display:block"), #  TODO:Mettre le display en none
                     HTML(
                         """<div class='item-65' style="padding:1em;">
                                  {% include "degree/add_cmp.html" %}
@@ -116,6 +119,7 @@ class DegreeForm(forms.ModelForm):
             'end_year',
             'ROF_code',
             'APOGEE_code',
+            'institutes'
         ]
 
 
