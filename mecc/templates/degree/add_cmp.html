@@ -3,80 +3,194 @@
 
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<!---
-<table style="width:75%">
-  <caption>{% trans "Composantes associées" %}</caption>
-  <tbody>
+
+<div id="table-diretu" class="table-editable">
+  <div id='message'></div>
+
+  <table class="table">
     <tr>
-      <td>swdqs
-      </td>
-      <td>sdqd
-      </td>
-      <td>sdqd
-      </td>
+      <th colspan="3">{% trans "Composantes associées" %}</th>
+      <th>
+        <button type="button" class=" table-add btn btn-default pull-right btn-md" id="add_cmp">
+          <span class=" glyphicon glyphicon-plus" ></span>
+        </button>
+      </th>
     </tr>
-    {% for e in objects.institute.all %}
+    {% for e in object.institutes.all %}
     <tr>
-      <td class="code_cmp">{{e.code}}</td>
-      <td class="label_cmp">{{e.label}}</td>
-      <td class="button_cmp">
-        <button type="button" class="btn btn-default table-remove btn-xs"  style="width:100%;height:100%">
+      <td >{{e.id}}</td>
+      <td >{{e.code}}</td>
+      <td >{{e.label}}</td>
+      <td  width="20%">
+        <button type="button" class="btn btn-default table-remove  btn-xs">
           <strong>{% trans "Supprimer" %}</strong>
+        </button>
+      </span>
+      </td>    </tr>
+    {% endfor %}
+    <br>
+    <!-- This is the clonable table line -->
+    <tr class="hide clone">
+      <td></td>
+      <td></td>
+      <td width="40%">
+        <input class="name input-naked"  name="diretu" placeholder='Rechercher'  />
+      </td>
+      <td>
+        <button type="button" class="btn btn-default new_cmp  btn-xs">
+          <strong>{% trans "Valider" %}</strong>
+        </button>
+        <button type="button" class="btn btn-default table-remove hidden  btn-xs">
+          <strong>Supprimer</strong>
         </button>
       </span>
       </td>
     </tr>
-    {% endfor %}
-    <tr class="clone">
-      <td class="code_cmp"></td>
-      <td class="label_cmp">
-        <input class="name input-naked" style="width:100%" name="cmp" placeholder={% trans "Rechercher" %} />
-      </td>
-      <td class="button_cmp">
-        <button type="button" class="btn btn-link   btn-xs"  style="width:100%;height:100%">
-          <strong>{% trans "Valider" %}</strong>
-        </button>
-        <button type="button" class="btn btn-link table-remove hidden  btn-xs"  style="width:100%;height:100%">
-          <strong>Supprimer</strong>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
--->
-<script type="text/javascript">
-  var instiutes = $('#id_institutes');
-  console.log(instiutes.val());
-  instiutes.val(['1', '5', '9']);
-  console.log(instiutes.val());
+  </table>
+</div>
+
+<script>
+
+$('.table-remove').click(function () {
+  var username = $('td:first',$(this).parents('tr')).next().next();
+  var type = username.next();
+  $(this).parents('tr').detach();
+});
+
+      var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
+      // transform select option to array or dict
+
+      var x = document.getElementById('id_institutes');
+      var dict = []
+      for (i=0; i < x.length; i++){
+        var txt =  x.options[i].text.split(' - ',2);
+        dict.push({"val": x.options[i].value, "label": txt[1], "code": txt[0]})
+      };
+
+
+function do_stuff (add_first, add_new, type) {
+
+  document.getElementById(add_first).style.display = "block";
+
+    $("#" + add_first + ", "+ add_new).click(function () {
+      var clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
+      var g_table =   $(this).parents('div').find(  $(this).parents('table'));
+      var a = clone.find('.name');
+      g_table.append(clone);
+      $(this).next().removeClass('hidden ');
+      $(this).addClass(' hidden');
+
+      var auto_comp = g_table.find(a);
+      var options = {
+        data: dict,
+        getValue: "label",
+        list: {
+            match:{
+              enabled:true
+            },
+            onSelectItemEvent: function() {
+                var _code = auto_comp.getSelectedItemData().code;
+                var _val = auto_comp.getSelectedItemData().val;
+                auto_comp.parents('td').prev()[0].innerHTML = _code;
+                auto_comp.parents('td').prev().prev()[0].innerHTML = _val;
+        }
+      }
+      };
+      auto_comp.easyAutocomplete(options);
+      $(add_new).one('click', function(e){
+          var tr = $(this).parents('tr');
+          var first_cell = $('td:first', tr);
+          var input = first_cell.find('input')
+          var last_name = input.val();
+          var first_name = first_cell.next().text();
+          var username = first_cell.next().next().text();
+          var refapp = first_cell.next().next().next().next().find('input');
+          input.addClass('hidden');
+          if (last_name != null) {
+            first_cell[0].innerHTML = last_name;
+            if (refapp[0] != null){
+               refapp[0].disabled = true
+            }
+          }
+
+
+      });
+
+   });
+}
+
+
+do_stuff("add_cmp", " .new_cmp", "diretu")
+
+
+
+
+
+
+
+  console.log(institute_val);
+  $('#id_institutes').val(institute_val);
+
+
 
   if ($('#id_degree_type').val() != '8'){
     document.getElementById('id_degree_type_label').readOnly = true;
   }
+  $('.name').on('change', function(){
+    // TODO : faire la meme chose mais pour la suppression
+    if (institute_val.indexOf($(this).closest('tr').find('td:first').text()) == -1) {
+        institute_val.push($(this).closest('tr').find('td:first').text());
+    };
+    console.log(institute_val);
+    $('#id_institutes').val(institute_val)
+  })
+
 
   $('#id_degree_type').on('change', function() {
     var label = document.getElementById('id_degree_type_label')
+    $('#id_degree_type_label').val(this.options[this.value].innerHTML);
     if (this.value!='8'){
       label.readOnly = true;
-      $('#id_degree_type_label').val(this.options[this.value].innerHTML);
     } else{
       label.readOnly = false;
-      $('#id_degree_type_label').val("");
-
     }
   });
-  console.log(document.getElementById('id_institutes'));
-  console.log();
-  var options = {
-    data: ["1"]
-  }
+
+
+
 
 </script>
 
-<style media="screen">
-  .code_cmp, .label_cmp, .button_cmp{
-    border-width: 0.5em;
-    border-style: solid;
-    border-color: #EEEEEE;
+
+
+
+
+<style>
+.table-editable {
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.table-remove {
+  color: red;
+  cursor: pointer;
+
+  &:hover {
+    color: #f00;
   }
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
+.table-add, .new_gescol, .new_cmp {
+  color: #070;
+  cursor: pointer;
+}
+.table-add, .type{
+  display: none;
+}
 </style>

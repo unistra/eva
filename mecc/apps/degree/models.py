@@ -39,8 +39,6 @@ class Degree(models.Model):
     """
     Degree model
     """
-    import datetime
-
     label =models.TextField(_("Libellé réglementaire"))
     degree_type = models.ForeignKey(DegreeType, verbose_name=_("Type de diplôme"))
     degree_type_label = models.CharField(_('Libellé du type de diplôme'),
@@ -49,7 +47,7 @@ class Degree(models.Model):
     start_year = models.IntegerField(_('Code année de début de validité'))
     end_year = models.IntegerField(_('Code année de fin de validité'))
     ROF_code = models.CharField(_("Référence Programme ROF"), max_length=20)
-    APOGEE_code = models.CharField(_("Référence dans le SI Scolarité (APOGEE)"), max_length=20)
+    APOGEE_code = models.CharField(_("Référence dans le SI Scolarité (APOGEE)"), max_length=40)
     institutes = models.ManyToManyField(Institute)
 
     @property
@@ -59,3 +57,6 @@ class Degree(models.Model):
     @property
     def get_short_label_type(self):
         return self.degree_type.short_label
+
+    class Meta:
+        ordering = ['degree_type_label', 'label']

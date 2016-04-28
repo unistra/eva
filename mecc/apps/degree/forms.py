@@ -7,7 +7,6 @@ from crispy_forms.bootstrap import InlineField, FormActions
 
 from django.utils.translation import ugettext as _
 
-from mecc.apps.institute.models import Institute
 
 class DegreeForm(forms.ModelForm):
     """
@@ -47,21 +46,19 @@ class DegreeForm(forms.ModelForm):
                             'label',
                             css_class='parent div-child-disp-flex label-child-w2'
                         ),
-                        css_class="item-75"
+                        css_class="item-65"
                     ),
                     Div(
+                        Div(
+
                         HTML("""
-                           <a href="{% url 'degree:degree_create'  %}" class="btn btn-primary bottom-2em item" style="width:10em;">Créer un diplôme</a>
+                           <a href="{% url 'degree:degree_create'  %}" class="btn btn-primary bottom-2em item" style="width:10em;margin-bottom:0.5em;">Créer un diplôme</a>
                         """),
 
                         Button('rof', _('[Référentiel OF]'), style="width:10em"),
-                        css_class='item-25 flex-center dir-col',
-                    ),
-
-                    css_class="has-bottom-border parent-centered degree-form-top"
-                ),
-                Div(
-                    Div(
+                        css_class="flex-center dir-col",
+                        style="self-align:flex-start"
+                        ),
                         Div(
                             'is_used',
                             Div(
@@ -76,8 +73,16 @@ class DegreeForm(forms.ModelForm):
                                 ),
                                 css_class="div-child-disp-flex disp-flex",
                             ),
-                            css_class="has-bottom-border"
+                            style="margin-left:15%;margin-right:15%"
                         ),
+                        css_class='item-35 ',
+                    ),
+
+                    css_class="has-bottom-border parent-centered degree-form-top"
+                ),
+                Div(
+                    Div(
+
                         Div(
                             'ROF_code',
                             'APOGEE_code',
@@ -91,14 +96,15 @@ class DegreeForm(forms.ModelForm):
                         </div>
                         """
                     ),
-                    css_class="parent disp-flex"
+                    css_class="parent disp-flex",
+                    style="height:35vh"
 
                 ),
             css_class="has-bottom-border degree-form-bottom"
             ),
         Div(
             FormActions(
-                Submit('add', _('Valider et fermer la fiche'), css_class=" btn btn-sm", style="width:30%"),
+                Submit('add', _('Valider et fermer la fiche'), css_class=" btn btn-sm", style="width:30%", onclick="_isEdited=false"),
                 HTML("""
                     <a style="width:30%" class="btn-primary btn btn-sm" href="{% url 'degree:list'%}">Annuler et fermer la fiche</a>
                 """),

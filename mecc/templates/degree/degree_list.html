@@ -4,14 +4,14 @@
 {% load field_name %}
 
 {% block page-header %}
-{% trans 'Liste des diplômes' %}
+{% trans 'Liste des diplômes de référence' %}
 {% endblock %}
 
 {% block app_content %}
 {% if object_list %}
 <table class="table">
    <tr class='table-head'>
-      <th>{% trans 'Libelé du Type Diplôme' %}</th>
+      <th>{% trans 'Libellé du Type Diplôme' %}</th>
       <th>{% trans "Intitulé réglementaire" %} <i>{% trans "(Équivalent programme ROF)" %}</i></th>
       <th>{% trans 'En service' %}</th>
       <th>{% trans 'Début' %}</th>
@@ -41,7 +41,7 @@
    {% endfor %}
 </table>
 {% else %}
-{% trans "Aucun diplômes" %}
+{% trans "Aucun diplôme" %}
 {%endif%}
 
 <div class='pull-right'>
