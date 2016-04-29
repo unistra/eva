@@ -6,34 +6,35 @@
 
 <div id="table-diretu" class="table-editable">
   <div id='message'></div>
-
-  <table class="table">
-    <tr>
-      <th colspan="3">{% trans "Composantes associées" %}</th>
-      <th>
-        <button type="button" class=" table-add btn btn-default pull-right btn-md" id="add_cmp">
+  <div class="f-1">
+    <label style="display: inline-block;"> {% trans "Composantes associées" %}
+    </label>
+        <button type="button" class=" table-add btn btn-default btn-xs" id="add_cmp" style="margin-left:1em;">
           <span class=" glyphicon glyphicon-plus" ></span>
         </button>
-      </th>
-    </tr>
+  </div>
+  <table class="table" id="degreeTable">
+
+
+    <tbody class="overflow" id='tbodyDegree'>
+
     {% for e in object.institutes.all %}
     <tr>
-      <td >{{e.id}}</td>
+      <td class="hide">{{e.id}}</td>
       <td >{{e.code}}</td>
-      <td >{{e.label}}</td>
+      <td width="70%">{{e.label}}</td>
       <td  width="20%">
         <button type="button" class="btn btn-default table-remove  btn-xs">
           <strong>{% trans "Supprimer" %}</strong>
         </button>
-      </span>
       </td>    </tr>
     {% endfor %}
     <br>
     <!-- This is the clonable table line -->
     <tr class="hide clone">
+      <td class="hide"></td>
       <td></td>
-      <td></td>
-      <td width="40%">
+      <td width="70%">
         <input class="name input-naked"  name="diretu" placeholder='Rechercher'  />
       </td>
       <td>
@@ -46,40 +47,50 @@
       </span>
       </td>
     </tr>
+  </tbody>
   </table>
 </div>
 
 <script>
 
+
+var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
+// transform select option to array or dict
+var x = document.getElementById('id_institutes');
+var dict = []
+for (i=0; i < x.length; i++){
+  var txt =  x.options[i].text.split(' - ',2);
+  dict.push({"val": x.options[i].value, "label": txt[1], "code": txt[0]})
+};
+
 $('.table-remove').click(function () {
-  var username = $('td:first',$(this).parents('tr')).next().next();
-  var type = username.next();
+  console.log(institute_val);
+  var _val = $('td:first',$(this).parents('tr')).text();
+
+  var i = institute_val.indexOf(_val);
+  if(i != -1) {
+    institute_val.splice(i, 1);
+  }
+  $('#id_institutes').val(institute_val);
   $(this).parents('tr').detach();
 });
-
-      var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
-      // transform select option to array or dict
-
-      var x = document.getElementById('id_institutes');
-      var dict = []
-      for (i=0; i < x.length; i++){
-        var txt =  x.options[i].text.split(' - ',2);
-        dict.push({"val": x.options[i].value, "label": txt[1], "code": txt[0]})
-      };
-
 
 function do_stuff (add_first, add_new, type) {
 
   document.getElementById(add_first).style.display = "block";
 
     $("#" + add_first + ", "+ add_new).click(function () {
-      var clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
-      var g_table =   $(this).parents('div').find(  $(this).parents('table'));
+      var tr = $(this).parents('tr');
+      var first_cell = tr.find('td:first')
+      if (institute_val.indexOf(first_cell.text()) == -1) {
+
+      var _val = $('td:first',$(this).parents('tr')).text();
+      var clone = $(this).parents('div').find('.clone').clone(true).removeClass('hide table-line clone');
+      var g_table =   $(this).parents('div').find('tbody');
       var a = clone.find('.name');
       g_table.append(clone);
       $(this).next().removeClass('hidden ');
       $(this).addClass(' hidden');
-
       var auto_comp = g_table.find(a);
       var options = {
         data: dict,
@@ -97,54 +108,33 @@ function do_stuff (add_first, add_new, type) {
       }
       };
       auto_comp.easyAutocomplete(options);
+}
       $(add_new).one('click', function(e){
           var tr = $(this).parents('tr');
-          var first_cell = $('td:first', tr);
-          var input = first_cell.find('input')
-          var last_name = input.val();
-          var first_name = first_cell.next().text();
-          var username = first_cell.next().next().text();
-          var refapp = first_cell.next().next().next().next().find('input');
-          input.addClass('hidden');
-          if (last_name != null) {
-            first_cell[0].innerHTML = last_name;
-            if (refapp[0] != null){
-               refapp[0].disabled = true
-            }
-          }
+          var first_cell = tr.find('td:first')
+          if (institute_val.indexOf(first_cell.text()) == -1) {
+          var third_cell = first_cell.next().next();
+          var txt = third_cell.find('input').val();
+          third_cell.find(".input").remove();
+          third_cell.text(txt);
 
-
+              institute_val.push(first_cell.text());
+          $('#id_institutes').val(institute_val)
+          };
       });
-
    });
 }
 
 
 do_stuff("add_cmp", " .new_cmp", "diretu")
 
-
-
-
-
-
-
-  console.log(institute_val);
-  $('#id_institutes').val(institute_val);
+$('#id_institutes').val(institute_val);
 
 
 
   if ($('#id_degree_type').val() != '8'){
     document.getElementById('id_degree_type_label').readOnly = true;
   }
-  $('.name').on('change', function(){
-    // TODO : faire la meme chose mais pour la suppression
-    if (institute_val.indexOf($(this).closest('tr').find('td:first').text()) == -1) {
-        institute_val.push($(this).closest('tr').find('td:first').text());
-    };
-    console.log(institute_val);
-    $('#id_institutes').val(institute_val)
-  })
-
 
   $('#id_degree_type').on('change', function() {
     var label = document.getElementById('id_degree_type_label')
@@ -180,17 +170,42 @@ do_stuff("add_cmp", " .new_cmp", "diretu")
     color: #f00;
   }
 }
-
+.input-naked{
+  width:100%;
+}
 [contenteditable=true]:empty:before {
   content: attr(placeholder);
   display: block; /* For Firefox */
 }
 
-.table-add, .new_gescol, .new_cmp {
+.table-add, .new_cmp {
   color: #070;
   cursor: pointer;
 }
 .table-add, .type{
   display: none;
 }
+
+.f-1{
+    display: -ms-inline-flexbox;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-align-content: flex-start;
+    -ms-flex-line-pack: start;
+    align-items: center;
+    }
+
+.table>tbody>tr>td , th{
+  padding: 0.2em;
+}
+
 </style>

@@ -12,7 +12,6 @@ class DegreeForm(forms.ModelForm):
     """
     Degree form
     """
-
     label = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}), label=_("Intitulé réglementaire :"), help_text=_("(équivalent programme ROF)"))
     start_year = forms.CharField(label=_('Début'))
     end_year = forms.CharField(label=_('Fin'))
@@ -89,16 +88,14 @@ class DegreeForm(forms.ModelForm):
                         ),
                         css_class="item-35 border-right degree-form-left"
                     ),
-                    Div('institutes', style="display:block"), #  TODO:Mettre le display en none
+                    Div('institutes', style="display:none"), #  TODO:Mettre le display en none
                     HTML(
-                        """<div class='item-65' style="padding:1em;">
+                        """<div class='item-65' style="padding:0 1em 1em 1em;">
                                  {% include "degree/add_cmp.html" %}
                         </div>
                         """
                     ),
                     css_class="parent disp-flex",
-                    style="height:35vh"
-
                 ),
             css_class="has-bottom-border degree-form-bottom"
             ),
