@@ -3,13 +3,24 @@ from django.views.generic.list import ListView
 from .models import Degree, DegreeType
 from .forms import DegreeTypeForm, DegreeForm
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.db.models import Q
+from mecc.apps.years.models import UniversityYear
 
 class DegreeListView(ListView):
     """
     Degree listview
     """
     model = Degree
+    template_name = 'degree/degree_list.html'
+    def get_queryset(self):
+        current_year = list(UniversityYear.objects.filter(
+            Q(is_target_year=True))).pop(0).code_year
+        print('----------')
+        print(current_year)
+
+        print(self.args)
+
+        return Degree.objects.all()
 
 
 class DegreeCreateView(CreateView):

@@ -6,6 +6,8 @@ from django_cas.decorators import login_required
 urlpatterns = [
     url(r'^list/$', login_required(DegreeListView.as_view()),
         name='list'),
+            # url(r'^list/(?P<filter>|all|current)/$', login_required(DegreeListView.as_view()),
+            #     name='list'),
     url(r'^create$', login_required(DegreeCreateView.as_view()),
         name='degree_create'),
     url(r'^(?P<id>\d+)', login_required(DegreeUpdateView.as_view()),

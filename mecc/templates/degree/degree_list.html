@@ -2,12 +2,15 @@
 
 {% load i18n %}
 {% load field_name %}
+{% load staticfiles %}
+
 
 {% block page-header %}
 {% trans 'Liste des diplômes de référence' %}
 {% endblock %}
 
 {% block app_content %}
+<script src="{% static 'js/tablefilter/tablefilter.js' %}"></script>
 {% if object_list %}
 <table class="table">
    <tr class='table-head'>
@@ -47,4 +50,41 @@
 <div class='pull-right'>
    <a href="{% url 'degree:degree_create'  %}" class="btn btn-primary"> {% trans 'Créer un diplôme' %}</a>
 </div>
+<script type="text/javascript">
+function filter(evt){
+    var frm = document.forms[0];
+    var slc = frm.slcColumns;
+    var inp = frm.inpSearch;
+
+    // Set the column's filter value
+    tf.setFilterValue(slc.value, inp.value);
+
+    // Filter the table
+    tf.filter();
+
+    // Prevent form submission
+    evt.preventDefault();
+}
+
+  var filtersConfig = {
+    base_path:"{% static 'js/tablefilter/' %}",
+    col_0 :'select',
+    col_1 :'none',
+    col_2 :'select',
+    col_3 :'select',
+    col_4 :'select',
+    col_5 :'none',
+    col_6 :'none',
+    paging: true,
+    popup_filters: true,
+    results_per_page: ['Entrées: ', [10, 25, 50, 100]],
+
+  };
+  var tf = new TableFilter(document.querySelector('.table'), filtersConfig);
+
+
+
+  tf.init();
+</script>
+
 {%endblock%}
