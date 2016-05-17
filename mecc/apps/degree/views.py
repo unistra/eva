@@ -5,22 +5,33 @@ from .forms import DegreeTypeForm, DegreeForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
-
+from mecc.apps.institute.models import Institute
 class DegreeListView(ListView):
     """
     Degree listview
     """
     model = Degree
     template_name = 'degree/degree_list.html'
+
     def get_queryset(self):
-        current_year = list(UniversityYear.objects.filter(
-            Q(is_target_year=True))).pop(0).code_year
-        print('----------')
-        print(current_year)
+        if self.kwargs['filter'] == 'all':
+            degrees = Degree.objects.all()
+        elif self.kwargs['filter'] == 'current':
+            current_year = list(UniversityYear.objects.filter(
+                Q(is_target_year=True))).pop(0).code_year
+            degrees = Degree.objects.filter(
+                Q(end_year__gte=current_year,start_year__lte=current_year)) # gte >=, lte <= Q compare querries
 
-        print(self.args)
+        if self.kwargs['cmp'] == 'none':
+            return degrees
 
-        return Degree.objects.all()
+        return degrees.filter(institutes__code='DRT')
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['institutes'] = Institute.objects.all()
+        return context
 
 
 class DegreeCreateView(CreateView):
@@ -29,7 +40,7 @@ class DegreeCreateView(CreateView):
     """
     model = Degree
     form_class = DegreeForm
-    success_url = '/degree/list'
+    success_url = '/degree/list/all/none'
 
 
 class DegreeUpdateView(UpdateView):
@@ -39,7 +50,7 @@ class DegreeUpdateView(UpdateView):
     model = Degree
     form_class = DegreeForm
     pk_url_kwarg = 'id'
-    success_url = '/degree/list'
+    success_url = '/degree/list/all/none'
 
 
 class DegreeDeleteView(DeleteView):
@@ -48,7 +59,7 @@ class DegreeDeleteView(DeleteView):
     """
     model = Degree
     pk_url_kwarg = 'id'
-    success_url = '/degree/list'
+    success_url = '/degree/list/all/none'
 
 class DegreeTypeListView(ListView):
     """

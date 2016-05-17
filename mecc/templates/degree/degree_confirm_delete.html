@@ -12,6 +12,6 @@
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression du type de diplôme " %} : </p><p> {{object.degree_type_label}} </p><p> {{ object.label}}</p>
     <input type="submit" value="{% trans 'Oui'%}" class="btn btn-primary"/>
-    <a href="{% url 'degree:list' %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
+    <a href="{% url 'degree:list' filter='current'%}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
 </form>
 {% endblock %}

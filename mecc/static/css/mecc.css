@@ -127,7 +127,6 @@ td.id_member{
  display: -ms-flexbox;
  display: -webkit-flex;
  display: flex;
-  align-items: center;
   justify-content: center;
 }
 .td-centered {
@@ -394,6 +393,9 @@ align-self: center;
     transition: all 0.5s ease;
 }
 
+.collapse  li  a {
+  padding-left: 2.4em!important;
+}
 #page-content-wrapper {width: 100%;padding: 0 1.5em 0 5em;}
 
 #wrapper.toggled #page-content-wrapper {position: relative;}

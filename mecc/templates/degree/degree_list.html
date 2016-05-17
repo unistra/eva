@@ -11,6 +11,20 @@
 
 {% block app_content %}
 <script src="{% static 'js/tablefilter/tablefilter.js' %}"></script>
+<select class="instiutes" name="">
+  {% for e in institutes%}
+  <option val="{{e.code}}">{{e.label}}</option>
+  {%endfor%}
+</select>
+<ul class="nav nav-tabs">
+  <li role="presentation" {% if 'current' in request.path %} class="active" {%endif%}>
+    <a href="{% url 'degree:list' filter='current' cmp='none'%}">{% trans "Diplômes en vigueur" %}</a>
+  </li>
+  <li role="presentation" {% if 'all' in request.path %} class="active" {%endif%}>
+      <a href="{% url 'degree:list' filter='all' cmp='none'%}">{% trans "Tous les diplômes" %}</a>
+  </li>
+
+</ul>
 {% if object_list %}
 <table class="table">
    <tr class='table-head'>
@@ -86,5 +100,17 @@ function filter(evt){
 
   tf.init();
 </script>
-
+<style media="screen">
+  .table{
+    display: flex;
+    flex-direction: column;
+  }
+  caption{
+    order:2;
+  }
+  tbody{
+    order:1;
+    width:100%;
+  }
+</style>
 {%endblock%}
