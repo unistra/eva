@@ -31,6 +31,8 @@ class InstituteForm(forms.ModelForm):
         label=_('Responsable administratif'),
         required=False)
 
+
+
     helper = FormHelper()
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
@@ -42,6 +44,7 @@ class InstituteForm(forms.ModelForm):
             Field('label'),
             Field('field'),
             Field('ROF_code'),
+            Field('ROF_support'),
             HTML('<hr/>'),
             Field('id_dircomp'),
             Field('id_rac'),
@@ -59,7 +62,8 @@ class InstituteForm(forms.ModelForm):
             'field',
             'id_dircomp',
             'id_rac',
-            'ROF_code'
+            'ROF_code',
+            'ROF_support'
         ]
 
 
@@ -114,3 +118,4 @@ class DircompInstituteForm(InstituteForm):
             self.fields['id_dircomp'].widget.attrs['readonly'] = True
             self.fields['id_rac'].widget.attrs['readonly'] = True
             self.fields['ROF_code'].widget.attrs['readonly'] = True
+            self.fields['ROF_support'].widget.attrs['readonly'] = True

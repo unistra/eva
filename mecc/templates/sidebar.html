@@ -79,7 +79,7 @@
         </li>
         {% endif %}
 
-        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+        {% if request.user|has_group:'DES1' or request.user|has_group:'DES2' or request.user.is_superuser%}
 
 
         <li>

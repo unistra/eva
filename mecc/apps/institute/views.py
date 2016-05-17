@@ -291,6 +291,7 @@ class InstituteListView(ListView):
                         'date_expected_MECC': iy.date_expected_MECC,
                         'date_last_notif': iy.date_last_notif,
                         'is_late': iy.is_expected_date_late,
+                        'ROF_support':institute.ROF_support,
                     }
                     institute_list.append(field)
                 except:

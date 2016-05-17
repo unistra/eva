@@ -19,15 +19,17 @@
 <table class="table" style="order:1">
 <tr class='fixed'>
    <th style="border-style:none" width=40%></th>
-   <th width=23%>{% trans "Directeur" %}</th>
-   <th width=23%>{% trans 'Responsable admin' %}</th>
+   <th width=20%>{% trans "Directeur" %}</th>
+   <th width=20%>{% trans 'Responsable admin' %}</th>
    <th width=7%>{% trans 'Date prév Conseil' %}</th>
    <th width=7%>{% trans 'Date dernière notif MECC' %}</th>
+   <th width=6%>{% trans "Appui ROF" %}</th>
 </tr>
 
 {% for field in institute_list %}
         <tr>
           <th style="border-style:none">{{ field.grouper }}</th>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -43,6 +45,7 @@
           <td>{{item.rac}}</td>
           <td><font color="{% if item.is_late %} red {% endif %}">{{item.date_expected_MECC|date:'d/m/Y'}}</font></td>
           <td>{{item.date_last_notif|date:'d/m/Y'}}</td>
+          <td>{% if item.ROF_support == True %}{% trans "OUI" %}{%endif%}</td>
         {% endfor %}
 {% endfor %}
 

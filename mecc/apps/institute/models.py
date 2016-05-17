@@ -32,7 +32,7 @@ class Institute(models.Model):
     diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
     scol_manager = models.ManyToManyField(MeccUser, related_name='scol_managers', blank=True)
     ROF_code = models.CharField(_('Code RNE'), max_length=10, blank=True, null=True)
-
+    ROF_support = models.BooleanField(_('Appui ROF'), default=False)
     def clean_fields(self, exclude=None):
         try:
             temp = Institute.objects.get(code=self.code)
