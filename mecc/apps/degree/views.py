@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
+
+
 class DegreeListView(ListView):
     """
     Degree listview
@@ -22,10 +24,10 @@ class DegreeListView(ListView):
             degrees = Degree.objects.filter(
                 Q(end_year__gte=current_year,start_year__lte=current_year)) # gte >=, lte <= Q compare querries
 
-        if self.kwargs['cmp'] == 'none':
+        if self.kwargs['cmp'] in [e.code for e in Institute.objects.all()]:
+            return degrees.filter(institutes__code=self.kwargs['cmp'])
+        else:
             return degrees
-
-        return degrees.filter(institutes__code='DRT')
 
 
     def get_context_data(self, **kwargs):
