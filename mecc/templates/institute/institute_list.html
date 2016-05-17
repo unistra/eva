@@ -7,6 +7,12 @@
 {% endblock %}
 
 {% block app_content %}
+{% if warning%}
+<div class='alert alert-warning fade in'>
+    </span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+    {{warning}}
+  </div>
+{%endif%}
 {% if ordered_list %}
 {% regroup ordered_list by domaine as institute_list %}
 <div class='flex-container' style="flex-direction:column">
@@ -30,7 +36,7 @@
         {% for item in field.list %}
         <tr class="hover-row">
           <td style="border-style:none;padding-left:2em">
-              <a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.labelled }} 
+              <a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.labelled }}
               </a>
           </td>
           <td>{{item.dircomp}}</td>

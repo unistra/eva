@@ -274,29 +274,37 @@ class InstituteListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
         institute_list = []
+        warnme = []
         try:
             current_year = UniversityYear.objects.get(
                 is_target_year=True).code_year
             ordered_list = Institute.objects.all().order_by('field', 'label')
             for institute in ordered_list:
-                iy = InstituteYear.objects.get(code_year=current_year, id_cmp=institute.id)
-                field = {
-                    'domaine': institute.field.name,
-                    'code': institute.code,
-                    'labelled': "%s - %s" % (institute.label, institute.ROF_code) if institute.ROF_code not in ['', ' ', None] else institute.label,
-                    'dircomp': institute.id_dircomp,
-                    'rac': institute.id_rac,
-                    'date_expected_MECC': iy.date_expected_MECC,
-                    'date_last_notif': iy.date_last_notif,
-                    'is_late': iy.is_expected_date_late,
-                }
-                institute_list.append(field)
+                try:
+                    iy = InstituteYear.objects.get(code_year=current_year, id_cmp=institute.id)
+                    field = {
+                        'domaine': institute.field.name,
+                        'code': institute.code,
+                        'labelled': "%s - %s" % (institute.label, institute.ROF_code) if institute.ROF_code not in ['', ' ', None] else institute.label,
+                        'dircomp': institute.id_dircomp,
+                        'rac': institute.id_rac,
+                        'date_expected_MECC': iy.date_expected_MECC,
+                        'date_last_notif': iy.date_last_notif,
+                        'is_late': iy.is_expected_date_late,
+                    }
+                    institute_list.append(field)
+                except:
+                    warnme.append("%s - %s" % (institute.label, institute.ROF_code) if institute.ROF_code not in ['', ' ', None] else institute.label,)
+
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée.')
         except InstituteYear.DoesNotExist:
             context['institute_year'] = _("L'initialisation des composantes \
             pour l'année selectionnée n'a pas encore été effectuée.")
 
+        if len(warnme) > 0:
+            context['warning'] = _('Il y a de(s) composante(s) non initialisée(s) \
+                pour cette année universitaire : %s' % (warnme))
         context['ordered_list'] = institute_list
         return context
     model = Institute

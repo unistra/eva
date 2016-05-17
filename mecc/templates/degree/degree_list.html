@@ -11,22 +11,22 @@
 
 {% block app_content %}
 <script src="{% static 'js/tablefilter/tablefilter.js' %}"></script>
-<select class="instiutes" name="">
-  <option val="none">{% trans "Toutes les composantes" %}</option>
 
-  {% for e in institutes%}
-  <option val="{{e.code}}">{{e.label}}</option>
-  {%endfor%}
-</select>
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs" style="width:50%;display:inline">
   <li role="presentation" {% if 'current' in request.path %} class="active" {%endif%}>
-    <a href="{% url 'degree:list' filter='current' cmp='none'%}">{% trans "Diplômes en vigueur" %}</a>
+    <a href="{% url 'degree:list' filter='current' cmp=cmp%}">{% trans "Diplômes en vigueur" %}</a>
   </li>
   <li role="presentation" {% if 'all' in request.path %} class="active" {%endif%}>
-      <a href="{% url 'degree:list' filter='all' cmp='none'%}">{% trans "Tous les diplômes" %}</a>
+      <a href="{% url 'degree:list' filter='all' cmp=cmp%}">{% trans "Tous les diplômes" %}</a>
   </li>
-
 </ul>
+ <select class="instiutes" id="select-institute">
+  <option value="none">{% trans "Toutes les composantes" %}</option>
+
+  {% for e in institutes%}
+  <option value="{{e.code}}">{{e.label}}</option>
+  {%endfor%}
+</select>
 {% if object_list %}
 <table class="table">
    <tr class='table-head'>
@@ -98,6 +98,11 @@ function filter(evt){
   };
   var tf = new TableFilter(document.querySelector('.table'), filtersConfig);
   tf.init();
+
+  // Select stuff
+  var e = document.getElementById("select-institute");
+  var institute_val = e.options[e.selectedIndex].value;
+  console.log(institute_val)
 </script>
 <style media="screen">
   caption {

@@ -145,6 +145,9 @@ class DegreeTypeForm(forms.ModelForm):
     """
     Degree type form
     """
+    is_in_use = forms.BooleanField(required=False, initial=True,
+        label=_("En service"))
+
     def __init__(self, *args, **kwargs):
         super(DegreeTypeForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
