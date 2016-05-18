@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from mecc.apps.degree.models import DegreeType
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from mecc.apps.years.models import UniversityYear
@@ -36,7 +35,7 @@ class Rule(models.Model):
                                  choices=EDITED_CHOICES, default='X')
     is_eci = models.BooleanField(_('ECI'), default=False)
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
-    degree_type = models.ManyToManyField(DegreeType)
+    degree_type = models.ManyToManyField('degree.DegreeType')
 
     @property
     def is_empty(self):

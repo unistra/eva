@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-
+from mecc.apps.utils.querries import rules_for_current_year
 from mecc.apps.institute.models import Institute
 
 class DegreeType(models.Model):
@@ -29,17 +29,24 @@ class DegreeType(models.Model):
         return reverse('degree:type')
 
     def clean_fields(self, exclude=None):
-        if self.display_order < 0:
+        if self.display_order is None or self.display_order < 0:
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
                     ]})
-
+        if not self.is_in_use :
+            rules = rules_for_current_year(self.pk) if self.pk is not None else None
+            if rules is None:
+                return
+            else:
+                raise ValidationError(_('La mise hors service ne peut s\'effectuer \
+                    que si aucune règle n\'y est rattachée pour l\'année \
+                    universitaire \n %s' % [e.label for e in rules] ))
 
 class Degree(models.Model):
     """
     Degree model
     """
-    label =models.TextField(_("Libellé réglementaire"))
+    label = models.TextField(_("Libellé réglementaire"))
     degree_type = models.ForeignKey(DegreeType, verbose_name=_("Type de diplôme"))
     degree_type_label = models.CharField(_('Libellé du type de diplôme'),
         max_length=120)

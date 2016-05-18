@@ -43,6 +43,8 @@ class Institute(models.Model):
         except Institute.DoesNotExist:
                 pass
 
+    
+
     def get_absolute_url(self):
         return reverse('institute:home', args=(self.code,))
 
