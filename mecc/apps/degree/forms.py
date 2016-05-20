@@ -26,7 +26,7 @@ class DegreeForm(forms.ModelForm):
         label=_("Références SI Scolarité"),
         required=False,
         widget=forms.TextInput(
-            attrs={'placeholder': _("[Codes APOGEE], saisie libre") }
+            attrs={'placeholder': _("[Code APOGEE], saisie libre") }
         )
     )
 

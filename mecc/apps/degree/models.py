@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.utils.querries import rules_for_current_year
+from mecc.apps.utils.querries import rules_for_current_year, rules_since_ever
 from mecc.apps.institute.models import Institute
 
 class DegreeType(models.Model):
@@ -41,6 +41,15 @@ class DegreeType(models.Model):
                 raise ValidationError(_('La mise hors service ne peut s\'effectuer \
                     que si aucune règle n\'y est rattachée pour l\'année \
                     universitaire \n %s' % [e.label for e in rules] ))
+
+    def delete(self):
+        rules = rules_since_ever(self.pk) if self.pk is not None else None
+        if rules is None:
+            super(DegreeType, self).delete(*args, **kwargs)
+        else:
+            raise ValidationError(_("Vous ne pouvez pas supprimer un type \
+                de diplôme qui contient des règles"))
+
 
 class Degree(models.Model):
     """

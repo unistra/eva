@@ -8,10 +8,22 @@
 {% endblock %}
 
 {% block app_content %}
+{% if rules == None %}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression du diplôme " %}{{ object }} - {{ object.long_label }} ?</p>
     <input type="submit" value="{% trans 'Oui'%}" class="btn btn-primary"/>
     <a href="{% url 'degree:type' %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
 </form>
+{%else%}
+<p>{% trans "Vous ne pouvez pas supprimer ce type de dipôme tant que des règles y sont rattachées : " %}</p>
+<ul>
+{%for e in rules%}
+<li>
+  {{e.label}}
+</li>
+{%endfor%}
+</ul>
+  <a href="{% url 'degree:type' %}" type="button"  class="btn btn-default pull-right">{% trans 'Retour à la liste des types de diplôme'%}</a>
+{%endif%}
 {% endblock %}

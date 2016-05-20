@@ -7064,7 +7064,7 @@
 {
     "fields": {
         "content_type": 21,
-        "name": "Donne acc\u00e8s \u00e0 un large pannel de fonctionnalit\u00e9",
+        "name": "Donne acc\u00e8s \u00e0 un large panel de fonctionnalit\u00e9",
         "codename": "DES1"
     },
     "pk": 67,
@@ -7073,7 +7073,7 @@
 {
     "fields": {
         "content_type": 21,
-        "name": "Donne acc\u00e8s \u00e0 un pannel restreint",
+        "name": "Donne acc\u00e8s \u00e0 un panel restreint",
         "codename": "DES2"
     },
     "pk": 68,
@@ -7208,7 +7208,7 @@
 {
     "fields": {
         "content_type": 18,
-        "name": "Donne acc\u00e8s \u00e0 un large pannel de fonctionnalit\u00e9",
+        "name": "Donne acc\u00e8s \u00e0 un large panel de fonctionnalit\u00e9",
         "codename": "DES1"
     },
     "pk": 83,
@@ -7217,7 +7217,7 @@
 {
     "fields": {
         "content_type": 18,
-        "name": "Donne acc\u00e8s \u00e0 un pannel restreint",
+        "name": "Donne acc\u00e8s \u00e0 un panel restreint",
         "codename": "DES2"
     },
     "pk": 84,

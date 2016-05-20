@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
+from mecc.apps.utils.querries import  rules_since_ever
 
 
 class DegreeListView(ListView):
@@ -106,3 +107,8 @@ class DegreeTypeDelete(DeleteView):
     model = DegreeType
     pk_url_kwarg = 'id'
     success_url = '/degree/type'
+
+    def get_context_data(self, **kwargs):
+        context = super(DegreeTypeDelete, self).get_context_data(**kwargs)
+        context['rules'] = rules_since_ever(kwargs['object'].id) if kwargs['object'].id is not None else None
+        return context

@@ -93,18 +93,22 @@ def add_pple(request):
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             if meccuser in institute.diretu.all():
                 return JsonResponse({
-                    'message': _("%s %s est déjà directeur de scolarité" % (
-                    request.POST.get('last_name'), request.POST.get('first_name'))
-                    )
+                    'message': _("%(last_name)s %(first_name)s est déjà \
+                    directeur de scolarité" % {
+                        'last_name':request.POST.get('last_name'),
+                        'first_name':request.POST.get('first_name')
+                    })
                 })
             institute.diretu.add(meccuser)
             institute.save()
         else:
             if meccuser in institute.scol_manager.all():
                 return JsonResponse({
-                    'message': _("%s %s est déjà gestionnaire de scolarité" % (
-                    request.POST.get('last_name'), request.POST.get('first_name')))
-
+                    'message': _("%(last_name)s %(first_name)s est déjà \
+                    gestionnaire de scolarité" % {
+                        'last_name':request.POST.get('last_name'),
+                        'first_name':request.POST.get('first_name')
+                    })
                 })
 
             meccuser.is_ref_app = False if request.POST.get('is_ref_app') == 'false' else True
@@ -116,8 +120,10 @@ def add_pple(request):
         meccuser.save()
 
         return JsonResponse({
-            'success': _("%s %s a bien été ajouté" % (
-            request.POST.get('last_name'), request.POST.get('first_name')))
+            'success': _("%(last_name)s %(first_name)s a bien été ajouté" % {
+                'last_name':request.POST.get('last_name'),
+                'first_name':request.POST.get('first_name')
+            })
         })
 
 
@@ -147,8 +153,10 @@ def remove_pple(request):
             meccuser.delete()
 
         return JsonResponse({
-            'success': _("%s %s a bien été supprimé" % (
-            meccuser.user.last_name, meccuser.user.first_name))
+            'success': _("%(last_name)s %(first_name)s a bien été supprimé" % {
+                'last_name':meccuser.user.last_name,
+                'first_name':meccuser.user.first_name
+            })
         })
 
 

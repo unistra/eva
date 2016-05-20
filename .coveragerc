@@ -2,3 +2,11 @@
 source = mecc/
 omit = mecc/settings/*
        mecc/wsgi.py
+       .tox/*
+       .tox*
+       setup.py
+       *egg*
+       *tests*
+       manage.py
+       fabfile.py
+       */__init__.py

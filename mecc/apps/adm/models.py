@@ -15,8 +15,8 @@ class Profile(models.Model):
 
     class Meta:
         permissions = (
-            ('DES1', _('Donne accès à un large pannel de fonctionnalité')),
-            ('DES2', _('Donne accès à un pannel restreint')),
+            ('DES1', _('Donne accès à un large panel de fonctionnalité')),
+            ('DES2', _('Donne accès à un panel restreint')),
             ('DES3', _('Peut usurper l\'identité des utilisateurs')),
         )
 

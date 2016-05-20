@@ -1,0 +1,1159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-19 12:22+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: mecc/admin.py:47
+msgid "Informations complémentaires"
+msgstr "More informations"
+
+#: mecc/admin.py:72 mecc/apps/adm/models.py:46
+#: mecc/templates/commission/search_member.html:38
+#: mecc/templates/commission/select.html:20 mecc/templates/sidebar.html:12
+#: mecc/templates/sidebar.html.py:29
+msgid "Composante"
+msgstr "Institute"
+
+#: mecc/admin.py:73
+msgid "Groupe"
+msgstr "Group"
+
+#: mecc/admin.py:74
+msgid "Profil"
+msgstr "Profile"
+
+#: mecc/admin.py:91
+msgid "Le mot de passe a bien été modifié"
+msgstr "Password has been updated successfully"
+
+#: mecc/apps/adm/models.py:10
+msgid "Code du profil"
+msgstr "Profile code"
+
+
+#: mecc/apps/adm/models.py:11
+msgid "Libellé du profil"
+msgstr "Profile label"
+
+#: mecc/apps/adm/models.py:18
+msgid "Donne accès à un large panel de fonctionnalité"
+msgstr "Provide a wide range of features "
+
+#: mecc/apps/adm/models.py:19
+msgid "Donne accès à un panel restreint"
+msgstr "Provide limited features"
+
+#: mecc/apps/adm/models.py:20
+msgid "Peut usurper l'identité des utilisateurs"
+msgstr "Can hijack user identity"
+
+#: mecc/apps/adm/models.py:29 mecc/apps/utils/ws.py:79
+msgid "Étudiant"
+msgstr "Student"
+
+#: mecc/apps/adm/models.py:30 mecc/apps/utils/ws.py:84
+msgid "Administratif"
+msgstr "Admin"
+
+#: mecc/apps/adm/models.py:31 mecc/apps/utils/ws.py:86
+msgid "Enseignant"
+msgstr ""
+
+#: mecc/apps/adm/models.py:35
+msgid "Membre de la commission ECI"
+msgstr "commission ECI Member"
+
+#: mecc/apps/adm/models.py:36 mecc/apps/institute/forms.py:23
+#: mecc/apps/institute/models.py:28
+msgid "Directeur de composante"
+msgstr "Institute Director"
+
+#: mecc/apps/adm/models.py:37 mecc/apps/institute/forms.py:31
+#: mecc/apps/institute/models.py:29
+msgid "Responsable administratif"
+msgstr "Administrative Officer"
+
+#: mecc/apps/adm/models.py:38 mecc/apps/adm/models.py:50
+msgid "Référent application"
+msgstr "Application referent"
+
+#: mecc/apps/adm/models.py:39
+msgid "Responsable Formation Scolarité"
+msgstr "Scolarship responsable"
+
+#: mecc/apps/adm/models.py:40
+msgid "Directeur d'études"
+msgstr "Studies Director"
+
+#: mecc/apps/adm/models.py:41
+msgid "Gestionnaire de scolarité"
+msgstr "Education manager"
+
+#: mecc/apps/adm/models.py:42
+msgid "Responsable de formation"
+msgstr "Education manager"
+
+#: mecc/apps/adm/models.py:48 mecc/templates/commission/search_member.html:37
+#: mecc/templates/commission/select.html:19
+msgid "Statut"
+msgstr "Statut"
+
+#: mecc/apps/commission/forms.py:18 mecc/apps/commission/models.py:11
+#: mecc/templates/commission/home.html:21
+#: mecc/templates/commission/home.html:38 mecc/templates/sidebar.html:77
+msgid "Commission ECI"
+msgstr "ECI Commission"
+
+#: mecc/apps/commission/forms.py:19 mecc/apps/commission/models.py:12
+#: mecc/templates/commission/home.html:40
+msgid "Etudiant CFVU titulaire"
+msgstr "Regular CFVU student"
+
+#: mecc/apps/commission/forms.py:20 mecc/apps/commission/models.py:13
+#: mecc/templates/commission/home.html:39
+msgid "Etudiant CFVU suppléant"
+msgstr "Substitute CFVU student"
+
+#: mecc/apps/commission/forms.py:24
+msgid "Type de membre"
+msgstr "Member type"
+
+#: mecc/apps/commission/models.py:17 mecc/templates/commission/home.html:15
+#: mecc/templates/commission/search_member.html:40
+#: mecc/templates/commission/select.html:22
+msgid "ID Membre"
+msgstr "Member ID"
+
+#: mecc/apps/commission/models.py:18 mecc/templates/commission/home.html:13
+#: mecc/templates/commission/search_member.html:19
+#: mecc/templates/commission/search_member.html:35
+#: mecc/templates/commission/select.html:17
+msgid "Nom"
+msgstr "Last name"
+
+#: mecc/apps/commission/models.py:19 mecc/templates/commission/home.html:14
+#: mecc/templates/commission/search_member.html:36
+#: mecc/templates/commission/select.html:18
+msgid "Prénom"
+msgstr "First name"
+
+#: mecc/apps/commission/models.py:21 mecc/templates/commission/home.html:19
+msgid "Type"
+msgstr "Type"
+
+#: mecc/apps/commission/models.py:23
+#: mecc/templates/commission/search_member.html:39
+#: mecc/templates/commission/select.html:21
+msgid "Mail"
+msgstr ""
+
+#: mecc/apps/commission/models.py:28
+#, python-format
+msgid "L'identifiant %s est déjà utilisé."
+msgstr "Username %s is unavailable"
+
+#: mecc/apps/commission/models.py:38
+msgid "Peut voir les membres de la commission ECI"
+msgstr "Can see ECI member"
+
+#: mecc/apps/commission/views.py:64
+msgid "Veuillez entrer au moins deux caractères."
+msgstr "Min 2 characters"
+
+#: mecc/apps/degree/forms.py:15
+msgid "Intitulé réglementaire :"
+msgstr "Regulatory title"
+
+#: mecc/apps/degree/forms.py:15
+msgid "(équivalent programme ROF)"
+msgstr "(ROF equivalent program)"
+
+#: mecc/apps/degree/forms.py:16 mecc/templates/degree/degree_list.html:36
+msgid "Début"
+msgstr "Start"
+
+#: mecc/apps/degree/forms.py:17 mecc/templates/degree/degree_list.html:37
+msgid "Fin"
+msgstr "End"
+
+#: mecc/apps/degree/forms.py:19
+msgid "Références Programme ROF"
+msgstr "Reference ROF Programme"
+
+#: mecc/apps/degree/forms.py:22
+msgid "[Identifiant programme ROF]"
+msgstr "[ROF Programme]"
+
+#: mecc/apps/degree/forms.py:26
+msgid "Références SI Scolarité"
+msgstr "[ID program ROF]"
+
+#: mecc/apps/degree/forms.py:29
+msgid "[Code APOGEE], saisie libre"
+msgstr "[APOGEE Code], free entry]"
+
+#: mecc/apps/degree/forms.py:56
+msgid "[Référentiel OF]"
+msgstr "[OF id]"
+
+#: mecc/apps/degree/forms.py:119
+#: mecc/templates/institute/institute_form.html:48
+msgid "Valider et fermer la fiche"
+msgstr "Validate and close"
+
+#: mecc/apps/degree/forms.py:149 mecc/apps/degree/models.py:13
+#: mecc/apps/degree/models.py:53 mecc/apps/institute/models.py:25
+#: mecc/apps/rules/models.py:33 mecc/apps/rules/models.py:80
+#: mecc/templates/degree/degree_list.html:35
+#: mecc/templates/degree/degreetype_list.html:17
+#: mecc/templates/rules/create/bottom.html:23
+#: mecc/templates/rules/manage_paragraph.html:27
+#: mecc/templates/rules/preview_rule.html:33
+#: mecc/templates/rules/preview_rule.html:89
+msgid "En service"
+msgstr "In use"
+
+#: mecc/apps/degree/forms.py:200 mecc/apps/rules/forms.py:207
+#: mecc/apps/years/forms.py:31 mecc/templates/degree/add_cmp.html:42
+#: mecc/templates/institute/add_diretu_gescol.html:43
+#: mecc/templates/institute/add_diretu_gescol.html:91
+msgid "Valider"
+msgstr "Validate"
+
+#: mecc/apps/degree/models.py:12 mecc/apps/rules/models.py:30
+#: mecc/apps/rules/models.py:81
+msgid "Numéro ordre affichage"
+msgstr "Dispaly order"
+
+#: mecc/apps/degree/models.py:14 mecc/templates/degree/degreetype_list.html:15
+msgid "Libellé court"
+msgstr "Short label"
+
+#: mecc/apps/degree/models.py:15 mecc/templates/degree/degreetype_list.html:16
+msgid "Libellé long"
+msgstr "Long label"
+
+#: mecc/apps/degree/models.py:16 mecc/templates/degree/degreetype_list.html:18
+msgid "Correspondance ROF"
+msgstr "ROF correspondance "
+
+#: mecc/apps/degree/models.py:25
+msgid "Peut voir les types de diplôme"
+msgstr "Can see degree type"
+
+#: mecc/apps/degree/models.py:34 mecc/apps/rules/models.py:66
+msgid "L'ordre d'affichage doit être positif."
+msgstr "Display order must be positive"
+
+#: mecc/apps/degree/models.py:41
+#, python-format
+msgid ""
+"La mise hors service ne peut s'effectuer                     que si aucune "
+"règle n'y est rattachée pour l'année                     universitaire \n"
+" %s"
+msgstr "Decommision available only if there is no rules this year : %s"
+
+#: mecc/apps/degree/models.py:49
+msgid "Libellé réglementaire"
+msgstr "Regulatory label"
+
+#: mecc/apps/degree/models.py:50
+msgid "Type de diplôme"
+msgstr "Degree type"
+
+#: mecc/apps/degree/models.py:51
+msgid "Libellé du type de diplôme"
+msgstr "Degree type label"
+
+#: mecc/apps/degree/models.py:54
+msgid "Code année de début de validité"
+msgstr "Validity start year"
+
+#: mecc/apps/degree/models.py:55
+msgid "Code année de fin de validité"
+msgstr "Validity end year"
+
+#: mecc/apps/degree/models.py:56
+msgid "Référence Programme ROF"
+msgstr "ROF reference""
+
+#: mecc/apps/degree/models.py:57
+msgid "Référence dans le SI Scolarité (APOGEE)"
+msgstr "APOGEE reference"
+
+#: mecc/apps/institute/forms.py:16 mecc/apps/institute/models.py:12
+msgid "Domaine"
+msgstr "Field"
+
+#: mecc/apps/institute/models.py:24
+msgid "Code composante"
+msgstr "Instiute code"
+
+#: mecc/apps/institute/models.py:26
+msgid "Libellé composante"
+msgstr "Institute label"
+
+#: mecc/apps/institute/models.py:34
+msgid "Code RNE"
+msgstr "RNE code"
+
+#: mecc/apps/institute/models.py:35
+#: mecc/templates/institute/institute_list.html:26
+msgid "Appui ROF"
+msgstr "ROF support"
+
+#: mecc/apps/institute/models.py:41
+#, python-format
+msgid "Le code composante \"%s\" est déjà utilisé."
+msgstr "\"%s\" is yet used"
+
+#: mecc/apps/institute/models.py:57
+msgid "Peut voir les composantes"
+msgstr "Can see institute"
+
+#: mecc/apps/institute/views.py:96
+#, python-format
+msgid ""
+"%(last_name)s %(first_name)s est déjà                     directeur de "
+"scolarité"
+msgstr "%(last_name)s %(first_name)s  is yet Scholarship Director"
+
+#: mecc/apps/institute/views.py:107
+#, python-format
+msgid ""
+"%(last_name)s %(first_name)s est déjà                     gestionnaire de "
+"scolarité"
+msgstr "%(last_name)s %(first_name)s  is yet Education manager"
+
+#: mecc/apps/institute/views.py:123
+#, python-format
+msgid "%(last_name)s %(first_name)s a bien été ajouté"
+msgstr "%(last_name)s %(first_name)s added"
+
+#: mecc/apps/institute/views.py:156
+#, python-format
+msgid "%(last_name)s %(first_name)s a bien été supprimé"
+msgstr "%(last_name)s %(first_name)s deleted"
+
+#: mecc/apps/institute/views.py:205 mecc/apps/institute/views.py:268
+msgid "Aucune année selectionnée"
+msgstr ""
+
+#: mecc/apps/institute/views.py:309
+msgid "Aucune année selectionnée."
+msgstr ""
+
+#: mecc/apps/institute/views.py:311
+msgid ""
+"L'initialisation des composantes             pour l'année selectionnée n'a "
+"pas encore été effectuée."
+msgstr ""
+
+#: mecc/apps/institute/views.py:315
+#, python-format
+msgid ""
+"Il y a de(s) composante(s) non initialisée(s)                 pour cette "
+"année universitaire : %s"
+msgstr "Non initialized years : %s"
+
+#: mecc/apps/rules/forms.py:16 mecc/templates/rules/create/bottom.html:24
+msgid "N° Affichage"
+msgstr "Display order"
+
+#: mecc/apps/rules/forms.py:18
+msgid "Texte de         l'alinéa standard"
+msgstr "Standard paragraph text"
+
+#: mecc/apps/rules/forms.py:21
+msgid ""
+"Texte de         consigne pour la saisie de l'alinéa dérogatoire (ou de "
+"composante)"
+msgstr "Dispensation paragraph text input"
+
+#: mecc/apps/rules/forms.py:25
+msgid "Texte de         consigne pour la saisie des motivations"
+msgstr "Motivation text input"
+
+#: mecc/apps/rules/forms.py:30 mecc/templates/rules/create/bottom.html:27
+msgid "Impact TM"
+msgstr "TM impact"
+
+#: mecc/apps/rules/forms.py:87
+msgid "Valider et retourner à la règle"
+msgstr "Validate and return to rule"
+
+#: mecc/apps/rules/forms.py:105 mecc/apps/rules/forms.py:216
+msgid "Veuillez selectionner un régime."
+msgstr "Select a regime"
+
+#: mecc/apps/rules/forms.py:138 mecc/apps/rules/models.py:27
+#: mecc/templates/rules/rule_list.html:40
+msgid "Nouvelle"
+msgstr "New"
+
+#: mecc/apps/rules/forms.py:139 mecc/apps/rules/models.py:25
+#: mecc/templates/commission/delete_member.html:20
+#: mecc/templates/degree/degree_confirm_delete.html:14
+#: mecc/templates/degree/degreetype_confirm_delete.html:14
+#: mecc/templates/rules/paragraph_confirm_delete.html:14
+#: mecc/templates/rules/rule_confirm_delete.html:14
+msgid "Oui"
+msgstr "Yes"
+
+#: mecc/apps/rules/forms.py:140 mecc/apps/rules/models.py:26
+#: mecc/templates/degree/degree_confirm_delete.html:15
+#: mecc/templates/degree/degreetype_confirm_delete.html:15
+#: mecc/templates/rules/paragraph_confirm_delete.html:15
+#: mecc/templates/rules/rule_confirm_delete.html:15
+msgid "Non"
+msgstr "No"
+
+#: mecc/apps/rules/forms.py:144
+msgid "La règle a-t-elle été modifiée ?"
+msgstr "Rule has been updated?"
+
+#: mecc/apps/rules/forms.py:148
+msgid "Saisir ici le libellé de la nouvelle règle"
+msgstr "Type here new rule label"
+
+#: mecc/apps/rules/forms.py:150
+msgid "N° d'ordre d'affichage"
+msgstr "Display order"
+
+#: mecc/apps/rules/models.py:13
+msgid "Code impact"
+msgstr "Impact code"
+
+#: mecc/apps/rules/models.py:14
+msgid "Description impact "
+msgstr "Impact description"
+
+#: mecc/apps/rules/models.py:31 mecc/apps/rules/models.py:77
+#: mecc/apps/years/models.py:14 mecc/apps/years/models.py:35
+#: mecc/templates/years/universityyear_list.html:15
+msgid "Code année"
+msgstr "Year"
+
+#: mecc/apps/rules/models.py:32
+msgid "Libellé"
+msgstr "label"
+
+#: mecc/apps/rules/models.py:34 mecc/templates/rules/rule_list.html:40
+msgid "Modifiée"
+msgstr "Edited"
+
+#: mecc/apps/rules/models.py:36
+msgid "ECI"
+msgstr "ECI"
+
+#: mecc/apps/rules/models.py:37
+msgid "CC/CT"
+msgstr "CC/CT"
+
+#: mecc/apps/rules/models.py:79
+msgid "Texte de l'alinéa standard"
+msgstr "Standard paragraph text"
+
+#: mecc/apps/rules/models.py:82
+msgid "Alinéa de composante"
+msgstr "Institute paragraph"
+
+#: mecc/apps/rules/models.py:83
+msgid "Interaction"
+msgstr "Interaction"
+
+#: mecc/apps/rules/models.py:84
+msgid ""
+"Texte de consigne pour la saisie de         l'alinéa dérogatoire (ou de "
+"composante)"
+msgstr "Dispensation paragraph text input"
+
+#: mecc/apps/rules/models.py:86
+msgid "Texte de consigne pour la saisie des         motivations"
+msgstr "Motivation text input"
+
+#: mecc/apps/rules/views.py:145
+msgid "Le numéro d'affichage a bien été mis à jour."
+msgstr "Dispaly order updated"
+
+#: mecc/apps/rules/views.py:149
+#, python-format
+msgid "L'objet %s n'a pas été mis à jour"
+msgstr "%s not updated"
+
+#: mecc/apps/spoof/views.py:34
+#, python-format
+msgid "L'utilisateur '%s' n'a pas                 été trouvé."
+msgstr "%s not found"
+
+#: mecc/apps/spoof/views.py:38
+#, python-format
+msgid "Vous ne pouvez pas usurper                 l'identité de %s."
+msgstr "You cannot hijack %s"
+
+#: mecc/apps/spoof/views.py:50
+msgid "Le mot de passe est érroné."
+msgstr "Wrong password"
+
+#: mecc/apps/utils/ws.py:37
+msgid "Mauvais type pour get_list_from_cmp"
+msgstr "Bad type for get_list_from_cmp"
+
+#: mecc/apps/utils/ws.py:80 mecc/apps/utils/ws.py:82
+msgid "Non renseigné"
+msgstr "Not provided"
+
+#: mecc/apps/years/forms.py:16 mecc/apps/years/forms.py:136
+#: mecc/templates/institute/institute_form.html:84
+msgid "Date prévisionnelle Conseil comp. MECC"
+msgstr "Conseil comp. MECC estimated date"
+
+#: mecc/apps/years/forms.py:80 mecc/apps/years/models.py:42
+#: mecc/templates/years/universityyear_list.html:17
+msgid "Cible courante"
+msgstr "Current target"
+
+#: mecc/apps/years/forms.py:88 mecc/apps/years/models.py:54
+#: mecc/templates/years/universityyear_list.html:21
+msgid "Initialisation des composantes effectuée"
+msgstr "Instiutes initialized"
+
+#: mecc/apps/years/forms.py:93 mecc/apps/years/models.py:51
+#: mecc/templates/years/universityyear_list.html:20
+msgid "Documents pdf"
+msgstr "PDF"
+
+#: mecc/apps/years/forms.py:110
+msgid "Déposer le document cadre"
+msgstr "Upload framework document
+"
+
+#: mecc/apps/years/models.py:13 mecc/templates/institute/granted.html:23
+#: mecc/templates/institute/institute_form.html:27
+msgid "ID composante"
+msgstr "Institute ID"
+
+#: mecc/apps/years/models.py:16
+msgid "Date prévisionnelle comp. MECC"
+msgstr "Comp. MECC expected date"
+
+#: mecc/apps/years/models.py:19
+#: mecc/templates/institute/institute_form.html:92
+msgid "Date dernière notification MECC"
+msgstr "MECC last update date"
+
+#: mecc/apps/years/models.py:36
+msgid "Ce code année est déjà utilisé."
+msgstr "This year is yet used"
+
+#: mecc/apps/years/models.py:39
+#: mecc/templates/years/universityyear_list.html:16
+msgid "Libellé année"
+msgstr "Year label"
+
+#: mecc/apps/years/models.py:45
+#: mecc/templates/institute/institute_form.html:63
+#: mecc/templates/years/universityyear_list.html:18
+msgid "Date validation cadre en CFVU"
+msgstr ""
+
+#: mecc/apps/years/models.py:48
+#: mecc/templates/institute/institute_form.html:73
+#: mecc/templates/years/universityyear_list.html:19
+msgid "Date prévisionnelle CFVU MECC"
+msgstr ""
+
+#: mecc/apps/years/models.py:68
+msgid "Veuillez entrer l'année sous le format                 AAAA."
+msgstr ""
+
+#: mecc/apps/years/models.py:75
+msgid ""
+"Il y a déjà une année \"cible courante\".                        Veuillez la "
+"désactiver au préalable."
+msgstr ""
+
+#: mecc/apps/years/views.py:54 mecc/apps/years/views.py:59
+msgid "Aucune année cible sélectionnée"
+msgstr ""
+
+#: mecc/apps/years/views.py:76
+msgid "L'année universitaire demandée n'a pas été trouvée."
+msgstr ""
+
+#: mecc/apps/years/views.py:91
+msgid "L'initialisation des composantes est à jour."
+msgstr ""
+
+#: mecc/apps/years/views.py:101
+msgid "1 composante a été initialisée."
+msgstr ""
+
+#: mecc/apps/years/views.py:103
+#, python-format
+msgid "%s composantes ont été initialisées."
+msgstr ""
+
+#: mecc/templates/404.html:6
+msgid "Page not found"
+msgstr ""
+
+#: mecc/templates/500.html:6
+msgid "Error"
+msgstr ""
+
+#: mecc/templates/admin/DES3.html:15
+msgid "Nouveau mot de passe : "
+msgstr ""
+
+#: mecc/templates/admin/DES3.html:20
+msgid "Modifier le mot de passe"
+msgstr ""
+
+#: mecc/templates/admin/base.html:4
+msgid "Administration de MECC"
+msgstr ""
+
+#: mecc/templates/admin/base.html:22
+msgid "Home"
+msgstr ""
+
+#: mecc/templates/admin/index.html:20
+#, python-format
+msgid "Models in the %(name)s application"
+msgstr ""
+
+#: mecc/templates/admin/index.html:31
+msgid "Add"
+msgstr ""
+
+#: mecc/templates/admin/index.html:37 mecc/templates/admin/index.html.py:47
+msgid "Change"
+msgstr ""
+
+#: mecc/templates/admin/index.html:45
+msgid "Modifier le mot de passe generic de DES3"
+msgstr ""
+
+#: mecc/templates/admin/index.html:53
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: mecc/templates/base.html:34
+msgid "MECC"
+msgstr ""
+
+#: mecc/templates/commission/delete_member.html:9
+msgid "Supprimer un membre "
+msgstr ""
+
+#: mecc/templates/commission/delete_member.html:12
+msgid "Êtes vous sûr de vouloir supprimer ce membre ?"
+msgstr ""
+
+#: mecc/templates/commission/delete_member.html:21
+msgid "No"
+msgstr ""
+
+#: mecc/templates/commission/home.html:5
+msgid "Commission ECI et étudiants élus"
+msgstr ""
+
+#: mecc/templates/commission/home.html:20
+msgid "Tous"
+msgstr ""
+
+#: mecc/templates/commission/home.html:22
+msgid "Étudiant CFVU suppléant"
+msgstr ""
+
+#: mecc/templates/commission/home.html:23
+msgid "Étudiant CFVU titulaire"
+msgstr ""
+
+#: mecc/templates/commission/home.html:50
+msgid "Il n'y a aucun membre."
+msgstr ""
+
+#: mecc/templates/commission/home.html:54
+msgid "Ajouter un membre"
+msgstr ""
+
+#: mecc/templates/commission/home.html:55
+msgid "Envoyer un message"
+msgstr ""
+
+#: mecc/templates/commission/search_member.html:14
+msgid "Rechercher un membre"
+msgstr ""
+
+#: mecc/templates/commission/search_member.html:65
+#: mecc/templates/commission/select.html:55
+msgid "Confirmer la sélection"
+msgstr ""
+
+#: mecc/templates/commission/select.html:11
+msgid "Effectuer une nouvelle recherche"
+msgstr ""
+
+#: mecc/templates/degree/add_cmp.html:10
+msgid "Composantes associées"
+msgstr ""
+
+#: mecc/templates/degree/add_cmp.html:28
+#: mecc/templates/institute/add_diretu_gescol.html:27
+#: mecc/templates/institute/add_diretu_gescol.html:74
+#: mecc/templates/institute/add_diretu_gescol.html:94
+msgid "Supprimer"
+msgstr ""
+
+#: mecc/templates/degree/degree_confirm_delete.html:7
+#: mecc/templates/degree/degreetype_confirm_delete.html:7
+#: mecc/templates/rules/rule_confirm_delete.html:7
+msgid "Fiche type de diplôme"
+msgstr ""
+
+#: mecc/templates/degree/degree_confirm_delete.html:13
+msgid "Confirmer la suppression du type de diplôme "
+msgstr ""
+
+#: mecc/templates/degree/degree_form.html:8
+msgid "Fiche Diplôme de référence"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:9
+msgid "Liste des diplômes de référence"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:17
+msgid "Diplômes en vigueur"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:20
+msgid "Tous les diplômes"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:24
+msgid "Toutes les composantes"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:33
+msgid "Libellé du Type Diplôme"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:34
+msgid "Intitulé réglementaire"
+msgstr "Regulatory title"
+
+#: mecc/templates/degree/degree_list.html:34
+msgid "(Équivalent programme ROF)"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:47
+#: mecc/templates/degree/degreetype_list.html:30
+#: mecc/templates/institute/institute_list.html:48
+#: mecc/templates/years/universityyear_list.html:31
+#: mecc/templates/years/universityyear_list.html:41
+msgid "OUI"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:49
+#: mecc/templates/degree/degreetype_list.html:32
+#: mecc/templates/years/universityyear_list.html:43
+msgid "non"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:63
+msgid "Aucun diplôme"
+msgstr ""
+
+#: mecc/templates/degree/degree_list.html:67
+msgid "Créer un diplôme"
+msgstr ""
+
+#: mecc/templates/degree/degreetype_confirm_delete.html:13
+msgid "Confirmer la suppression du diplôme "
+msgstr ""
+
+#: mecc/templates/degree/degreetype_list.html:6
+msgid "Type de diplômes"
+msgstr ""
+
+#: mecc/templates/degree/degreetype_list.html:13
+msgid "ID type"
+msgstr ""
+
+#: mecc/templates/degree/degreetype_list.html:14
+msgid "N° ordre affichage"
+msgstr ""
+
+#: mecc/templates/degree/degreetype_list.html:49
+#: mecc/templates/rules/create/top-right.html:9
+msgid "Ajouter un type de diplôme"
+msgstr ""
+
+#: mecc/templates/head_button.html:3
+msgid "Déconnexion"
+msgstr ""
+
+#: mecc/templates/head_button.html:4
+msgid "Contact"
+msgstr ""
+
+#: mecc/templates/head_button.html:10
+msgid "Contact :"
+msgstr ""
+
+#: mecc/templates/head_button.html:13
+msgid "Texte de contact....."
+msgstr ""
+
+#: mecc/templates/institute/add_diretu_gescol.html:12
+#: mecc/templates/institute/view_diretu_gescol.html:7
+msgid "Directeurs d'études"
+msgstr ""
+
+#: mecc/templates/institute/add_diretu_gescol.html:57
+#: mecc/templates/institute/view_diretu_gescol.html:22
+msgid "Gestionnaires de scolarité"
+msgstr ""
+
+#: mecc/templates/institute/add_diretu_gescol.html:58
+msgid "référent app"
+msgstr ""
+
+#: mecc/templates/institute/granted.html:23
+#: mecc/templates/institute/institute_form.html:27
+msgid "(auto)"
+msgstr ""
+
+#: mecc/templates/institute/granted.html:35
+#: mecc/templates/institute/institute_form.html:54
+msgid "Année cible"
+msgstr ""
+
+#: mecc/templates/institute/granted.html:38
+#: mecc/templates/institute/institute_form.html:58
+msgid "Document Cadre général CFVU"
+msgstr ""
+
+#: mecc/templates/institute/home.html:5
+#: mecc/templates/institute/institute_list.html:6
+msgid "Liste des composantes"
+msgstr ""
+
+#: mecc/templates/institute/home.html:24
+#: mecc/templates/institute/institute_list.html:53
+msgid "Aucune composante."
+msgstr ""
+
+#: mecc/templates/institute/home.html:27
+#: mecc/templates/institute/institute_form.html:120
+#: mecc/templates/institute/institute_list.html:56
+msgid "Ajouter une composante"
+msgstr ""
+
+#: mecc/templates/institute/institute_confirm_delete.html:7
+#: mecc/templates/institute/institute_form.html:9
+msgid "Fiche composante"
+msgstr ""
+
+#: mecc/templates/institute/institute_confirm_delete.html:15
+msgid "Confirmer la suppression de la composante "
+msgstr ""
+
+#: mecc/templates/institute/institute_form.html:103
+msgid "Lettre de présentation"
+msgstr ""
+
+#: mecc/templates/institute/institute_form.html:112
+msgid "Autres documents"
+msgstr ""
+
+#: mecc/templates/institute/institute_list.html:22
+msgid "Directeur"
+msgstr ""
+
+#: mecc/templates/institute/institute_list.html:23
+msgid "Responsable admin"
+msgstr ""
+
+#: mecc/templates/institute/institute_list.html:24
+msgid "Date prév Conseil"
+msgstr ""
+
+#: mecc/templates/institute/institute_list.html:25
+msgid "Date dernière notif MECC"
+msgstr ""
+
+#: mecc/templates/rules/create/base.html:8
+msgid "Fiche détaillée d'une règle générale"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:7
+msgid "Alinéas"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:14
+#: mecc/templates/rules/create/bottom.html:77
+msgid " Ajouter un alinéa"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:21
+msgid "Id alinéa (auto)"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:22
+msgid "Texte de l'alinéa"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:25
+msgid "Alinéa Cmp"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:26
+msgid "Inter- action"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:28
+#: mecc/templates/rules/create/bottom.html:29
+msgid "Texte consigne"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:28
+msgid "Règle dérogatoire (ou de composante)"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:29
+msgid "Motivations"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:75
+msgid "Aucun alinéa pour cette règle"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:83
+msgid "Pré-visualiser cette règle"
+msgstr ""
+
+#: mecc/templates/rules/create/bottom.html:84
+msgid "Retourner à la liste des règles"
+msgstr ""
+
+#: mecc/templates/rules/create/top-right.html:5
+msgid "Types de diplômes concernés :"
+msgstr ""
+
+#: mecc/templates/rules/manage_paragraph.html:10
+msgid "Fiche détaillée d'un alinéa de règle générale"
+msgstr ""
+
+#: mecc/templates/rules/manage_paragraph.html:23
+msgid "Année universitaire :"
+msgstr ""
+
+#: mecc/templates/rules/manage_paragraph.html:36
+#: mecc/templates/rules/rule_list.html:21
+msgid "Libellé de règle"
+msgstr ""
+
+#: mecc/templates/rules/paragraph_confirm_delete.html:7
+msgid "Suppression d'un alinéa"
+msgstr ""
+
+#: mecc/templates/rules/paragraph_confirm_delete.html:12
+msgid "Confirmer la suppression de l'alinéa : "
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:18
+msgid "Règle id auto"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:28
+msgid "NOUVELLE "
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:28
+msgid "Modifiée "
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:33
+#: mecc/templates/rules/preview_rule.html:89
+msgid "Hors service"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:41
+msgid "Types de diplôme concernés :"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:51
+msgid "ALINÉAS :"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:69
+msgid "Interaction type alinéa de composante"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:71
+msgid "Interaction type dérogation"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:80
+msgid "Texte consigne règle dérogatoire (ou de composante)"
+msgstr ""
+
+#: mecc/templates/rules/preview_rule.html:84
+msgid "Texte consigne motivations"
+msgstr ""
+
+#: mecc/templates/rules/rule_confirm_delete.html:13
+msgid "Confirmer la suppression de la règle : "
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:8 mecc/templates/sidebar.html:128
+msgid "Règles générales"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:20
+msgid "ID règle (auto)"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:22
+msgid "N° affichage"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:55
+msgid "Dupliquer les règles générales des années précédentes"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:56
+msgid "Créer une nouvelle règle"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:57
+msgid "Générer pdf des règles de l'année"
+msgstr ""
+
+#: mecc/templates/rules/rule_list.html:58
+msgid "Historique Règles générales"
+msgstr ""
+
+#: mecc/templates/sidebar.html:17 mecc/templates/sidebar.html.py:34
+msgid "Général"
+msgstr ""
+
+#: mecc/templates/sidebar.html:21
+msgid "Validations"
+msgstr ""
+
+#: mecc/templates/sidebar.html:38
+msgid "Documents"
+msgstr ""
+
+#: mecc/templates/sidebar.html:49
+msgid "Administration"
+msgstr ""
+
+#: mecc/templates/sidebar.html:58 mecc/templates/spoof/form.html:5
+msgid "Usurpation d'identité"
+msgstr ""
+
+#: mecc/templates/sidebar.html:67
+msgid "Tableau de bord"
+msgstr ""
+
+#: mecc/templates/sidebar.html:89
+msgid "Composantes"
+msgstr ""
+
+#: mecc/templates/sidebar.html:100 mecc/templates/years/home.html:7
+#: mecc/templates/years/initialize.html:7
+#: mecc/templates/years/universityyear_confirm_delete.html:7
+#: mecc/templates/years/universityyear_list.html:7
+msgid "Années universitaires"
+msgstr ""
+
+#: mecc/templates/sidebar.html:108
+msgid "Diplômes de référence"
+msgstr ""
+
+#: mecc/templates/sidebar.html:113
+msgid "Types de diplômes"
+msgstr ""
+
+#: mecc/templates/sidebar.html:117
+msgid "Liste des diplômes"
+msgstr ""
+
+#: mecc/templates/sidebar.html:137
+msgid "OFFRE DE FORMATION"
+msgstr ""
+
+#: mecc/templates/sidebar.html:146
+msgid "Moteur de génération de documents MECC"
+msgstr ""
+
+#: mecc/templates/spoof/form.html:17
+msgid "ID utilisateur à usurper"
+msgstr ""
+
+#: mecc/templates/spoof/form.html:18
+msgid "mot de passe générique : 123456"
+msgstr ""
+
+#: mecc/templates/spoof/notification_bar.html:4
+#, python-format
+msgid "Vous êtes en train d'usurper l'identité de '%(user)s'."
+msgstr ""
+
+#: mecc/templates/spoof/notification_bar.html:6
+msgid "Stopper l'usurpation"
+msgstr ""
+
+#: mecc/templates/years/home.html:56
+#: mecc/templates/years/universityyear_list.html:56
+msgid "Aucune année disponible."
+msgstr ""
+
+#: mecc/templates/years/home.html:61
+#: mecc/templates/years/universityyear_list.html:61
+msgid "Créer une nouvelle année"
+msgstr ""
+
+#: mecc/templates/years/initialize.html:13
+msgid "Retour à la liste des années universitaires"
+msgstr ""
+
+#: mecc/templates/years/universityyear_confirm_delete.html:15
+msgid "Confirmer la suppression de l'année universitaire "
+msgstr ""
+
+#: mecc/templates/years/universityyear_form.html:9
+msgid "Fiche année universitaire"
+msgstr ""
+
+#: mecc/templates/years/universityyear_form.html:20
+msgid "Initialiser les composantes"
+msgstr ""
+
+#: mecc/templates/years/universityyear_form.html:23
+msgid "Valider et retourner à la liste des années universitaires"
+msgstr ""
+
+#: mecc/templates/years/universityyear_form.html:26
+msgid "Annuler et retourner à la liste des années universitaires"
+msgstr ""
