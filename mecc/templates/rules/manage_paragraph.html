@@ -105,9 +105,7 @@ $('#submit-id-add').on('click', function(event) {
 }
 
   if (document.getElementById('id_is_interaction').checked ){
-      console.log(CKEDITOR.instances.id_text_derog.getData())
     if(CKEDITOR.instances.id_text_derog.getData() == ''){
-      console.log('here')
       event.preventDefault();
       $("#text_derog").addClass("all-in-red");
       proceed = false;

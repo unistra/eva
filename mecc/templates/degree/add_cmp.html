@@ -64,7 +64,7 @@ for (i=0; i < x.length; i++){
 };
 
 $('.table-remove').click(function () {
-  console.log(institute_val);
+
   var _val = $('td:first',$(this).parents('tr')).text();
 
   var i = institute_val.indexOf(_val);
@@ -110,10 +110,9 @@ function do_stuff (add_first, add_new, type) {
       auto_comp.easyAutocomplete(options);
     }
       $(add_new).one('click', function(e){
-        console.log(institute_val)
+
           var tr = $(this).parents('tr');
           var first_cell = tr.find('td:first')
-          console.log(institute_val.indexOf(first_cell.text()));
           if (institute_val.indexOf(first_cell.text()) == -1) {
           var third_cell = first_cell.next().next();
           var txt = third_cell.find('input').val();

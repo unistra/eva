@@ -15,3 +15,5 @@ def rules_since_ever(degree_type_code):
         return rules
     else:
         return None
+
+    

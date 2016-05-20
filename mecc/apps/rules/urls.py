@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import RulesListView, RuleCreate, RuleDelete, \
     edit_rule, manage_degreetype, update_display_order, \
-    manage_paragraph, ParagraphDelete , edit_paragraph
+    manage_paragraph, ParagraphDelete , edit_paragraph, gen_pdf
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -23,4 +23,6 @@ urlpatterns = [
             name='paragraph_edit'),
     url(r'^delete-paragraph/(?P<id>\d+)', login_required(ParagraphDelete.as_view()),
         name='paragraph_delete'),
+    url(r'^gen_pdf/(?P<id_degreetype>\d+)', gen_pdf,
+        name='gen_pdf'),
 ]

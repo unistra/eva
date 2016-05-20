@@ -5,6 +5,7 @@ from .forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from mecc.apps.years.models import UniversityYear
+from mecc.apps.degree.models import DegreeType
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from mecc.apps.degree.models import DegreeType
@@ -12,12 +13,16 @@ from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from mecc.apps.years.models import UniversityYear
 from django_cas.decorators import login_required
+from django.http import HttpResponse
+
+
+from mecc.apps.utils.pdfs import degree_type_rules_for_current_year, \
+    setting_up_pdf, NumberedCanvas
+
 
 class RulesListView(ListView):
     """
     Rules list view
-
-
     """
     model = Rule
     def get_queryset(self):
@@ -29,6 +34,10 @@ class RulesListView(ListView):
 
         return qs.filter(code_year=current_year.code_year)
 
+    def get_context_data(self, **kwargs):
+        context = super(RulesListView, self).get_context_data(**kwargs)
+        context['degree_types'] = DegreeType.objects.all()
+        return context
 
 
 class RuleCreate(CreateView):
@@ -202,3 +211,18 @@ class RuleDelete(DeleteView):
     model = Rule
     pk_url_kwarg = 'id'
     success_url = '/rules/list'
+
+
+def gen_pdf(request, id_degreetype):
+    current_year = list(UniversityYear.objects.filter(Q(is_target_year=True))).pop(0)
+    degree_type = get_object_or_404(DegreeType, id=id_degreetype)
+    title = "MECC - %s - %s" % (degree_type.short_label, current_year.code_year)
+
+    response, doc = setting_up_pdf(title, margin=42)
+    story = degree_type_rules_for_current_year(title, degree_type)
+    if story is None:
+        return redirect('commission:home')
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+
+    return response
