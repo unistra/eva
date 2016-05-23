@@ -125,7 +125,6 @@ def degree_type_rules_for_current_year(title, degreetype):
             continu" %  degreetype.short_label, styles["Normal"]), '']
         ]
 
-
         for e in cr3:
             lf_paragraph(e, data)
 
