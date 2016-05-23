@@ -5,3 +5,4 @@ britney-utils==0.1.2
 django-crispy-forms==1.5.2
 django-ckeditor==5.0.3
 reportlab==3.3.0
+Pillow==3.2.0
