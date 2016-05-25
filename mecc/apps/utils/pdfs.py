@@ -10,6 +10,7 @@ from .querries import rules_for_current_year
 from reportlab.lib.styles import getSampleStyleSheet
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.rules.models import Paragraph as ParagraphRules
+from django.utils.translation import ugettext as _
 
 styles = getSampleStyleSheet()
 
@@ -53,87 +54,116 @@ class NumberedCanvas(canvas.Canvas):
                 (self._pageNumber, page_count))
 
 
+def block_rules(title, rules, story):
+    if len(rules) > 0:
+        t = [
+            [""],
+            [Paragraph(title, styles["Normal"])]
+        ]
+
+        table = Table(t, colWidths=(550), style=[
+            ('BOX', (0, 1), (-1, 1), 1, colors.black),
+            ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+            # ('SPAN', (0, 1), (-1, 1)),
+            # ('GRID', (0, 0), (-1, -1), 1, colors.darkorange),
+            # ('LINEBELOW', (0, 2), (-1, -1), 2, colors.lightgrey),
+        ])
+        story.append(table)
+
+        for paragraph in rules:
+            add_paragraph(paragraph, story)
+
+    return story
+
+
+def add_paragraph(e, story):
+    t = [["", ""]]
+
+    t.append([
+        Paragraph("<para textColor=darkblue>%s</para>" % e.label,
+                  styles['Heading4']),
+        Paragraph("<para align=right textColor=grey> ID %s</para>" % e.pk,
+                  styles['Normal'])])
+
+    paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
+
+    for p in paragraphs:
+        txt = ''
+        cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
+        derog = _("Dérogation possible") if p.is_interaction else ''
+        if p.is_interaction:
+            txt = derog if not p.is_cmp else cmp
+
+        t.append(
+            [
+                Paragraph(p.text_standard, styles['Normal']),
+                Paragraph("<para align=right textColor=grey>%s</para>" % txt,
+                          styles['Normal'])
+            ]
+            )
+
+    table = Table(t, colWidths=(425, 125), style=[
+        # ('BOX', (0, 1), (-1, 1), 1, colors.black),
+        # ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+        ('LINEBELOW', (0, 2), (-1, -1), 0.75, colors.lightgrey),
+    ])
+    story.append(table)
+    return story
+
+
 def degree_type_rules_for_current_year(title, degreetype):
+    degree_type = degreetype.short_label.upper()
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0).code_year
     cr = rules_for_current_year(degreetype.id)
     if cr is None:
         return None
-    cr1 = cr.filter(Q(is_eci=True, is_ccct=True))
-    cr2 = cr.filter(Q(is_eci=True, is_ccct=False))
-    cr3 = cr.filter(Q(is_eci=False, is_ccct=True))
+
     story = []
-
-    def lf_paragraph(e, data):
-        data.append([Paragraph(e.label, styles['Normal']), ""])
-        paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
-        for p in paragraphs:
-
-            data.append([Paragraph(p.text_standard, styles['Normal']), ""])
-
-        return data
 
 # ############ TITLE ################################
 
     header = [
-        "Modalilté d'évaluation des connaissances et compétences",
-        "Règles générales - %s" % degreetype.short_label,
-        "Année universitaire %s/%s" % (current_year, current_year + 1)
+        _("Modaliltés d'évaluation des connaissances et compétences"),
+        _("Règles générales - %s" % degreetype.short_label),
+        _("Année universitaire %s/%s" % (current_year, current_year + 1))
     ]
-
+    ttle = []
     for e in header:
-        story.append(Paragraph(e, styles["Normal"]))
+        ttle.append(Paragraph("<para align=center \
+            textColor=darkblue>%s</para>" % e, styles["Heading3"]))
+
+    t = [[Image('mecc/static/img/logo_uds.png', 150, 65), ttle]]
+
+    table = Table(t, colWidths=(150, 400))
+
+    story.append(table)
 
     story.append(Spacer(0, 12))
+
 # ############ ECI/CCT ################################
-    if len(cr1) > 0:
-        data = [
-            [Paragraph("REGLES APPLICABLES à tous les diplômes \
-                de type %s" % degreetype.short_label, styles["Normal"]), '']
-        ]
 
-        for e in cr1:
-            lf_paragraph(e, data)
+    block_rules(
+        _("RÈGLES APPLICABLES à tous les diplômes de type \
+        %s" % degree_type),
+        cr.filter(Q(is_eci=True, is_ccct=True)),
+        story
+    )
 
-        t = Table(data, style=[
-            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
-        ])
-        story.append(t)
 # ############ ECI ################################
-    if len(cr2) > 0:
-        story.append(Spacer(0, 50))
 
-        data = [
-            [Paragraph("REGLES APPLICABLES aux diplômes de type %s en  \
-             évaluation continue intégrale" %
-             degreetype.short_label, styles["Normal"]), '']
-        ]
-
-        for e in cr2:
-            lf_paragraph(e, data)
-
-        t = Table(data, style=[
-            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
-        ])
-        story.append(t)
+    block_rules(
+        _("RÈGLES APPLICABLES aux diplômes de type %s en  \
+         évaluation continue intégrale" % degree_type),
+        cr.filter(Q(is_eci=True, is_ccct=False)),
+        story
+    )
 
 # ############ CCCT ################################
-    if len(cr3) > 0:
-
-        story.append(Spacer(0, 50))
-
-        data = [
-            [Paragraph("REGLES APPLICABLES aux diplômes \
-            de type %s en contrôle terminal, combiné ou non avec un contrôle \
-            continu" % degreetype.short_label, styles["Normal"]), '']
-        ]
-
-        for e in cr3:
-            lf_paragraph(e, data)
-
-        t = Table(data, style=[
-            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
-        ])
-        story.append(t)
-
+    block_rules(
+        _("RÈGLES APPLICABLES aux diplômes  de type %s en contrôle terminal, \
+        combiné ou non avec un contrôle continu" % degree_type),
+        cr.filter(Q(is_eci=False, is_ccct=True)),
+        story
+    )
     return story
