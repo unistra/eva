@@ -64,7 +64,7 @@ $('.select-type').on('change', function() {
     new_type = this.value;
     id = $(this).parents('td').prev().text();
     $.ajax({
-        url: "/commission/",
+        url: "{% url 'commission:change_typemember'%}",
         type: "POST",
         data: {
             username: id,

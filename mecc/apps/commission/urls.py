@@ -9,4 +9,6 @@ urlpatterns = [
         name='delete'),
     url(r'^get_pple/$', views.get_list_of_pple,
         name='get_pple'),
+    url(r'^change_typemember/$', views.change_typemember,
+        name='change_typemember'),
 ]

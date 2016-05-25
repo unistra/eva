@@ -7,19 +7,25 @@ from .models import ECICommissionMember
 from .forms import ECIForm
 from django_cas.decorators import login_required
 
+from mecc.decorators import is_ajax_request, is_post_request
+
+
+@is_post_request
+@is_ajax_request
+def change_typemember(request):
+    username = request.POST.get('username', '')
+    type_member = request.POST.get('type_member', '')
+    member = ECICommissionMember.objects.get(username=username)
+    member.member_type = type_member
+    member.save()
+    return JsonResponse({"Edited": True})
+
 
 @login_required
 def home(request, template='commission/home.html'):
     """
     Home view
     """
-    if request.is_ajax() and request.method == 'POST':
-        username = request.POST.get('username', '')
-        type_member = request.POST.get('type_member', '')
-        member = ECICommissionMember.objects.get(username=username)
-        member.member_type = type_member
-        member.save()
-
     data = {}
     data['form'] = ECIForm
     if request.method == 'POST':
@@ -34,36 +40,34 @@ def home(request, template='commission/home.html'):
     return render(request, template, data)
 
 
+@is_post_request
 @login_required
 def delete_member(request):
     """
     Delete view
     """
-    if request.method == 'POST':
-        username = request.POST.get('username', '')
-        member = ECICommissionMember.objects.get(username=username)
-        member.delete()
-        return redirect('commission:home')
-    return render(request)
+    username = request.POST.get('username', '')
+    member = ECICommissionMember.objects.get(username=username)
+    member.delete()
+    return redirect('commission:home')
 
 
+@is_ajax_request
 @login_required
 def get_list_of_pple(request):
-    # TODO: NOT A VIEW
     """
     Ajax : return list of pple with searched name
     """
     data = {}
-    if request.is_ajax():
-        x = request.GET.get('member', '')
-        if len(x) > 1:
-            ppl = [
-                e for e in get_from_ldap(x) if e['username'] not in [
-                    e.username for e in ECICommissionMember.objects.all()
-                ]
+    x = request.GET.get('member', '')
+    if len(x) > 1:
+        ppl = [
+            e for e in get_from_ldap(x) if e['username'] not in [
+                e.username for e in ECICommissionMember.objects.all()
             ]
-            data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
-            return JsonResponse(data)
-        else:
-            return JsonResponse(
-                {'message': _('Veuillez entrer au moins deux caractères.')})
+        ]
+        data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
+        return JsonResponse(data)
+    else:
+        return JsonResponse(
+            {'message': _('Veuillez entrer au moins deux caractères.')})
