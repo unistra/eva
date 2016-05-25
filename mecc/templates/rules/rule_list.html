@@ -72,7 +72,9 @@
                 <span style="margin-bottom:0.2em">{% trans "Veuillez sélectionner un type de diplôme : " %}</span>
                   <select id="select-degreetype" name="">
                     {%for e in degree_types%}
+                        {% if "CATALOGUE" not in e.short_label%}
                     <option value="{{e.id}}">{{e.short_label}}</option>
+                        {%endif%}
                     {%endfor%}
                   </select>
             </div>
