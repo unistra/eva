@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext as _
 from django.shortcuts import render,  redirect
 from django.http import JsonResponse
-from mecc.apps.utils.ws import  get_from_ldap
+from mecc.apps.utils.ws import get_from_ldap
 
 from .models import ECICommissionMember
 from .forms import ECIForm
@@ -57,8 +57,13 @@ def get_list_of_pple(request):
     if request.is_ajax():
         x = request.GET.get('member', '')
         if len(x) > 1:
-            ppl = [e for e in get_from_ldap(x) if e['username'] not in [e.username for e in ECICommissionMember.objects.all()]]
+            ppl = [
+                e for e in get_from_ldap(x) if e['username'] not in [
+                    e.username for e in ECICommissionMember.objects.all()
+                ]
+            ]
             data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
             return JsonResponse(data)
         else:
-            return JsonResponse({'message': _('Veuillez entrer au moins deux caractères.')})
+            return JsonResponse(
+                {'message': _('Veuillez entrer au moins deux caractères.')})

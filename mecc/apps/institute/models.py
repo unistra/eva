@@ -25,14 +25,22 @@ class Institute(models.Model):
     is_on_duty = models.BooleanField(_('En service'))
     label = models.CharField(_('Libellé composante'), max_length=85)
     field = models.ForeignKey(AcademicField, blank=False)
-    id_dircomp = models.CharField(_('Directeur de composante'), max_length=65, blank=True)
-    id_rac = models.CharField(_('Responsable administratif'), max_length=65, blank=True)
-    dircomp = models.ForeignKey(MeccUser, related_name='dircomp', blank=True, null=True)
-    rac = models.ForeignKey(MeccUser, related_name='racs', blank=True, null=True)
-    diretu = models.ManyToManyField(MeccUser, related_name='diretu', blank=True)
-    scol_manager = models.ManyToManyField(MeccUser, related_name='scol_managers', blank=True)
-    ROF_code = models.CharField(_('Code RNE'), max_length=10, blank=True, null=True)
+    id_dircomp = models.CharField(
+        _('Directeur de composante'), max_length=65, blank=True)
+    id_rac = models.CharField(
+        _('Responsable administratif'), max_length=65, blank=True)
+    dircomp = models.ForeignKey(
+        MeccUser, related_name='dircomp', blank=True, null=True)
+    rac = models.ForeignKey(
+        MeccUser, related_name='racs', blank=True, null=True)
+    diretu = models.ManyToManyField(
+        MeccUser, related_name='diretu', blank=True)
+    scol_manager = models.ManyToManyField(
+        MeccUser, related_name='scol_managers', blank=True)
+    ROF_code = models.CharField(
+        _('Code RNE'), max_length=10, blank=True, null=True)
     ROF_support = models.BooleanField(_('Appui ROF'), default=False)
+
     def clean_fields(self, exclude=None):
         try:
             temp = Institute.objects.get(code=self.code)
@@ -42,8 +50,6 @@ class Institute(models.Model):
                         ]})
         except Institute.DoesNotExist:
                 pass
-
-    
 
     def get_absolute_url(self):
         return reverse('institute:home', args=(self.code,))

@@ -44,7 +44,8 @@ class MeccUserInline(admin.StackedInline):
     model = MeccUser
     can_delete = False
     fieldsets = (
-        (_('Informations complémentaires'), {'fields': ('status', "cmp", "profile")}),
+        (_('Informations complémentaires'), {
+            'fields': ('status', "cmp", "profile")}),
     )
 
 
@@ -55,7 +56,8 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationFormWithoutPass
 
     list_filter = ('is_staff', 'groups__name',)
-    list_display = ('username', 'is_superuser', 'get_profile', 'get_group', 'get_cmp')
+    list_display = ('username', 'is_superuser', 'get_profile',
+                    'get_group', 'get_cmp')
 
     def get_cmp(self, obj):
         return obj.meccuser.cmp
@@ -65,9 +67,11 @@ class UserAdmin(BaseUserAdmin):
 
     def get_group(self, obj):
         """
-        get group, separate by comma, and display empty string if user has no group
+        get group, separate by comma, and display empty string if user has
+        no group
         """
-        return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
+        return ','.join(
+            [g.name for g in obj.groups.all()]) if obj.groups.count() else ''
 
     get_cmp.short_description = _('Composante')
     get_group.short_description = _('Groupe')
@@ -101,7 +105,6 @@ def get_admin_urls(urls):
         )
         return my_urls + urls
     return get_urls
-
 
 
 # Set & Register adm stuff

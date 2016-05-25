@@ -18,7 +18,7 @@ def home(request, template='spoof/form.html'):
             'DES3' in request.user.groups.values_list('name', flat=True):
 
         try:
-            if request.session['is_spoofed_user'] == False:
+            if not request.session['is_spoofed_user']:
                 request.session['real_username'] = request.user.username
         except KeyError:
             request.session['is_spoofed_user'] = False
@@ -30,7 +30,7 @@ def home(request, template='spoof/form.html'):
             generic_pass = request.POST.get('pass')
             try:
                 new_user = User.objects.get(username=asked_user)
-            except ObjectDoesNotExist as e:
+            except ObjectDoesNotExist:
                 data['error'] = _("L'utilisateur '%s' n'a pas \
                 été trouvé." % asked_user)
                 return render(request, template, data)
@@ -60,7 +60,7 @@ def release_user(request):
     """
     real_username = request.session['real_username']
     new_user = User.objects.get(username=real_username)
-    r = request_with_other_user(request, new_user)
+    request_with_other_user(request, new_user)
 
     request.session['is_spoofed_user'] = False
 

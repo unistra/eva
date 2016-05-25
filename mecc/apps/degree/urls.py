@@ -1,10 +1,12 @@
 from django.conf.urls import url
 from .views import DegreeListView, DegreeTypeListView, DegreeTypeCreate, \
-    DegreeTypeUpdate, DegreeTypeDelete, DegreeCreateView, DegreeUpdateView, DegreeDeleteView
+    DegreeTypeUpdate, DegreeTypeDelete, DegreeCreateView, DegreeUpdateView, \
+    DegreeDeleteView
 from django_cas.decorators import login_required
 
 urlpatterns = [
-    url(r'^list/(?P<filter>|all|current)/(?P<cmp>\w+)/$', login_required(DegreeListView.as_view()),
+    url(r'^list/(?P<filter>|all|current)/(?P<cmp>\w+)/$',
+        login_required(DegreeListView.as_view()),
         name='list'),
     url(r'^create$', login_required(DegreeCreateView.as_view()),
         name='degree_create'),
@@ -18,6 +20,7 @@ urlpatterns = [
         name='type_create'),
     url(r'^type/(?P<id>\d+)', login_required(DegreeTypeUpdate.as_view()),
         name='type_edit'),
-    url(r'^type/delete/(?P<id>\d+)', login_required(DegreeTypeDelete.as_view()),
+    url(r'^type/delete/(?P<id>\d+)',
+        login_required(DegreeTypeDelete.as_view()),
         name='type_delete'),
 ]

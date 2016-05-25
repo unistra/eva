@@ -2,7 +2,6 @@ from django import forms
 from mecc.apps.institute.models import Institute, AcademicField
 from django.utils.translation import ugettext as _
 
-from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field
 
@@ -30,8 +29,6 @@ class InstituteForm(forms.ModelForm):
         }),
         label=_('Responsable administratif'),
         required=False)
-
-
 
     helper = FormHelper()
     helper.form_tag = False
@@ -72,21 +69,21 @@ class DircompInstituteForm(InstituteForm):
     Institute Form for dircomp
     """
     def clean_code(self):
-        instance = getattr(self, 'instance', None)
+        self.instance = getattr(self, 'instance', None)
         if self.instance:
             return self.instance.code
         else:
             return self.cleaned_data['code']
 
     def clean_is_on_duty(self):
-        instance = getattr(self, 'instance', None)
+        self.instance = getattr(self, 'instance', None)
         if self.instance:
             return self.instance.is_on_duty
         else:
             return self.cleaned_data['is_on_duty']
 
     def clean_label(self):
-        instance = getattr(self, 'instance', None)
+        self.instance = getattr(self, 'instance', None)
         if self.instance:
             return self.instance.label
         else:
@@ -96,12 +93,12 @@ class DircompInstituteForm(InstituteForm):
         return self.cleaned_data['field']
 
     def clean_id_dircomp(self):
-        instance = getattr(self, 'instance', None)
+        self.instance = getattr(self, 'instance', None)
 
         return self.cleaned_data['id_dircomp']
 
     def clean_id_rac(self):
-        instance = getattr(self, 'instance', None)
+        self.instance = getattr(self, 'instance', None)
         if self.instance:
             return self.instance.id_rac
         else:

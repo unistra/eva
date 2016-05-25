@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render
-from django.template import RequestContext
 from mecc.apps.years.models import UniversityYear
 from django.core.exceptions import ObjectDoesNotExist
 

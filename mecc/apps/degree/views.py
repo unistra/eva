@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.querries import  rules_since_ever
+from mecc.apps.utils.querries import rules_since_ever
 
 
 class DegreeListView(ListView):
@@ -23,18 +23,17 @@ class DegreeListView(ListView):
             current_year = list(UniversityYear.objects.filter(
                 Q(is_target_year=True))).pop(0).code_year
             degrees = Degree.objects.filter(
-                Q(end_year__gte=current_year,start_year__lte=current_year)) # gte >=, lte <= Q compare querries
+                Q(end_year__gte=current_year, start_year__lte=current_year))
 
         if self.kwargs['cmp'] in [e.code for e in Institute.objects.all()]:
             return degrees.filter(institutes__code=self.kwargs['cmp'])
         else:
             return degrees
 
-
     def get_context_data(self, **kwargs):
         context = super(ListView, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all()
-        context['cmp']= self.kwargs['cmp']
+        context['cmp'] = self.kwargs['cmp']
         return context
 
 
@@ -64,6 +63,7 @@ class DegreeDeleteView(DeleteView):
     model = Degree
     pk_url_kwarg = 'id'
     success_url = '/degree/list/all/none'
+
 
 class DegreeTypeListView(ListView):
     """
@@ -110,5 +110,6 @@ class DegreeTypeDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(DegreeTypeDelete, self).get_context_data(**kwargs)
-        context['rules'] = rules_since_ever(kwargs['object'].id) if kwargs['object'].id is not None else None
+        context['rules'] = rules_since_ever(
+            kwargs['object'].id) if kwargs['object'].id is not None else None
         return context

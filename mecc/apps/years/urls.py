@@ -11,8 +11,8 @@ urlpatterns = [
         name='home'),
     url(r'^new/$', login_required(UniversityYearCreate.as_view()),
         name='create'),
-    url(r'^delete/(?P<code_year>\d+)', login_required(UniversityYearDelete.as_view()),
-        name='delete'),
+    url(r'^delete/(?P<code_year>\d+)', login_required(
+        UniversityYearDelete.as_view()), name='delete'),
     url(r'^initialize/(?P<code_year>\d+)', initialize_year,
         name='initialize'),
 ]

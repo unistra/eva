@@ -3,7 +3,7 @@ from django import forms
 from .models import Rule, Paragraph, Impact
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div, Button, Submit
+from crispy_forms.layout import Layout, HTML, Field, Div,  Submit
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
@@ -39,10 +39,10 @@ class ParagraphForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("""
-                        <div class="grey-font item flex-start">
-                          <label class="">ID alinéa <small>(auto)</small> : </label>
-                          <span id="rule_id"> {{id_paragraph}}</span>
-                        </div>
+                <div class="grey-font item flex-start">
+                  <label class="">ID alinéa <small>(auto)</small> : </label>
+                  <span id="rule_id"> {{id_paragraph}}</span>
+                </div>
                     """),
                     Div(
 
@@ -57,7 +57,8 @@ class ParagraphForm(forms.ModelForm):
                         'is_cmp',
                         Div(
                             Div('is_interaction', css_class="is_interaction"),
-                            Div(Field('impact', css_class="flex-end "), css_class=" item disabled-event "),
+                            Div(Field('impact', css_class="flex-end "),
+                                css_class=" item disabled-event "),
                             css_class="parent"
                         ),
                         css_class="item item-35 paraph-cmp",
@@ -81,22 +82,19 @@ class ParagraphForm(forms.ModelForm):
                     'text_motiv',
                     css_class=" item-70 item disabled-event", id="text_motiv"
                 ),
-                    Div(
-
-                        Submit(
-                            'add', _('Valider et retourner à la règle'),
-                            css_class="form-submit-paraph-item btn-lines",
-                            style=""),
-                        HTML("""
-                            <a class='btn form-submit-paraph-item btn-default btn-lines'
-                            href={% url 'rules:rule_edit' id=rule.id%} >
-                             Annuler et retourner à la règle
-                             </a>
-                             """),
-                        css_class='item-30'
-                    ),
-                css_class = 'parent '
-
+                Div(
+                    Submit(
+                        'add', _('Valider et retourner à la règle'),
+                        css_class="form-submit-paraph-item btn-lines",
+                        style=""),
+                    HTML("""
+                <a class='btn form-submit-paraph-item btn-default btn-lines'
+                href={% url 'rules:rule_edit' id=rule.id%} >
+                Annuler et retourner à la règle </a>
+                         """),
+                    css_class='item-30'
+                ),
+                css_class='parent '
             )
         )
 
@@ -143,11 +141,13 @@ class RuleForm(forms.ModelForm):
     is_edited = forms.ChoiceField(choices=EDITED_CHOICES,
                                   label=_("La règle a-t-elle été modifiée ?"))
 
-    label = forms.CharField(label=('Libellé de règle'),
-                            widget=forms.TextInput(
-                                attrs={'placeholder': _('Saisir ici le libellé de la nouvelle règle')}))
+    label = forms.CharField(
+        label=('Libellé de règle'),
+        widget=forms.TextInput(attrs={'placeholder': _(
+            'Saisir ici le libellé de la nouvelle règle')}))
 
-    display_order = forms.IntegerField(initial=0, label=_("N° d'ordre d'affichage"))
+    display_order = forms.IntegerField(
+        initial=0, label=_("N° d'ordre d'affichage"))
 
     def __init__(self, *args, **kwargs):
         super(RuleForm, self).__init__(*args, **kwargs)
@@ -158,14 +158,14 @@ class RuleForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 HTML("""
-                    <div class="item item-3 grey-font">
-                      <label class="">ID règle <small>(auto)</small> : </label>
-                      <span id="rule_id"> {{latest_id | stringformat:"03d"}}</span>
-                    </div>
-                    <div class="item item-3 grey-font">
-                      <label class="">Année universitaire :</label>
-                      <span id="rule_date"> {{current_year}} </span>
-                    </div>
+            <div class="item item-3 grey-font">
+              <label class="">ID règle <small>(auto)</small> : </label>
+              <span id="rule_id"> {{latest_id | stringformat:"03d"}}</span>
+            </div>
+            <div class="item item-3 grey-font">
+              <label class="">Année universitaire :</label>
+              <span id="rule_date"> {{current_year}} </span>
+            </div>
                 """),
                 Div(
 
@@ -204,7 +204,8 @@ class RuleForm(forms.ModelForm):
                 'is_edited',
                 Div(
                     FormActions(
-                        Submit('add', _('Valider'), css_class="btn-xs", onclick="_isEdited=false"),
+                        Submit('add', _('Valider'), css_class="btn-xs",
+                               onclick="_isEdited=false"),
                     ), css_class='on-right',
                 ),
                 css_class='parent last-line'
@@ -213,7 +214,7 @@ class RuleForm(forms.ModelForm):
 
     def clean(self):
         if (self.cleaned_data.get('is_ccct') or self.cleaned_data.get('is_eci')) is False:
-            raise ValidationError(_("Veuillez selectionner un régime."))
+                raise ValidationError(_("Veuillez selectionner un régime."))
 
         return self.cleaned_data
 

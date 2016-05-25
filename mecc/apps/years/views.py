@@ -5,7 +5,7 @@ from django.views.generic.list import ListView
 from .forms import UniversityYearForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django_cas.decorators import login_required
 
 
@@ -47,7 +47,8 @@ class UniversityYearListView(ListView):
     University year list view
     """
     def get_context_data(self, **kwargs):
-        context = super(UniversityYearListView, self).get_context_data(**kwargs)
+        context = super(
+            UniversityYearListView, self).get_context_data(**kwargs)
         try:
             a = UniversityYear.objects.get(is_target_year=True)
         except ObjectDoesNotExist:
@@ -56,12 +57,14 @@ class UniversityYearListView(ListView):
             self.request.session['current_year'] = a.label_year
             self.request.session['current_code_year'] = a.code_year
         except AttributeError:
-            self.request.session['current_year'] = str(_('Aucune année cible sélectionnée'))
+            self.request.session['current_year'] = str(
+                _('Aucune année cible sélectionnée'))
             self.request.session['current_code_year'] = None
 
         return context
 
     model = UniversityYear
+
 
 @login_required
 def initialize_year(request, code_year, template='years/initialize.html'):
@@ -73,7 +76,8 @@ def initialize_year(request, code_year, template='years/initialize.html'):
     try:
         y = UniversityYear.objects.get(code_year=code_year)
     except ObjectDoesNotExist:
-        data['message'] = _("L'année universitaire demandée n'a pas été trouvée.")
+        data['message'] = _(
+            "L'année universitaire demandée n'a pas été trouvée.")
         return render(request, '500.html', data)
     except KeyError as e:
         data['message'] = e.message

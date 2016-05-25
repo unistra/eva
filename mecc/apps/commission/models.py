@@ -25,8 +25,8 @@ class ECICommissionMember(models.Model):
     def clean_fields(self, exclude=None):
         if self.username in [e.username for e in ECICommissionMember.objects.all()]:
             raise ValidationError(
-                {'username': [_("L'identifiant %s est déjà utilisé." \
-                 % self.username), ]}
+                {'username': [_(
+                    "L'identifiant %s est déjà utilisé." % self.username), ]}
             )
 
     def __str__(self):

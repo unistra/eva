@@ -58,7 +58,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         except ValueError:
             granted_edit_institute(
                 request, code, template='institute/dircomp.html')
-        return redirect('/') # Redirect after POST
+        return redirect('/')  # Redirect after POST
 
     return render(request, template, data)
 
@@ -95,8 +95,8 @@ def add_pple(request):
                 return JsonResponse({
                     'message': _("%(last_name)s %(first_name)s est déjà \
                     directeur de scolarité" % {
-                        'last_name':request.POST.get('last_name'),
-                        'first_name':request.POST.get('first_name')
+                        'last_name': request.POST.get('last_name'),
+                        'first_name': request.POST.get('first_name')
                     })
                 })
             institute.diretu.add(meccuser)
@@ -106,12 +106,13 @@ def add_pple(request):
                 return JsonResponse({
                     'message': _("%(last_name)s %(first_name)s est déjà \
                     gestionnaire de scolarité" % {
-                        'last_name':request.POST.get('last_name'),
-                        'first_name':request.POST.get('first_name')
+                        'last_name': request.POST.get('last_name'),
+                        'first_name': request.POST.get('first_name')
                     })
                 })
 
-            meccuser.is_ref_app = False if request.POST.get('is_ref_app') == 'false' else True
+            meccuser.is_ref_app = False if request.POST.get(
+                'is_ref_app') == 'false' else True
             if meccuser.is_ref_app:
                 profile = Profile.objects.get(code='REFAPP')
             institute.scol_manager.add(meccuser)
@@ -121,8 +122,8 @@ def add_pple(request):
 
         return JsonResponse({
             'success': _("%(last_name)s %(first_name)s a bien été ajouté" % {
-                'last_name':request.POST.get('last_name'),
-                'first_name':request.POST.get('first_name')
+                'last_name': request.POST.get('last_name'),
+                'first_name': request.POST.get('first_name')
             })
         })
 
@@ -154,8 +155,8 @@ def remove_pple(request):
 
         return JsonResponse({
             'success': _("%(last_name)s %(first_name)s a bien été supprimé" % {
-                'last_name':meccuser.user.last_name,
-                'first_name':meccuser.user.first_name
+                'last_name': meccuser.user.last_name,
+                'first_name': meccuser.user.first_name
             })
         })
 
@@ -289,7 +290,8 @@ class InstituteListView(ListView):
             ordered_list = Institute.objects.all().order_by('field', 'label')
             for institute in ordered_list:
                 try:
-                    iy = InstituteYear.objects.get(code_year=current_year, id_cmp=institute.id)
+                    iy = InstituteYear.objects.get(
+                        code_year=current_year, id_cmp=institute.id)
                     field = {
                         'domaine': institute.field.name,
                         'code': institute.code,
@@ -299,7 +301,7 @@ class InstituteListView(ListView):
                         'date_expected_MECC': iy.date_expected_MECC,
                         'date_last_notif': iy.date_last_notif,
                         'is_late': iy.is_expected_date_late,
-                        'ROF_support':institute.ROF_support,
+                        'ROF_support': institute.ROF_support,
                     }
                     institute_list.append(field)
                 except:

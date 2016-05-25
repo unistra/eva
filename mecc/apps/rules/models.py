@@ -27,7 +27,8 @@ class Rule(models.Model):
         ('X', _('Nouvelle')),
     )
 
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False, default=0)
+    display_order = models.IntegerField(
+        _('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))
     label = models.CharField(_("Libellé"), max_length=75)
     is_in_use = models.BooleanField(_('En service'), default=True)
@@ -78,7 +79,8 @@ class Paragraph(models.Model):
     rule = models.ManyToManyField(Rule)
     text_standard = models.TextField(_("Texte de l'alinéa standard"))
     is_in_use = models.BooleanField(_('En service'), default=True)
-    display_order = models.IntegerField(_('Numéro ordre affichage'), unique=False)
+    display_order = models.IntegerField(
+        _('Numéro ordre affichage'), unique=False)
     is_cmp = models.BooleanField(_('Alinéa de composante'))
     is_interaction = models.BooleanField(_('Interaction'))
     text_derog = models.TextField(_("Texte de consigne pour la saisie de \
@@ -91,7 +93,7 @@ class Paragraph(models.Model):
         return "Alinéa n° %s" % self.pk
 
     def get_absolute_url(self):
-        return reverse('rules:rule_edit', id=rule.object.all()[0].id)
+        return reverse('rules:rule_edit', id=Rule.object.all()[0].id)
 
     class Meta:
         ordering = ['display_order']

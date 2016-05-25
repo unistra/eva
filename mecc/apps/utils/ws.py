@@ -44,7 +44,7 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
         page_size=500, page=page_num
     )
     r = json.loads(ask.text)
-# FIXME: content belows work but can be improved perhaps with list comprehension
+# FIXME: may work with list comprehension
     if r and 'results' in r and r['results']:
         for i in r['results']:
             for e in i['accounts']:

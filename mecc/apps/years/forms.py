@@ -1,6 +1,6 @@
 from django import forms
 from mecc.apps.years.models import UniversityYear, InstituteYear
-from crispy_forms.bootstrap import  FormActions
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, HTML, Field
 from django.utils.translation import ugettext as _
@@ -89,7 +89,7 @@ class UniversityYearForm(forms.ModelForm):
         initial='False',
     )
     pdf_doc = forms.CharField(
-        widget=forms.Textarea(attrs={'rows':4, 'cols':40}),
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}),
         label=_('Documents pdf'), required=False)
 
     helper = FormHelper()

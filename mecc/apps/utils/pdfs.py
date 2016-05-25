@@ -7,10 +7,12 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 
 from .querries import rules_for_current_year
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.rules.models import Paragraph as ParagraphRules
-styles=getSampleStyleSheet()
+
+styles = getSampleStyleSheet()
+
 
 def setting_up_pdf(title, margin=72):
     """
@@ -22,7 +24,6 @@ def setting_up_pdf(title, margin=72):
     doc = SimpleDocTemplate(response, rightMargin=margin, leftMargin=margin,
                             topMargin=margin, bottomMargin=18)
     return response, doc
-
 
 
 class NumberedCanvas(canvas.Canvas):
@@ -48,7 +49,8 @@ class NumberedCanvas(canvas.Canvas):
             self.setFillGray(0.2)
             self.setFont("Helvetica", 8.5)
             self.drawRightString(
-                205 * mm, 5 * mm, "Page %d/%d" % (self._pageNumber, page_count))
+                205 * mm, 5 * mm, "Page %d/%d" %
+                (self._pageNumber, page_count))
 
 
 def degree_type_rules_for_current_year(title, degreetype):
@@ -60,8 +62,8 @@ def degree_type_rules_for_current_year(title, degreetype):
     cr1 = cr.filter(Q(is_eci=True, is_ccct=True))
     cr2 = cr.filter(Q(is_eci=True, is_ccct=False))
     cr3 = cr.filter(Q(is_eci=False, is_ccct=True))
-
     story = []
+
     def lf_paragraph(e, data):
         data.append([Paragraph(e.label, styles['Normal']), ""])
         paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
@@ -70,6 +72,7 @@ def degree_type_rules_for_current_year(title, degreetype):
             data.append([Paragraph(p.text_standard, styles['Normal']), ""])
 
         return data
+
 # ############ TITLE ################################
 
     header = [
@@ -81,55 +84,55 @@ def degree_type_rules_for_current_year(title, degreetype):
     for e in header:
         story.append(Paragraph(e, styles["Normal"]))
 
-    story.append(Spacer(0,12))
+    story.append(Spacer(0, 12))
 # ############ ECI/CCT ################################
     if len(cr1) > 0:
         data = [
             [Paragraph("REGLES APPLICABLES à tous les diplômes \
-                de type %s" %  degreetype.short_label, styles["Normal"]), '']
+                de type %s" % degreetype.short_label, styles["Normal"]), '']
         ]
-
 
         for e in cr1:
             lf_paragraph(e, data)
 
         t = Table(data, style=[
-            ('LINEABOVE', (0,0), (-1,-1), 0.25, colors.lightgrey),
+            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
         ])
         story.append(t)
 # ############ ECI ################################
     if len(cr2) > 0:
-        story.append(Spacer(0,50))
+        story.append(Spacer(0, 50))
 
         data = [
             [Paragraph("REGLES APPLICABLES aux diplômes de type %s en  \
-                évaluation continue intégrale" %  degreetype.short_label, styles["Normal"]), '']
+             évaluation continue intégrale" %
+             degreetype.short_label, styles["Normal"]), '']
         ]
 
         for e in cr2:
             lf_paragraph(e, data)
 
         t = Table(data, style=[
-            ('LINEABOVE', (0,0), (-1,-1), 0.25, colors.lightgrey),
+            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
         ])
         story.append(t)
 
 # ############ CCCT ################################
     if len(cr3) > 0:
 
-        story.append(Spacer(0,50))
+        story.append(Spacer(0, 50))
 
         data = [
             [Paragraph("REGLES APPLICABLES aux diplômes \
             de type %s en contrôle terminal, combiné ou non avec un contrôle \
-            continu" %  degreetype.short_label, styles["Normal"]), '']
+            continu" % degreetype.short_label, styles["Normal"]), '']
         ]
 
         for e in cr3:
             lf_paragraph(e, data)
 
         t = Table(data, style=[
-            ('LINEABOVE', (0,0), (-1,-1), 0.25, colors.lightgrey),
+            ('LINEABOVE', (0, 0), (-1, -1), 0.25, colors.lightgrey),
         ])
         story.append(t)
 

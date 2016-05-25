@@ -23,7 +23,8 @@ class InstituteYear(models.Model):
         if isinstance(self.date_expected_MECC, datetime.date):
             current = UniversityYear.objects.get(is_target_year=True)
             if isinstance(current.date_expected, datetime.date):
-                return True if current.date_expected <= self.date_expected_MECC else False
+                return True if (current.date_expected <=
+                                self.date_expected_MECC) else False
         return None
 
 
@@ -58,7 +59,8 @@ class UniversityYear(models.Model):
         return self.label_year
 
     def clean_fields(self, exclude=None):
-        if self.code_year in set([e.code_year for e in InstituteYear.objects.all()]):
+        if self.code_year in set(
+                [e.code_year for e in InstituteYear.objects.all()]):
             self.is_year_init = True
         else:
             self.is_year_init = False

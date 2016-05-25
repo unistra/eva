@@ -1,13 +1,10 @@
 from django import forms
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Button, Div, Field
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Layout, Field
 from django.utils.translation import ugettext as _
 
 from .models import ECICommissionMember
-from ..adm.models import MeccUser
-from django.contrib.auth.models import User
 
 
 class ECIForm(ModelForm):
@@ -21,7 +18,7 @@ class ECIForm(ModelForm):
     )
 
     member_type = forms.ChoiceField(choices=MEMBER_TYPE_CHOICES,
-        label=_('Type de membre'))
+                                    label=_('Type de membre'))
 
     def __init__(self, *args, **kwargs):
         super(ECIForm, self).__init__(*args, **kwargs)
@@ -37,4 +34,10 @@ class ECIForm(ModelForm):
 
     class Meta:
         model = ECICommissionMember
-        fields = ['username', 'member_type', 'last_name', 'first_name', 'email']
+        fields = [
+            'username',
+            'member_type',
+            'last_name',
+            'first_name',
+            'email'
+        ]
