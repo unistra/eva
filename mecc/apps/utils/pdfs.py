@@ -5,14 +5,16 @@ from reportlab.pdfgen import canvas
 from django.db.models import Q
 from reportlab.lib.units import mm
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_JUSTIFY
 
 from .querries import rules_for_current_year
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.rules.models import Paragraph as ParagraphRules
 from django.utils.translation import ugettext as _
 
 styles = getSampleStyleSheet()
+styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 
 
 def setting_up_pdf(title, margin=72):
@@ -96,7 +98,7 @@ def add_paragraph(e, story):
 
         t.append(
             [
-                Paragraph(p.text_standard, styles['Normal']),
+                Paragraph(p.text_standard, styles["Justify"]),
                 Paragraph("<para align=right textColor=grey>%s</para>" % txt,
                           styles['Normal'])
             ]
@@ -124,18 +126,18 @@ def degree_type_rules_for_current_year(title, degreetype):
 # ############ TITLE ################################
 
     header = [
-        _("Modaliltés d'évaluation des connaissances et compétences"),
+        _("Modalités d'évaluation des connaissances et compétences"),
         _("Règles générales - %s" % degreetype.short_label),
         _("Année universitaire %s/%s" % (current_year, current_year + 1))
     ]
     ttle = []
     for e in header:
-        ttle.append(Paragraph("<para align=center \
-            textColor=darkblue>%s</para>" % e, styles["Heading3"]))
+        ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
-    t = [[Image('mecc/static/img/logo_uds.png', 150, 65), ttle]]
+    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
 
-    table = Table(t, colWidths=(150, 400))
+    table = Table(t, colWidths=(145, 405))
 
     story.append(table)
 
