@@ -88,10 +88,8 @@ class UniversityYearForm(forms.ModelForm):
         label=_('Initialisation des composantes effectuée'),
         initial='False',
     )
-    pdf_doc = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}),
-        label=_('Documents pdf'), required=False)
-
+    pdf_doc = forms.FileField(
+        label=_("Déposer document cadre"))
     helper = FormHelper()
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
@@ -104,10 +102,7 @@ class UniversityYearForm(forms.ModelForm):
             Field('date_validation', css_class='input-xlarge'),
             Field('date_expected', css_class='input-xlarge'),
             HTML('<hr/>'),
-            Field('pdf_doc', readonly=True),
-            HTML("""
-            <a href="#" class="btn btn-primary" id="upload_doc">%s </a>
-            """ % _('Déposer le document cadre')),
+            Field('pdf_doc'),
             HTML('<hr/>'),
             Field('is_year_init', readonly=True),
 

@@ -48,8 +48,8 @@ class UniversityYear(models.Model):
     date_expected = models.DateField(
         _('Date prévisionnelle CFVU MECC'), blank=True, null=True
     )
-    pdf_doc = models.CharField(
-        _('Documents pdf'), max_length=100, blank=True, null=True
+    pdf_doc = models.FileField(
+        upload_to='doc_cadre/', blank=True,
     )
     is_year_init = models.BooleanField(
         _('Initialisation des composantes effectuée'), default=False
@@ -57,6 +57,15 @@ class UniversityYear(models.Model):
 
     def __str__(self):
         return self.label_year
+
+    def save(self, *args, **kwargs):
+        try:
+            this = UniversityYear.objects.get(id=self.id)
+            if this.pdf_doc != self.pdf_doc:
+                this.pdf_doc.delete(save=False)
+        except:
+            pass
+        super(UniversityYear, self).save(*args, **kwargs)
 
     def clean_fields(self, exclude=None):
         if self.code_year in set(
@@ -78,6 +87,15 @@ class UniversityYear(models.Model):
                         Veuillez la désactiver au préalable.'), ]})
             except UniversityYear.DoesNotExist:
                     pass
+
+        ext = self.pdf_doc.name.split('.')[-1]
+        if ext not in ['pdf', 'doc', 'docx', 'odt', 'ott']:
+            raise ValidationError(
+                {'pdf_doc': [_("Vous ne pouvez déposer que des documents pdf \
+                    ou doc."), ]})
+        else:
+            self.pdf_doc.name = _(
+                "Document_cadre_%s.%s" % (self.code_year, ext))
 
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
