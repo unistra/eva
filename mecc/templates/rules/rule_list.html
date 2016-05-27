@@ -176,7 +176,7 @@ $('.display-order').on('change', function() {
 function go_gen_pdf(){
 var e = document.getElementById("select-degreetype");
   var degree_type = e.options[e.selectedIndex].value;
-  location.href='/rules/gen_pdf/' + degree_type
+  window.open('/rules/gen_pdf/' + degree_type, '_blank').focus()
 }
 </script>
 {% endblock %}

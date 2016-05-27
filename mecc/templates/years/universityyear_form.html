@@ -15,18 +15,18 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
-<form action="" method="post"  class='div-flex'>
-<a {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years" style='margin-left:25%;'  {% if not object %} disabled {% endif %}>
-   {% trans 'Initialiser les composantes' %} </a>
+<form enctype="multipart/form-data" action="" method="post"  class='div-flex'>
+<button {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years" style='margin-left:25%;'  {% if not object %} disabled {% endif %}>
+   {% trans 'Initialiser les composantes' %} </button>
     {% crispy form %}
     <div id="btn-sbmt">
     <input type="submit" name="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}"
     class="btn btn-primary btn-lines" id="submit-id-submit">
-    <a href='{% url "years:home" %}'value="" class="btn btn-primary btn-lines">
-      {% trans 'Annuler et retourner à la liste des années universitaires' %}</a>
+    <button href='{% url "years:home" %}' value="" class="btn btn-primary btn-lines">
+      {% trans 'Annuler et retourner à la liste des années universitaires' %}</button>
 
     </div>
-</form1>
+</form>
 
 <script>
 // Add checkbox next to id_code
@@ -73,6 +73,5 @@ document.getElementById('id_is_target_year').value = 1;
 {% endif %}
 
   </script>
-
 
 {% endblock %}
