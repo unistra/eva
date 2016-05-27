@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, \
-    ListFlowable, ListItem, Table, PageBreak, CondPageBreak, TableStyle
+from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
+    Table
 from reportlab.pdfgen import canvas
 from django.db.models import Q
 from reportlab.lib.units import mm
@@ -66,9 +66,6 @@ def block_rules(title, rules, story):
         table = Table(t, colWidths=(550), style=[
             ('BOX', (0, 1), (-1, 1), 1, colors.black),
             ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
-            # ('SPAN', (0, 1), (-1, 1)),
-            # ('GRID', (0, 0), (-1, -1), 1, colors.darkorange),
-            # ('LINEBELOW', (0, 2), (-1, -1), 2, colors.lightgrey),
         ])
         story.append(table)
 
@@ -82,31 +79,33 @@ def add_paragraph(e, story):
     t = [["", ""]]
 
     t.append([
-        Paragraph("<para textColor=darkblue>%s</para>" % e.label,
-                  styles['Heading4']),
-        Paragraph("<para align=right textColor=grey> ID %s</para>" % e.pk,
-                  styles['Normal'])])
+        Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
+                  styles['Normal']),
+        Paragraph("<para align=right textColor=darkblue fontSize=8>\
+                  ID %s</para>" % e.pk, styles['Normal'])])
 
     paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
 
     for p in paragraphs:
         txt = ''
         cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
-        derog = _("Dérogation possible") if p.is_interaction else ''
+        derog = _("Dérogation <br></br> possible") if p.is_interaction else ''
         if p.is_interaction:
             txt = derog if not p.is_cmp else cmp
 
         t.append(
             [
                 Paragraph(p.text_standard, styles["Justify"]),
-                Paragraph("<para align=right textColor=grey>%s</para>" % txt,
-                          styles['Normal'])
+                Paragraph("<para align=right textColor=grey fontSize=8>\
+                    %s</para>" % txt, styles['Normal'])
             ]
             )
 
-    table = Table(t, colWidths=(425, 125), style=[
+    table = Table(t, colWidths=(400, 125), style=[
         # ('BOX', (0, 1), (-1, 1), 1, colors.black),
-        # ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+        # ('BACKGROUND', (1, 0), (1, -1), colors.grey),
+        ('VALIGN', (0, 0), (0, -1), 'TOP'),
+        ('VALIGN', (1, 1), (1, -1), 'MIDDLE'),
         ('LINEBELOW', (0, 2), (-1, -1), 0.75, colors.lightgrey),
     ])
     story.append(table)
@@ -118,8 +117,6 @@ def degree_type_rules_for_current_year(title, degreetype):
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0).code_year
     cr = rules_for_current_year(degreetype.id)
-    if cr is None:
-        return None
 
     story = []
 
@@ -142,6 +139,13 @@ def degree_type_rules_for_current_year(title, degreetype):
     story.append(table)
 
     story.append(Spacer(0, 12))
+
+# ############ No rules case ################################
+
+    if cr is None:
+        story.append(Spacer(0, 24))
+        story.append(Paragraph(_("Aucune règle."), styles['Normal']))
+        return story
 
 # ############ ECI/CCT ################################
 

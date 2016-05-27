@@ -45,3 +45,6 @@ htmlcov/
 .fab_tasks~
 *.db
 .idea/
+
+# generated_stuff
+mecc/media/doc_cadre/
