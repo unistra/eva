@@ -233,8 +233,7 @@ def gen_pdf(request, id_degreetype):
 
     response, doc = setting_up_pdf(title, margin=42)
     story = degree_type_rules_for_current_year(title, degree_type)
-    if story is None:
-        return redirect('commission:home')
+
     doc.build(story, canvasmaker=NumberedCanvas)
 
     return response
