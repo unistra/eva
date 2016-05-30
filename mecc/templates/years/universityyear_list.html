@@ -49,7 +49,9 @@
       <a href="{% url 'years:edit' code_year=e.code_year %}" class="glyphicon glyphicon-pencil"></a>
     </td>
     <td>
+        {% if e.can_be_deleted%}
       <a href="{% url 'years:delete' code_year=e.code_year %}" class="glyphicon glyphicon-trash"></a>
+        {%endif%}
     </td>
   </tr>
     {% endfor %}
