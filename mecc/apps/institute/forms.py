@@ -115,4 +115,4 @@ class DircompInstituteForm(InstituteForm):
             self.fields['id_dircomp'].widget.attrs['readonly'] = True
             self.fields['id_rac'].widget.attrs['readonly'] = True
             self.fields['ROF_code'].widget.attrs['readonly'] = True
-            self.fields['ROF_support'].widget.attrs['readonly'] = True
+            self.fields['ROF_support'].widget.attrs['disabled'] = True
