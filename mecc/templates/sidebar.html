@@ -101,7 +101,7 @@
         </li>
         {% endif %}
 
-        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user|has_group:'DES2'%}
 
          <li class="dropdown">
             <a href="#collapseDegree"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
