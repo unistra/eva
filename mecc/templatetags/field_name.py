@@ -15,4 +15,8 @@ def get_field_name(instance, field_name):
 
 @register.filter
 def filename(value):
-    return os.path.basename(value.file.name)
+    try :
+        return os.path.basename(value.file.name)
+    except OSError as e:
+        pass
+    return None
