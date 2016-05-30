@@ -89,7 +89,7 @@ class UniversityYearForm(forms.ModelForm):
         initial='False',
     )
     pdf_doc = forms.FileField(
-        label=_("Déposer document cadre"))
+        label=_("Déposer document cadre"), required=False)
     helper = FormHelper()
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
