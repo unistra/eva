@@ -51,7 +51,9 @@ class Rule(models.Model):
         Return true if there is at least one derogation in paragraphs concerned
         by the rule
         """
-        return True if True in [e.is_interaction for e in Paragrah.objects.filter(rule=self)] else False
+        return True if True in [e.is_interaction for e in
+                                Paragraph.objects.filter(
+                                    rule=self)] else False
 
     def __str__(self):
         return self.label
