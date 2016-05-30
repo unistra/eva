@@ -35,7 +35,7 @@
     </td>
     <td>{{e.date_validation|date:"d/m/Y"}}</td>
     <td>{{e.date_expected|date:"d/m/Y"}}</td>
-    <td>{%if e.pdf_doc%}
+    <td>{%if e.pdf_doc|filename%}
         <a href="/media/{{e.pdf_doc}}">{{e.pdf_doc|filename}}</a>
         {%endif%}
     </td>
