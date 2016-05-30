@@ -49,7 +49,7 @@ class UniversityYear(models.Model):
         _('Date prévisionnelle CFVU MECC'), blank=True, null=True
     )
     pdf_doc = models.FileField(
-        upload_to='doc_cadre/', blank=True,
+        upload_to='doc_cadre/', blank=True, null=True
     )
     is_year_init = models.BooleanField(
         _('Initialisation des composantes effectuée'), default=False
