@@ -88,14 +88,15 @@ class UniversityYear(models.Model):
             except UniversityYear.DoesNotExist:
                     pass
 
-        ext = self.pdf_doc.name.split('.')[-1]
-        if ext not in ['pdf', 'doc', 'docx', 'odt', 'ott']:
-            raise ValidationError(
-                {'pdf_doc': [_("Vous ne pouvez déposer que des documents pdf \
-                    ou doc."), ]})
-        else:
-            self.pdf_doc.name = _(
-                "Document_cadre_%s.%s" % (self.code_year, ext))
+        if self.pdf_doc:
+            ext = self.pdf_doc.name.split('.')[-1]
+            if ext not in ['pdf', 'doc', 'docx', 'odt', 'ott']:
+                raise ValidationError(
+                    {'pdf_doc': [_("Vous ne pouvez déposer que des documents pdf \
+                        ou doc."), ]})
+            else:
+                self.pdf_doc.name = _(
+                    "Document_cadre_%s.%s" % (self.code_year, ext))
 
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
