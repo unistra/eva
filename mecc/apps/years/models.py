@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 import re
 import datetime
+from django.apps import apps
 
 
 class InstituteYear(models.Model):
@@ -55,6 +56,15 @@ class UniversityYear(models.Model):
         _('Initialisation des composantes effectuée'), default=False
     )
 
+    @property
+    def can_be_deleted(self):
+        Rule = apps.get_model('rules.Rule')
+        rules = Rule.objects.filter(code_year=self.code_year)
+        if not len(rules) > 0:
+            return True
+        else:
+            return False
+
     def __str__(self):
         return self.label_year
 
@@ -97,6 +107,12 @@ class UniversityYear(models.Model):
             else:
                 self.pdf_doc.name = _(
                     "Document_cadre_%s.%s" % (self.code_year, ext))
+
+    def delete(self):
+        Rule = apps.get_model('rules.Rule')
+        rules = Rule.objects.filter(code_year=self.code_year)
+        if not len(rules) > 0:
+            super(UniversityYear, self).delete()
 
     def get_absolute_url(self):
         return reverse('years:home', args=(self.code_year,))
