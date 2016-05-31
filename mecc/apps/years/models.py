@@ -78,6 +78,7 @@ class UniversityYear(models.Model):
         super(UniversityYear, self).save(*args, **kwargs)
 
     def clean_fields(self, exclude=None):
+        max_size = 1240000
         if self.code_year in set(
                 [e.code_year for e in InstituteYear.objects.all()]):
             self.is_year_init = True
@@ -104,6 +105,10 @@ class UniversityYear(models.Model):
                 raise ValidationError(
                     {'pdf_doc': [_("Vous ne pouvez déposer que des documents pdf \
                         ou doc."), ]})
+            elif self.pdf_doc.size > max_size:
+                raise ValidationError(
+                    {'pdf_doc': [_("La taille du document ne peut être \
+                        supérieure à 1MB."), ]})
             else:
                 self.pdf_doc.name = _(
                     "Document_cadre_%s.%s" % (self.code_year, ext))
