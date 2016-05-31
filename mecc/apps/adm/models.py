@@ -31,17 +31,6 @@ class MeccUser(models.Model):
         ('PROF', _('Enseignant')),
     )
 
-    PROFILE_CHOICES = (
-        ('ECI', _('Membre de la commission ECI')),
-        ('DIRCOMP', _('Directeur de composante')),
-        ('RAC', _('Responsable administratif')),
-        ('REFAPP', _('Référent application')),
-        ('REFSCOL', _('Responsable Formation Scolarité')),
-        ('DIRETU', _('Directeur d\'études')),
-        ('GESCOL', _('Gestionnaire de scolarité')),
-        ('RESPFORM', _('Responsable de formation')),
-    )
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     cmp = models.CharField(_('Composante'), max_length=5, blank=True)
     status = models.CharField(
