@@ -12,6 +12,7 @@ from mecc.decorators import is_ajax_request, is_post_request
 
 @is_post_request
 @is_ajax_request
+@login_required
 def change_typemember(request):
     username = request.POST.get('username', '')
     type_member = request.POST.get('type_member', '')
