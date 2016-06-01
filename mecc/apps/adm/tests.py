@@ -2,11 +2,13 @@ from django.test import TestCase
 from .models import Profile, MeccUser
 from django.contrib.auth.models import User
 
+
 class ProfileTestCase(TestCase):
 
     def test_profile_str(self):
         test1 = Profile.objects.create(code='TEST1', label='Test num 1')
         self.assertEqual(str(test1), test1.label)
+
 
 class MeccUserTestCase(TestCase):
 
