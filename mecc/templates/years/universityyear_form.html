@@ -16,8 +16,8 @@
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
 <form enctype="multipart/form-data" action="" method="post"  class='div-flex'>
-<button {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years" style='margin-left:25%;'  {% if not object %} disabled {% endif %}>
-   {% trans 'Initialiser les composantes' %} </button>
+<a {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years" style='margin-left:25%;'  {% if not object %} disabled {% endif %}>
+   {% trans 'Initialiser les composantes' %} </a>
     {% crispy form %}
     <div id="btn-sbmt">
     <input type="submit" name="submit" value="{% trans 'Valider et retourner à la liste des années universitaires' %}"
