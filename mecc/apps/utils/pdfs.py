@@ -87,19 +87,21 @@ def add_paragraph(e, story):
     paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
 
     for p in paragraphs:
-        txt = ''
-        cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
-        derog = _("Dérogation <br></br> possible") if p.is_interaction else ''
-        if p.is_interaction:
-            txt = derog if not p.is_cmp else cmp
+        if p.is_in_use:
+            txt = ''
+            cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
+            derog = _("Dérogation <br></br> possible") if \
+                p.is_interaction else ''
+            if p.is_interaction:
+                txt = derog if not p.is_cmp else cmp
 
-        t.append(
-            [
-                Paragraph(p.text_standard, styles["Justify"]),
-                Paragraph("<para align=right textColor=grey fontSize=8>\
-                    %s</para>" % txt, styles['Normal'])
-            ]
-            )
+            t.append(
+                [
+                    Paragraph(p.text_standard, styles["Justify"]),
+                    Paragraph("<para align=right textColor=grey fontSize=8>\
+                        %s</para>" % txt, styles['Normal'])
+                ]
+                )
 
     table = Table(t, colWidths=(400, 125), style=[
         # ('BOX', (0, 1), (-1, 1), 1, colors.black),
