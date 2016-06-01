@@ -47,7 +47,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         instance=institute_year)
     data['disabled_institute_year'] = DisabledInstituteYearForm(
         instance=institute_year)
-    data['cadre_gen'] = "xxxxx.pdf"
+    data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
     if request.POST:
         try:
             expected_mecc = datetime.strptime(
@@ -198,13 +198,13 @@ class InstituteCreate(CreateView):
         except ObjectDoesNotExist:
             context['latest_instit_id'] = 1
         try:
-            current_year = UniversityYear.objects.get(
-                is_target_year=True).code_year
+            uy = UniversityYear.objects.get(is_target_year=True)
+            current_year = uy.code_year
+            context['cadre_gen'] = uy.pdf_doc
             context['institute_year'] = InstituteYear.objects.filter(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
-        context['cadre_gen'] = "xxxxx.pdf"
         current_year = UniversityYear.objects.get(
             is_target_year=True).code_year
         context['university_year'] = UniversityYear.objects.get(
@@ -258,16 +258,17 @@ class InstituteUpdate(UpdateView):
         except ObjectDoesNotExist:
             context['latest_instit_id'] = 1
         try:
-            current_year = UniversityYear.objects.get(
-                is_target_year=True).code_year
+            uy = UniversityYear.objects.get(is_target_year=True)
+            current_year = uy.code_year
+            context['cadre_gen'] = uy.pdf_doc
             context['institute_year'] = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
-            context['university_year'] = UniversityYear.objects.get(
-                code_year=current_year)
+            context['university_year'] = uy
             context['institute'] = self.object
+            print('here')
+
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
-        context['cadre_gen'] = "xxxxx.pdf"
         return context
 
     slug_field = 'code'

@@ -24,7 +24,6 @@ class UniversityYearDelete(DeleteView):
         context = super(UniversityYearDelete, self).get_context_data(**kwargs)
         context['rules'] = rules_for_year(kwargs['object'].code_year) \
             if kwargs['object'].id is not None else None
-        print(context['rules'])
         return context
 
 

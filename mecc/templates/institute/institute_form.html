@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load field_name %}
 
 {% load i18n %}
 {% load staticfiles %}
@@ -55,7 +56,7 @@
 
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : <a href ='#'>{{cadre_gen}}</a></label>
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href ="/media/{{cadre_gen}}">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
   </div>
 
   <div>
