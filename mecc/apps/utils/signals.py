@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError as ie
 
 
 @receiver(pre_save, sender=ECICommissionMember)
@@ -18,7 +19,7 @@ def ECI_pre_save(sender, **kwargs):
     try:
         user = User.objects.create_user(
             new_user.username, email=new_user.email)
-    except IntegrityError:
+    except (IntegrityError, ie):
         user = User.objects.get(username=new_user.username)
     user.last_name = new_user.last_name
     user.first_name = new_user.first_name
@@ -44,6 +45,6 @@ def ECI_post_delete(sender, **kwargs):
     eci = Profile.objects.get(code='ECI')
     meccuser.profile.remove(eci)
     profiles = meccuser.profile.all()
-    if len(profiles) < 1:
+    if len(profiles) < 1 and not meccuser.user.is_superuser:
         meccuser.user.delete()
         meccuser.delete()
