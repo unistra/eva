@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 from django_cas.decorators import login_required
+from mecc.apps.utils.querries import rules_for_year
 
 
 class UniversityYearDelete(DeleteView):
@@ -18,6 +19,13 @@ class UniversityYearDelete(DeleteView):
     slug_field = 'code_year'
     slug_url_kwarg = 'code_year'
     success_url = '/years'
+
+    def get_context_data(self, **kwargs):
+        context = super(UniversityYearDelete, self).get_context_data(**kwargs)
+        context['rules'] = rules_for_year(kwargs['object'].code_year) \
+            if kwargs['object'].id is not None else None
+        print(context['rules'])
+        return context
 
 
 class UniversityYearCreate(CreateView):
