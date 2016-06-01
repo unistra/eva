@@ -56,15 +56,6 @@ class UniversityYear(models.Model):
         _('Initialisation des composantes effectuée'), default=False
     )
 
-    @property
-    def can_be_deleted(self):
-        Rule = apps.get_model('rules.Rule')
-        rules = Rule.objects.filter(code_year=self.code_year)
-        if not len(rules) > 0:
-            return True
-        else:
-            return False
-
     def __str__(self):
         return self.label_year
 
