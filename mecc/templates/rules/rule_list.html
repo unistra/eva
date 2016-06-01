@@ -52,7 +52,7 @@
 {% endif %}
 </div>
 <div class="buttons_list">
-<a href="" class="btn-primary btn btn-sm btn-1">{% trans "Dupliquer les règles générales des années précédentes" %}</a>
+<a href="{% url 'rules:duplicate'%}" class="btn-primary btn btn-sm btn-1">{% trans "Dupliquer les règles générales des années précédentes" %}</a>
 <a href="{% url 'rules:new'%}" class="btn-primary btn btn-sm">{% trans "Créer une nouvelle règle" %}</a>
 <a data-toggle="modal" data-target="#select_degreetype" class="btn-primary btn btn-sm">{% trans "Générer pdf des règles de l'année" %}</a>
 <a href="" class="btn-primary btn btn-sm" >{% trans "Historique Règles générales" %}</a>

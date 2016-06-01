@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from .views import RulesListView, RuleCreate, RuleDelete, \
     edit_rule, manage_degreetype, update_display_order, \
-    manage_paragraph, ParagraphDelete, edit_paragraph, gen_pdf
+    manage_paragraph, ParagraphDelete, edit_paragraph, gen_pdf, \
+    duplicate_rule
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -26,4 +27,6 @@ urlpatterns = [
         name='paragraph_delete'),
     url(r'^gen_pdf/(?P<id_degreetype>\d+)', gen_pdf,
         name='gen_pdf'),
+    url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_rule,  # (?:/(?<i>[regex])?/$) makes the arg i optional :)
+        name='duplicate'),
 ]

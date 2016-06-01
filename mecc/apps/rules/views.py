@@ -237,3 +237,14 @@ def gen_pdf(request, id_degreetype):
     doc.build(story, canvasmaker=NumberedCanvas)
 
     return response
+
+
+def duplicate_rule(request, year=None, template='rules/duplicate.html'):
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    data['current_year'] = "%s/%s" % (current_year.code_year,
+                                      current_year.code_year + 1)
+    if year is None:
+        data['rules'] = Rule.objects.all()
+    return render(request, template, data)

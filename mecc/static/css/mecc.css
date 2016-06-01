@@ -4,7 +4,48 @@
 .red{
   color: red;
 }
+/*******************************************************************************
+/* CKEDITOR custom css*/
+.duplicate-table{
+    margin:1em;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+    border-width:1px;
+    border-style:solid;
+    border-color:black;
+    background-color: #E1F1FE;
+}
+.duplicate-table .thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
 
+.duplicate-table .tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow: auto;
+  max-height: 50vh;
+  background-color: white;
+
+}
+.duplicate-table td{
+    border-width:0.1px;
+    border-style:solid;
+    border-color:lightgrey;
+}
+.duplicate-table  .tbody tr {
+  width: 100%;
+}
+.duplicate-table .thead,
+.duplicate-table .tbody tr {
+  display: table;
+  table-layout: fixed;
+}
 /*******************************************************************************
 /* CKEDITOR custom css*/
 .django-ckeditor-widget{
