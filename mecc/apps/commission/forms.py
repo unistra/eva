@@ -29,7 +29,7 @@ class ECIForm(ModelForm):
             Field('last_name'),
             Field('first_name'),
             Field('member_type'),
-            Field('mail')
+            Field('email')
         )
 
     class Meta:
