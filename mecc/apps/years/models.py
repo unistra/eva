@@ -100,9 +100,6 @@ class UniversityYear(models.Model):
                 raise ValidationError(
                     {'pdf_doc': [_("La taille du document ne peut être \
                         supérieure à 1MB."), ]})
-            else:
-                self.pdf_doc.name = _(
-                    "Document_cadre_%s.%s" % (self.code_year, ext))
 
     def delete(self):
         Rule = apps.get_model('rules.Rule')
