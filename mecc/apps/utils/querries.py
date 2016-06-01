@@ -28,7 +28,7 @@ def rules_since_ever(degree_type_code):
         return None
 
 
-def rules_for_selected_year(selected_year):
+def rules_for_year(selected_year):
     """
     Return list of rules for selected year
     """
