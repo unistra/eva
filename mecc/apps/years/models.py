@@ -92,10 +92,10 @@ class UniversityYear(models.Model):
 
         if self.pdf_doc:
             ext = self.pdf_doc.name.split('.')[-1]
-            if ext not in ['pdf', 'doc', 'docx', 'odt', 'ott']:
+            if ext not in ['pdf']:
                 raise ValidationError(
-                    {'pdf_doc': [_("Vous ne pouvez déposer que des documents pdf \
-                        ou doc."), ]})
+                    {'pdf_doc': [_("Vous ne pouvez déposer que des documents \
+                        pdf."), ]})
             elif self.pdf_doc.size > max_size:
                 raise ValidationError(
                     {'pdf_doc': [_("La taille du document ne peut être \
@@ -106,6 +106,3 @@ class UniversityYear(models.Model):
         rules = Rule.objects.filter(code_year=self.code_year)
         if not len(rules) > 0:
             super(UniversityYear, self).delete()
-
-    def get_absolute_url(self):
-        return reverse('years:home', args=(self.code_year,))
