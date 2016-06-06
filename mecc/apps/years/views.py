@@ -2,7 +2,7 @@ from .models import UniversityYear, InstituteYear
 from ..institute.models import Institute
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from .forms import UniversityYearForm
+from .forms import UniversityYearFormUpdate, UniversityYearFormCreate
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
@@ -32,7 +32,7 @@ class UniversityYearCreate(CreateView):
     University year create view
     """
     model = UniversityYear
-    form_class = UniversityYearForm
+    form_class = UniversityYearFormCreate
     success_url = '/years'
 
 
@@ -41,7 +41,7 @@ class UniversityYearUpdate(UpdateView):
     University year update view
     """
     model = UniversityYear
-    form_class = UniversityYearForm
+    form_class = UniversityYearFormUpdate
 
     slug_field = 'code_year'
     slug_url_kwarg = 'code_year'

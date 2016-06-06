@@ -4,6 +4,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, HTML, Field
 from django.utils.translation import ugettext as _
+from mecc.apps.utils.widgets import CustomFileInput
 
 
 class DircompInstituteYearForm(forms.ModelForm):
@@ -72,7 +73,7 @@ class DircompUniversityYearForm(forms.ModelForm):
         ]
 
 
-class UniversityYearForm(forms.ModelForm):
+class UniversityYearFormCreate(forms.ModelForm):
     """
     University year form
     """
@@ -88,8 +89,7 @@ class UniversityYearForm(forms.ModelForm):
         label=_('Initialisation des composantes effectuée'),
         initial='False',
     )
-    pdf_doc = forms.FileField(
-        label=_("Déposer document cadre"), required=False)
+
     helper = FormHelper()
     helper.form_tag = False
     helper.form_class = 'form-horizontal'
@@ -101,9 +101,11 @@ class UniversityYearForm(forms.ModelForm):
             Field('is_target_year', css_class='input-xlarge'),
             Field('date_validation', css_class='input-xlarge'),
             Field('date_expected', css_class='input-xlarge'),
-            HTML('<hr/>'),
-            Field('pdf_doc'),
-            HTML('<hr/>'),
+            HTML('''<hr/>
+            <div><label class="control-label col-lg-8" for="id_pdf_doc">
+            %s</label><div class="controls col-lg-4 grey">
+            %s</div></div><hr/>''' % (_("Déposer document cadre"), _(
+                "Vous devez créer l'année au préalable"))),
             Field('is_year_init', readonly=True),
 
             HTML('<hr/>'),
@@ -119,7 +121,71 @@ class UniversityYearForm(forms.ModelForm):
             'date_validation',
             'date_expected',
             'is_year_init',
-            'pdf_doc'
+        ]
+
+
+class UniversityYearFormUpdate(forms.ModelForm):
+    """
+    University year form
+    """
+
+    is_target_year = forms.TypedChoiceField(
+        label=_('Cible courante'),
+        choices=((0, "Non"), (1, "OUI")),
+        coerce=lambda x: bool(int(x)),
+        widget=forms.Select,
+        required=True,
+    )
+    is_year_init = forms.CharField(
+        max_length=5, min_length=3,
+        label=_('Initialisation des composantes effectuée'),
+        initial='False',
+    )
+    pdf_doc = forms.FileField(
+        label=_("Déposer document cadre"), required=False,
+        widget=CustomFileInput()
+    )
+    instance = None
+
+    def __init__(self, *args, **kwargs):
+        super(UniversityYearFormUpdate, self).__init__(*args, **kwargs)
+        self.instance = kwargs.get('instance')
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-8'
+        self.helper.field_class = 'col-lg-4'
+        self.helper.layout = Layout(
+                Field('code_year'),
+                Field('label_year', readonly=True),
+                Field('is_target_year', css_class='input-xlarge'),
+                Field('date_validation', css_class='input-xlarge'),
+                Field('date_expected', css_class='input-xlarge'),
+                HTML('<hr/>'),
+                Field('pdf_doc') if kwargs.get('instance') is not
+                None else HTML('''
+                <div><label class="control-label col-lg-8" for="id_pdf_doc">
+                %s</label><div class="controls col-lg-4 grey">
+                %s</div></div>''' % (_("Déposer document cadre"), _(
+                    "Vous devez créer l'année au préalable"))),
+                HTML('<hr/>'),
+                Field('is_year_init', readonly=True),
+
+                HTML('<hr/>'),
+        )
+
+        if kwargs.get('instance') is not None and self:
+            self.Meta.fields.append('pdf_doc')
+
+    class Meta:
+        model = UniversityYear
+        fields = [
+            'code_year',
+            'label_year',
+            'is_target_year',
+            'date_validation',
+            'date_expected',
+            'is_year_init',
         ]
 
 
