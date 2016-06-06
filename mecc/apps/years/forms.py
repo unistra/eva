@@ -176,6 +176,7 @@ class UniversityYearFormUpdate(forms.ModelForm):
 
         if kwargs.get('instance') is not None and self:
             self.Meta.fields.append('pdf_doc')
+            self.Meta.widgets = {'pdf_doc': CustomFileInput()}
 
     class Meta:
         model = UniversityYear

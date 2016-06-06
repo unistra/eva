@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .forms import DisabledInstituteYearForm, DircompInstituteYearForm, \
-    DircompUniversityYearForm, UniversityYearForm, InstituteYearForm
+    DircompUniversityYearForm, UniversityYearFormCreate, InstituteYearForm
 
 
 class YearFormsTest(TestCase):
@@ -38,7 +38,7 @@ class YearFormsTest(TestCase):
             'is_year_init': True,
             'pdf_doc': '',
         }
-        form = UniversityYearForm(data=form_data)
+        form = UniversityYearFormCreate(data=form_data)
         self.assertTrue(form.is_valid)
 
     def test_institute_year(self):
