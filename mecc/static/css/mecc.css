@@ -4,6 +4,12 @@
 .red{
   color: red;
 }
+.grey {
+  color: grey:
+}
+.has-1em-margin-top{
+    margin-top: 1em;
+}
 /*******************************************************************************
 /* CKEDITOR custom css*/
 .duplicate-table{
