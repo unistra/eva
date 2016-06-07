@@ -91,7 +91,6 @@ class CommissionViewTest(TransactionTestCase):
             form_data = {}
             form_data[field] = value
 
-
     def test_changetypemember(self):
         u = ECICommissionMember.objects.create(
             username="johndoe", member_type="tenured", email="jd@nope.eu")

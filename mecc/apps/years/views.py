@@ -8,6 +8,9 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render
 from django_cas.decorators import login_required
 from mecc.apps.utils.querries import rules_for_year
+from mecc.decorators import is_ajax_request, is_post_request
+from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 
 
 class UniversityYearDelete(DeleteView):
@@ -46,7 +49,11 @@ class UniversityYearUpdate(UpdateView):
     slug_field = 'code_year'
     slug_url_kwarg = 'code_year'
 
-    success_url = '/years'
+    def get_success_url(self):
+        if self.request.method == 'POST' and 'add_pdf' in self.request.POST:
+            code_year = self.request.POST.get('code_year')
+            return reverse('years:edit', kwargs={'code_year': code_year})
+        return reverse('years:home')
 
 
 class UniversityYearListView(ListView):
@@ -114,3 +121,13 @@ def initialize_year(request, code_year, template='years/initialize.html'):
             data['message'] = _('%s composantes ont été initialisées.' % x)
 
     return render(request, template, data)
+
+
+@is_post_request
+@is_ajax_request
+def delete_pdf(request):
+    x = request.POST.get('id_year', '')
+    uy = UniversityYear.objects.get(id=x)
+    uy.pdf_doc.delete(save=False)
+    uy.save()
+    return redirect('years:edit', code_year=uy.code_year)

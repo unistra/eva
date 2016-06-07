@@ -106,3 +106,6 @@ class UniversityYear(models.Model):
         rules = Rule.objects.filter(code_year=self.code_year)
         if not len(rules) > 0:
             super(UniversityYear, self).delete()
+
+    def get_absolute_url(self):
+        return reverse('years:edit', kwargs={'code_year': self.code_year})

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import UniversityYearUpdate, UniversityYearListView, \
-    UniversityYearCreate, UniversityYearDelete, initialize_year
+    UniversityYearCreate, UniversityYearDelete, initialize_year, delete_pdf
 from django_cas.decorators import login_required
 
 
@@ -15,4 +15,6 @@ urlpatterns = [
         UniversityYearDelete.as_view()), name='delete'),
     url(r'^initialize/(?P<code_year>\d+)', initialize_year,
         name='initialize'),
+    url(r'^del_pdf/$', delete_pdf,
+        name='delete_pdf'),
 ]

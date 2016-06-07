@@ -29,7 +29,17 @@
 </form>
 <script>
 function delete_pdf(){
-    console.log({{object.id}});
+    $.ajax({
+        url: "{% url 'years:delete_pdf'%}",
+        type: "POST",
+        data: {
+            id_year: {{object.id}} ,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(data){
+            location.reload();
+        }
+        })
     return false
 }
 
