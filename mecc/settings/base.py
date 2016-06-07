@@ -329,14 +329,6 @@ AUTHENTICATION_BACKENDS = (
     'django_cas.backends.CASBackend',
 )
 
-############################
-# CAS server configuration #
-############################
-
-CAS_SERVER_URL = 'https://cas.unistra.fr:443/cas/login'
-CAS_LOGOUT_REQUEST_ALLOWED = ('cas-dev1.u-strasbg.fr', 'cas-dev2.u-strasbg.fr')
-CAS_USER_CREATION = True
-
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -366,3 +358,28 @@ CKEDITOR_CONFIGS = {
         'entities':'false'
     },
 }
+
+
+############################
+# CAS server configuration #
+############################
+
+CAS_SERVER_URL = 'https://cas.unistra.fr:443/cas/login'
+CAS_LOGOUT_REQUEST_ALLOWED = ('cas-dev1.u-strasbg.fr', 'cas-dev2.u-strasbg.fr')
+CAS_USER_CREATION = True
+
+
+##########
+# Camelot #
+##########
+CAMELOT_SPORE = None
+CAMELOT_BASE_URL = None
+CAMELOT_TOKEN = None
+
+############
+# apogeews #
+############
+
+APOGEEWS_SPORE = None
+APOGEEWS_BASE_URL = None
+APOGEEWS_TOKEN = None

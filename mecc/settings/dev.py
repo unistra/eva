@@ -72,9 +72,9 @@ INTERNAL_IPS = ('127.0.0.1', '0.0.0.0')
 # Camelot settings #
 ####################
 
-CAMELOT_SPORE = 'http://rest-api.u-strasbg.fr/camelot/description.json'
-CAMELOT_BASE_URL = "https://camelot-test.u-strasbg.fr"
-CAMELOT_TOKEN = "f8a635587c1cf39826fbd9aabfeab35107cd54b8"
+CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
+CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
+CAMELOT_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
 
 
 
@@ -82,6 +82,6 @@ CAMELOT_TOKEN = "f8a635587c1cf39826fbd9aabfeab35107cd54b8"
 # LDAP Settings    #
 ####################
 
-LDAP_SPORE = 'http://rest-api.u-strasbg.fr/ldapws/description.json'
-LDAP_BASE_URL = "http://ldapws-test.u-strasbg.fr"
-LDAP_TOKEN = "d800c7d0ed5f38b66b6a5a1fe804f0dff500d236"
+LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
+LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
+LDAP_TOKEN = environ.get('LDAP_TOKEN', 'S3CR3T')
