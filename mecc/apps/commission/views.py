@@ -83,14 +83,20 @@ def send_mail(request):
     """
     Send mail
     """
-    body = _("""
+    s = subject = "[MECC] Notification"
+    b = body = _("""
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
     # member_mails = [e.email for e in ECICommissionMember.objects.all()]
     member_mails = ['ibis.ismail@unistra.fr', 'weible@unistra.fr']
+
+    if request.method == 'POST':
+        subject = request.POST.get('subject', s) if request.POST.get('subject') not in ['', ' '] else s
+        body = request.POST.get('body', b) if request.POST.get('body') not in ['', ' '] else b
+
     mail = EmailMultiAlternatives(
-      subject="[MECC] Notification",
+      subject=subject,
       body=body,
       from_email="MECC Admin<%s>" % settings.MAIL_FROM,
       to=member_mails,

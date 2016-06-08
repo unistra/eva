@@ -15,7 +15,7 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'commission:send_mail'%}">
                     {% csrf_token %}
-                    <input type="text" name="title" id="mail-title" placeholder="Sujet"class="form-control"></input>
+                    <input type="text" name="subject" id="mail-title" placeholder="Sujet"class="form-control"></input>
                     <textarea name="body" rows="8"class="form-control has-1em-margin-top" placeholder="Message de notification"></textarea>
                     <button class="btn btn-primary has-1em-margin-top">{% trans "Envoyer" %}</button>
                 </form>
