@@ -11,6 +11,4 @@ urlpatterns = [
         name='get_pple'),
     url(r'^change_typemember/$', views.change_typemember,
         name='change_typemember'),
-    url(r'^send_mail/$', views.send_mail,
-        name='send_mail'),
 ]

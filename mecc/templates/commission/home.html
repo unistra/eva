@@ -52,15 +52,15 @@
   {% endif %}
   <div style='text-align: center;margin-top:2em;'>
       <a data-toggle="modal" data-target="#searchMember" class="btn btn-primary"> {% trans 'Ajouter un membre' %}</a> {% if commission_staff %}
-      <a data-toggle="modal" data-target="#send_mail" class="btn btn-primary"> {% trans 'Envoyer un message (personnalisé)' %}</a>
-      {# <a href="mailto:{{staff_mails}}?reply-to=test@test.test" class="btn btn-primary"> {% trans "Envoyer un message" %}</a> {% endif %}#}
-      <a href="{% url 'commission:send_mail'%}" class="btn btn-primary"> {% trans "Envoyer un message (prédefini)" %}</a> {% endif %}
-  </div>
+      <a href="mailto:" class="btn btn-primary"> {% trans "Envoyer un message" %}</a> {% endif %}
+      <a href="mailto:{%for e in staff_mails%}{{e}},{%endfor%}?subject=[MECC]%20Notification&body=Bonjour,%0AIl%20s'agit%20d'une%20notification%20automatique.&In-Reply-
+     To=%3c3469A91.D10AF4C@example.com"> test</a>
+      {%for e in staff_mails%}{{e}},{%endfor%}
+</div>
 
 
 {% include "commission/search_member.html" %}
 {% include "commission/delete_member.html" %}
-{% include "commission/send_mail.html" %}
 
 <script>
 $('.select-type').on('change', function() {
