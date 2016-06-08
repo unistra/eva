@@ -94,7 +94,8 @@ def send_mail(request):
         ',') if request.POST.get('cc') is not None else None
     bcc = request.POST.get('bcc').split(
         ',') if request.POST.get('bcc') is not None else None
-    # to = ['ibis.ismail@unistra.fr']
+    to = ['ibis.ismail@unistra.fr', 'weible@unistra.fr']
+    cc = bcc = ['ibis.ismail@unistra.fr']
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
     body = request.POST.get('body', b) if request.POST.get(
