@@ -88,7 +88,7 @@ def send_mail(request):
     Merci.
     """)
     # member_mails = [e.email for e in ECICommissionMember.objects.all()]
-    member_mails = [ 'ibis.ismail@unistra.fr']
+    member_mails = ['ibis.ismail@unistra.fr', 'weible@unistra.fr']
     mail = EmailMultiAlternatives(
       subject="[MECC] Notification",
       body=body,
