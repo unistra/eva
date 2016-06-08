@@ -3,6 +3,7 @@ from mecc.apps.degree.forms import DegreeTypeForm, DegreeForm
 
 
 class DegreeTypeFormTest(TestCase):
+
     def test_form(self):
         form_data = {'label': 'TEST1'}
         form = DegreeTypeForm(data=form_data)
@@ -10,6 +11,7 @@ class DegreeTypeFormTest(TestCase):
 
 
 class DegreeFormTest(TestCase):
+
     def test_form(self):
         form_data = {'short_label': 'TEST1'}
         form = DegreeForm(data=form_data)

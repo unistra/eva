@@ -35,7 +35,7 @@ class DegreeType(models.Model):
         if self.display_order is None or self.display_order < 0:
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
-                    ]})
+            ]})
         if not self.is_in_use:
             rules = rules_for_current_year(
                 self.pk) if self.pk is not None else None

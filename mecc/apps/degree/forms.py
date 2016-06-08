@@ -187,9 +187,9 @@ class DegreeTypeForm(forms.ModelForm):
                             """),
                         InlineField('is_in_use'),
                         css_class='col-md-12'
-                        ),
-                    css_class='row'
                     ),
+                    css_class='row'
+                ),
                 Div(
                     Div(Field('display_order'), css_class='col-md-12'),
                     css_class="row"
