@@ -83,13 +83,18 @@ def send_mail(request):
     """
     Send mail
     """
-    s = subject = "[MECC] Notification"
-    b = body = _("""
+    s = "[MECC] Notification"
+    b = _("""
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-    # member_mails = [e.email for e in ECICommissionMember.objects.all()]
-    member_mails = ['ibis.ismail@unistra.fr']
+    to = request.POST.get('to').split(
+        ',') if request.POST.get('to') is not None else None
+    cc = request.POST.get('cc').split(
+        ',') if request.POST.get('cc') is not None else None
+    bcc = request.POST.get('bcc').split(
+        ',') if request.POST.get('bcc') is not None else None
+    # to = ['ibis.ismail@unistra.fr']
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
     body = request.POST.get('body', b) if request.POST.get(
@@ -99,7 +104,9 @@ def send_mail(request):
         subject=subject,
         body=body,
         from_email="MECC Admin<%s>" % settings.MAIL_FROM,
-        to=member_mails,
+        to=bcc,
+        cc=cc,
+        bcc=to,
         headers={"Reply-To": settings.MAIL_FROM}
     )
     mail.send()
