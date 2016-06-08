@@ -36,7 +36,7 @@
   <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href ="/media/{{cadre_gen}}">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
   </div>
   {% crispy form_university_year%}
   {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}

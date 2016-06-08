@@ -28,6 +28,7 @@
     </div>
 </form>
 <script>
+{% if object %}
 function delete_pdf(){
     $.ajax({
         url: "{% url 'years:delete_pdf'%}",
@@ -37,12 +38,12 @@ function delete_pdf(){
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function(data){
-            location.reload();
+            window.location.replace("{% url 'years:edit' code_year=object.code_year%}");
         }
         })
     return false
 }
-
+{%endif%}
 // Add checkbox next to id_code
 a = document.getElementById("init_years");
 b = document.getElementById("id_is_year_init").parentNode.parentNode;
