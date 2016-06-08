@@ -38,10 +38,9 @@ function delete_pdf(){
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function(data){
-            if (location.protocol !== "https:") location.protocol = "https:";
-            window.location.replace("{% url 'years:edit' code_year=object.code_year%}/");
         }
         })
+    window.location.replace("{% url 'years:edit' code_year=object.code_year%}/");
     return false
 }
 {%endif%}
