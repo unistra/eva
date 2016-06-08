@@ -85,3 +85,20 @@ CAMELOT_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
 LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
 LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
 LDAP_TOKEN = environ.get('LDAP_TOKEN', 'S3CR3T')
+
+
+
+#######################
+# Email configuration #
+#######################
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+SERVER_EMAIL = 'root@{{ server_name }}'
+EMAIL_SUBJECT_PREFIX = '[{{ application_name }}]'
+EMAIL_PORT = 1025
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = environ.get('LOG_DIR_MAIL', normpath(join('/tmp', '%s_mail.log' % SITE_NAME)))
+# EMAIL_HOST = 'localhost'
+# SERVER_EMAIL = 'root@localhost'
+# EMAIL_SUBJECT_PREFIX = "MECC"

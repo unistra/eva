@@ -8,6 +8,10 @@ from .forms import ECIForm
 from django_cas.decorators import login_required
 
 from mecc.decorators import is_ajax_request, is_post_request
+from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
+
+from django.conf import settings
 
 
 @is_post_request
@@ -72,3 +76,27 @@ def get_list_of_pple(request):
     else:
         return JsonResponse(
             {'message': _('Veuillez entrer au moins deux caractères.')})
+
+# @is_post_request
+@login_required
+def send_mail(request):
+    """
+    Send mail
+    """
+    body = _("""
+    Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+    Merci.
+    """)
+    # member_mails = [e.email for e in ECICommissionMember.objects.all()]
+    member_mails = [ 'ibis.ismail@unistra.fr']
+    mail = EmailMultiAlternatives(
+      subject="[MECC] Notification",
+      body=body,
+      from_email="MECC Admin<%s>" % settings.MAIL_FROM,
+      to=member_mails,
+      headers={"Reply-To": settings.MAIL_FROM}
+    )
+    mail.attach_alternative("<p>%s</p>" % body, "text/html")
+    mail.send()
+
+    return redirect('commission:home')

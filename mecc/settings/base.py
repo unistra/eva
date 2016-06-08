@@ -383,3 +383,9 @@ CAMELOT_TOKEN = None
 APOGEEWS_SPORE = None
 APOGEEWS_BASE_URL = None
 APOGEEWS_TOKEN = None
+
+########
+# MAIL #
+########
+
+MAIL_FROM = 'des-admin-mecc@unistra.fr'
