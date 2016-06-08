@@ -38,7 +38,7 @@ function delete_pdf(){
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function(data){
-            window.location.replace("{% url 'years:edit' code_year=object.code_year%}");
+            window.location.replace("{% url 'years:edit' code_year=object.code_year%}/");
         }
         })
     return false
