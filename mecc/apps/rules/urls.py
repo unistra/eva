@@ -27,6 +27,7 @@ urlpatterns = [
         name='paragraph_delete'),
     url(r'^gen_pdf/(?P<id_degreetype>\d+)', gen_pdf,
         name='gen_pdf'),
-    url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_rule,  # (?:/(?<i>[regex])?/$) makes the arg i optional :)
+    # (?:/(?<i>[regex])?/$) makes the arg i optional :)
+    url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_rule,
         name='duplicate'),
 ]

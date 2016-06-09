@@ -64,22 +64,6 @@ class ECIMemberTest(TestCase):
             "TEST2" not in [e.username for e in User.objects.all()]
         )
 
-#
-# class CommissionViewTest(TestCase):
-#
-#     def test_send_mail(self):
-#
-#         request = self.factory.post(
-#             '/commission/send_mail',
-#             {'subject': '[MECC]', 'body': "Hello",
-#              "from_email": "from@mail.xy", "to": "to@mail.xy",
-#              "cc": "cc@mail.xy", "bcc": "bcc@mail.xy"},
-#             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-#
-#         resp = send_mail(request)
-#
-#         self.assertEqual(resp.status_code, 200)
-
 
 # TransactionTestCase allow to not raise TransactionManagementError
 class CommissionTrajsitionViewTest(TransactionTestCase):

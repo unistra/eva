@@ -17,6 +17,20 @@ def is_ajax_request(view_func):
     return wrapper
 
 
+def user_can_spoof(view_func):
+    """
+    Check if user can spoof identity
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.has_perm('adm.can_spoof_user') or \
+                'DES3' in request.user.groups.values_list('name', flat=True):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
+            permission to access this page.")
+    return wrapper
+
+
 def is_DES1(view_func):
     """
     Check if user belong to DES1 group

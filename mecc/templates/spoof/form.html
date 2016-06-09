@@ -7,7 +7,7 @@
 
 {% block app_content %}
 <div>
-    <form action=" " class="login-form" method="post" style="width:50%">
+    <form action="{% url 'spoof:spoof'%}" class="login-form" method="post" style="width:50%">
 {% if error %}
       <div class="alert alert-warning" role="alert">
   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

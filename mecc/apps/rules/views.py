@@ -247,4 +247,6 @@ def duplicate_rule(request, year=None, template='rules/duplicate.html'):
                                       current_year.code_year + 1)
     if year is None:
         data['rules'] = Rule.objects.all()
+    else:
+        data['rules'] = Rule.objects.filter(code_year=year)
     return render(request, template, data)
