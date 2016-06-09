@@ -1,7 +1,7 @@
 from django.test import TestCase, RequestFactory, TransactionTestCase
 from .forms import ECIForm
 from .models import ECICommissionMember
-from .views import home, change_typemember
+from .views import home, change_typemember, send_mail
 from ..adm.models import Profile, MeccUser
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -10,11 +10,12 @@ from django.core.exceptions import ValidationError
 
 def create_ajax_request():
     return RequestFactory.get(
-            '/pdf', {'student_number': '21214045'},
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        '/pdf', {'student_number': '21214045'},
+        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
 
 class ECIFormTest(TestCase):
+
     def test_form(self):
         form_data = {
             'member_type': 'TEST1',
@@ -27,6 +28,7 @@ class ECIFormTest(TestCase):
 
 
 class ECIMemberTest(TestCase):
+
     def setUp(self):
         Profile.objects.create(code='ECI', label="Membre de la commission ECI")
         Profile.objects.create(code='DIRCOMP', label="Directeur de composante")
@@ -62,9 +64,26 @@ class ECIMemberTest(TestCase):
             "TEST2" not in [e.username for e in User.objects.all()]
         )
 
+#
+# class CommissionViewTest(TestCase):
+#
+#     def test_send_mail(self):
+#
+#         request = self.factory.post(
+#             '/commission/send_mail',
+#             {'subject': '[MECC]', 'body': "Hello",
+#              "from_email": "from@mail.xy", "to": "to@mail.xy",
+#              "cc": "cc@mail.xy", "bcc": "bcc@mail.xy"},
+#             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+#
+#         resp = send_mail(request)
+#
+#         self.assertEqual(resp.status_code, 200)
+
 
 # TransactionTestCase allow to not raise TransactionManagementError
-class CommissionViewTest(TransactionTestCase):
+class CommissionTrajsitionViewTest(TransactionTestCase):
+
     def setUp(self):
         Profile.objects.create(code='ECI', label="Membre de la commission ECI")
         self.factory = RequestFactory()
@@ -113,3 +132,16 @@ class CommissionViewTest(TransactionTestCase):
             'supply')
 
         self.assertEqual(resp.status_code, 200)
+
+    def test_send_mail(self):
+
+        request = self.factory.post(
+            '/commission/send_mail',
+            {'subject': '[MECC]', 'body': "Hello",
+             "from_email": "from@mail.xy", "to": "to@mail.xy",
+             "cc": "cc@mail.xy", "bcc": "bcc@mail.xy"},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        u = User.objects.create_user(username='test')
+        request.user = u
+        resp = send_mail(request)
+        self.assertEqual(resp.status_code, 302)

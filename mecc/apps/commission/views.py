@@ -88,12 +88,12 @@ def send_mail(request):
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-    to = request.POST.get('to').split(
-        ',') if request.POST.get('to') is not None else None
-    cc = request.POST.get('cc').split(
-        ',') if request.POST.get('cc') is not None else None
-    bcc = request.POST.get('bcc').split(
-        ',') if request.POST.get('bcc') is not None else None
+    # to = request.POST.get('to').split(
+    #     ',') if request.POST.get('to') is not None else None
+    # cc = request.POST.get('cc').split(
+    #     ',') if request.POST.get('cc') is not None else None
+    # bcc = request.POST.get('bcc').split(
+    #     ',') if request.POST.get('bcc') is not None else None
     to = ['ibis.ismail@unistra.fr', 'weible@unistra.fr']
     cc = bcc = ['ibis.ismail@unistra.fr']
     subject = request.POST.get('subject', s) if request.POST.get(
