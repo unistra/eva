@@ -27,27 +27,26 @@
         <table class="duplicate-table duplicate-table-1">
             <thead class="thead">
                 <tr class="row-head">
-                    <th width=5%>
+                    <th width=5% class="td-centered">
                         <input type="checkbox" onClick="check_all(this)" />
                     </th>
-                    <th width=10%>{%trans 'Source'%}</th>
-                    <th width=15%>{%trans 'N° règle'%}</th>
+                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
+                    <th width=15% class="td-centered">{%trans 'N° règle'%}</th>
                     <th width=60%>{%trans 'Libellé de règle'%}</th>
-                    <th width=10%>{%trans 'N° Aff'%}</th>
+                    <th width=10% class="td-centered">{%trans 'N° Aff'%}</th>
                 </tr>
             </thead>
             <tbody class="tbody">
                 {%if not rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
                 {%for e in rules%}
-                <tr class="hover-row select">
-                    <td width=5%>
-
+                <tr>
+                    <td width=5% class="td-centered">
                         <input type="checkbox" id="{{e.id}}" name="rule_{{e.id}}" class="checkbox_rule">
                     </td>
-                    <td width=10%>{{e.code_year}}</td>
-                    <td width=15%>{{e.id | stringformat:"05d"}}</td>
-                    <td width=60%>{{e.label}}</td>
-                    <td width=10%>{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.code_year}}</td>
+                    <td width=15% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.id | stringformat:"05d"}}</td>
+                    <td width=60% class="{% if not e.is_in_use%} grey-background{%endif%}">{{e.label}}</td>
+                    <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
@@ -56,28 +55,25 @@
     <div class="duplicate-2">
 
         <table class="duplicate-table duplicate-table-2">
-            <thead>
-                <tr>
-                    <th width=10%>{%trans 'Source'%}</th>
-                    <th width=15%>{%trans 'N° règle'%}</th>
+            <thead class="thead">
+                <tr class="row-head">
+                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
+                    <th width=15% class="td-centered">{%trans 'N° règle'%}</th>
                     <th width=65%>{%trans 'Libellé de règle'%}</th>
-                    <th width=10%>{%trans 'N° Aff'%}</th>
-                    <th width=5%></th>
+                    <th width=10% class="td-centered">{%trans 'N° Aff'%}</th>
+                    <th width=5% ></th>
                 </tr>
             </thead>
             <tbody class="tbody">
-                <tr class="hover-row select">
-                    <td></td>
-                </tr>
                 {%if not existing_rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
 
                 {%for e in existing_rules%}
-                <tr class="hover-row select">
-                    <td width=10%>{{e.code_year}}</td>
-                    <td width=15%>{{e.id | stringformat:"05d"}}</td>
+                <tr class="{% if not e.is_in_use%} grey-background{%endif%}">
+                    <td width=10% class="td-centered">{{e.code_year}}</td>
+                    <td width=15% class="td-centered">{{e.id | stringformat:"05d"}}</td>
                     <td width=65%>{{e.label}}</td>
-                    <td width=10%>{{e.display_order|stringformat:"03d"}}</td>
-                    <td width=5%>
+                    <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=5% class="td-centered">
                         <a href="" class="glyphicon glyphicon-trash"></a>
                     </td>
                 </tr>

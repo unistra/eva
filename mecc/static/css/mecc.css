@@ -7,6 +7,13 @@
 .grey {
     color: grey:
 }
+.grey-background{
+    background-color: lightgrey;
+}
+
+.white-background{
+    background-color: white;
+}
 .has-1em-margin-top {
     margin-top: 1em;
 }
@@ -88,15 +95,15 @@
     /* body takes all the remaining available space */
     flex: 1 1 auto;
     display: block;
-    overflow: auto;
+    overflow-y: scroll;
     max-height: 60vh;
     background-color: white;
 }
 .duplicate-table-1 td:not(:first-child) {
-    border: 0.1px solid lightgrey;
+    border: 0.1px solid grey;
 }
 .duplicate-table-2 td {
-    border: 0.1px solid lightgrey;
+    border: 0.1px solid grey;
 }
 .duplicate-table .tbody tr {
     width: 100%;
