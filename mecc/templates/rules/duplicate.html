@@ -2,90 +2,101 @@
 {% load i18n %}
 {% load field_name %}
 {% load staticfiles %}
-
 {% load staticfiles %}
 
-
 {% block page-header %}
-{% trans 'Duplication des règles générales vers l’année ' %} {{current_year}}
-{% endblock %}
+{% trans 'Duplication des règles générales vers l’année ' %} {{current_year}} {% endblock %}
 {% block app_content %}
+
 <script src="{% static 'js/jquery-ui.min.js' %}"></script>
 
-{%if rules%}
-<div class="disp-flex">
-
-<table id='table-draggable1' class="duplicate-table">
-    <thead class="thead">
-    <tr>
-        <th width=10%>{%trans 'Source'%}</th>
-        <th width=15%>{%trans 'N° règle'%}</th>
-        <th width=65%>{%trans 'Libellé de règle'%}</th>
-        <th width=10%>{%trans 'N° Aff'%}</th>
-    </tr>
-    </thead>
-<tbody class="connectedSortable tbody">
-    {%for e in rules%}
-    <tr class="hover-row select">
-        <td width=10%>{{e.code_year}}</td>
-        <td width=15%>{{e.id | stringformat:"05d"}}</td>
-        <td width=65%>{{e.label}}</td>
-        <td width=10%>{{e.display_order|stringformat:"03d"}}</td>
-    </tr>
-    {%endfor%}
-{%endif%}
-</tbody>
-</table>
-{%if rules%}
-<table id='table-draggable2' class="duplicate-table">
-    <thead>
-    <tr>
-        <th width=10%>{%trans 'Source'%}</th>
-        <th width=15%>{%trans 'N° règle'%}</th>
-        <th width=65%>{%trans 'Libellé de règle'%}</th>
-        <th width=10%>{%trans 'N° Aff'%}</th>
-    </tr>
-    </thead>
-<tbody class="connectedSortable tbody">
-    <tr class="hover-row select">
-        <td></td>
-    </tr>
-
-    {%for e in existing_rules%}
-    <tr class="hover-row select">
-        <td width=10%>{{e.code_year}}</td>
-        <td width=15%>{{e.id}}</td>
-        <td width=65%>{{e.label}}</td>
-        <td width=10%>{{e.display_order}}</td>
-    </tr>
-    {%endfor%}
-{%endif%}
-</tbody>
-</table>
+<div class="disp-flex duplicate-h">
+    <span class="subtitle-duplicate">{% trans "Sélectionner une année source" %}
+    </span>
+    <select class="form-control width-15">
+        {%if availables_years%} {%for e, year in availables_years%}
+        <option value="{{e}}">{{year}}</option>
+        {%endfor%} {%else%}
+        <option value="option">{% trans "Aucune règles" %}</option>
+        {%endif%}
+    </select>
 </div>
+<div class="disp-flex">
+    <div class="duplicate-2">
+
+        <table class="duplicate-table duplicate-table-1">
+            <thead class="thead">
+                <tr class="row-head">
+                    <th width=5%>
+                        <input type="checkbox" onClick="check_all(this)" />
+                    </th>
+                    <th width=10%>{%trans 'Source'%}</th>
+                    <th width=15%>{%trans 'N° règle'%}</th>
+                    <th width=60%>{%trans 'Libellé de règle'%}</th>
+                    <th width=10%>{%trans 'N° Aff'%}</th>
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                {%if not rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
+                {%for e in rules%}
+                <tr class="hover-row select">
+                    <td width=5%>
+
+                        <input type="checkbox" id="{{e.id}}" name="rule_{{e.id}}" class="checkbox_rule">
+                    </td>
+                    <td width=10%>{{e.code_year}}</td>
+                    <td width=15%>{{e.id | stringformat:"05d"}}</td>
+                    <td width=60%>{{e.label}}</td>
+                    <td width=10%>{{e.display_order|stringformat:"03d"}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div class="duplicate-2">
+
+        <table class="duplicate-table duplicate-table-2">
+            <thead>
+                <tr>
+                    <th width=10%>{%trans 'Source'%}</th>
+                    <th width=15%>{%trans 'N° règle'%}</th>
+                    <th width=65%>{%trans 'Libellé de règle'%}</th>
+                    <th width=10%>{%trans 'N° Aff'%}</th>
+                    <th width=5%></th>
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                <tr class="hover-row select">
+                    <td></td>
+                </tr>
+                {%if not existing_rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
+
+                {%for e in existing_rules%}
+                <tr class="hover-row select">
+                    <td width=10%>{{e.code_year}}</td>
+                    <td width=15%>{{e.id | stringformat:"05d"}}</td>
+                    <td width=65%>{{e.label}}</td>
+                    <td width=10%>{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=5%>
+                        <a href="" class="glyphicon glyphicon-trash"></a>
+                    </td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="buttons_list">
+<a href="{% url 'rules:duplicate'%}" class="btn-primary btn btn-sm btn-duplicate">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</a>
+<a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des règles générales" %}</a>
+</div>
+
 <script type="text/javascript">
-$(document).ready(function() {
-
-var $tabs=$('#table-draggable2')
-          $("tbody.connectedSortable")    .sortable({
-        connectWith: ".connectedSortable",
-        items: "> tr:not(:first)",
-        appendTo: $tabs,
-        helper:"clone",
-        zIndex: 999990
-    })
-    .disableSelection()
-;
-
-var $tab_items = $( ".nav-tabs > li", $tabs ).droppable({
-  accept: ".connectedSortable tr",
-  hoverClass: "ui-state-hover",
-
-  drop: function( event, ui ) {
-    return false;
-  }
-});
-
-});
+    function check_all(source) {
+        checkboxes = document.getElementsByClassName("checkbox_rule");
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 </script>
 {% endblock %}
