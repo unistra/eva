@@ -245,8 +245,19 @@ def duplicate_rule(request, year=None, template='rules/duplicate.html'):
         Q(is_target_year=True))).pop(0)
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
+
+    all_rules = Rule.objects.all()
     if year is None:
-        data['rules'] = Rule.objects.all()
+        rules = all_rules
     else:
-        data['rules'] = Rule.objects.filter(code_year=year)
+        rules = all_rules.filter(code_year=year)
+
+    data['availables_years'] = {(e.code_year, "%s/%s" % (
+        e.code_year, e.code_year + 1)) for e in all_rules}
+    data['existing_rules'] = current = all_rules.filter(
+        code_year=current_year.code_year)
+
+    data['rules'] = [e for e in rules if e not in current]
+    print(data['existing_rules'])
+    print(data['rules'])
     return render(request, template, data)
