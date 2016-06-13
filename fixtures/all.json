@@ -1923,1472 +1923,1116 @@
     },
     "pk": 8,
     "model": "adm.profile"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en licence",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            5,
-            6
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 1,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en master",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            7
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 2,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            14,
-            15,
-            16,
-            17,
-            18,
-            25
-        ],
-        "display_order": 5,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 3,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions p\u00e9dagogiques",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19,
-            21,
-            22
-        ],
-        "display_order": 8,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 4,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Assiduit\u00e9",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            5,
-            6,
-            7,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 10,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 5,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Validation d'acquis",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 13,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 6,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Etudes accomplies \u00e0 l'\u00e9tranger",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 14,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 7,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Cas particulier d\u2019un m\u00e9moire de recherche ou d\u2019un rapport de stage",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            7
-        ],
-        "display_order": 19,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 8,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Jurys",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 20,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 9,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            5,
-            7
-        ],
-        "display_order": 25,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 10,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en licence ",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            5
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 11,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en master",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            7
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 12,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Calcul de la moyenne g\u00e9n\u00e9rale en licence",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            5,
-            6
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 13,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Calcul de la moyenne g\u00e9n\u00e9rale",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            7
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 14,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Equivalences et mentions",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            4,
-            7
-        ],
-        "display_order": 31,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 15,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Dipl\u00f4me interm\u00e9diaire de DEUG",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            5,
-            6
-        ],
-        "display_order": 35,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 16,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Dipl\u00f4me interm\u00e9diaire de ma\u00eetrise",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            7
-        ],
-        "display_order": 35,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 17,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Conservation d'une note d'une ann\u00e9e sur l'autre",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 40,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 18,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Capitalisation",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 41,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 19,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Sessions d'examens",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            5,
-            6,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 45,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 20,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Session de rattrapage",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            7
-        ],
-        "display_order": 46,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 21,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Evaluation continue int\u00e9grale - principes directeurs",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 50,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 22,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Organisation de l'\u00e9valuation continue int\u00e9grale",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 51,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 23,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Nombre d'\u00e9valuations par UE",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            5,
-            6,
-            7
-        ],
-        "display_order": 52,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 24,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de correction des \u00e9valuations et de restitution p\u00e9dagogique aux \u00e9tudiants",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 53,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 25,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Absence aux \u00e9preuves avec convocation",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 54,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 26,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Absence aux \u00e9preuves sans convocation",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 55,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 27,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Session de rattrapage en ECI",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7
-        ],
-        "display_order": 56,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 28,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Absence aux \u00e9preuves terminales",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 71,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 29,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Absence aux \u00e9preuves de contr\u00f4le continu",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 72,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 30,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Organisation des \u00e9preuves",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 74,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 31,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Anonymat des \u00e9preuves",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            7,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 75,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 32,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Report de note de la session principale \u00e0 la session de rattrapage",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 80,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 33,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s d'acc\u00e8s et de progression en DAEU",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 34,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de progression en DUT",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 35,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de progression en DEUST",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            4
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 36,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de progression en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 37,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de progression en DFG",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            15
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 38,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s de progression en DFA",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            16
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 39,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Modalit\u00e9s d'acc\u00e8s au dipl\u00f4me d'Etat de Sant\u00e9",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            17,
-            18,
-            19
-        ],
-        "display_order": 1,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 40,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 6,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 41,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives en DFA",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            16
-        ],
-        "display_order": 6,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 42,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en m\u00e9decine",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            19
-        ],
-        "display_order": 6,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 43,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en pharmacie",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            17
-        ],
-        "display_order": 6,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 44,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions administratives en Th\u00e8se en vue du DE de docteur en chirurgie dentaire",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            18
-        ],
-        "display_order": 6,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 45,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Inscriptions p\u00e9dagogiques en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 8,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 46,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Validation d'acquis en DAEU",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1
-        ],
-        "display_order": 13,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 47,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Notation des QCM (Questions \u00e0 choix multiples)",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 16,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 48,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Notation des QRC (Questions r\u00e9dactionnelles courtes)",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 17,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 49,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Notation des QCD (Questions \u00e0 choix double)",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            14,
-            15
-        ],
-        "display_order": 18,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 50,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Jury du DAEU",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1
-        ],
-        "display_order": 20,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 51,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Jurys des certificats de sant\u00e9",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            16
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 52,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Th\u00e8se d'exercice en vue du DE de docteur en pharmacie",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            17
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 53,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Th\u00e8se d'exercice en vue du DE de docteur en m\u00e9decine",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            19
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 54,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Th\u00e8se d'exercice en vue du DE de docteur en chirurgie dentaire",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            18
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 55,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Jury du DUT",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 56,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en licence professionnelle",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            6
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 57,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en DEUST",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            4
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 58,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en DAEU (r\u00e9gime CC/CT)",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 59,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en DAEU (r\u00e9gime ECI)",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1
-        ],
-        "display_order": 26,
-        "is_ccct": false,
-        "code_year": 2015
-    },
-    "pk": 60,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en DUT",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 61,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Compensation en DFG, DFA et DE",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 26,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 62,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Calcul de la moyenne g\u00e9n\u00e9rale en DEUST",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            4
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 63,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Classement et validation en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 64,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Validation du DFG",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            15
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 65,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Validation du DFA",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            16
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 66,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Validation du dipl\u00f4me de Docteur",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            17,
-            18,
-            19
-        ],
-        "display_order": 30,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 67,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Conservation d'une note d'une ann\u00e9e sur l'autre en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 40,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 68,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Capitalisation en licence professionnelle",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            6
-        ],
-        "display_order": 41,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 69,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Capitalisation en DUT",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            3
-        ],
-        "display_order": 41,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 70,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Session d'examen en PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 45,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 71,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Epreuves de la session de rattrapage en licence (CC/CT)",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            5,
-            6
-        ],
-        "display_order": 47,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 72,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Session de rattrapage en DEUST",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            4
-        ],
-        "display_order": 46,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 73,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Epreuves de la session de rattrapage (CC/CT)",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            7
-        ],
-        "display_order": 47,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 74,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Absence aux \u00e9preuves du concours de PACES",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            14
-        ],
-        "display_order": 71,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 75,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Report de note de la session principale \u00e0 la session de rattrapage en DFG et DFA",
-        "is_edited": "X",
-        "is_eci": false,
-        "is_in_use": true,
-        "degree_type": [
-            15,
-            16
-        ],
-        "display_order": 80,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 76,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Jurys du DEUST",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            4
-        ],
-        "display_order": 21,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 77,
-    "model": "rules.rule"
-},
-{
-    "fields": {
-        "label": "Stages",
-        "is_edited": "X",
-        "is_eci": true,
-        "is_in_use": true,
-        "degree_type": [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            15,
-            16,
-            17,
-            18,
-            19
-        ],
-        "display_order": 18,
-        "is_ccct": true,
-        "code_year": 2015
-    },
-    "pk": 78,
-    "model": "rules.rule"
-},
+},{
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [5, 6],
+		"is_edited": "X",
+		"label": "Modalités d'accès et de progression en licence",
+		"n_rule": 1,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 1
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [7],
+		"is_edited": "X",
+		"label": "Modalités d'accès et de progression en master",
+		"n_rule": 2,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 2
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7, 14,
+			15, 16, 17, 18, 25],
+		"is_edited": "X",
+		"label": "Inscriptions administratives",
+		"n_rule": 3,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 5
+	},
+	"pk": 3
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 2, 3, 4, 5, 6, 7,
+			15, 16, 17, 18, 19, 21, 22],
+		"is_edited": "X",
+		"label": "Inscriptions pédagogiques",
+		"n_rule": 4,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 8
+	},
+	"pk": 4
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 5, 6, 7, 14,
+			15, 16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Assiduité",
+		"n_rule": 5,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 10
+	},
+	"pk": 5
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Validation d'acquis",
+		"n_rule": 6,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 13
+	},
+	"pk": 6
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Etudes accomplies à l'étranger",
+		"n_rule": 7,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 14
+	},
+	"pk": 7
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [7],
+		"is_edited": "X",
+		"label": "Cas particulier d’un mémoire de recherche ou d’un rapport de stage",
+		"n_rule": 8,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 19
+	},
+	"pk": 8
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Jurys",
+		"n_rule": 9,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 20
+	},
+	"pk": 9
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 5, 7],
+		"is_edited": "X",
+		"label": "Compensation",
+		"n_rule": 10,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 25
+	},
+	"pk": 10
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [5],
+		"is_edited": "X",
+		"label": "Compensation en licence ",
+		"n_rule": 11,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 11
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [7],
+		"is_edited": "X",
+		"label": "Compensation en master",
+		"n_rule": 12,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 12
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [5, 6],
+		"is_edited": "X",
+		"label": "Calcul de la moyenne générale en licence",
+		"n_rule": 13,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 13
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 7],
+		"is_edited": "X",
+		"label": "Calcul de la moyenne générale",
+		"n_rule": 14,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 14
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 4, 7],
+		"is_edited": "X",
+		"label": "Equivalences et mentions",
+		"n_rule": 15,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 31
+	},
+	"pk": 15
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [5, 6],
+		"is_edited": "X",
+		"label": "Diplôme intermédiaire de DEUG",
+		"n_rule": 16,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 35
+	},
+	"pk": 16
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [7],
+		"is_edited": "X",
+		"label": "Diplôme intermédiaire de maîtrise",
+		"n_rule": 17,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 35
+	},
+	"pk": 17
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Conservation d'une note d'une année sur l'autre",
+		"n_rule": 18,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 40
+	},
+	"pk": 18
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Capitalisation",
+		"n_rule": 19,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 41
+	},
+	"pk": 19
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [5, 6, 15, 16, 17, 18,
+			19],
+		"is_edited": "X",
+		"label": "Sessions d'examens",
+		"n_rule": 20,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 45
+	},
+	"pk": 20
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 7],
+		"is_edited": "X",
+		"label": "Session de rattrapage",
+		"n_rule": 21,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 46
+	},
+	"pk": 21
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Evaluation continue intégrale - principes directeurs",
+		"n_rule": 22,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 50
+	},
+	"pk": 22
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Organisation de l'évaluation continue intégrale",
+		"n_rule": 23,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 51
+	},
+	"pk": 23
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Nombre d'évaluations par UE",
+		"n_rule": 24,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 52
+	},
+	"pk": 24
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Modalités de correction des évaluations et de restitution pédagogique aux étudiants",
+		"n_rule": 25,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 53
+	},
+	"pk": 25
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Absence aux épreuves avec convocation",
+		"n_rule": 26,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 54
+	},
+	"pk": 26
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Absence aux épreuves sans convocation",
+		"n_rule": 27,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 55
+	},
+	"pk": 27
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7],
+		"is_edited": "X",
+		"label": "Session de rattrapage en ECI",
+		"n_rule": 28,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 56
+	},
+	"pk": 28
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1, 3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Absence aux épreuves terminales",
+		"n_rule": 29,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 71
+	},
+	"pk": 29
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1, 3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Absence aux épreuves de contrôle continu",
+		"n_rule": 30,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 72
+	},
+	"pk": 30
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1, 3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Organisation des épreuves",
+		"n_rule": 31,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 74
+	},
+	"pk": 31
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [7, 14, 15, 16, 17,
+			18, 19],
+		"is_edited": "X",
+		"label": "Anonymat des épreuves",
+		"n_rule": 32,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 75
+	},
+	"pk": 32
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1, 3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Report de note de la session principale à la session de rattrapage",
+		"n_rule": 33,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 80
+	},
+	"pk": 33
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1],
+		"is_edited": "X",
+		"label": "Modalités d'accès et de progression en DAEU",
+		"n_rule": 34,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 34
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3],
+		"is_edited": "X",
+		"label": "Modalités de progression en DUT",
+		"n_rule": 35,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 35
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [4],
+		"is_edited": "X",
+		"label": "Modalités de progression en DEUST",
+		"n_rule": 36,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 36
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Modalités de progression en PACES",
+		"n_rule": 37,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 37
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [15],
+		"is_edited": "X",
+		"label": "Modalités de progression en DFG",
+		"n_rule": 38,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 38
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [16],
+		"is_edited": "X",
+		"label": "Modalités de progression en DFA",
+		"n_rule": 39,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 39
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [17, 18, 19],
+		"is_edited": "X",
+		"label": "Modalités d'accès au diplôme d'Etat de Santé",
+		"n_rule": 40,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 1
+	},
+	"pk": 40
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Inscriptions administratives en PACES",
+		"n_rule": 41,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 6
+	},
+	"pk": 41
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [16],
+		"is_edited": "X",
+		"label": "Inscriptions administratives en DFA",
+		"n_rule": 42,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 6
+	},
+	"pk": 42
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [19],
+		"is_edited": "X",
+		"label": "Inscriptions administratives en Thèse en vue du DE de docteur en médecine",
+		"n_rule": 43,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 6
+	},
+	"pk": 43
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [17],
+		"is_edited": "X",
+		"label": "Inscriptions administratives en Thèse en vue du DE de docteur en pharmacie",
+		"n_rule": 44,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 6
+	},
+	"pk": 44
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [18],
+		"is_edited": "X",
+		"label": "Inscriptions administratives en Thèse en vue du DE de docteur en chirurgie dentaire",
+		"n_rule": 45,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 6
+	},
+	"pk": 45
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Inscriptions pédagogiques en PACES",
+		"n_rule": 46,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 8
+	},
+	"pk": 46
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1],
+		"is_edited": "X",
+		"label": "Validation d'acquis en DAEU",
+		"n_rule": 47,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 13
+	},
+	"pk": 47
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7, 14,
+			15, 16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Notation des QCM (Questions à choix multiples)",
+		"n_rule": 48,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 16
+	},
+	"pk": 48
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7, 14,
+			15, 16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Notation des QRC (Questions rédactionnelles courtes)",
+		"n_rule": 49,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 17
+	},
+	"pk": 49
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [14, 15],
+		"is_edited": "X",
+		"label": "Notation des QCD (Questions à choix double)",
+		"n_rule": 50,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 18
+	},
+	"pk": 50
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1],
+		"is_edited": "X",
+		"label": "Jury du DAEU",
+		"n_rule": 51,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 20
+	},
+	"pk": 51
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [16],
+		"is_edited": "X",
+		"label": "Jurys des certificats de santé",
+		"n_rule": 52,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 52
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [17],
+		"is_edited": "X",
+		"label": "Thèse d'exercice en vue du DE de docteur en pharmacie",
+		"n_rule": 53,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 53
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [19],
+		"is_edited": "X",
+		"label": "Thèse d'exercice en vue du DE de docteur en médecine",
+		"n_rule": 54,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 54
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [18],
+		"is_edited": "X",
+		"label": "Thèse d'exercice en vue du DE de docteur en chirurgie dentaire",
+		"n_rule": 55,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 55
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3],
+		"is_edited": "X",
+		"label": "Jury du DUT",
+		"n_rule": 56,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 56
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [6],
+		"is_edited": "X",
+		"label": "Compensation en licence professionnelle",
+		"n_rule": 57,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 57
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [4],
+		"is_edited": "X",
+		"label": "Compensation en DEUST",
+		"n_rule": 58,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 58
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1],
+		"is_edited": "X",
+		"label": "Compensation en DAEU (régime CC/CT)",
+		"n_rule": 59,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 59
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": false,
+		"is_eci": true,
+		"degree_type": [1],
+		"is_edited": "X",
+		"label": "Compensation en DAEU (régime ECI)",
+		"n_rule": 60,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 60
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3],
+		"is_edited": "X",
+		"label": "Compensation en DUT",
+		"n_rule": 61,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 61
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [15, 16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Compensation en DFG, DFA et DE",
+		"n_rule": 62,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 26
+	},
+	"pk": 62
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [4],
+		"is_edited": "X",
+		"label": "Calcul de la moyenne générale en DEUST",
+		"n_rule": 63,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 63
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Classement et validation en PACES",
+		"n_rule": 64,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 64
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [15],
+		"is_edited": "X",
+		"label": "Validation du DFG",
+		"n_rule": 65,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 65
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [16],
+		"is_edited": "X",
+		"label": "Validation du DFA",
+		"n_rule": 66,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 66
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [17, 18, 19],
+		"is_edited": "X",
+		"label": "Validation du diplôme de Docteur",
+		"n_rule": 67,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 30
+	},
+	"pk": 67
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Conservation d'une note d'une année sur l'autre en PACES",
+		"n_rule": 68,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 40
+	},
+	"pk": 68
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [6],
+		"is_edited": "X",
+		"label": "Capitalisation en licence professionnelle",
+		"n_rule": 69,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 41
+	},
+	"pk": 69
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [3],
+		"is_edited": "X",
+		"label": "Capitalisation en DUT",
+		"n_rule": 70,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 41
+	},
+	"pk": 70
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Session d'examen en PACES",
+		"n_rule": 71,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 45
+	},
+	"pk": 71
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [5, 6],
+		"is_edited": "X",
+		"label": "Epreuves de la session de rattrapage en licence (CC/CT)",
+		"n_rule": 72,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 47
+	},
+	"pk": 72
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [4],
+		"is_edited": "X",
+		"label": "Session de rattrapage en DEUST",
+		"n_rule": 73,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 46
+	},
+	"pk": 73
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [1, 3, 4, 7],
+		"is_edited": "X",
+		"label": "Epreuves de la session de rattrapage (CC/CT)",
+		"n_rule": 74,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 47
+	},
+	"pk": 74
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [14],
+		"is_edited": "X",
+		"label": "Absence aux épreuves du concours de PACES",
+		"n_rule": 75,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 71
+	},
+	"pk": 75
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": false,
+		"degree_type": [15, 16],
+		"is_edited": "X",
+		"label": "Report de note de la session principale à la session de rattrapage en DFG et DFA",
+		"n_rule": 76,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 80
+	},
+	"pk": 76
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [4],
+		"is_edited": "X",
+		"label": "Jurys du DEUST",
+		"n_rule": 77,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 21
+	},
+	"pk": 77
+}, {
+	"model": "rules.rule",
+	"fields": {
+		"is_ccct": true,
+		"is_eci": true,
+		"degree_type": [1, 3, 4, 5, 6, 7, 15,
+			16, 17, 18, 19],
+		"is_edited": "X",
+		"label": "Stages",
+		"n_rule": 78,
+		"is_in_use": true,
+		"code_year": 2015,
+		"display_order": 18
+	},
+	"pk": 78
+},
+
 {
     "fields": {
         "display_order": 1,
