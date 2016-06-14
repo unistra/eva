@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Impact(models.Model):
@@ -26,7 +27,7 @@ class Rule(models.Model):
         ('N', _('Non')),
         ('X', _('Nouvelle')),
     )
-
+# TODO: check que cela fonctionne bien =)
     display_order = models.IntegerField(
         _('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))
@@ -37,6 +38,7 @@ class Rule(models.Model):
     is_eci = models.BooleanField(_('ECI'), default=False)
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField('degree.DegreeType')
+    n_rule = models.IntegerField(_('Numéro de règle'), unique=False)
 
     @property
     def is_empty(self):
@@ -68,9 +70,15 @@ class Rule(models.Model):
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
             ]})
+        try:
+            self.n_rule = Rule.objects.all().latest('id').id + 1
+            print('here')
+        except ObjectDoesNotExist:
+            self.n_rule = 1
 
     class Meta:
         ordering = ['display_order']
+        unique_together = (("n_rule", "code_year"),)
 
 
 class Paragraph(models.Model):

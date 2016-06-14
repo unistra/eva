@@ -29,7 +29,8 @@
 </form>
 <script>
 {% if object %}
-function delete_pdf(){
+function delete_pdf(e){
+    e.preventDefault()
     $.ajax({
         url: "{% url 'years:delete_pdf'%}",
         type: "POST",

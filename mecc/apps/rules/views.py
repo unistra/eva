@@ -11,7 +11,8 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from django_cas.decorators import login_required
-
+from mecc.decorators import is_post_request, is_ajax_request
+from django.db import transaction
 
 from mecc.apps.utils.pdfs import degree_type_rules_for_current_year, \
     setting_up_pdf, NumberedCanvas
@@ -76,8 +77,10 @@ def manage_paragraph(request, rule_id,
         Q(is_target_year=True))).pop(0)
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
-    data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
-
+    try:
+        data['id_paragraph'] = Paragraph.objects.latest('id').id + 1
+    except ObjectDoesNotExist:
+        data['id_paragraph'] = 1
     if exist:
         parag = get_object_or_404(Paragraph, id=exist)
         data['paragraph_form'] = ParagraphForm(instance=parag)
@@ -163,7 +166,7 @@ def update_display_order(request):
     else:
         message = _("L'objet %s n'a pas été mis à jour" %
                     request.POT.get('_id'))
-        return JsonResponse({'status': 'false', 'message': message},
+        return JsonResponse({'status': 'False', 'message': message},
                             status=500)
 
 
@@ -224,6 +227,7 @@ class RuleDelete(DeleteView):
     success_url = '/rules/list'
 
 
+@login_required
 def gen_pdf(request, id_degreetype):
     current_year = list(
         UniversityYear.objects.filter(Q(is_target_year=True))).pop(0)
@@ -239,7 +243,8 @@ def gen_pdf(request, id_degreetype):
     return response
 
 
-def duplicate_rule(request, year=None, template='rules/duplicate.html'):
+@login_required
+def duplicate_home(request, year=None, template='rules/duplicate.html'):
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
@@ -248,7 +253,7 @@ def duplicate_rule(request, year=None, template='rules/duplicate.html'):
 
     all_rules = Rule.objects.all()
     if year is None:
-        rules = all_rules
+        rules = all_rules.order_by('code_year')
     else:
         rules = all_rules.filter(code_year=year)
 
@@ -256,8 +261,68 @@ def duplicate_rule(request, year=None, template='rules/duplicate.html'):
         e.code_year, e.code_year + 1)) for e in all_rules}
     data['existing_rules'] = current = all_rules.filter(
         code_year=current_year.code_year)
+    data['asked_year'] = None if year is None else int(year)
 
-    data['rules'] = [e for e in rules if e not in current]
-    print(data['existing_rules'])
-    print(data['rules'])
+    data['rules'] = [e for e in rules if e.n_rule not in [
+        a.n_rule for a in current]]
     return render(request, template, data)
+
+
+@transaction.atomic
+@login_required
+@is_ajax_request
+@is_post_request
+def duplicate_add(request):
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    x = request.POST.getlist('list_id[]')
+
+    dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
+    labels = []
+    for e in dic:
+
+        r = Rule.objects.filter(
+            code_year=e.get('year')).filter(n_rule=e.get('n_rule')).first()
+        rule = Rule.objects.create(
+            display_order=r.display_order,
+            code_year=current_year.code_year,
+            label=r.label,
+            is_in_use=r.is_in_use,
+            is_edited='N',
+            is_eci=r.is_eci,
+            is_ccct=r.is_ccct,
+            n_rule=r.n_rule
+        )
+        for a in r.degree_type.all():
+            degree_type = DegreeType.objects.get(id=a.id)
+            rule.degree_type.add(degree_type)
+        rule.save()
+
+        paragraphs = Paragraph.objects.filter(
+            code_year=e.get('year')).filter(rule__id=r.id)
+
+        for p in paragraphs:
+            p.rule.add(rule)
+            p.save()
+
+        labels.append(r.label)
+    return JsonResponse({'status': 'added', 'n_rule': [
+        e.get('n_rule') for e in dic], 'labels': labels})
+
+
+@login_required
+@is_ajax_request
+@is_post_request
+def duplicate_remove(request):
+    x = request.POST.get('id')
+    rule = Rule.objects.get(id=x)
+    label = rule.label
+    paragraphs = Paragraph.objects.filter(rule__id=x)
+    for p in paragraphs:
+        if p.is_cmp or p.is_interaction:
+            return JsonResponse({
+                "error": "%s comporte des dérogations." % (label)})
+
+    rule.delete()
+
+    return JsonResponse({"status": "removed", "label": label})

@@ -213,8 +213,9 @@ class RuleForm(forms.ModelForm):
         )
 
     def clean(self):
-        if (self.cleaned_data.get('is_ccct') or self.cleaned_data.get('is_eci')) is False:
-                raise ValidationError(_("Veuillez selectionner un régime."))
+        if (self.cleaned_data.get(
+                'is_ccct') or self.cleaned_data.get('is_eci')) is False:
+            raise ValidationError(_("Veuillez selectionner un régime."))
 
         return self.cleaned_data
 

@@ -2,20 +2,23 @@
 {% load i18n %}
 {% load field_name %}
 {% load staticfiles %}
-{% load staticfiles %}
 
 {% block page-header %}
+<link rel="stylesheet" href="{% static 'css/notif.css' %}">
+<script src="{% static 'js/notif.js' %}"></script>
+
 {% trans 'Duplication des règles générales vers l’année ' %} {{current_year}} {% endblock %}
 {% block app_content %}
 
-<script src="{% static 'js/jquery-ui.min.js' %}"></script>
-
+ <div class='notifications top-right'></div>
 <div class="disp-flex duplicate-h">
     <span class="subtitle-duplicate">{% trans "Sélectionner une année source" %}
     </span>
-    <select class="form-control width-15">
+    <select class="form-control width-15" id="duplicate_select_year" onchange="select_year()">
+
+        <option value="" {%if asked_year == None%} selected {%endif%}>{% trans "Toutes" %}</option>
         {%if availables_years%} {%for e, year in availables_years%}
-        <option value="{{e}}">{{year}}</option>
+        <option value="{{e}}" {% if e == asked_year %}selected{%else%}{%endif%}>{{year}}</option>
         {%endfor%} {%else%}
         <option value="option">{% trans "Aucune règles" %}</option>
         {%endif%}
@@ -36,15 +39,15 @@
                     <th width=10% class="td-centered">{%trans 'N° Aff'%}</th>
                 </tr>
             </thead>
-            <tbody class="tbody">
+            <tbody class="tbody" id="source">
                 {%if not rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
                 {%for e in rules%}
-                <tr>
+                <tr id="source_{{e.n_rule}}">
                     <td width=5% class="td-centered">
-                        <input type="checkbox" id="{{e.id}}" name="rule_{{e.id}}" class="checkbox_rule">
+                        <input type="checkbox" id="{{e.code_year}}_{{e.n_rule}}" name="rule_{{e.id}}" class="checkbox_rule">
                     </td>
                     <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.code_year}}</td>
-                    <td width=15% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.id | stringformat:"05d"}}</td>
+                    <td width=15% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.n_rule | stringformat:"05d"}}</td>
                     <td width=60% class="{% if not e.is_in_use%} grey-background{%endif%}">{{e.label}}</td>
                     <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
                 </tr>
@@ -59,22 +62,22 @@
                 <tr class="row-head">
                     <th width=10% class="td-centered">{%trans 'Source'%}</th>
                     <th width=15% class="td-centered">{%trans 'N° règle'%}</th>
-                    <th width=65%>{%trans 'Libellé de règle'%}</th>
+                    <th width=60%>{%trans 'Libellé de règle'%}</th>
                     <th width=10% class="td-centered">{%trans 'N° Aff'%}</th>
                     <th width=5% ></th>
                 </tr>
             </thead>
-            <tbody class="tbody">
+            <tbody class="tbody" id="current">
                 {%if not existing_rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
 
                 {%for e in existing_rules%}
-                <tr class="{% if not e.is_in_use%} grey-background{%endif%}">
+                <tr class="{% if not e.is_in_use%} grey-background{%endif%}" id="current_{{e.id}}">
                     <td width=10% class="td-centered">{{e.code_year}}</td>
-                    <td width=15% class="td-centered">{{e.id | stringformat:"05d"}}</td>
-                    <td width=65%>{{e.label}}</td>
+                    <td width=15% class="td-centered">{{e.n_rule | stringformat:"05d"}}</td>
+                    <td width=60%>{{e.label}}</td>
                     <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
                     <td width=5% class="td-centered">
-                        <a href="" class="glyphicon glyphicon-trash"></a>
+                        <a class="glyphicon glyphicon-trash select" id="{{e.id}} " onclick="del_rule(this, this.id);"></a>
                     </td>
                 </tr>
                 {%endfor%}
@@ -83,16 +86,90 @@
     </div>
 </div>
 <div class="buttons_list">
-<a href="{% url 'rules:duplicate'%}" class="btn-primary btn btn-sm btn-duplicate">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</a>
+<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_rule()">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</button>
 <a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des règles générales" %}</a>
 </div>
-
 <script type="text/javascript">
-    function check_all(source) {
-        checkboxes = document.getElementsByClassName("checkbox_rule");
-        for (var i = 0, n = checkboxes.length; i < n; i++) {
-            checkboxes[i].checked = source.checked;
+function del_rule($this, value) {
+    $.ajax({
+        url: "{% url 'rules:duplicate_remove'%}",
+        type: "POST",
+        data: {
+            id: value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(data){
+            if (data.error){
+                $('.top-right').notify({
+                    message: { text: data.error },
+                    type:'danger'
+                  }).show();
+            } else if (data.status === 'removed') {
+                console.log(value);
+                $('.top-right').notify({
+                    message: { text: data.label + ' a bien été supprimé.'},
+                    type:'info'
+                }).show();
+                var row = document.getElementById("current_"+ value);
+                row.deleteCell(4);
+                var dest = document.getElementById("source");
+                console.log(dest);
+                row.id = 'source_' + value;
+                td = row.insertCell(0);
+                td.innerHTML ='<input type="checkbox" class="checkbox_rule" name="rule_' + value +'" id="_+' + value +'+">';
+                td.className += 'td-centered';
+                dest.appendChild(row);
+            }
         }
+    })
+}
+function add_rule(){
+    checkboxes = document.getElementsByClassName("checkbox_rule");
+    var notChecked = [], checked = [];
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        id = checkboxes[i].id
+        checkboxes[i].checked ? checked.push(id) : notChecked.push(id);
     }
+    $.ajax({
+        url: "{% url 'rules:duplicate_add'%}",
+        type: "POST",
+        data: {
+            list_id: checked,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(data){
+            if (data.status === 'added') {
+                for (var i = 0, n = data.n_rule.length; i < n; i++) {
+                    var row = document.getElementById("source_" + data.n_rule[i]);
+                    row.deleteCell(0);
+                    var dest = document.getElementById('current');
+                    row.id = 'current_' + data.n_rule[i];
+                    td = row.insertCell(4);
+                    td.innerHTML = '<a onclick="del_rule(this, this.id);" id="' + data.n_rule[i] + '" class="glyphicon glyphicon-trash select"></a>';
+                    td.className += 'td-centered';
+                    dest.appendChild(row);
+                    $('.top-right').notify({
+                        message: { text: 'Règle n°'+ data.n_rule[i]+ ' dupliquée.' },
+                        type:'info'
+                      }).show();
+                }
+            }
+        }
+    });
+}
+function select_year(){
+    var e = document.getElementById("duplicate_select_year");
+    var year = e.options[e.selectedIndex].value;
+    window.location.replace("{% url 'rules:duplicate' %}" + year);
+}
+
+// All checkbox take the same state as this checkbox
+function check_all(source) {
+    checkboxes = document.getElementsByClassName("checkbox_rule");
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+ // for the ones that aren't closable and don't fade out there is a .hide() function.
 </script>
 {% endblock %}

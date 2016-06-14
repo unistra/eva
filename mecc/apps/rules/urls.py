@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import RulesListView, RuleCreate, RuleDelete, \
     edit_rule, manage_degreetype, update_display_order, \
     manage_paragraph, ParagraphDelete, edit_paragraph, gen_pdf, \
-    duplicate_rule
+    duplicate_home, duplicate_add, duplicate_remove
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^gen_pdf/(?P<id_degreetype>\d+)', gen_pdf,
         name='gen_pdf'),
     # (?:/(?<i>[regex])?/$) makes the arg i optional :)
-    url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_rule,
+    url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_home,
         name='duplicate'),
+    url(r'^duplicate_add/$', duplicate_add,
+        name='duplicate_add'),
+    url(r'^duplicate_remove/$', duplicate_remove,
+        name='duplicate_remove'),
 ]
