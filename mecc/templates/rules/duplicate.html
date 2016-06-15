@@ -110,6 +110,9 @@ function del_rule($this, value) {
                     message: { text: data.label + ' a bien été supprimé.'},
                     type:'info'
                 }).show();
+                setTimeout(function(){
+                    window.location.reload()
+                }, 500);
                 var row = document.getElementById("current_"+ value);
                 row.deleteCell(4);
                 var dest = document.getElementById("source");
@@ -140,6 +143,13 @@ function add_rule(){
         success: function(data){
             if (data.status === 'added') {
                 for (var i = 0, n = data.n_rule.length; i < n; i++) {
+                    $('.top-right').notify({
+                        message: { text: 'Règle n°'+ data.n_rule[i]+ ' dupliquée.' },
+                        type:'info'
+                    }).show();
+                    setTimeout(function(){
+                        window.location.reload()
+                    }, 500);
                     var row = document.getElementById("source_" + data.n_rule[i]);
                     row.deleteCell(0);
                     var dest = document.getElementById('current');
@@ -148,10 +158,6 @@ function add_rule(){
                     td.innerHTML = '<a onclick="del_rule(this, this.id);" id="' + data.n_rule[i] + '" class="glyphicon glyphicon-trash select"></a>';
                     td.className += 'td-centered';
                     dest.appendChild(row);
-                    $('.top-right').notify({
-                        message: { text: 'Règle n°'+ data.n_rule[i]+ ' dupliquée.' },
-                        type:'info'
-                      }).show();
                 }
             }
         }
