@@ -27,7 +27,6 @@ class Rule(models.Model):
         ('N', _('Non')),
         ('X', _('Nouvelle')),
     )
-# TODO: check que cela fonctionne bien =)
     display_order = models.IntegerField(
         _('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))

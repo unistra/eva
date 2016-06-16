@@ -2,8 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.utils.querries import rules_for_current_year, rules_since_ever
+from mecc.apps.utils.querries import rules_degree_for_year, rules_since_ever
 from mecc.apps.institute.models import Institute
+from mecc.apps.utils.querries import currentyear
 
 
 class DegreeType(models.Model):
@@ -37,8 +38,9 @@ class DegreeType(models.Model):
                 _('L\'ordre d\'affichage doit être positif.'),
             ]})
         if not self.is_in_use:
-            rules = rules_for_current_year(
-                self.pk) if self.pk is not None else None
+            c = currentyear()
+            rules = rules_degree_for_year(
+                self.pk, c.code_year) if self.pk is not None else None
             if rules is None:
                 return
             else:
