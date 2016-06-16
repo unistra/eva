@@ -7,7 +7,7 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY
 
-from .querries import rules_for_current_year
+from .querries import rules_degree_for_year
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.rules.models import Paragraph as ParagraphRules
@@ -104,6 +104,7 @@ def add_paragraph(e, story):
                 )
 
     table = Table(t, colWidths=(400, 125), style=[
+        # comment usefull to visualize border and grid
         # ('BOX', (0, 1), (-1, 1), 1, colors.black),
         # ('BACKGROUND', (1, 0), (1, -1), colors.grey),
         ('VALIGN', (0, 0), (0, -1), 'TOP'),
@@ -114,11 +115,10 @@ def add_paragraph(e, story):
     return story
 
 
-def degree_type_rules_for_current_year(title, degreetype):
+def degree_type_rules(title, degreetype, year):
     degree_type = degreetype.short_label.upper()
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0).code_year
-    cr = rules_for_current_year(degreetype.id)
+
+    cr = rules_degree_for_year(degreetype.id, year)
 
     story = []
 
@@ -127,7 +127,7 @@ def degree_type_rules_for_current_year(title, degreetype):
     header = [
         _("Modalités d'évaluation des connaissances et compétences"),
         _("Règles générales - %s" % degreetype.short_label),
-        _("Année universitaire %s/%s" % (current_year, current_year + 1))
+        _("Année universitaire %s/%s" % (year, year + 1))
     ]
     ttle = []
     for e in header:
