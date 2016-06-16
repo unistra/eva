@@ -31,7 +31,7 @@ class CustomFileInput(ClearableFileInput):
         return (template % substitutions)
 
     template_with_clear = (
-        '<a id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
-        onclick="return delete_pdf(event)">%s</a>' % _('Supprimer le document')
+        '<button id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
+        name="delete_pdf">%s</button>' % _('Supprimer le document')
 
     )
