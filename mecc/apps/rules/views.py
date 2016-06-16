@@ -13,8 +13,8 @@ from django.utils.translation import ugettext as _
 from django_cas.decorators import login_required
 from mecc.decorators import is_post_request, is_ajax_request
 from django.db import transaction
-
-from mecc.apps.utils.pdfs import degree_type_rules_for_current_year, \
+from mecc.apps.utils.querries import currentyear, rules_for_year
+from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas
 
 
@@ -24,19 +24,18 @@ class RulesListView(ListView):
     """
     model = Rule
 
-    def get_queryset(self):
+    def get_queryset(self, **args):
+        """
+        return query rules only for current year
+        """
         qs = super(RulesListView, self).get_queryset()
-        try:
-            current_year = list(UniversityYear.objects.filter(
-                Q(is_target_year=True))).pop(0)
-        except IndexError:
-            return qs.filter(code_year=1)
-
-        return qs.filter(code_year=current_year.code_year)
+        cy = currentyear()
+        return qs.filter(code_year=cy.code_year if cy is not None else None)
 
     def get_context_data(self, **kwargs):
         context = super(RulesListView, self).get_context_data(**kwargs)
         context['degree_types'] = DegreeType.objects.all()
+        context['asked_year'] = currentyear().code_year
         return context
 
 
@@ -53,8 +52,7 @@ class RuleCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(RuleCreate, self).get_context_data(**kwargs)
-        current_year = list(UniversityYear.objects.filter(
-            Q(is_target_year=True))).pop(0)
+        current_year = currentyear()
         context['current_year'] = "%s/%s" % (current_year.code_year,
                                              current_year.code_year + 1)
         try:
@@ -73,8 +71,7 @@ def manage_paragraph(request, rule_id,
     data = {}
     rule = get_object_or_404(Rule, id=rule_id)
     data['rule'] = rule
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
+    current_year = currentyear()
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
     try:
@@ -181,10 +178,9 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
 
     data['paragraphs'] = Paragraph.objects.filter((Q(rule=rule)))
     data['editing'] = True
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
-    data['current_year'] = "%s/%s" % (current_year.code_year,
-                                      current_year.code_year + 1)
+    current_year = currentyear()
+    data['current_year'] = "%s/%s" % (rule.code_year,
+                                      rule.code_year + 1)
     if request.POST and request.POST.get('label'):
         rule.display_order = request.POST.get('display_order')
         rule.label = request.POST.get('label')
@@ -228,15 +224,14 @@ class RuleDelete(DeleteView):
 
 
 @login_required
-def gen_pdf(request, id_degreetype):
-    current_year = list(
-        UniversityYear.objects.filter(Q(is_target_year=True))).pop(0)
+def gen_pdf(request, id_degreetype, year=None):
+    year = currentyear().code_year if year is None else int(year)
+    print(year)
     degree_type = get_object_or_404(DegreeType, id=id_degreetype)
     title = "MECC - %s - %s" % (
-        degree_type.short_label, current_year.code_year)
-
+        degree_type.short_label, year)
     response, doc = setting_up_pdf(title, margin=42)
-    story = degree_type_rules_for_current_year(title, degree_type)
+    story = degree_type_rules(title, degree_type, year)
 
     doc.build(story, canvasmaker=NumberedCanvas)
 
@@ -244,24 +239,39 @@ def gen_pdf(request, id_degreetype):
 
 
 @login_required
+def history_home(request, year=None, template='rules/history.html'):
+    data = {}
+    year = currentyear().code_year if year is None else year
+    data['asked_year'] = int(year)
+
+    all_rules = Rule.objects.all()
+
+    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
+        e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
+    data['rules'] = all_rules.filter(code_year=year)
+    data['degree_types'] = DegreeType.objects.all()
+    return render(request, template, data)
+
+
+@login_required
 def duplicate_home(request, year=None, template='rules/duplicate.html'):
     data = {}
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
+    current_year = currentyear()
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
 
     all_rules = Rule.objects.all()
-    if year is None:
-        rules = all_rules.order_by('code_year')
-    else:
-        rules = all_rules.filter(code_year=year)
 
-    data['availables_years'] = {(e.code_year, "%s/%s" % (
-        e.code_year, e.code_year + 1)) for e in all_rules}
+    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
+        e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
     data['existing_rules'] = current = all_rules.filter(
         code_year=current_year.code_year)
     data['asked_year'] = None if year is None else int(year)
+
+    if year is None:
+        return render(request, template, data)
+    else:
+        rules = all_rules.filter(code_year=year)
 
     data['rules'] = [e for e in rules if e.n_rule not in [
         a.n_rule for a in current]]
@@ -273,8 +283,7 @@ def duplicate_home(request, year=None, template='rules/duplicate.html'):
 @is_ajax_request
 @is_post_request
 def duplicate_add(request):
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
+    current_year = currentyear()
     x = request.POST.getlist('list_id[]')
 
     dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
@@ -317,11 +326,12 @@ def duplicate_remove(request):
     x = request.POST.get('id')
     rule = Rule.objects.get(id=x)
     label = rule.label
-    paragraphs = Paragraph.objects.filter(rule__id=x)
-    for p in paragraphs:
-        if p.is_cmp or p.is_interaction:
-            return JsonResponse({
-                "error": "%s comporte des dérogations." % (label)})
+    # paragraphs = Paragraph.objects.filter(rule__id=x)
+    # Correct test will be later
+    # for p in paragraphs:
+    #     if p.is_cmp or p.is_interaction:
+    #         return JsonResponse({
+    #             "error": "%s comporte des dérogations." % (label)})
 
     rule.delete()
 
