@@ -16,7 +16,7 @@
     </span>
     <select class="form-control width-15" id="duplicate_select_year" onchange="select_year()">
 
-        <option value="" {%if asked_year == None%} selected {%endif%}>{% trans "Toutes" %}</option>
+        <option value="" {%if asked_year == None%} selected {%endif%}>{% trans "Aucune" %}</option>
         {%if availables_years%} {%for e, year in availables_years%}
         <option value="{{e}}" {% if e == asked_year %}selected{%else%}{%endif%}>{{year}}</option>
         {%endfor%} {%else%}
@@ -46,10 +46,10 @@
                     <td width=5% class="td-centered">
                         <input type="checkbox" id="{{e.code_year}}_{{e.n_rule}}" name="rule_{{e.id}}" class="checkbox_rule">
                     </td>
-                    <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.code_year}}</td>
-                    <td width=15% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.n_rule | stringformat:"05d"}}</td>
-                    <td width=60% class="{% if not e.is_in_use%} grey-background{%endif%}">{{e.label}}</td>
-                    <td width=10% class="td-centered {% if not e.is_in_use%} grey-background{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=10% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.code_year}}</td>
+                    <td width=15% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.n_rule | stringformat:"05d"}}</td>
+                    <td width=60% class="{% if not e.is_in_use%} grey{%endif%}">{{e.label}}</td>
+                    <td width=10% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
@@ -71,7 +71,7 @@
                 {%if not existing_rules%}<tr><td>{% trans "Aucune règle." %}</td></tr>{%endif%}
 
                 {%for e in existing_rules%}
-                <tr class="{% if not e.is_in_use%} grey-background{%endif%}" id="current_{{e.id}}">
+                <tr class="{% if not e.is_in_use%} grey{%endif%}" id="current_{{e.id}}">
                     <td width=10% class="td-centered">{{e.code_year}}</td>
                     <td width=15% class="td-centered">{{e.n_rule | stringformat:"05d"}}</td>
                     <td width=60%>{{e.label}}</td>

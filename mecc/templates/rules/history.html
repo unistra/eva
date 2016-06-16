@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load field_name %}
+{% load staticfiles %}
+
+{% block page-header %}
+<link rel="stylesheet" href="{% static 'css/notif.css' %}">
+<script src="{% static 'js/notif.js' %}"></script>
+
+{% trans 'Historique des règles générales' %} {{current_year}} {% endblock %}
+{% block app_content %}
+
+
+ <div class='notifications top-right'></div>
+<div class="disp-flex duplicate-h">
+    <span class="subtitle-duplicate">{% trans "Sélectionner une année :" %}
+    </span>
+    <select class="form-control width-15" id="history_select_year" onchange="select_year()">
+
+        {%if availables_years%} {%for e, year in availables_years%}
+        <option value="{{e}}" {% if e == asked_year %}selected{%else%}{%endif%}>{{year}}</option>
+        {%endfor%} {%endif%}
+    </select>
+</div>
+
+
+
+<script src="{% static 'js/srtable.js' %}"></script>
+<div class="table_list">
+  {% if rules %}
+  <table class="table" id="rule-table">
+    <thead>
+     <tr>
+
+        <th width="5%"style="color:grey" class="td-center">{% trans 'N° règle' %}</th>
+        <th width="43%">{% trans "Libellé de règle" %}</th>
+        <th width="6%" class='sort-default'>{% trans 'N° affichage' %}</th>
+        <th width="10%"> </th>
+        <th width="11%"></th>
+        <th width="11%"></th>
+        <th width="11%"></th>
+        <th width="11%"></th>
+        <th width="5%"></th>
+     </tr>
+   </thead>
+   <tbody class="overflow" >
+  {%for e in rules%}
+
+  <tr class="hover-row {%if not e.is_in_use%} grey {%endif%} ">
+     <td class='disabled td-centered' width="5%">{{e.n_rule | stringformat:"05d"}}</td>
+     <td>{{e.label}}</td>
+     <td width="6%" class="td-centered">{{e.display_order}}</td>
+     <td width="11%" class="td-centered">{%if not e.is_in_use%}Hors service{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="blue">{% trans "Nouvelle" %}</span>{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
+      <td width="5%" class="td-centered">
+        <a href="{% url 'rules:rule_delete' id=e.id %}" >{% trans "voir" %}</a>
+      </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+   </table>
+{% endif %}
+</div>
+<div class="buttons_list">
+<a data-toggle="modal" data-target="#select_degreetype" class="btn-primary btn btn-sm">{% trans "Générer pdf des règles de cette année" %}</a>
+<a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm">{% trans "Quitter l'historique des règles" %}</a>
+
+{% include "rules/modal_select_degreetype.html"%}
+
+
+</div>
+
+<style media="screen">
+
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+table thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+table tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow: auto;
+  max-height: 65vh;
+
+}
+table tbody tr {
+  width: 100%;
+}
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+</style>
+
+<script type="text/javascript">
+function select_year(){
+    var e = document.getElementById("history_select_year");
+    var year = e.options[e.selectedIndex].value;
+    window.location.replace("{% url 'rules:history' %}" + year);
+}
+</script>
+{% endblock %}

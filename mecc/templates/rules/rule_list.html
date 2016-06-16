@@ -55,37 +55,10 @@
 <a href="{% url 'rules:duplicate'%}" class="btn-primary btn btn-sm btn-1">{% trans "Dupliquer les règles générales des années précédentes" %}</a>
 <a href="{% url 'rules:new'%}" class="btn-primary btn btn-sm">{% trans "Créer une nouvelle règle" %}</a>
 <a data-toggle="modal" data-target="#select_degreetype" class="btn-primary btn btn-sm">{% trans "Générer pdf des règles de l'année" %}</a>
-<a href="" class="btn-primary btn btn-sm" >{% trans "Historique Règles générales" %}</a>
+<a href="{% url 'rules:history'%}" class="btn-primary btn btn-sm" >{% trans "Historique Règles générales" %}</a>
 </div>
 
-
-<!-- Modal -->
-<div class="modal fade fade" id="select_degreetype" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">{% trans "Selection du type de diplôme " %}</h4>
-            </div>
-            <div class="modal-body">
-                <span style="margin-bottom:0.2em">{% trans "Veuillez sélectionner un type de diplôme : " %}</span>
-                  <select id="select-degreetype" name="">
-                    {%for e in degree_types%}
-                        {% if "CATALOGUE" not in e.short_label%}
-                    <option value="{{e.id}}">{{e.short_label}}</option>
-                        {%endif%}
-                    {%endfor%}
-                  </select>
-            </div>
-            <div class="modal-footer" style="padding-bottom:1em">
-                    <a onclick='go_gen_pdf()' class="btn btn-primary" >{% trans "Valider" %}</a>
-                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% include "rules/modal_select_degreetype.html"%}
 <style media="screen">
 
 table {
@@ -145,10 +118,6 @@ $('.display-order').on('change', function() {
       }
   });
 });
-function go_gen_pdf(){
-var e = document.getElementById("select-degreetype");
-  var degree_type = e.options[e.selectedIndex].value;
-  window.open('/rules/gen_pdf/' + degree_type, '_blank').focus()
-}
+
 </script>
 {% endblock %}
