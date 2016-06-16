@@ -44,7 +44,7 @@
      </tr>
    </thead>
    <tbody class="overflow" >
-  {%for e in rules%}
+  {%for e, para in rules%}
 
   <tr class="hover-row {%if not e.is_in_use%} grey {%endif%} ">
      <td class='disabled td-centered' width="5%">{{e.n_rule | stringformat:"05d"}}</td>
@@ -55,8 +55,10 @@
      <td width="11%" class="td-centered">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="11%" class="td-centered">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%" class="td-centered">
-        <a href="{% url 'rules:rule_delete' id=e.id %}" >{% trans "voir" %}</a>
+        <a href="{% url 'rules:gen_one' rule_id=e.id %}" target="_blank" >{% trans "voir" %}</a>
+        {# TODO: faire un preview comme dans edit rule avec para pour paragraphs et e.degree_type.all pour rule_degreetype #}
       </td>
+
   </tr>
   {% endfor %}
 </tbody>

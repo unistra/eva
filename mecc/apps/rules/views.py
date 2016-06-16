@@ -4,7 +4,6 @@ from .models import Rule, Paragraph
 from .forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
-from mecc.apps.years.models import UniversityYear
 from mecc.apps.degree.models import DegreeType
 from django.db.models import Q
 from django.core.urlresolvers import reverse
@@ -13,9 +12,9 @@ from django.utils.translation import ugettext as _
 from django_cas.decorators import login_required
 from mecc.decorators import is_post_request, is_ajax_request
 from django.db import transaction
-from mecc.apps.utils.querries import currentyear, rules_for_year
+from mecc.apps.utils.querries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
-    setting_up_pdf, NumberedCanvas
+    setting_up_pdf, NumberedCanvas, one_rule
 
 
 class RulesListView(ListView):
@@ -238,6 +237,16 @@ def gen_pdf(request, id_degreetype, year=None):
 
 
 @login_required
+def pdf_one_rule(request, rule_id):
+    rule = get_object_or_404(Rule, id=rule_id)
+    title = "MECC - %s - %s" % (rule.label, rule.code_year)
+    response, doc = setting_up_pdf(title, margin=42)
+    story = one_rule(title, rule)
+    doc.build(story, canvasmaker=NumberedCanvas)
+    return response
+
+
+@login_required
 def history_home(request, year=None, template='rules/history.html'):
     data = {}
     year = currentyear().code_year if year is None else year
@@ -247,8 +256,11 @@ def history_home(request, year=None, template='rules/history.html'):
 
     data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
         e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
-    data['rules'] = all_rules.filter(code_year=year)
+    data['rules'] = [(e, Paragraph.objects.filter(
+        rule=e)) for e in all_rules.filter(code_year=year)]
+
     data['degree_types'] = DegreeType.objects.all()
+
     return render(request, template, data)
 
 

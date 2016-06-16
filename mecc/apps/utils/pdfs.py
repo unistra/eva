@@ -9,7 +9,6 @@ from reportlab.lib.enums import TA_JUSTIFY
 
 from .querries import rules_degree_for_year
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from mecc.apps.years.models import UniversityYear
 from mecc.apps.rules.models import Paragraph as ParagraphRules
 from django.utils.translation import ugettext as _
 
@@ -58,6 +57,7 @@ class NumberedCanvas(canvas.Canvas):
 
 def block_rules(title, rules, story):
     if len(rules) > 0:
+        print('here')
         t = [
             [""],
             [Paragraph(title, styles["Normal"])]
@@ -115,6 +115,46 @@ def add_paragraph(e, story):
     return story
 
 
+def one_rule(title, rule):
+    story = []
+    year = rule.code_year
+# ############ TITLE ################################
+
+    header = [
+        _("Modalités d'évaluation des connaissances et compétences"),
+        rule.label,
+        _("Année universitaire %s/%s" % (year, year + 1))
+    ]
+    ttle = []
+    for e in header:
+        ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
+
+    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
+
+    table = Table(t, colWidths=(145, 405))
+
+    story.append(table)
+
+    story.append(Spacer(0, 12))
+    degrees = str([e.short_label for e in rule.degree_type.all()])[1:-1]
+    applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> \
+        %s" % degrees)
+    if rule.is_eci and rule.is_ccct:
+        applies = _("RÈGLE APPLICABLE à tous les diplômes de type : <br></br> \
+        %s" % degrees)
+    if rule.is_eci and not rule.is_ccct:
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> %s <br></br> en  \
+        évaluation continue intégrale" % degrees)
+    if not rule.is_eci and rule.is_ccct:
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br>%s<br></br> en contrôle \
+        terminal, combiné ou non avec un contrôle continu" % degrees)
+
+    block_rules(applies, [rule], story)
+
+    return story
+
+
 def degree_type_rules(title, degreetype, year):
     degree_type = degreetype.short_label.upper()
 
@@ -169,7 +209,7 @@ def degree_type_rules(title, degreetype, year):
 
 # ############ CCCT ################################
     block_rules(
-        _("RÈGLES APPLICABLES aux diplômes  de type %s en contrôle terminal, \
+        _("RÈGLES APPLICABLES aux diplômes de type %s en contrôle terminal, \
         combiné ou non avec un contrôle continu" % degree_type),
         cr.filter(Q(is_eci=False, is_ccct=True)),
         story
