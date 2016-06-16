@@ -265,7 +265,6 @@ class InstituteUpdate(UpdateView):
                 code_year=current_year, id_cmp=self.object.id)
             context['university_year'] = uy
             context['institute'] = self.object
-            print('here')
 
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')

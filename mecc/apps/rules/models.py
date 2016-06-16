@@ -71,7 +71,6 @@ class Rule(models.Model):
             ]})
         try:
             self.n_rule = Rule.objects.all().latest('id').id + 1
-            print('here')
         except ObjectDoesNotExist:
             self.n_rule = 1
 

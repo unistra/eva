@@ -226,7 +226,6 @@ class RuleDelete(DeleteView):
 @login_required
 def gen_pdf(request, id_degreetype, year=None):
     year = currentyear().code_year if year is None else int(year)
-    print(year)
     degree_type = get_object_or_404(DegreeType, id=id_degreetype)
     title = "MECC - %s - %s" % (
         degree_type.short_label, year)
