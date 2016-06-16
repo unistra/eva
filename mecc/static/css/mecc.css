@@ -10,7 +10,9 @@
 .grey-background{
     background-color: lightgrey;
 }
-
+.grey{
+    color: grey;
+}
 .white-background{
     background-color: white;
 }
