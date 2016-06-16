@@ -27,11 +27,11 @@ class CustomFileInput(ClearableFileInput):
                 '%(add_pdf)s'
             )
             substitutions['add_pdf'] = '<button type="submit" id="add_pdf" class="pull-right btn btn-primary btn-xs" \
-            name="add_pdf">%s</button></br>' % _('Ajouter le document')
+            name="add_pdf">%s</button>' % _('Ajouter le document')
         return (template % substitutions)
 
     template_with_clear = (
-        '<button id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
+        '</br><button id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
         name="delete_pdf">%s</button>' % _('Supprimer le document')
 
     )
