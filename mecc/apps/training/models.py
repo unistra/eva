@@ -13,7 +13,6 @@ class Training(models.Model):
     PROGRESS_CHOICE = (('E', _('En cours')), ('A', _('Achevée')))
 
     code_year = models.IntegerField(_("Code année"), unique=False)
-    id_training = models.AutoField(primary_key=False)
     degree_type = models.ForeignKey(DegreeType, related_name='degree_type')
     label = models.TextField(_('Intitulé de formation'))
     is_used = models.BooleanField(_('En service'), default=True)
@@ -29,10 +28,12 @@ class Training(models.Model):
     ref_cpa_rof = models.CharField(_('Référence CPA ROF'), max_length=20)
     ref_si_scol = models.CharField(_('Référence SI Scol'), max_length=20)
     progress_rule = models.CharField(
-        _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE
+        _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
+        max_length=1
     )
     progress_tabke = models.CharField(
-        _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE
+        _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
+        max_length=1
     )
     MECC_TYPE_CHOICE = (('E', _('ECI')), ('C', _('CC/CT')),)
     date_val_cmp = models.DateField(
@@ -96,8 +97,3 @@ class TrainingResp(models.Model):
     """
     training_cmp = models.ForeignKey('training.TrainingCMP')
     resp_formation = models.ForeignKey('adm.MeccUser')
-
-
-    @property
-    def code_year(self):
-        return self.training_cmp.code_year
