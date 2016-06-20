@@ -253,9 +253,15 @@ def history_home(request, year=None, template='rules/history.html'):
     data['asked_year'] = int(year)
 
     all_rules = Rule.objects.all()
-
-    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
+    availables_years = sorted({(e.code_year, "%s/%s" % (
         e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
+    # display current year for selecting year if this year doesn't contain rule
+    disp_curr_y = (currentyear().code_year, "%s/%s" % (
+        currentyear().code_year, int(currentyear().code_year)+1))
+    if disp_curr_y not in availables_years:
+        availables_years.append(disp_curr_y)
+
+    data['availables_years'] = availables_years
     data['rules'] = [(e, Paragraph.objects.filter(
         rule=e)) for e in all_rules.filter(code_year=year)]
 
