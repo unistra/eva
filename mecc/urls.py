@@ -21,6 +21,8 @@ urlpatterns = patterns(
         namespace='spoof')),
     url(r'^rules/', include('mecc.apps.rules.urls',
         namespace='rules')),
+    url(r'^training/', include('mecc.apps.training.urls',
+        namespace='training')),
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),

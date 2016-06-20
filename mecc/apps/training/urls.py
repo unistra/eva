@@ -1,12 +1,9 @@
 from django.conf.urls import url
-from .views import home, release_user, spoof_user
+from .views import TrainingListView
+from django_cas.decorators import login_required
 
 
 urlpatterns = [
-    url(r'^$', home,
-        name='home'),
-    url(r'^release/$', release_user,
-        name='release'),
-    url(r'^spoof/$', spoof_user,
-        name='spoof'),
+    url(r'^list/$', login_required(TrainingListView.as_view()),
+        name='list'),
     ]

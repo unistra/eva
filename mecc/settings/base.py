@@ -247,6 +247,7 @@ LOCAL_APPS = (
     'mecc.apps.years',
     'mecc.apps.adm',
     'mecc.apps.rules',
+    'mecc.apps.training',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
