@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 
 class CustomFileInput(ClearableFileInput):
     template_with_initial = (
-        '<a href="%(initial_url)s">%(initial)s</a> </br>'
+        '<a href="%(initial_url)s" target="_blank">%(initial)s</a> </br>'
         '%(clear_template)s<br/>'
     )
 
@@ -13,6 +13,7 @@ class CustomFileInput(ClearableFileInput):
         substitutions = {
         }
         template = '%(input)s'
+
         substitutions['input'] = super(ClearableFileInput, self).render(
             name, value, attrs)
         if self.is_initial(value):
