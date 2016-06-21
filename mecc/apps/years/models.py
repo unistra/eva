@@ -89,10 +89,11 @@ class UniversityYear(models.Model):
                         Veuillez la désactiver au préalable.'), ]})
             except UniversityYear.DoesNotExist:
                     pass
-        # check pdf exist on host 
+        # check pdf exist on host, if it doesn't pass 0 to pdf_size
+        # for other tests
         try:
             pdf_size = self.pdf_doc.size
-        except FileNotFoundError:
+        except (FileNotFoundError, ValueError):
             pdf_size = 0
         if self.pdf_doc:
             ext = self.pdf_doc.name.split('.')[-1]
