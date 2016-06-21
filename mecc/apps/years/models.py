@@ -89,14 +89,18 @@ class UniversityYear(models.Model):
                         Veuillez la désactiver au préalable.'), ]})
             except UniversityYear.DoesNotExist:
                     pass
-
+        # check pdf exist on host 
+        try:
+            pdf_size = self.pdf_doc.size
+        except FileNotFoundError:
+            pdf_size = 0
         if self.pdf_doc:
             ext = self.pdf_doc.name.split('.')[-1]
             if ext not in ['pdf']:
                 raise ValidationError(
                     {'pdf_doc': [_("Vous ne pouvez déposer que des documents \
                         pdf."), ]})
-            elif self.pdf_doc.size > max_size:
+            elif pdf_size > max_size:
                 raise ValidationError(
                     {'pdf_doc': [_("La taille du document ne peut être \
                         supérieure à 1MB."), ]})
