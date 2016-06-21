@@ -13,7 +13,8 @@ class Training(models.Model):
     PROGRESS_CHOICE = (('E', _('En cours')), ('A', _('Achevée')))
 
     code_year = models.IntegerField(_("Code année"), unique=False)
-    degree_type = models.ForeignKey(DegreeType, related_name='degree_type')
+    degree_type = models.ForeignKey(
+        DegreeType, related_name='degree_type', verbose_name='Type de diplôme')
     label = models.TextField(_('Intitulé de formation'))
     is_used = models.BooleanField(_('En service'), default=True)
     MECC_tab = models.BooleanField(_('Témoin Tableau MECC'), default=True)
@@ -25,13 +26,13 @@ class Training(models.Model):
         _('Session pour la formation'), blank=False,
         choices=SESSION_TYPE_CHOICE, max_length=1
     )
-    ref_cpa_rof = models.CharField(_('Référence CPA ROF'), max_length=20)
+    ref_cpa_rof = models.CharField(_('Référence CP Année ROF'), max_length=20)
     ref_si_scol = models.CharField(_('Référence SI Scol'), max_length=20)
     progress_rule = models.CharField(
         _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
         max_length=1
     )
-    progress_tabke = models.CharField(
+    progress_table = models.CharField(
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
         max_length=1
     )

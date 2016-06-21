@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans 'Fiche Formation' %}
+
+{% endblock %}
+
+
+{% block app_content %}
+  <div class="flex">
+        <form action="" method="post">
+           {% crispy form %}
+        </form>
+  </div>
+  </div>
+ {%endblock%}

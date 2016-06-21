@@ -3,7 +3,7 @@ from django import forms
 from .models import Rule, Paragraph, Impact
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div,  Submit
+from crispy_forms.layout import Layout, HTML, Field, Div, Submit
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
