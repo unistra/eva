@@ -7,47 +7,57 @@
 .grey {
     color: grey:
 }
-.grey-background{
+.grey-background {
     background-color: lightgrey;
 }
-.grey{
+.grey {
     color: grey;
 }
-.white-background{
+.white-background {
     background-color: white;
 }
 .has-1em-margin-top {
     margin-top: 1em;
 }
 .padding-1 {
-    padding:1em;
+    padding: 1em;
 }
+
 /*******************************************************************************
 /* FORM training*/
 
-.training-form > .form-group{
+.training-form-validate, .training-form-1 {
+    width: 50%;
+    padding: 1em;
+}
+.training-form> .form-group, .training-form-validate> .form-group {
     display: flex;
     width: 100%;
 }
-.training-form > .form-group >:first-child, .training-form > .disp-flex >:first-child{
+.training-form-validate> .form-group:not(:first-child) {
+    flex-grow: 0;
+    min-width: 10em;
+    max-width: 10em;
+}
+.training-form> .form-group>:first-child, .training-form> .disp-flex>:first-child {
     flex-grow: 0;
     min-width: 13em;
+    max-width: 13em;
+}
+.training-form-validate> .form-group>:first-child, .training-form> .disp-flex:not(:first-child), .training-form> .form-group:nth-child(2) {
+    flex-grow: 1;
+}
+@media(max-width:980px) {
+    .training-form> .form-group, .training-form-validate> .form-group, .training-form> .disp-flex {
+        flex-direction: column;
+    }
+}
+@media(max-width:1200px) {
+    .training-form> .disp-flex>:first-child {
+        min-width: 0;
+    }
 }
 
-.training-form > .disp-flex :not(:first-child), .training-form > .form-group :nth-child(2){
-    flex-grow: 1;
-    min-width: 10em;
-}
-@media(max-width:900px) {
-    .training-form > .form-group, .training-form > .disp-flex{
-    flex-direction: column;;
-    }
-}
-@media(max-width:1200px){
-    .training-form > .disp-flex >:first-child{
-    min-width: 0;
-    }
-}
 /*******************************************************************************
 /* Rules list*/
 
@@ -180,7 +190,7 @@
 /*******************************************************************************
 /* Forms*/
 
-.degree-form-left >div {
+.degree-form-left>div {
     padding: 0 1em 0 1em;
 }
 .buttons_list {
@@ -241,19 +251,19 @@ td.id_member {
 .disp-flex {
     display: flex;
 }
-.div-child-disp-flex > div {
+.div-child-disp-flex> div {
     display: flex;
 }
-.label-child-w2 > div > label {
+.label-child-w2> div> label {
     width: 30%;
 }
-.label-child-w2 > div > div {
+.label-child-w2> div> div {
     width: 70%;
 }
-.label-child-w1 > div > label {
+.label-child-w1> div> label {
     width: 50%;
 }
-.label-child-w1 > div > div {
+.label-child-w1> div> div {
     width: 50%;
 }
 .parent-centered {
@@ -304,7 +314,7 @@ td.id_member {
     width: 75%!important;
     max-height: 100%;
 }
-.gen-table > td {
+.gen-table> td {
     padding: 0.5em;
 }
 #selectedMember {

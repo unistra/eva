@@ -11,10 +11,51 @@
 
 
 {% block app_content %}
-  <div class="flex">
-        <form action="" method="post">
-           {% crispy form %}
+    <ul class="nav nav-tabs" style="margin-bottom:1em">
+        <li class="active"><a href="#">{% trans "Général" %}</a></li>
+        <li><a href="#">{% trans "Règles" %}</a></li>
+        <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+    </ul>
+  <div class="has-bottom-border disp-flex">
+        <form action="" method="post" class="border-right training-form-1">
+            {%crispy form%}
         </form>
-  </div>
-  </div>
+        <div class="training-form-validate training-form-1 grey">
+            <h2 class="modal-title">{% trans "Étapes de validation" %} {{disp_current_year}}</h2></br>
+           <div class="form-group">
+              <label>
+              {% trans "Etat d'avancement Saisie des règles" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+           <div class="form-group">
+              <label>
+              {% trans "Etat d'avancement Saisie Tabbleau MECC" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+           <div class="form-group">
+              <label>
+              {% trans "Date de validation en Conseil de Composante" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+           <div class="form-group">
+              <label>
+              {% trans "Date Réserve DES" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+           <div class="form-group">
+              <label>
+              {% trans "Date Visa DES" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+           <div class="form-group">
+              <label>
+              {% trans "Date de validation en CFVU" %}</label>
+              <div> <input class="form-control" disabled="true"> </div>
+           </div>
+
+        </div>
+ </div>
+ <div class="has-bottom-border disp-flex">
+     bal
+</div>
  {%endblock%}
