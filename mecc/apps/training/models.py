@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
+from mecc.apps.utils.querries import currentyear
 
 
 class Training(models.Model):
@@ -26,8 +27,12 @@ class Training(models.Model):
         _('Session pour la formation'), blank=False,
         choices=SESSION_TYPE_CHOICE, max_length=1
     )
-    ref_cpa_rof = models.CharField(_('Référence CP Année ROF'), max_length=20)
-    ref_si_scol = models.CharField(_('Référence SI Scol'), max_length=20)
+    ref_cpa_rof = models.CharField(
+        _('Référence CP Année ROF'), max_length=20, null=True
+    )
+    ref_si_scol = models.CharField(
+        _('Référence SI Scol'), max_length=20, null=True
+    )
     progress_rule = models.CharField(
         _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
         max_length=1
@@ -46,8 +51,12 @@ class Training(models.Model):
         _('Date de visa DES'), blank=True, null=True
     )
     date_val_cfvu = models.DateField(
-        _('Date de validation en CFVU'), blank=True, null=False
+        _('Date de validation en CFVU'), blank=True, null=True
     )
+
+    def clean_fields(self, exclude=None):
+        if self.code_year is None:
+            self.code_year = currentyear().code_year
 
     @property
     def input_opening(self):
