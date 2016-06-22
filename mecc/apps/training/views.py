@@ -11,6 +11,12 @@ class TrainingListView(ListView):
     """
     model = Training
 
+    def get_context_data(self, **kwargs):
+        context = super(TrainingListView, self).get_context_data(**kwargs)
+        context['disp_current_year'] = "%s/%s" % (
+            currentyear().code_year, currentyear().code_year + 1)
+        return context
+
 
 class TrainingCreate(CreateView):
     """

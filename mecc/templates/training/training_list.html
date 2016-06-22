@@ -1,1 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans 'Formations' %} {{disp_current_year}}
+
+{% endblock %}
+
+
+{% block app_content %}
+
 {{object_list}}
+
+
+
+<div class="buttons_list">
+<a href="#" class="btn-primary btn btn-sm btn-1">Dupliquer les formations des années précédentes</a>
+<a href="{% url 'training:new'%}" class="btn-primary btn btn-sm">Créer une nouvelle formation</a>
+
+</div>
+
+{% endblock %}

@@ -122,8 +122,8 @@
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
         <li style="margin-top:3em">
-            <a href="#"
-            {% if 'formation' in request.path %}
+            <a href="{% url 'training:list'%}"
+            {% if 'training' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>
