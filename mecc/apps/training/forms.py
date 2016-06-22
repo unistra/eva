@@ -10,48 +10,54 @@ class TrainingForm(forms.ModelForm):
     """
     Training form
     """
+    MECC_type = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(('E', _('ECI')), ('C', _('CC/CT'))),
+        label=_('Régime'), initial='E'
+    )
+    session_type = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(('2', _('2 sessions')), (('1', _('Session unique')))),
+        label=_('Session'), initial='2'
+    )
+    label = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2, 'style': 'resize:none;'}),
+        label=_("Intitulé de la formation"),
+        help_text=_("Année/parcours")
+    )
+
     def __init__(self, *args, **kwargs):
         super(TrainingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-4'
-        self.helper.field_class = 'col-lg-8'
+
         self.helper.layout = Layout(
             Div(
+
+                'degree_type',
+
                 Div(
-
-                    Div(
-                        'degree_type',
-                    ),
-                    Div(
-                        'is_used',
-                        'MECC_tab',
-                    ),
-                    Div(
-                        'label',
-                    ),
-                    Div(
-                        'MECC_type',
-                    ),
-                    Div(
-                        'session_type',
-                    ),
-                    Div(
-                        'ref_cpa_rof',
-                    ),
-                    Div(
-                        'ref_si_scol',
-                    ),
-                    Div(
-                        Submit(
-                            'add', _('Valider'),
-                            ),
-                    ),
+                    HTML("""
+                        <div class="control-label"> </div>
+                        """),
+                    'is_used',
+                    'MECC_tab',
+                    css_class="disp-flex"
                 ),
-                style="width:50%;background-color: yellow;"
-            )
-
+                'label',
+                Div(
+                    HTML("""
+                        <div class="control-label"> </div>
+                        """),
+                    'MECC_type',
+                    'session_type',
+                    css_class="disp-flex"
+                ),
+                'ref_cpa_rof',
+                'ref_si_scol',
+                css_class="has-bottom-border border-right training-form",
+                style="width:50%;heigth:70%;padding-right:1em;"
+            ),
         )
 
     class Meta:
