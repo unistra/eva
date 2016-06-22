@@ -89,7 +89,6 @@ class TrainingForm(forms.ModelForm):
                 Div(
                     Submit('add', _('Valider'),
                            css_class="pull-right btn-warning"),
-                    style='height:2.5em;'
                 ),
                 css_class="training-form",
             ),

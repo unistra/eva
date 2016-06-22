@@ -9,8 +9,16 @@ class Training(models.Model):
     Training model
     """
 
-    MECC_TYPE_CHOICE = (('E', _('ECI')), ('C', _('CC/CT')))
-    SESSION_TYPE_CHOICE = (('1', _('Session unique')), ('2', _('2 sessions')))
+    MECC_TYPE_CHOICE = (
+        ('E', _('ECI')),
+        ('C', _('CC/CT')),
+        ('N', _('Non applicable'))
+    )
+    SESSION_TYPE_CHOICE = (
+        ('1', _('Session unique')),
+        ('2', _('2 sessions')),
+        ('0', _('Non applicable'))
+    )
     PROGRESS_CHOICE = (('E', _('En cours')), ('A', _('Achevée')))
 
     code_year = models.IntegerField(_("Code année"), unique=False)
@@ -28,10 +36,10 @@ class Training(models.Model):
         choices=SESSION_TYPE_CHOICE, max_length=1
     )
     ref_cpa_rof = models.CharField(
-        _('Référence CP Année ROF'), max_length=20, null=True
+        _('Référence CP Année ROF'), max_length=20, null=True, blank=True
     )
     ref_si_scol = models.CharField(
-        _('Référence SI Scol'), max_length=20, null=True
+        _('Référence SI Scol'), max_length=20, null=True, blank=True
     )
     progress_rule = models.CharField(
         _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
@@ -61,20 +69,20 @@ class Training(models.Model):
     @property
     def input_opening(self):
         INPUT_CHOICE = (
-            ('1', _('Ouverte')),
-            ('2', _('Fermée en composante')),
-            ('3', _('Rouverte pour correction')),
-            ('4', _('Définitivement fermée'))
+            ('1', _('ouverte')),
+            ('2', _('fermée en composante')),
+            ('3', _('rouverte pour correction')),
+            ('4', _('définitivement fermée'))
         )
         empty = ['', ' ', None]
         if self.date_val_cfvu not in empty:
-            return INPUT_CHOICE[3]
+            return INPUT_CHOICE[3][1]
         if self.date_val_cmp in empty:
-            return INPUT_CHOICE[0]
+            return INPUT_CHOICE[0][1]
         if self.date_val_cmp not in empty and self.date_res_des in empty:
-            return INPUT_CHOICE[1]
+            return INPUT_CHOICE[1][1]
         if self.date_val_cmp not in empty and self.date_res_des not in empty:
-            return INPUT_CHOICE[2]
+            return INPUT_CHOICE[2][1]
         return None
 
 
@@ -85,7 +93,7 @@ class TrainingCMP(models.Model):
     """
     code_year = models.IntegerField(_("Code année"), unique=False)
     id_training = models.ForeignKey('training.Training')
-    degree_type = models.ForeignKey('degree.DegreeType')
+    degree_type = models.ForeignKey('institute.Institute')
     supply_cmp = models.BooleanField(_('Composante porteuse'))
 
     def clean_fields(self):

@@ -1,8 +1,9 @@
 from django.views.generic.list import ListView
 from django.views.generic import CreateView
 from .models import Training
-from .forms import TrainingForm, ValidationTrainingForm
+from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
+from mecc.apps.institute.models import Institute
 
 
 class TrainingListView(ListView):
@@ -17,13 +18,24 @@ class TrainingListView(ListView):
             currentyear().code_year, currentyear().code_year + 1)
         return context
 
+    def get_queryset(self):
+        institutes = [e.code for e in Institute.objects.all()]
+        if self.kwargs['cmp'] in institutes:
+            # TODO: filtrer les formations en fonction des compostantes
+            return Training.objects.all()
+
+        else:
+            return Training.objects.all()
+
+    template_name = 'training/training_list.html'
+
 
 class TrainingCreate(CreateView):
     """
     Training year create view
     """
     model = Training
-    success_url = '/years'
+    success_url = '/training/list'
     form_class = TrainingForm
 
     def get_context_data(self, **kwargs):

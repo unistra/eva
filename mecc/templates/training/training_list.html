@@ -11,8 +11,55 @@
 
 
 {% block app_content %}
+{%if object_list%}
+<div class="table_list">
+  {% if object_list %}
+  <table class="table" id="rule-table">
+    <thead>
+     <tr>
 
-{{object_list}}
+        <th width="4%" class="td-centered"></th>
+        <th width="20%" class="td-centered"></th>
+        <th width="9%" class="td-centered">{% trans 'Saisie règles' %}</th>
+        <th width="9%" class="td-centered">{% trans 'Saisie Tableau MECC' %}</th>
+        <th width="10%" class="td-centered">{% trans 'Date de validation en Conseil de composante' %}</th>
+        <th width="9%" class="td-centered">{% trans "Date reserve DES" %}</th>
+        <th width="9%" class="td-centered">{% trans "Date visa DES" %}</th>
+        <th width="9%" class="td-centered">{% trans "Date Validation en CFVU" %}</th>
+        <th width="10%" class="td-centered"></th>
+        <th width="9%" class="td-centered"></th>
+     </tr>
+   </thead>
+   <tbody class="overflow" >
+
+{%regroup object_list by degree_type as trainings %}
+
+
+{%for field in trainings%}
+<tr>
+    <td><strong>{{field.grouper}}</strong></td>
+<tr>
+{% for item in field.list %}
+<tr class="hover-row">
+    <td width="4%"></td>
+    <td width="20%">{{item.label}}</td>
+    <td width="9%" class="td-centered">{{item.progress_rule}}</td>
+    <td width="9%" class="td-centered">{{item.progress_table}}</td>
+    <td width="10%" class="td-centered">{{item.date_val_cmp}}</td>
+    <td width="9%" class="td-centered">{{item.date_res_des}}</td>
+    <td width="9%" class="td-centered">{{item.date_visa_des}}</td>
+    <td width="9%" class="td-centered">{{item.date_val_cfvu}}</td>
+    <td width="10%" class="td-centered grey">Saisie {{item.input_opening}}</td>
+    <td width="9%" class="td-centered">
+        <a href="#" class="glyphicon glyphicon-trash"></a>
+    </td>
+</tr>
+{%endfor%}
+{%endfor%}
+</tbody>
+
+{%endif%}
+{%endif%}
 
 
 
@@ -21,5 +68,38 @@
 <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm">Créer une nouvelle formation</a>
 
 </div>
+
+<style media="screen">
+
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+table thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+table tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow: auto;
+  max-height: 65vh;
+
+}
+table tbody tr {
+  width: 100%;
+}
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+</style>
+
 
 {% endblock %}

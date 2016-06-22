@@ -22,6 +22,11 @@
 .padding-1 {
     padding:1em;
 }
+.title-block{
+    font-size: 1.2em;
+    margin-top: 0.5em;
+
+}
 /*******************************************************************************
 /* FORM training*/
 .training-form-validate,
@@ -63,11 +68,6 @@
 @media(max-width:1200px){
     .training-form > .disp-flex >:first-child{
         min-width: 0;
-    }
-    .training-form-validate > .form-group >:first-child{
-        flex-grow: 0;
-        min-width: 13em;
-        max-width: 13em;
     }
 }
 /*******************************************************************************

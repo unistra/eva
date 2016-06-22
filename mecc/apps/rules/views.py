@@ -196,9 +196,9 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     data['rule_degreetype'] = [e for e in rule.degree_type.all()]
     data['available_degreetype'] = [
         e for e in DegreeType.objects.all() if
-        e.id not in [a.id for a in data['rule_degreetype']] and
-        not (e.short_label.upper().startswith('CATALOGUE') or
-             e.long_label.upper().startswith('CATALOGUE'))
+        e.id not in [a.id for a in data['rule_degreetype']]  # and
+        # not (e.short_label.upper().startswith('CATALOGUE') or
+        #      e.long_label.upper().startswith('CATALOGUE'))
     ]
 
     return render(request, template, data)
