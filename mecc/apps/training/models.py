@@ -9,7 +9,7 @@ class Training(models.Model):
     """
 
     MECC_TYPE_CHOICE = (('E', _('ECI')), ('C', _('CC/CT')))
-    SESSION_TYPE_CHOICE = (('1', _('session unique')), ('2', _('2 sessions')))
+    SESSION_TYPE_CHOICE = (('1', _('Session unique')), ('2', _('2 sessions')))
     PROGRESS_CHOICE = (('E', _('En cours')), ('A', _('Achevée')))
 
     code_year = models.IntegerField(_("Code année"), unique=False)
@@ -19,7 +19,7 @@ class Training(models.Model):
     is_used = models.BooleanField(_('En service'), default=True)
     MECC_tab = models.BooleanField(_('Témoin Tableau MECC'), default=True)
     MECC_type = models.CharField(
-        _('Régime MECC de la formation'), blank=False,
+        verbose_name=_('Régime MECC de la formation'), blank=False,
         choices=MECC_TYPE_CHOICE, max_length=1
     )
     session_type = models.CharField(
@@ -36,7 +36,6 @@ class Training(models.Model):
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
         max_length=1
     )
-    MECC_TYPE_CHOICE = (('E', _('ECI')), ('C', _('CC/CT')),)
     date_val_cmp = models.DateField(
         _('Date de validation en conseil de composante'), blank=True, null=True
     )
