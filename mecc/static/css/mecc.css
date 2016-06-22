@@ -23,6 +23,32 @@
     padding:1em;
 }
 /*******************************************************************************
+/* FORM training*/
+
+.training-form > .form-group{
+    display: flex;
+    width: 100%;
+}
+.training-form > .form-group >:first-child, .training-form > .disp-flex >:first-child{
+    flex-grow: 0;
+    min-width: 13em;
+}
+
+.training-form > .disp-flex :not(:first-child), .training-form > .form-group :nth-child(2){
+    flex-grow: 1;
+    min-width: 10em;
+}
+@media(max-width:900px) {
+    .training-form > .form-group, .training-form > .disp-flex{
+    flex-direction: column;;
+    }
+}
+@media(max-width:1200px){
+    .training-form > .disp-flex >:first-child{
+    min-width: 0;
+    }
+}
+/*******************************************************************************
 /* Rules list*/
 
 .display-order {
