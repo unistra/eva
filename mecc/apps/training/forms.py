@@ -3,7 +3,38 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Submit
 from django.utils.translation import ugettext as _
 
+
 from .models import Training
+
+
+class ValidationTrainingForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TrainingForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        self.helper.layout = Layout(
+            Div(
+                'progress_rule',
+                'progress_table',
+                'date_val_cmp',
+                'date_res_des',
+                'date_visa_des',
+                'date_val_cfvu',
+                css_class="training-form training-form-1",
+            )
+        )
+
+    class Meta:
+        model = Training
+        fields = [
+            'progress_rule',
+            'progress_table',
+            'date_val_cmp',
+            'date_res_des',
+            'date_visa_des',
+            'date_val_cfvu',
+        ]
 
 
 class TrainingForm(forms.ModelForm):
@@ -55,8 +86,12 @@ class TrainingForm(forms.ModelForm):
                 ),
                 'ref_cpa_rof',
                 'ref_si_scol',
-                css_class="has-bottom-border border-right training-form",
-                style="width:50%;heigth:70%;padding-right:1em;"
+                Div(
+                    Submit('add', _('Valider'),
+                           css_class="pull-right btn-warning"),
+                    style='height:2.5em;'
+                ),
+                css_class="training-form",
             ),
         )
 
