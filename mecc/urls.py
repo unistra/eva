@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django_cas.decorators import login_required
 from django.conf.urls.static import static
-
+from mecc.apps.institute.views import get_list
 from django.contrib import admin
 admin.autodiscover()
 
@@ -21,6 +21,8 @@ urlpatterns = patterns(
         namespace='spoof')),
     url(r'^rules/', include('mecc.apps.rules.urls',
         namespace='rules')),
+    url(r'^ressources/(?P<employee_type>|prof|adm)/(?P<pk>[a-zA-Z]{3}).json',
+        get_list, name='get_list'),
     url(r'^training/', include('mecc.apps.training.urls',
         namespace='training')),
     url(r'^admin/', include(admin.site.urls)),
