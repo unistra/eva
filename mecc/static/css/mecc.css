@@ -27,8 +27,26 @@
     margin-top: 0.5em;
 
 }
+.no-border{
+    border: none!important;
+}
+.border-bottom{
+    border-bottom: 1px solid #dddddd;
+    border-top: none!important;
+}
+.border-right-left{
+    border-right: 1px solid #dddddd;
+    border-left: 1px solid #dddddd;
+
+}
+.no-padding{
+    padding: 0!important;
+}
 /*******************************************************************************
 /* FORM training*/
+.list-training{
+    font-size: 0.95em!important;
+}
 .training-form-validate,
 .training-form-1 {
     width:50%;
@@ -205,10 +223,7 @@
 .degree-form-left >div {
     padding: 0 1em 0 1em;
 }
-.buttons_list {
-    text-align: center;
-    width: 100%;
-}
+
 td.id_member {
     display: none;
 }

@@ -62,9 +62,19 @@ class Training(models.Model):
         _('Date de validation en CFVU'), blank=True, null=True
     )
 
+    institutes = models.ManyToManyField('institute.Institute')
+    supply_cmp = models.CharField(_('porteuse'), max_length=3)
+    resp_formations = models.ManyToManyField('adm.MeccUser')
+
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
+        try:
+            if self.institutes and self.supply_cmp in ['', ' ', None]:
+                self.supply_cmp = self.institutes.all().first().code
+        except ValueError:
+            # do nothing if create training and not etid it
+            pass
 
     @property
     def input_opening(self):
@@ -86,31 +96,31 @@ class Training(models.Model):
         return None
 
 
-class TrainingCMP(models.Model):
-    """
-    Intermediary model allowing connection with year, training and cmp
-    (institute)
-    """
-    code_year = models.IntegerField(_("Code année"), unique=False)
-    id_training = models.ForeignKey('training.Training')
-    degree_type = models.ForeignKey('institute.Institute')
-    supply_cmp = models.BooleanField(_('Composante porteuse'))
+# class TrainingCMP(models.Model):
+#     """
+#     Intermediary model allowing connection with year, training and cmp
+#     (institute)
+#     """
+#     code_year = models.IntegerField(_("Code année"), unique=False)
+#     id_training = models.ForeignKey('training.Training')
+#     degree_type = models.ForeignKey('institute.Institute')
+#     supply_cmp = models.BooleanField(_('Composante porteuse'))
+#
+#     def clean_fields(self):
+#         same = TrainingCMP.objects.filter(
+#             code_year=self.code_year,
+#             id_training=self.id_training,
+#             degree_type=self.degree_type
+#         )
+#         if same:
+#             self.supply_cmp = False
+#         else:
+#             self.supply_cmp = True
+#
 
-    def clean_fields(self):
-        same = TrainingCMP.objects.filter(
-            code_year=self.code_year,
-            id_training=self.id_training,
-            degree_type=self.degree_type
-        )
-        if same:
-            self.supply_cmp = False
-        else:
-            self.supply_cmp = True
-
-
-class TrainingResp(models.Model):
-    """
-    Model for training responsable with training CMP, user, and
-    """
-    training_cmp = models.ForeignKey('training.TrainingCMP')
-    resp_formation = models.ForeignKey('adm.MeccUser')
+# class TrainingResp(models.Model):
+#     """
+#     Model for training responsable with training CMP, user, and
+#     """
+#     # training_cmp = models.ForeignKey('training.TrainingCMP')
+#     resp_formation = models.ForeignKey('adm.MeccUser')

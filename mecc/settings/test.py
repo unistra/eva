@@ -50,9 +50,9 @@ CAMELOT_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
 # LDAP Settings    #
 ####################
 
-LDAP_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
-LDAP_BASE_URL = environ.get('CAMELOT_BASE_URL', "http://ldapws-test.u-strasbg.fr")
-LDAP_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
+LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
+LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
+LDAP_TOKEN = environ.get('LDAP_TOKEN', 'S3CR3T')
 
 
 ####################

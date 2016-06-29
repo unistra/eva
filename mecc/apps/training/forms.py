@@ -1,15 +1,22 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div, Submit
+from crispy_forms.layout import Layout, HTML, Div, Submit
 from django.utils.translation import ugettext as _
-
-
 from .models import Training
 
 
+class InstituteTrainingForm(forms.ModelForm):
+
+    class Meta:
+        model = Training
+        fields = [
+            'institutes',
+            'supply_cmp',
+        ]
+
 class ValidationTrainingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(TrainingForm, self).__init__(*args, **kwargs)
+        super(ValidationTrainingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
 

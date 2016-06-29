@@ -12,22 +12,22 @@
 
 {% block app_content %}
 {%if object_list%}
-<div class="table_list">
+<div class="table_list list-training">
   {% if object_list %}
   <table class="table" id="rule-table">
     <thead>
      <tr>
 
-        <th width="4%" class="td-centered"></th>
+        <th width="5%" class="td-centered"></th>
         <th width="20%" class="td-centered"></th>
-        <th width="9%" class="td-centered">{% trans 'Saisie règles' %}</th>
-        <th width="9%" class="td-centered">{% trans 'Saisie Tableau MECC' %}</th>
-        <th width="10%" class="td-centered">{% trans 'Date de validation en Conseil de composante' %}</th>
-        <th width="9%" class="td-centered">{% trans "Date reserve DES" %}</th>
-        <th width="9%" class="td-centered">{% trans "Date visa DES" %}</th>
-        <th width="9%" class="td-centered">{% trans "Date Validation en CFVU" %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie règles' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie Tableau MECC' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Date de validation en Conseil de composante' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date reserve DES" %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date visa DES" %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date Validation en CFVU" %}</th>
         <th width="10%" class="td-centered"></th>
-        <th width="9%" class="td-centered"></th>
+        <th width="5%" class="td-centered"></th>
      </tr>
    </thead>
    <tbody class="overflow" >
@@ -37,21 +37,21 @@
 
 {%for field in trainings%}
 <tr>
-    <td><strong>{{field.grouper}}</strong></td>
+    <td class='no-border'><strong>{{field.grouper}}</strong></td>
 <tr>
 {% for item in field.list %}
 <tr class="hover-row">
-    <td width="4%"></td>
-    <td width="20%">{{item.label}}</td>
-    <td width="9%" class="td-centered">{{item.progress_rule}}</td>
-    <td width="9%" class="td-centered">{{item.progress_table}}</td>
-    <td width="10%" class="td-centered">{{item.date_val_cmp}}</td>
-    <td width="9%" class="td-centered">{{item.date_res_des}}</td>
-    <td width="9%" class="td-centered">{{item.date_visa_des}}</td>
-    <td width="9%" class="td-centered">{{item.date_val_cfvu}}</td>
-    <td width="10%" class="td-centered grey">Saisie {{item.input_opening}}</td>
-    <td width="9%" class="td-centered">
-        <a href="#" class="glyphicon glyphicon-trash"></a>
+    <td width="5%" class='no-padding no-border'></td>
+    <td width="20%" class='no-padding no-border'><a href='{% url 'training:edit' id=item.id %}'>{{item.label}}</a></td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_rule}} </td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_table}} </td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_val_cmp}}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_res_des}}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_visa_des}}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_val_cfvu}}</td>
+    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
+    <td width="5%" class="no-padding td-centered no-border">
+        <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
     </td>
 </tr>
 {%endfor%}
@@ -61,14 +61,18 @@
 {%endif%}
 {%endif%}
 
-
-
-<div class="buttons_list">
-<a href="#" class="btn-primary btn btn-sm btn-1">Dupliquer les formations des années précédentes</a>
-<a href="{% url 'training:new'%}" class="btn-primary btn btn-sm">Créer une nouvelle formation</a>
-
+</table>
 </div>
 
+<div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
+    <span class="title-block" style="width=20%">
+        <strong>Préparation</strong>
+    </span>
+    <div class="" style="width:80%">
+        <a href="#" class="btn-primary btn btn-sm btn-1" style="width:45%">Dupliquer les formations des années précédentes</a>
+        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">Créer une nouvelle formation</a>
+    </div>
+</div>
 <style media="screen">
 
 table {
@@ -88,7 +92,7 @@ table tbody {
   flex: 1 1 auto;
   display: block;
   overflow: auto;
-  max-height: 65vh;
+  max-height: 62vh;
 
 }
 table tbody tr {

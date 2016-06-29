@@ -9,6 +9,13 @@ import json
 
 from django.utils.translation import ugettext as _
 
+TEACHER_GRADES = ["ENSEIGNANT",
+                  "MAITRE",
+                  "MCUPH",
+                  "PROF",
+                  "PUPH",
+                  ]
+
 
 def create_client(name, token, spore, base_url):
     """
@@ -23,7 +30,7 @@ def create_client(name, token, spore, base_url):
         client = britney_utils.get_client(name, spore, base_url,
                                           middlewares=middlewares)
     except (SporeMethodStatusError, SporeMethodCallError) as e:
-        raise InvalidParamError("Spore returns a %s" % e)
+        raise Exception("Spore returns error : %s" % e)
     except urllib.error.URLError as e:
         raise Exception("Wrong url for spore")
     return client
@@ -48,7 +55,7 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
     if r and 'results' in r and r['results']:
         for i in r['results']:
             for e in i['accounts']:
-                if e['is_active'] == True:
+                if e['is_active'] is True:
                     person = {
                         "last_name": i['last_name'],
                         "birth_name": i['birth_name'],
@@ -62,7 +69,7 @@ def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
                     if person not in result and '@etu.unistra.fr' \
                        not in person['mail'] and person[("status")] == employee_type:
                         result.append(person)
-    if r['next'] != None:
+    if r['next'] is not None:
         page_num += 1
         get_list_from_cmp(cmp, employee_type, page_num=page_num, result=result)
 
@@ -77,15 +84,15 @@ def get_from_ldap(val):
             if e['is_active']:
                 if e['primary_affiliation'] == 'student':
                     affiliation = _('Étudiant')
-                    cmp = e['main_registration_code'] if e['main_registration_code'] != None else _('Non renseigné')
+                    cmp = e['main_registration_code'] if e['main_registration_code'] is not None else _('Non renseigné')
                 else:
-                    cmp = e['main_affectation_code'] if e['main_affectation_code'] != None else _('Non renseigné')
+                    cmp = e['main_affectation_code'] if e['main_affectation_code'] is not None else _('Non renseigné')
                     if e['primary_affiliation'] == 'employee':
                         affiliation = _('Administratif')
                     else:
                         affiliation = _('Enseignant')
                 person = {
-                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize()!= e['last_name'] else e['last_name'],
+                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize() != e['last_name'] else e['last_name'],
                     "first_name": e['first_name'].title(),
                     "status": affiliation,
                     "institute": cmp,

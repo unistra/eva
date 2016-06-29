@@ -166,7 +166,6 @@ def get_list(request, employee_type, pk):
     """
     Return list of professor or administration staff
     """
-    # TODO: NOT A VIEW
     if employee_type == 'prof':
         type_staff = 'Enseignant'
     elif employee_type == 'adm':
