@@ -3,18 +3,13 @@
 
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<form>
-{%if itf%}
-<div hidden>
-    {{itf}}
-</div>
-{%endif%}
 <div id="table-diretu" class="table-editable">
   <div id='message'></div>
-  <div class="f-1">
-    <label style="display: inline-block;"> {% trans "Composantes" %}
+  <div class="f-1" style="width:100%">
+    <label style="display: inline-block;width:75%" > {% trans "Composantes" %}
     </label>
-        <button type="button" class=" table-add btn btn-default btn-xs" id="add_cmp" style="margin-left:1em;">
+    <span style="width:20%">porteuse</span>
+        <button type="button" class=" table-add btn btn-default btn-xs pull-right" id="add_cmp" style="margin-left:1em;">
           <span class=" glyphicon glyphicon-plus" ></span>
         </button>
   </div>
@@ -25,11 +20,12 @@
 
     {% for e in object.institutes.all %}
     <tr>
-      <td class="hide">{{e.id}}</td>
-      <td >{{e.code}}</td>
-      <td width="70%">{{e.label}}</td>
-      <td  width="20%">
-        <button type="button" class="btn btn-default table-remove  btn-xs">
+      <td class="hide add_instit_1">{{e.id}}</td>
+      <td width=10% class="v-align-m">{{e.code}}</td>
+      <td width="65%" class="v-align-m">{{e.label}}</td>
+      <td width="25%" class="v-align-m">
+           <input type="radio" name="is_supply" value="{{e.code}}" {%if e.code == object.supply_cmp%}checked="checked"{%endif%}>
+        <button type="button" class="btn btn-default table-remove btn-xs pull-right">
           <strong>{% trans "Supprimer" %}</strong>
         </button>
       </td>    </tr>
@@ -38,15 +34,16 @@
     <!-- This is the clonable table line -->
     <tr class="hide clone">
       <td class="hide"></td>
-      <td></td>
-      <td width="70%">
+      <td width=10% class="v-align-m"> </td>
+      <td width="65%" class="v-align-m">
         <input class="name input-naked"  name="diretu" placeholder='Rechercher'  />
       </td>
-      <td>
-        <button type="button" class="btn btn-default new_cmp  btn-xs">
+      <td class="v-align-m" width=25%>
+          <input type="radio"  name="is_supply" value="" class="hidden">
+        <button type="button" class="btn btn-default new_cmp pull-right btn-xs ">
           <strong>{% trans "Valider" %}</strong>
         </button>
-        <button type="button" class="btn btn-default table-remove hidden  btn-xs">
+        <button type="button" class="btn btn-default table-remove hidden pull-right btn-xs">
           <strong>Supprimer</strong>
         </button>
       </span>
@@ -55,11 +52,15 @@
   </tbody>
   </table>
 </div>
-    <input type="submit" id="submit-id-add" class="btn btn-primary pull-right btn-warning" value="Valider" name="add">
-</form>
 
 <script>
 
+$('input[name="is_supply"]').on('click', function(e){
+    val = $('input[name="is_supply"]:checked').val();
+    if (val != ''){
+        $('#id_supply_cmp').val(val);
+    }
+});
 
 var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
 // transform select option to array or dict
@@ -93,11 +94,11 @@ function do_stuff (add_first, add_new, type) {
 
       var _val = $('td:first',$(this).parents('tr')).text();
       var clone = $(this).parents('div').find('.clone').clone(true).removeClass('hide table-line clone');
-      var g_table =   $(this).parents('div').find('tbody');
+      var g_table =   $(this).parents('div').find('#tbodyDegree');
       var a = clone.find('.name');
       g_table.append(clone);
       $(this).next().removeClass('hidden ');
-      $(this).addClass(' hidden');
+      $(this).addClass('hidden');
       var auto_comp = g_table.find(a);
       var options = {
         data: dict,
@@ -125,9 +126,14 @@ function do_stuff (add_first, add_new, type) {
           var txt = third_cell.find('input').val();
           third_cell.find(".input").remove();
           third_cell.text(txt);
-          console.log(first_cell.text());
-              institute_val.push(first_cell.text());
+          institute_val.push(first_cell.text());
+          radio = tr.find('input[name=is_supply]');
+          radio.val(first_cell.next().text()) ;
+          if (radio.is(":checked")){
+              $('#id_supply_cmp').val(radio.val());
+          }
           $('#id_institutes').val(institute_val)
+          radio.removeClass('hidden');
           };
       });
    });
@@ -135,25 +141,34 @@ function do_stuff (add_first, add_new, type) {
 
 
 do_stuff("add_cmp", " .new_cmp", "diretu")
-
 $('#id_institutes').val(institute_val);
-
-
-
-
 
 </script>
 
+<style media="screen">
 
-
-
-
-<style>
-.table-editable {
-  position: relative;
-  padding-left: 15px;
-  padding-right: 15px;
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
 }
+table thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+
+table tbody tr {
+  width: 100%;
+}
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+
 
 .table-remove {
   color: red;

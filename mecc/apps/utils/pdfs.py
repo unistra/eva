@@ -57,7 +57,6 @@ class NumberedCanvas(canvas.Canvas):
 
 def block_rules(title, rules, story):
     if len(rules) > 0:
-        print('here')
         t = [
             [""],
             [Paragraph(title, styles["Normal"])]

@@ -63,18 +63,12 @@ class Training(models.Model):
     )
 
     institutes = models.ManyToManyField('institute.Institute')
-    supply_cmp = models.CharField(_('porteuse'), max_length=3)
+    supply_cmp = models.CharField(_('porteuse'), max_length=3, blank=True)
     resp_formations = models.ManyToManyField('adm.MeccUser')
 
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
-        try:
-            if self.institutes and self.supply_cmp in ['', ' ', None]:
-                self.supply_cmp = self.institutes.all().first().code
-        except ValueError:
-            # do nothing if create training and not etid it
-            pass
 
     @property
     def input_opening(self):

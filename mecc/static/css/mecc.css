@@ -1,3 +1,6 @@
+.v-align-m{
+    vertical-align: middle!important;
+}
 .blue {
     color: #004A87!important;
 }
@@ -6,6 +9,9 @@
 }
 .grey {
     color: grey:
+}
+.black {
+    color: black:
 }
 .grey-background{
     background-color: lightgrey;
@@ -25,7 +31,6 @@
 .title-block{
     font-size: 1.2em;
     margin-top: 0.5em;
-
 }
 .no-border{
     border: none!important;
@@ -44,6 +49,7 @@
 }
 /*******************************************************************************
 /* FORM training*/
+
 .list-training{
     font-size: 0.95em!important;
 }
@@ -322,6 +328,15 @@ td.id_member {
 }
 .row {
     margin-top: 0.5em;
+}
+.has-top-border {
+    margin-top: 0.5em!important;
+    padding-top: 1em!important;
+    border-top-style: solid;
+    border-top-color: #358CD3;
+    padding-top: 0.25em;
+    border-top-width: 0.15em;
+
 }
 .has-bottom-border {
     border-bottom-style: solid;

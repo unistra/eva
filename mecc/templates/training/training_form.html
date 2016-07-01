@@ -16,9 +16,12 @@
         <li><a href="#">{% trans "Règles" %}</a></li>
         <li><a href="#">{% trans "Tableau MECC" %}</a></li>
     </ul>
-  <div class="has-bottom-border disp-flex">
-        <form action="" method="post" class="border-right training-form-1">
+  <div class="disp-flex">
+        <form action="" method="post" class="border-right training-form-1" id="training_form">
             {%crispy form%}
+            {% include "training/form/add_cmp.html" %}
+                <button name="stay" class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
+
         </form>
         <div class="training-form-validate training-form-1 {%if not validation_form%}grey {%endif%}">
             <h2 class="title-block">{% trans "Étapes de validation" %} {{disp_current_year}}</h2></br>
@@ -47,15 +50,29 @@
               {% trans "Date Visa DES" %}</label>
               <div> <input class="form-control" disabled="true"> </div>
            </div>
-           <div class="form-group">
+           <div class="form-group fill-space">
               <label>
               {% trans "Date de validation en CFVU" %}</label>
               <div> <input class="form-control" disabled="true"> </div>
            </div>
-
+           <div>
+               <span id="input_progress"></span>
+           </div>
+           <div class="has-top-border margin-top-auto" style="color:black">
+               {% if object %}
+               {% include "training/form/add_respform.html" %}
+               {% else %}
+               BLAB
+               {%endif%}
+           </div>
         </div>
+
  </div>
- <div class="has-bottom-border disp-flex">
-    {% include "training/form/add_cmp.html" %}
+
+ <div class="buttons_list has-top-border" style="margin-top:1em;">
+     <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Valider et créer une nouvelle formation" %}</button>
+ <a href="{% url 'training:list' %}" class="btn-primary btn btn-sm btn-1">{% trans "Retour liste des formations" %}</a>
  </div>
+
+ </script>
  {%endblock%}

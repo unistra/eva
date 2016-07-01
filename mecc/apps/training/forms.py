@@ -1,18 +1,18 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Div, Submit
+from crispy_forms.layout import Layout, HTML, Div
 from django.utils.translation import ugettext as _
 from .models import Training
+from django.core.exceptions import ValidationError
 
 
-class InstituteTrainingForm(forms.ModelForm):
-
+class RespTrainingForm(forms.ModelForm):
     class Meta:
         model = Training
         fields = [
-            'institutes',
-            'supply_cmp',
+            'resp_formations'
         ]
+
 
 class ValidationTrainingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -28,6 +28,7 @@ class ValidationTrainingForm(forms.ModelForm):
                 'date_res_des',
                 'date_visa_des',
                 'date_val_cfvu',
+
                 css_class="training-form training-form-1",
             )
         )
@@ -41,6 +42,8 @@ class ValidationTrainingForm(forms.ModelForm):
             'date_res_des',
             'date_visa_des',
             'date_val_cfvu',
+            'institutes',
+            'supply_cmp',
         ]
 
 
@@ -48,6 +51,19 @@ class TrainingForm(forms.ModelForm):
     """
     Training form
     """
+
+    def clean(self):
+        if self.cleaned_data.get('institutes') is None:
+            raise ValidationError(_("Veuillez selectionner au \
+                moins une composante."))
+        available_institues = self.cleaned_data.get('institutes').all()
+        available_code = [e.code for e in available_institues]
+        if self.cleaned_data.get('supply_cmp') not in available_code:
+            raise ValidationError(_('Veuillez selectionner une composante \
+                porteuse'))
+
+        return self.cleaned_data
+
     MECC_type = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=(('E', _('ECI')), ('C', _('CC/CT'))),
@@ -94,9 +110,14 @@ class TrainingForm(forms.ModelForm):
                 'ref_cpa_rof',
                 'ref_si_scol',
                 Div(
-                    Submit('add', _('Valider'),
-                           css_class="pull-right btn-warning"),
+                    'institutes',
+                    'supply_cmp',
+                    css_class="hidden"
                 ),
+                # Div(
+                #     Submit('add', _('Valider'),
+                #            css_class="pull-right btn-warning"),
+                # ),
                 css_class="training-form",
             ),
         )
@@ -112,4 +133,6 @@ class TrainingForm(forms.ModelForm):
             'session_type',
             'ref_cpa_rof',
             'ref_si_scol',
+            'institutes',
+            'supply_cmp',
         ]

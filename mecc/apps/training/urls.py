@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import TrainingListView, TrainingCreate, TrainingDelete, \
-    edit_training
+    TrainingEdit
 from django_cas.decorators import login_required
 
 
@@ -12,6 +12,6 @@ urlpatterns = [
         name='new'),
     url(r'^delete/(?P<id_training>\w+)', login_required(
         TrainingDelete.as_view()), name='delete'),
-    url(r'^edit/(?P<id>\d+)', edit_training,
+    url(r'^edit/(?P<id>\d+)', TrainingEdit.as_view(),
         name='edit'),
     ]

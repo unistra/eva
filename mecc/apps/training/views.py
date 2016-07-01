@@ -1,12 +1,12 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Training
-from .forms import TrainingForm, ValidationTrainingForm, InstituteTrainingForm
+from .forms import TrainingForm, ValidationTrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
 from mecc.apps.adm.models import Profile
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, redirect
+from django_cas.decorators import login_required
 
 
 def add_current_year(context):
@@ -28,11 +28,14 @@ class TrainingListView(ListView):
     def get_queryset(self):
         institutes = [e.code for e in Institute.objects.all()]
         user_profiles = [
-                e.code for e in self.requerequest.POSTst.user.meccuser.profile.all()
+                e.code for e in self.request.user.meccuser.profile.all()
             ] if self.request.user.is_superuser is not True else [
                 e.code for e in Profile.objects.all()
             ]
 
+        print(user_profiles)
+        print('-4sqd564sq563d15qs63d1--*/-dqs5dqs')
+        print(self.kwargs['cmp'])
         if self.kwargs['cmp'] in institutes:
             # TODO: filtrer les formations en fonction des compostantes
             cmp = self.kwargs['cmp']
@@ -62,29 +65,32 @@ class TrainingCreate(CreateView):
         return reverse('training:edit', args=(self.object.id,))
 
 
-def edit_training(request, id, template='training/training_form.html'):
+class TrainingEdit(UpdateView):
     """
-    Edit training
+    Training update view
     """
-    data = {}
-    training = Training.objects.get(id=id)
-    if request.method == 'POST':
-        form = TrainingForm(request.POST)
-        if form.is_valid():
-            train = form.save(commit=False)
-            train.save()
-        itf = InstituteTrainingForm(request.POST)
-        if itf.is_valid():
-            print('hello')
-            train = form.save(commit=False)
-            train = form.save()
-    else:
-        form = TrainingForm(instance=training)
-        itf = InstituteTrainingForm(instance=training)
-    data['form'] = form
-    data['itf'] = itf
-    data['object'] = training
-    return render(request, template, data)
+    model = Training
+    form_class = TrainingForm
+    pk_url_kwarg = 'id'
+
+    def get_success_url(self):
+        if self.request.method == 'POST' and 'new_training' \
+           in self.request.POST:
+            return reverse('training:new')
+        elif self.request.method == 'POST' and 'stay' in self.request.POST:
+            return reverse('training:edit', kwargs={'id': self.object.id})
+        else:
+            return reverse('training:list')
+
+    def get_context_data(self, **kwargs):
+        context = super(TrainingEdit, self).get_context_data(**kwargs)
+        context['disp_current_year'] = "%s/%s" % (
+            currentyear().code_year, currentyear().code_year + 1)
+        context['object'] = self.object
+        print(self.object.resp_formations.all())
+        # context['validation_form'] = ValidationTrainingForm(
+        #     instance=self.object)
+        return context
 
 
 class TrainingDelete(DeleteView):
@@ -98,3 +104,25 @@ class TrainingDelete(DeleteView):
     slug_field = 'id'
     slug_url_kwarg = 'id_training'
     success_url = '/training/list'
+
+
+#
+# @is_ajax_request
+# @login_required
+# def get_list_of_teacher(request):
+#     """
+#     Ajax : return list of teacher with searched name
+#     """
+#     data = {}
+#     x = request.GET.get('member', '')
+#     if len(x) > 1:
+#         ppl = [
+#             e for e in get_from_ldap(x) if e['username'] not in [
+#                 e.username for e in ECICommissionMember.objects.all()
+#             ]
+#         ]
+#         data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
+#         return JsonResponse(data)
+#     else:
+#         return JsonResponse(
+#             {'message': _('Veuillez entrer au moins deux caractères.')})
