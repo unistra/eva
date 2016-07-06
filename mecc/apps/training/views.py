@@ -37,20 +37,25 @@ class TrainingListView(ListView):
     model = Training
 
     def get_context_data(self, **kwargs):
+        id_cmp = self.kwargs.get('cmp')
+        print(self.kwargs)
         context = super(TrainingListView, self).get_context_data(**kwargs)
+        context['label_cmp'] = Institute.objects.get(
+            code=id_cmp).label if id_cmp is not None else "Toutes composantes"
+        self.request.session['visited_cmp'] = self.kwargs.get('cmp')
         return add_current_year(context)
 
     @has_requested_cmp
     def get_queryset(self):
-        print('here')
         institutes = [e.code for e in Institute.objects.all()]
+        trainings = Training.objects.filter(
+            code_year=currentyear().code_year).order_by('degree_type')
         if self.kwargs['cmp'] is None:
-            return Training.objects.filter(
-                code_year=currentyear().code_year).order_by('degree_type')
+            return trainings
 
         if self.kwargs['cmp'] in institutes:
-            return Training.objects.all().filter(
-                institutes__code=self.kwargs['cmp']).order_by('degree_type')
+            print('lolilol')
+            return trainings.filter(institutes__code=self.kwargs['cmp'])
 
     template_name = 'training/training_list.html'
 
