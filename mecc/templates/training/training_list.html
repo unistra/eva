@@ -11,6 +11,8 @@
 
 
 {% block app_content %}
+<h2 class='title-block bold'>{{label_cmp}}</h2>
+<br>
 {%if object_list%}
 <div class="table_list list-training">
   {% if object_list %}
@@ -42,13 +44,13 @@
 {% for item in field.list %}
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
-    <td width="20%" class='no-padding no-border'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
+    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_rule}} </td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_table}} </td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_val_cmp}}</td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_res_des}}</td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_visa_des}}</td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.date_val_cfvu}}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
     <td width="5%" class="no-padding td-centered no-border">
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
@@ -60,7 +62,6 @@
 
 {%endif%}
 {%endif%}
-
 </table>
 </div>
 
