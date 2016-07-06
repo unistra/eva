@@ -16,7 +16,7 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp
 from mecc.apps.adm.models import MeccUser, Profile
-from mecc.apps.utils.institute import manage_dircomp_rac
+from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
 
 

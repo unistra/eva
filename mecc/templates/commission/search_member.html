@@ -91,6 +91,7 @@ function searchMember() {
         type: "GET",
         data: {
             member: search,
+            research_type : 'ECI',
         },
         success: function(data) {
             document.getElementById('load-wrap').style.display = 'none';

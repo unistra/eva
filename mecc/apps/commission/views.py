@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render,  redirect
 from django.http import JsonResponse
 from mecc.apps.utils.ws import get_from_ldap
-
+from mecc.apps.training.models import Training
 from .models import ECICommissionMember
 from .forms import ECIForm
 from django_cas.decorators import login_required
@@ -64,12 +64,17 @@ def get_list_of_pple(request):
     """
     data = {}
     x = request.GET.get('member', '')
+    y = request.GET.get('research_type', None)
+    if y == 'ECI':
+        r = [e.username for e in ECICommissionMember.objects.all()]
+    if y == 'RESPFORM':
+        z = request.GET.get('id_training')
+        r = [e.user.username for e in
+             Training.objects.get(id=z).resp_formations.all()]
+    elif y is None:
+        r = []
     if len(x) > 1:
-        ppl = [
-            e for e in get_from_ldap(x) if e['username'] not in [
-                e.username for e in ECICommissionMember.objects.all()
-            ]
-        ]
+        ppl = [e for e in get_from_ldap(x) if e['username'] not in r]
         data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
         return JsonResponse(data)
     else:

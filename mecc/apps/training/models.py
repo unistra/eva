@@ -111,10 +111,11 @@ class Training(models.Model):
 #         else:
 #             self.supply_cmp = True
 #
-
+#
 # class TrainingResp(models.Model):
 #     """
 #     Model for training responsable with training CMP, user, and
 #     """
-#     # training_cmp = models.ForeignKey('training.TrainingCMP')
-#     resp_formation = models.ForeignKey('adm.MeccUser')
+#     resp_formation = models.ManyToManyField('adm.MeccUser')
+#     training_cmp = models.IntegerField(_('ID formation'), unique=False)
+#     code_year = models.IntegerField(_("Code année"), unique=False)

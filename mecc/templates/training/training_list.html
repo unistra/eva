@@ -42,7 +42,7 @@
 {% for item in field.list %}
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
-    <td width="20%" class='no-padding no-border'><a href='{% url 'training:edit' id=item.id %}'>{{item.label}}</a></td>
+    <td width="20%" class='no-padding no-border'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_rule}} </td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_table}} </td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.date_val_cmp}}</td>

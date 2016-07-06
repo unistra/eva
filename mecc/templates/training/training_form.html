@@ -58,11 +58,13 @@
            <div>
                <span id="input_progress"></span>
            </div>
-           <div class="has-top-border margin-top-auto" style="color:black">
-               {% if object %}
+           <div class="has-top-border margin-top-auto" {% if object %}style="color:black">
+
                {% include "training/form/add_respform.html" %}
-               {% else %}
-               BLAB
+               {% else %}>
+               <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
+                   <br><span class="padding-1">{% trans "AUCUN" %}</span>
+
                {%endif%}
            </div>
         </div>

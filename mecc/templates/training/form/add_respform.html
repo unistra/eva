@@ -15,13 +15,25 @@
 
       <tbody class="overflow" id='repsformtbody'>
 
-      {% for e in object.institutes.all %}
+      {% for e in object.resp_formations.all %}
+
       <tr>
-        <td width=42.5% class="v-align-m">{{e.label}}</td>
-        <td width="42.5%" class="v-align-m">{{e.label}}</td>
-        <td width="10%" class="v-align-m">{{e.code}}</td>
+        <td width=42.5% class="v-align-m">{{e.user.last_name}}</td>
+        <td width="42.5%" class="v-align-m">{{e.user.first_name}}</td>
+        <td width="10%" class="v-align-m">{{e.cmp}}</td>
         <td width="5%" class="v-align-m">
-            <a href="{% url 'institute:delete' code=e.id %}" class="glyphicon glyphicon-trash"></a>
+            <form class="" action="{% url 'training:process_resp'%}" method="post">
+                <div class="hidden" hidden >
+                    {% csrf_token %}
+
+                        <input type="text" name="formation"  value="{{object.id}}" readonly>
+                        <input type="text" name="username"  readonly value="{{e.user.username}}">
+
+                    </div>
+                    <button type="submit" class="btn-link" name="remove">
+                        <strong><a class="glyphicon glyphicon-trash"></a></strong></button>
+            </form>
+
 
         </td>
       </tr>
@@ -99,52 +111,24 @@
                 <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
             </div>
             <div class="modal-body" style="padding-bottom:0">
-                <form method="post" action="" class="">
-                    <div class="hidden" hidden>
+                <form method="post" action="{% url 'training:process_resp' %}" class="">
+                    <div class="hidden" hidden >
                         {% csrf_token %}
-                    <div class="form-group" id="div_id_username">
-                         <label class="control-label" for="">
-                                    {% trans "ID Membre" %}
-                        </label>
-                        <div class="controls ">
-                            <input type="text" name="username" maxlength="35" id="id_username" class="form-control" readonly>
-                        </div>
+
+                            <input type="text" name="formation"  id="id_formation"  value="{{object.id}}" readonly>
+                            <input type="text" name="username" id="id_username" readonly>
+                            <input type="text" name="mail"  id="id_email" readonly>
+                            <input type="text" name="name" id="id_name" readonly>
+                            <input type="text" name="firstname"  id="id_firstname" readonly>
+                            <input type="text" name="cmp" id="id_cmp" readonly>
                     </div>
-                    <div class="form-group" id="div_id_username" >
-                        <div class="controls ">
-                            <input type="text" name="username" maxlength="35" id="id_email" class="form-control" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group" id="div_id_name">
-                         <label class="control-label" for="">
-                                    {% trans "Nom" %}
-                        </label>
-                        <div class="controls ">
-                            <input type="text" name="username" maxlength="35" id="id_name" class="form-control" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group" id="div_id_firstname">
-                         <label class="control-label" for="">
-                                    {% trans "Prénom" %}
-                        </label>
-                        <div class="controls ">
-                            <input type="text" name="username" maxlength="35" id="id_firstname" class="form-control" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group" id="div_id_cmp">
-                         <label class="control-label" for="">
-                                    {% trans "Compostante" %}
-                        </label>
-                        <div class="controls ">
-                            <input type="text" name="username" maxlength="35" id="id_cmp" class="form-control" readonly>
-                        </div>
-                    </div>
-                </div>
-                Voulez vous vraiment ajouter :
+                    Voulez vous vraiment ajouter :
                     <span id="span_name"></span> <span id="span_first_name"></span>
                     (<span id="span_cmp"></span>) comme responsable de formation <strong>{{object.label}}</strong> ?
+                    <span id="span_username"></span>
+                </div>
             <div class="modal-footer">
-                        <input type="submit" name="add" value="Ajouter" class="btn btn-primary" id="submit-id-add">
+                        <input type="submit" name="add_respform" value="Ajouter" class="btn btn-primary" id="submit-id-add">
                         <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
             </div>
         </form>
@@ -167,6 +151,9 @@ function searchMember() {
         type: "GET",
         data: {
             member: search,
+            research_type : 'RESPFORM',
+            id_training: {{object.id}}
+
         },
         success: function(data) {
             document.getElementById('load-wrap').style.display = 'none';
@@ -222,6 +209,7 @@ function searchMember() {
                     var mail = $(institute).next('td');
                     var id = $(mail).next('td');
                     document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+                    document.getElementById('span_username').textContent = id.text().replace(/\s+/g, '');
                     document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
                     document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
                     document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');

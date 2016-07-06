@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans 'Formations' %} {{disp_current_year}}
+
+{% endblock %}
+
+{% block app_content %}
+
+<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
+
+{% if institutes %}
+
+{% regroup institutes by field as institute_list %}
+
+{% for field in institute_list %}
+<li>
+
+        <ul>
+            {{ field.grouper }}
+
+        {% for item in field.list %}
+        <br>
+        <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}
+        </a>
+        {% endfor %}
+    </ul>
+
+    </li>
+{% endfor %}
+
+{% else %}
+
+
+{% endif %}
+
+{%endblock%}

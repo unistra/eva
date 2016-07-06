@@ -2,6 +2,7 @@ from functools import wraps
 # from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def is_ajax_request(view_func):
@@ -36,10 +37,29 @@ def is_DES1(view_func):
     Check if user belong to DES1 group
     """
     @wraps(view_func)
-    def wrapper(request, group_name, *args, **kwargs):
-        group = Group.objects.get(name=group_name)
-        if group in request.user.groups.all():
+    def wrapper(request, *args, **kwargs):
+        group = Group.objects.get(name='DES1')
+        if group in request.user.groups.all() or request.user.is_superuser:
             return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
+            permission to access this page.")
+    return wrapper
+
+
+def has_requested_cmp(view_func):
+    @wraps(view_func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            if self.kwargs.get('cmp') == self.request.user.meccuser.cmp:
+                return view_func(self, *args, **kwargs)
+        except ObjectDoesNotExist:
+            # Nothin to do here since user such as superuser can not having
+            # meccuser informations
+            pass
+
+        if self.request.user.is_superuser or \
+           'DES1' in self.request.user.groups.all():
+            return view_func(self, *args, **kwargs)
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
     return wrapper

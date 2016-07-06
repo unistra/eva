@@ -1,6 +1,9 @@
 .v-align-m{
     vertical-align: middle!important;
 }
+.margin-left1{
+    margin-left: 1em;
+}
 .blue {
     color: #004A87!important;
 }
@@ -24,6 +27,9 @@
 }
 .has-1em-margin-top {
     margin-top: 1em;
+}
+.bold{
+    font-weight: bold!important;
 }
 .padding-1 {
     padding:1em;

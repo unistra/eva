@@ -1,18 +1,33 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Training
-from .forms import TrainingForm, ValidationTrainingForm
+from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
-from mecc.apps.adm.models import Profile
 from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required
 
+from mecc.decorators import is_post_request, is_DES1, has_requested_cmp
+from mecc.apps.utils.manage_pple import manage_respform
+from django.shortcuts import render, redirect
 
-def add_current_year(context):
-    context['disp_current_year'] = "%s/%s" % (
+
+def add_current_year(dic):
+    dic['disp_current_year'] = "%s/%s" % (
         currentyear().code_year, currentyear().code_year + 1)
-    return context
+    return dic
+
+
+@is_DES1
+@login_required
+def list_training(request, template='training/list_cmp.html'):
+    """
+    View for DES1 - can select CMP
+    """
+    data = {}
+    data['institutes'] = Institute.objects.all().order_by('field', 'label')
+    add_current_year(data)
+    return render(request, template, data)
 
 
 class TrainingListView(ListView):
@@ -25,24 +40,17 @@ class TrainingListView(ListView):
         context = super(TrainingListView, self).get_context_data(**kwargs)
         return add_current_year(context)
 
+    @has_requested_cmp
     def get_queryset(self):
+        print('here')
         institutes = [e.code for e in Institute.objects.all()]
-        user_profiles = [
-                e.code for e in self.request.user.meccuser.profile.all()
-            ] if self.request.user.is_superuser is not True else [
-                e.code for e in Profile.objects.all()
-            ]
+        if self.kwargs['cmp'] is None:
+            return Training.objects.filter(
+                code_year=currentyear().code_year).order_by('degree_type')
 
-        print(user_profiles)
-        print('-4sqd564sq563d15qs63d1--*/-dqs5dqs')
-        print(self.kwargs['cmp'])
         if self.kwargs['cmp'] in institutes:
-            # TODO: filtrer les formations en fonction des compostantes
-            cmp = self.kwargs['cmp']
-            return Training.objects.all().order_by('degree_type')
-
-        else:
-            return Training.objects.all().order_by('degree_type')
+            return Training.objects.all().filter(
+                institutes__code=self.kwargs['cmp']).order_by('degree_type')
 
     template_name = 'training/training_list.html'
 
@@ -57,9 +65,7 @@ class TrainingCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingCreate, self).get_context_data(**kwargs)
-        context['disp_current_year'] = "%s/%s" % (
-            currentyear().code_year, currentyear().code_year + 1)
-        return context
+        return add_current_year(context)
 
     def get_success_url(self):
         return reverse('training:edit', args=(self.object.id,))
@@ -87,7 +93,7 @@ class TrainingEdit(UpdateView):
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['object'] = self.object
-        print(self.object.resp_formations.all())
+        context['resp_form'] = self.object.resp_formations.all()
         # context['validation_form'] = ValidationTrainingForm(
         #     instance=self.object)
         return context
@@ -104,6 +110,14 @@ class TrainingDelete(DeleteView):
     slug_field = 'id'
     slug_url_kwarg = 'id_training'
     success_url = '/training/list'
+
+
+@login_required
+@is_post_request
+def process_respform(request):
+    t_id = request.POST.dict().get('formation')
+    manage_respform(request.POST.dict())
+    return redirect('training:edit', id=t_id)
 
 
 #
