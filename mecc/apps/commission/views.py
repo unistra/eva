@@ -56,7 +56,6 @@ def delete_member(request):
     return redirect('commission:home')
 
 
-@is_ajax_request
 @login_required
 def get_list_of_pple(request):
     """
