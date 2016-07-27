@@ -25,7 +25,7 @@
 {% endif %}
 <div id="div_auto_id"  class='form-group'>
   <label for="auto_id" class="control-label col-lg-5 requiredField">
-                {% trans "ID composante" %} <small> {% trans "(auto)" %}</small><span class="asteriskField">*</span> </label>
+                {% trans "ID composante" %} <small> {% trans "(auto)" %}</small></label>
 <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
 </div>
   {% crispy form %}

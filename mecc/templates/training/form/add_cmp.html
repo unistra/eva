@@ -1,219 +1,90 @@
 {% load i18n %}
-{% load staticfiles %}
-
-<script src="{% static 'js/autocomplete.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
-<div id="table-diretu" class="table-editable">
-  <div id='message'></div>
-  <div class="f-1" style="width:100%">
-    <label style="display: inline-block;width:75%" > {% trans "Composantes" %}
-    </label>
-    <span style="width:20%">porteuse</span>
-        <button type="button" class=" table-add btn btn-default btn-xs pull-right" id="add_cmp" style="margin-left:1em;">
-          <span class=" glyphicon glyphicon-plus" ></span>
-        </button>
-  </div>
-  <table class="table" id="degreeTable">
-
-
-    <tbody class="overflow" id='tbodyDegree'>
-
-    {% for e in object.institutes.all %}
-    <tr>
-      <td class="hide add_instit_1">{{e.id}}</td>
-      <td width=10% class="v-align-m">{{e.code}}</td>
-      <td width="65%" class="v-align-m">{{e.label}}</td>
-      <td width="25%" class="v-align-m">
-           <input type="radio" name="is_supply" value="{{e.code}}" {%if e.code == object.supply_cmp%}checked="checked"{%endif%}>
-        <button type="button" class="btn btn-default table-remove btn-xs pull-right">
-          <strong>{% trans "Supprimer" %}</strong>
-        </button>
-      </td>    </tr>
-    {% endfor %}
-    <br>
-    <!-- This is the clonable table line -->
-    <tr class="hide clone">
-      <td class="hide"></td>
-      <td width=10% class="v-align-m"> </td>
-      <td width="65%" class="v-align-m">
-        <input class="name input-naked"  name="diretu" placeholder='Rechercher'  />
+<label style="display: inline-block;width:75%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
+</label>
+<table class = "table table-striped" style="white-space: nowrap" id='degreeTable'>
+      <tr>
+        <td>
+          <select name="select-degreetype" style="width:100%" id='select-cmp'>
+          <option selected value="default">{% trans "Ajouter une composante" %}</option>
+          {% for e in institutes%}
+          <option value="{{e.id}}">
+            {{e.label}}
+          </option>
+          {%endfor%}
+        </select>
       </td>
-      <td class="v-align-m" width=25%>
-          <input type="radio"  name="is_supply" value="" class="hidden">
-        <button type="button" class="btn btn-default new_cmp pull-right btn-xs ">
-          <strong>{% trans "Valider" %}</strong>
-        </button>
-        <button type="button" class="btn btn-default table-remove hidden pull-right btn-xs">
-          <strong>Supprimer</strong>
-        </button>
-      </span>
-      </td>
-    </tr>
-  </tbody>
-  </table>
-</div>
+      </tr>
+   <tbody class="overflow" id='tbodyCmp'>
+  {% for e in object.institutes.all%}
+  <tr id='row-{{e.id}}'>
+     <td width=95%>{{e}}
+     </td>
+     <td width=5% >
+      <a id="{{e.id}}" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>
+     </td>
+  </tr>
+  {%endfor%}
 
-<script>
+   </tbody>
 
-$('input[name="is_supply"]').on('click', function(e){
-    val = $('input[name="is_supply"]:checked').val();
-    if (val != ''){
-        $('#id_supply_cmp').val(val);
-    }
-});
-
-var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
-// transform select option to array or dict
-var x = document.getElementById('id_institutes');
-var dict = []
-for (i=0; i < x.length; i++){
-  var txt =  x.options[i].text.split(' - ',2);
-  dict.push({"val": x.options[i].value, "label": txt[1], "code": txt[0]})
-};
-
-$('.table-remove').click(function () {
-
-  var _val = $('td:first',$(this).parents('tr')).text();
-
-  var i = institute_val.indexOf(_val);
-  if(i != -1) {
-    institute_val.splice(i, 1);
-  }
-  $('#id_institutes').val(institute_val);
-  $(this).parents('tr').detach();
-});
-
-function do_stuff (add_first, add_new, type) {
-
-  document.getElementById(add_first).style.display = "block";
-
-    $("#" + add_first + ", "+ add_new).click(function () {
-      var tr = $(this).parents('tr');
-      var first_cell = tr.find('td:first')
-      if (institute_val.indexOf(first_cell.text()) == -1) {
-
-      var _val = $('td:first',$(this).parents('tr')).text();
-      var clone = $(this).parents('div').find('.clone').clone(true).removeClass('hide table-line clone');
-      var g_table =   $(this).parents('div').find('#tbodyDegree');
-      var a = clone.find('.name');
-      g_table.append(clone);
-      $(this).next().removeClass('hidden ');
-      $(this).addClass('hidden');
-      var auto_comp = g_table.find(a);
-      var options = {
-        data: dict,
-        getValue: "label",
-        list: {
-            match:{
-              enabled:true
-            },
-            onSelectItemEvent: function() {
-                var _code = auto_comp.getSelectedItemData().code;
-                var _val = auto_comp.getSelectedItemData().val;
-                auto_comp.parents('td').prev()[0].innerHTML = _code;
-                auto_comp.parents('td').prev().prev()[0].innerHTML = _val;
-        }
-      }
-      };
-      auto_comp.easyAutocomplete(options);
-    }
-      $(add_new).one('click', function(e){
-
-          var tr = $(this).parents('tr');
-          var first_cell = tr.find('td:first')
-          if (institute_val.indexOf(first_cell.text()) == -1) {
-          var third_cell = first_cell.next().next();
-          var txt = third_cell.find('input').val();
-          third_cell.find(".input").remove();
-          third_cell.text(txt);
-          institute_val.push(first_cell.text());
-          radio = tr.find('input[name=is_supply]');
-          radio.val(first_cell.next().text()) ;
-          if (radio.is(":checked")){
-              $('#id_supply_cmp').val(radio.val());
-          }
-          $('#id_institutes').val(institute_val)
-          radio.removeClass('hidden');
-          };
-      });
-   });
-}
-
-
-do_stuff("add_cmp", " .new_cmp", "diretu")
-$('#id_institutes').val(institute_val);
-
-</script>
+</table>
 
 <style media="screen">
+#degreeTable .table{
+  width: 22vw;
 
-table {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-  width: 100%;
 }
-table thead {
-  /* head takes the height it requires,
-  and it's not scaled when table is resized */
-  flex: 0 0 auto;
-  width: calc(100% - 0.9em);
-}
-
-table tbody tr {
-  width: 100%;
-}
-table thead,
-table tbody tr {
-  display: table;
-  table-layout: fixed;
-}
-
-
-.table-remove {
-  color: red;
-  cursor: pointer;
-
-  &:hover {
-    color: #f00;
+#degreeTable .overflow{
+    overflow: auto;
+    height: 77px;
+    display:block;
   }
+ caption{
+  padding-top: 0;
 }
-.input-naked{
-  width:100%;
+#degreeTable td{
+  width: 100vw;
 }
-[contenteditable=true]:empty:before {
-  content: attr(placeholder);
-  display: block; /* For Firefox */
-}
-
-.table-add, .new_cmp {
-  color: #070;
-  cursor: pointer;
-}
-.table-add, .type{
-  display: none;
-}
-
-.f-1{
-    display: -ms-inline-flexbox;
-    display: -webkit-inline-flex;
-    display: inline-flex;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
-    flex-direction: row;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    -webkit-align-content: flex-start;
-    -ms-flex-line-pack: start;
-    align-items: center;
-    }
-
-.table>tbody>tr>td , th{
+.table>tbody>tr>td {
   padding: 0.2em;
 }
-
 </style>
+
+<script type="text/javascript">
+function delete_degreetype(id){
+  var x = document.getElementById("selectDegree");
+
+    //   success: function(data){
+    //     var opt = document.createElement('option');
+    //     opt.value = data.degree_id;
+    //     opt.innerHTML = data.degree;
+    //     x.appendChild(opt);
+    //     var rowId = 'row-' + data.degree_id;
+    //     var row = document.getElementById(rowId);
+    //     row.parentNode.removeChild(row);
+    //   }
+  });
+}
+
+$('#select-cmp').on('change', function() {
+    var x = document.getElementById("select-cmp");
+    var val = this.value;
+    var label = this.options[this.selectedIndex].innerHTML;
+    if (val != "default"){
+        console.log(val);
+        x.remove(x.selectedIndex);
+        var tbody = document.getElementById('tbodyCmp');
+        var row = tbody.insertRow(0);
+        row.id = 'row-' + val
+        var cell1 = row.insertCell(0);
+        cell1.style.width = '100%'
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = label;
+        cell2.innerHTML =   '<a id=" '+ val +'" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>';
+    }
+    //     success: function(data) {
+
+    //
+    // };
+});
+</script>

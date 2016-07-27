@@ -70,6 +70,7 @@ class TrainingCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingCreate, self).get_context_data(**kwargs)
+        context['institutes'] = Institute.objects.all()
         return add_current_year(context)
 
     def get_success_url(self):

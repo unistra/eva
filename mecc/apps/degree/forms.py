@@ -208,6 +208,12 @@ class DegreeTypeForm(forms.ModelForm):
                     css_class="row"
                 ),
                 Div(
+                    Div(HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
+                                *Champ obligatoire</span>  </div>'),
+                        css_class='col-md-12'),
+                    css_class='row'
+                ),
+                Div(
                     FormActions(
                         Button(
                             'cancel', 'Annuler', onclick='history.go(-1);',

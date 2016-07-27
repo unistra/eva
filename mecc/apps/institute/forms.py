@@ -42,6 +42,8 @@ class InstituteForm(forms.ModelForm):
             Field('field'),
             Field('ROF_code'),
             Field('ROF_support'),
+            HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
+                        *Champ obligatoire</span>  </div>'),
             HTML('<hr/>'),
             Field('id_dircomp'),
             Field('id_rac'),

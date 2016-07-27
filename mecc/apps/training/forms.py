@@ -67,12 +67,14 @@ class TrainingForm(forms.ModelForm):
     MECC_type = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=(('E', _('ECI')), ('C', _('CC/CT'))),
-        label=_('Régime'), initial='E'
+        label=_('Régime'), initial='E',
+        required=False
     )
     session_type = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=(('2', _('2 sessions')), (('1', _('Session unique')))),
-        label=_('Session'), initial='2'
+        label=_('Session'), initial='2', required=False
+
     )
     label = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 2, 'style': 'resize:none;'}),

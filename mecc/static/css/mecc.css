@@ -1,10 +1,15 @@
+.required-fields{
+    font-size: .8em;
+    font-style: oblique;
+    font-weight: normal;
+}
 .v-align-m{
     vertical-align: middle!important;
 }
 .margin-left1{
     margin-left: 1em;
 }
-.blue {
+.blue, .asteriskField {
     color: #004A87!important;
 }
 .red {
@@ -426,9 +431,6 @@ ul {
   width: 14em;
 }*/
 
-.asteriskField {
-    display: none;
-}
 label {
     margin-bottom: 0.5em;
     padding-top: 0.5em;

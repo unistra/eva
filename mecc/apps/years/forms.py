@@ -82,12 +82,12 @@ class UniversityYearFormCreate(forms.ModelForm):
         choices=((0, "Non"), (1, "OUI")),
         coerce=lambda x: bool(int(x)),
         widget=forms.Select,
-        required=True,
+        required=False,
     )
     is_year_init = forms.CharField(
         max_length=5, min_length=3,
         label=_('Initialisation des composantes effectuée'),
-        initial='False',
+        initial='False', required=False
     )
 
     helper = FormHelper()
@@ -101,6 +101,8 @@ class UniversityYearFormCreate(forms.ModelForm):
             Field('is_target_year', css_class='input-xlarge'),
             Field('date_validation', css_class='input-xlarge'),
             Field('date_expected', css_class='input-xlarge'),
+            HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
+                        *Champ obligatoire</span>  </div>'),
             HTML('''<hr/>
             <div><label class="control-label col-lg-8" for="id_pdf_doc">
             %s</label><div class="controls col-lg-4 grey">
@@ -134,12 +136,12 @@ class UniversityYearFormUpdate(forms.ModelForm):
         choices=((0, "Non"), (1, "OUI")),
         coerce=lambda x: bool(int(x)),
         widget=forms.Select,
-        required=True,
+        required=False,
     )
     is_year_init = forms.CharField(
         max_length=5, min_length=3,
         label=_('Initialisation des composantes effectuée'),
-        initial='False',
+        initial='False', required=False
     )
     pdf_doc = forms.FileField(
         label=_("Déposer document cadre"), required=False,
@@ -161,6 +163,8 @@ class UniversityYearFormUpdate(forms.ModelForm):
                 Field('is_target_year', css_class='input-xlarge'),
                 Field('date_validation', css_class='input-xlarge'),
                 Field('date_expected', css_class='input-xlarge'),
+                HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
+                            *Champ obligatoire</span>  </div>'),
                 HTML('<hr/>'),
                 Field('pdf_doc') if kwargs.get('instance') is not
                 None else HTML('''

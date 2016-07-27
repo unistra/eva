@@ -13,10 +13,12 @@ class ParagraphForm(forms.ModelForm):
     """
     Paragraph form
     """
-    display_order = forms.IntegerField(initial=0, label=_("N° Affichage"))
+    display_order = forms.IntegerField(
+        initial=0, label=_("N° Affichage"), required=False)
 
     text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
-        l'alinéa standard"))
+        l'alinéa standard <span class=required-fields style=color:#004A87\
+        >Champ obligatoire</span>"), required=False)
 
     text_derog = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"),
@@ -139,7 +141,8 @@ class RuleForm(forms.ModelForm):
     )
 
     is_edited = forms.ChoiceField(choices=EDITED_CHOICES,
-                                  label=_("La règle a-t-elle été modifiée ?"))
+                                  label=_("La règle a-t-elle été modifiée ?"),
+                                  required=False)
 
     label = forms.CharField(
         label=('Libellé de règle'),
@@ -185,7 +188,7 @@ class RuleForm(forms.ModelForm):
                 Div(
 
                     HTML("""
-                          <label class="">Régime(s) concerné(s) : </label>
+                          <label class="">Régime(s) concerné(s)<span class="asteriskField">*</span> : </label>
                     """),
                     Div(
                         'is_eci',
@@ -202,6 +205,8 @@ class RuleForm(forms.ModelForm):
             Div(
                 Field('display_order'),
                 'is_edited',
+                HTML('<span class="required-fields blue" style="margin-top:1em;">\
+                *Champ obligatoire</span>'),
                 Div(
                     FormActions(
                         Submit('add', _('Valider'), css_class="btn-xs",
