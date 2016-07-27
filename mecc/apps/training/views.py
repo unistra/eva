@@ -96,6 +96,8 @@ class TrainingEdit(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingEdit, self).get_context_data(**kwargs)
+        context['institutes'] = Institute.objects.all()
+
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['object'] = self.object
