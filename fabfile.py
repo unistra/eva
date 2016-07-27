@@ -105,7 +105,10 @@ def test():
     env.goal = 'test'
     env.socket_port = '8030'
     env.socket_host = '127.0.0.1'
-    env.map_settings = {}
+    env.map_settings = {
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
+    }
     execute(build_env)
 
 
