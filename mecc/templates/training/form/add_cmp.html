@@ -20,7 +20,7 @@
      <td width=95%>{{e}}
      </td>
      <td width=5% >
-      <a id="{{e.id}}" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>
+      <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-degree"></a>
      </td>
   </tr>
   {%endfor%}
@@ -51,8 +51,22 @@
 </style>
 
 <script type="text/javascript">
+
+$('.remove-degree').click(function () {
+    console.log('hola');
+  var _val = $('td:first',$(this).parents('tr')).text();
+
+  var i = institute_val.indexOf(_val);
+  if(i != -1) {
+    institute_val.splice(i, 1);
+  }
+  $('#id_institutes').val(institute_val);
+  $(this).parents('tr').detach();
+});
+
 function delete_degreetype(id){
-  var x = document.getElementById("selectDegree");
+    var a = $('td:first', $(this).parents('tr')).text();
+      console.log(a);
 
     //   success: function(data){
     //     var opt = document.createElement('option');

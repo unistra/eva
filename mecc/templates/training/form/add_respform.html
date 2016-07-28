@@ -125,7 +125,6 @@
                     Voulez vous vraiment ajouter :
                     <span id="span_name"></span> <span id="span_first_name"></span>
                     (<span id="span_cmp"></span>) comme responsable de formation <strong>{{object.label}}</strong> ?
-                    <span id="span_username"></span>
                 </div>
             <div class="modal-footer">
                         <input type="submit" name="add_respform" value="Ajouter" class="btn btn-primary" id="submit-id-add">
@@ -208,8 +207,6 @@ function searchMember() {
                     var institute = $(first_name).next('td').next('td');
                     var mail = $(institute).next('td');
                     var id = $(mail).next('td');
-                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-                    document.getElementById('span_username').textContent = id.text().replace(/\s+/g, '');
                     document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
                     document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
                     document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
