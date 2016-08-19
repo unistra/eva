@@ -5,10 +5,12 @@ from django.utils.translation import ugettext as _
 
 class Profile(models.Model):
     """
-    Model for profile
+    Model for profile with year and cmp
     """
     code = models.CharField(_('Code du profil'), max_length=10)
     label = models.CharField(_('Libellé du profil'), max_length=30)
+    year = models.IntegerField(_('Année'), blank=True, null=True)
+    cmp = models.CharField(_('Composante'), max_length=3)
 
     def __str__(self):
         return self.label
@@ -40,3 +42,7 @@ class MeccUser(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+    class Meta:
+        verbose_name = _('Utilisateur')
