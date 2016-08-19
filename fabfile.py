@@ -81,7 +81,10 @@ def dev():
     env.server_ssl_on = False
     env.goal = 'dev'
     env.socket_port = '8001'
-    env.map_settings = {}
+    env.map_settings = {
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
+    }
     execute(build_env)
 
 

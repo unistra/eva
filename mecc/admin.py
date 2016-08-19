@@ -50,7 +50,6 @@ class MeccUserInline(admin.StackedInline):
 
 
 class UserAdmin(BaseUserAdmin):
-    # inlines = (MeccUserInline, )
 
     form = UserChangeFormWithoutPass
     add_form = UserCreationFormWithoutPass
@@ -63,7 +62,10 @@ class UserAdmin(BaseUserAdmin):
         return obj.meccuser.cmp
 
     def get_profile(self, obj):
-        return ", ".join([e.label for e in obj.meccuser.profile.all()])
+        return "<br>".join(
+            ["%s %s" % (e.label,  e.cmp) for e in obj.meccuser.profile.all()])
+    # Allow br to work
+    get_profile.allow_tags = True
 
     def get_group(self, obj):
         """
