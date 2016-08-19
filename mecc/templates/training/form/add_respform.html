@@ -183,7 +183,6 @@ function searchMember() {
                         tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
                         tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
                         tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
-
                         tr.cells[2].className += 'hidden';
                         tr.cells[4].className += 'hidden';
                         tr.cells[5].className += 'hidden';
@@ -208,6 +207,7 @@ function searchMember() {
                     var mail = $(institute).next('td');
                     var id = $(mail).next('td');
                     document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
                     document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
                     document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
                     document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
