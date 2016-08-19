@@ -2,6 +2,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.training.models import Training
 from django.db.models import Q
 from django.contrib.auth.models import User
+from mecc.apps.utils.querries import currentyear
 
 
 def manage_dircomp_rac(new_username, profile, institute, request, name):
@@ -45,26 +46,33 @@ def manage_dircomp_rac(new_username, profile, institute, request, name):
     meccuser.save()
 
 
-def manage_respform(dic):
+def manage_respform(dic, t_id):
     """
     Create / delete repsform for a training
     """
-    user_profile = Profile.objects.get(code="RESPFORM")
-
+    print(dic)
+    supply_cmp = Training.objects.get(id=t_id).supply_cmp
+    user_profile = Profile.objects.filter(Q(code="RESPFORM", cmp=supply_cmp))
     training = Training.objects.get(id=dic.get('formation'))
     user, user_created = User.objects.get_or_create(
         username=dic.get('username'))
     if user_created:
+        user.username = dic.get('username')
         user.first_name = dic.get('firstname')
         user.last_name = dic.get('name')
         user.email = dic.get('mail')
         user.save()
 
     meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
+    u_p = user_profile.first()
 
     if 'add_respform' in dic:
+        if len(user_profile) < 1:
+            u_p = Profile.objects.create(
+                code="RESPFORM", cmp=supply_cmp,
+                label="Responsable de formation", year=currentyear().code_year)
         meccuser.cmp = dic.get('cmp')
-        meccuser.profile.add(user_profile)
+        meccuser.profile.add(u_p)
         training.resp_formations.add(meccuser)
         training.save()
         meccuser.save()
@@ -76,7 +84,7 @@ def manage_respform(dic):
         )
         training.resp_formations.remove(meccuser)
         if len(train_respform) < 1:
-            meccuser.profile.remove(user_profile)
+            meccuser.profile.remove(u_p)
         if len(meccuser.profile.all()) < 1 and len(user.groups.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()
