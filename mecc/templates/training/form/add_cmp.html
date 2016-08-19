@@ -8,7 +8,7 @@
           <option selected value="default">{% trans "Ajouter une composante" %}</option>
           {% for e in institutes%}
           <option value="{{e.id}}">
-            {{e.label}}
+            {{e.code}} - {{e.label}}
           </option>
           {%endfor%}
         </select>
@@ -17,10 +17,10 @@
    <tbody class="overflow" id='tbodyCmp'>
   {% for e in object.institutes.all%}
   <tr id='row-{{e.id}}'>
-     <td width=95%>{{e}}
+     <td style="width: 100%">{{e}}
      </td>
-     <td width=5% >
-      <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-degree"></a>
+     <td >
+      <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-cmp"></a>
      </td>
   </tr>
   {%endfor%}
@@ -52,33 +52,27 @@
 
 <script type="text/javascript">
 
-$('.remove-degree').click(function () {
-    console.log('hola');
-  var _val = $('td:first',$(this).parents('tr')).text();
+var institute_val = $('#id_institutes').val() === null ? [] :  $('#id_institutes').val();
+// transform select option to array or dict
+var x = document.getElementById('id_institutes');
+var dict = []
+for (i=0; i < x.length; i++){
+  var txt =  x.options[i].text.split(' - ',2);
+  dict.push({"val": x.options[i].value, "label": txt[1], "code": txt[0]})
+};
 
-  var i = institute_val.indexOf(_val);
-  if(i != -1) {
-    institute_val.splice(i, 1);
-  }
-  $('#id_institutes').val(institute_val);
-  $(this).parents('tr').detach();
-});
+$('.remove-cmp').click(function () {
+    console.log("jere");
+    var _val = $('td:first',$(this).parents('tr')).text();
 
-function delete_degreetype(id){
-    var a = $('td:first', $(this).parents('tr')).text();
-      console.log(a);
+    var i = institute_val.indexOf(_val);
+    if(i != -1) {
+      institute_val.splice(i, 1);
+    }
+    $('#id_institutes').val(institute_val);
+    $(this).parents('tr').detach();
+  });
 
-    //   success: function(data){
-    //     var opt = document.createElement('option');
-    //     opt.value = data.degree_id;
-    //     opt.innerHTML = data.degree;
-    //     x.appendChild(opt);
-    //     var rowId = 'row-' + data.degree_id;
-    //     var row = document.getElementById(rowId);
-    //     row.parentNode.removeChild(row);
-    //   }
-  // });
-}
 
 $('#select-cmp').on('change', function() {
     var x = document.getElementById("select-cmp");
@@ -94,11 +88,12 @@ $('#select-cmp').on('change', function() {
         cell1.style.width = '100%'
         var cell2 = row.insertCell(1);
         cell1.innerHTML = label;
-        cell2.innerHTML =   '<a id=" '+ val +'" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>';
+        cell2.innerHTML =   '<a id=" '+ val +'" class="glyphicon glyphicon-trash select remove-cmp" ></a>';
     }
     //     success: function(data) {
 
     //
     // };
 });
+$('#id_institutes').val(institute_val);
 </script>
