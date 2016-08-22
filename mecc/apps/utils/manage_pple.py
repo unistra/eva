@@ -50,7 +50,6 @@ def manage_respform(dic, t_id):
     """
     Create / delete repsform for a training
     """
-    print(dic)
     supply_cmp = Training.objects.get(id=t_id).supply_cmp
     user_profile = Profile.objects.filter(Q(code="RESPFORM", cmp=supply_cmp))
     training = Training.objects.get(id=dic.get('formation'))

@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block app_content %}
-{% if rules == None %}
+{% if rules == None and trainings == None %}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression de l'année universitaire " %}{{ object.code_year }}?</p>
@@ -17,6 +17,7 @@
 
 </form>
 {%else%}
+{%if rules%}
 <p>{% trans "Vous ne pouvez pas supprimer cette année tant que des règles y sont rattachées : " %}</p>
 <ul>
 {%for e in rules%}
@@ -24,6 +25,17 @@
   {{e.label}}
 </li>
 {%endfor%}
+{%endif%}
+</ul>
+{% if trainings%}
+<p>{% trans "Vous ne pouvez pas supprimer cette année tant que des formations y sont rattachées : " %}</p>
+<ul>
+{%for e in trainings%}
+<li>
+  {{e.label}}
+</li>
+{%endfor%}
+{%endif%}
 </ul>
 <a href="{% url 'years:home' %}" type="button"  class="btn btn-default">{% trans "Retour" %}</a>
 {%endif%}

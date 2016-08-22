@@ -38,7 +38,6 @@ class TrainingListView(ListView):
 
     def get_context_data(self, **kwargs):
         id_cmp = self.kwargs.get('cmp')
-        print(self.kwargs)
         context = super(TrainingListView, self).get_context_data(**kwargs)
         context['label_cmp'] = Institute.objects.get(
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"

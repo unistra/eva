@@ -11,6 +11,7 @@ from mecc.apps.utils.querries import rules_for_year
 from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
+from mecc.apps.training.models import Training
 
 
 class UniversityYearDelete(DeleteView):
@@ -24,9 +25,14 @@ class UniversityYearDelete(DeleteView):
     success_url = '/years'
 
     def get_context_data(self, **kwargs):
+        code_year = kwargs['object'].code_year
+        trainings = Training.objects.filter(code_year=code_year)
+
         context = super(UniversityYearDelete, self).get_context_data(**kwargs)
-        context['rules'] = rules_for_year(kwargs['object'].code_year) \
+        context['rules'] = rules_for_year(code_year) \
             if kwargs['object'].id is not None else None
+        context['trainings'] = trainings \
+            if kwargs['object'].id is not None or len(trainings) < 1 else None
         return context
 
 
