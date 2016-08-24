@@ -125,3 +125,16 @@ def process_respform(request):
 
     manage_respform(request.POST.dict(), t_id)
     return redirect('training:edit', id=t_id)
+
+
+@login_required
+def respform_list(request, template='training/respform_trainings.html'):
+    """
+    View for respform list all binded training
+    """
+    data = {}
+    data['trainings'] = Training.objects.filter(
+        resp_formations=request.user.meccuser)
+    cmp_to_display = [e.cmp for e in request.user.meccuser.profile.all() if
+                      e.year == currentyear().code_year and e.code == 'RESPFORM']
+    return render(request, template, data)
