@@ -88,34 +88,3 @@ class Training(models.Model):
         if self.date_val_cmp not in empty and self.date_res_des not in empty:
             return INPUT_CHOICE[2][1]
         return None
-
-
-# class TrainingCMP(models.Model):
-#     """
-#     Intermediary model allowing connection with year, training and cmp
-#     (institute)
-#     """
-#     code_year = models.IntegerField(_("Code année"), unique=False)
-#     id_training = models.ForeignKey('training.Training')
-#     degree_type = models.ForeignKey('institute.Institute')
-#     supply_cmp = models.BooleanField(_('Composante porteuse'))
-#
-#     def clean_fields(self):
-#         same = TrainingCMP.objects.filter(
-#             code_year=self.code_year,
-#             id_training=self.id_training,
-#             degree_type=self.degree_type
-#         )
-#         if same:
-#             self.supply_cmp = False
-#         else:
-#             self.supply_cmp = True
-#
-#
-# class TrainingResp(models.Model):
-#     """
-#     Model for training responsable with training CMP, user, and
-#     """
-#     resp_formation = models.ManyToManyField('adm.MeccUser')
-#     training_cmp = models.IntegerField(_('ID formation'), unique=False)
-#     code_year = models.IntegerField(_("Code année"), unique=False)
