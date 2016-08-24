@@ -46,6 +46,7 @@ class TrainingListView(ListView):
 
     @has_requested_cmp
     def get_queryset(self):
+        # print(self.request.user.meccuser.cmp)
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
             code_year=currentyear().code_year).order_by('degree_type')
@@ -106,6 +107,7 @@ class TrainingEdit(UpdateView):
 
 
 class TrainingDelete(DeleteView):
+
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
         return add_current_year(context)
@@ -134,7 +136,57 @@ def respform_list(request, template='training/respform_trainings.html'):
     """
     data = {}
     data['trainings'] = Training.objects.filter(
-        resp_formations=request.user.meccuser)
-    cmp_to_display = [e.cmp for e in request.user.meccuser.profile.all() if
-                      e.year == currentyear().code_year and e.code == 'RESPFORM']
+        resp_formations=request.user.meccuser).filter(
+        code_year=currentyear().code_year)
+    return render(request, template, data)
+
+
+@login_required
+def duplicate_home(request, year=None, template='training/duplicate.html'):
+    """
+    View for duplicate training from other year to current year
+    """
+    data = {}
+    current_year = currentyear()
+    data['current_year'] = "%s/%s" % (current_year.code_year,
+                                      current_year.code_year + 1)
+
+    all_trainings = Training.objects.all()
+
+    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
+        e.code_year, e.code_year + 1)) for e in all_trainings}, reverse=True)
+    data['existing_trainings'] = current = all_trainings.filter(
+        code_year=current_year.code_year)
+    data['asked_year'] = None if year is None else int(year)
+
+    if year is None:
+        return render(request, template, data)
+    else:
+        data['trainings'] = all_trainings.filter(code_year=year)
+    return render(request, template, data)
+
+
+def duplqicate_home(request, year=None, template='rules/duplicate.html'):
+    data = {}
+    current_year = currentyear()
+    disp_current_year = "%s/%s" % (
+        current_year.code_year, current_year.code_year + 1)
+    data['current_year'] = disp_current_year
+
+    all_rules = Rule.objects.all()
+
+    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
+        e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
+
+    data['existing_rules'] = current = all_rules.filter(
+        code_year=current_year.code_year)
+    data['asked_year'] = None if year is None else int(year)
+
+    if year is None:
+        return render(request, template, data)
+    else:
+        [rules] = all_rules.filter(code_year=year)
+
+    data['rules'] = [e for e in rules if e.n_rule not in [
+        a.n_rule for a in current]]
     return render(request, template, data)
