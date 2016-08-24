@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans "Mes formations" %}
+{% endblock %}
+
+
+{% block app_content %}
+<br>
+<div class=" list-training">
+  <table class="table" id="rule-table">
+    <thead>
+     <tr>
+
+        <th width="5%" class="td-centered"></th>
+        <th width="25%" class="td-centered"></th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie règles' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie Tableau MECC' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Date de validation en Conseil de composante' %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date reserve DES" %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date visa DES" %}</th>
+        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date Validation en CFVU" %}</th>
+        <th width="10%" class="td-centered"></th>
+     </tr>
+   </thead>
+   <tbody class="overflow" >
+
+{%regroup trainings by degree_type as trainings %}
+
+
+{%for field in trainings%}
+<tr>
+    <td class='no-border'><strong>{{field.grouper}}</strong></td>
+<tr>
+{% for item in field.list %}
+<tr class="hover-row">
+    <td width="5%" class='no-padding no-border'></td>
+    <td width="25%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_rule}} </td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_table}} </td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
+    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
+</tr>
+{%endfor%}
+{%endfor%}
+</tbody>
+
+
+</table>
+</div>
+
+<style media="screen">
+
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+table thead {
+  /* head takes the height it requires,
+  and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+table tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow: auto;
+  max-height: 62vh;
+
+}
+table tbody tr {
+  width: 100%;
+}
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+</style>
+
+{%endblock%}
