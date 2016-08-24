@@ -14,8 +14,8 @@ def has_group(user, group_name):
 
 @register.filter(name='is_profile')
 def is_profile(meccuser, profile_code):
-    profile = Profile.objects.get(code=profile_code)
-    return True if profile in meccuser.profile.all() else False
+    return True if profile_code in [
+        e.code for e in meccuser.profile.all()] else False
 
 
 @register.filter(name='gas_profile')

@@ -23,7 +23,7 @@
           </ul>
        </li>
       {% endif %}
-      {% if request.user.meccuser|is_profile:"DIRETU" or request.user.meccuser|is_profile:"GESCOL"%}
+      {% if request.user.meccuser|is_profile:"DIRETU" or request.user.meccuser|is_profile:"GESCOL" or request.user.meccuser|is_profile:"RESPFORM"%}
         <li class="dropdown">
            <a href="#collapse2"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
           > {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
@@ -117,6 +117,14 @@
             {% if 'rules' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Règles générales' %}</a>
+        </li>
+        {% endif %}
+        {% if request.user.meccuser|is_profile:'RESPFORM' or request.user.is_superuser%}
+        <li>
+            <a href="{% url 'training:list_resp' %}"
+            {% if 'resp' in request.path %}
+               class="item-selected"
+            {% endif %}>{% trans 'Mes formations' %}</a>
         </li>
         {% endif %}
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
