@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import TrainingListView, TrainingCreate, TrainingDelete, \
-    TrainingEdit, process_respform, list_training
+    TrainingEdit, process_respform, list_training, respform_list
 from django_cas.decorators import login_required
 
 
@@ -18,4 +18,6 @@ urlpatterns = [
         name='process_resp'),
     url(r'^list_all/$', list_training,
         name='list_all'),
+    url(r'^list_resp/$', respform_list,
+        name='list_resp')
     ]
