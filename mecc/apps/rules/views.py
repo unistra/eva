@@ -15,7 +15,7 @@ from django.db import transaction
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
-
+from django.core import serializers
 
 class RulesListView(ListView):
     """
@@ -353,3 +353,22 @@ def duplicate_remove(request):
     rule.delete()
 
     return JsonResponse({"status": "removed", "label": label})
+
+
+@login_required
+@is_ajax_request
+def details_rule(request):
+    current_year = currentyear()
+    x = request.GET.get('val')
+    rule = Rule.objects.get(id=x)
+    paragraphs = Paragraph.objects.filter(rule__id=x)
+    json_response = {
+        'id': x,
+        'year': "%s/%s" % (current_year.code_year, current_year.code_year + 1),
+        'title': rule.label,
+        'paragraphs': [
+            {'alinea': e.display_order, 'text': e.text_standard,
+             'is_derog': True if e.is_cmp or e.is_interaction else False}
+            for e in paragraphs]
+    }
+    return JsonResponse(json_response)
