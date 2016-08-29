@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.utils.querries import currentyear
+from mecc.apps.rules.models import Impact
 
 
 class Training(models.Model):
@@ -29,38 +30,28 @@ class Training(models.Model):
     MECC_tab = models.BooleanField(_('Témoin Tableau MECC'), default=True)
     MECC_type = models.CharField(
         verbose_name=_('Régime MECC de la formation'), blank=False,
-        choices=MECC_TYPE_CHOICE, max_length=1
-    )
+        choices=MECC_TYPE_CHOICE, max_length=1)
     session_type = models.CharField(
         _('Session pour la formation'), blank=False,
-        choices=SESSION_TYPE_CHOICE, max_length=1
-    )
+        choices=SESSION_TYPE_CHOICE, max_length=1)
     ref_cpa_rof = models.CharField(
-        _('Référence CP Année ROF'), max_length=20, null=True, blank=True
-    )
+        _('Référence CP Année ROF'), max_length=20, null=True, blank=True)
     ref_si_scol = models.CharField(
-        _('Référence SI Scol'), max_length=20, null=True, blank=True
-    )
+        _('Référence SI Scol'), max_length=20, null=True, blank=True)
     progress_rule = models.CharField(
         _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
-        max_length=1
-    )
+        max_length=1)
     progress_table = models.CharField(
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
-        max_length=1
-    )
+        max_length=1)
     date_val_cmp = models.DateField(
-        _('Date de validation en conseil de composante'), blank=True, null=True
-    )
+        _('Date de validation en conseil de composante'), blank=True, null=True)
     date_res_des = models.DateField(
-        _('Date de réserve DES'), blank=True, null=True
-    )
+        _('Date de réserve DES'), blank=True, null=True)
     date_visa_des = models.DateField(
-        _('Date de visa DES'), blank=True, null=True
-    )
+        _('Date de visa DES'), blank=True, null=True)
     date_val_cfvu = models.DateField(
-        _('Date de validation en CFVU'), blank=True, null=True
-    )
+        _('Date de validation en CFVU'), blank=True, null=True)
 
     institutes = models.ManyToManyField('institute.Institute')
     supply_cmp = models.CharField(_('porteuse'), max_length=3, blank=True)
@@ -88,3 +79,22 @@ class Training(models.Model):
         if self.date_val_cmp not in empty and self.date_res_des not in empty:
             return INPUT_CHOICE[2][1]
         return None
+
+
+class SpecificParagraph(models.Model):
+    """
+    Specific paragraph model
+    """
+    TYPE_PARAPGRAPH = (('D', _('Dérogatoire')), ('C', _('Composante')))
+    code_year = models.IntegerField(_("Code année"), unique=False)
+    training = models.ForeignKey(Training)
+    rule_gen_id = models.IntegerField(_('ID règle générale'))
+    paragraph_gen_id = models.IntegerField(_('ID alinéa général'))
+    type_paragraph = models.CharField(
+        _('Type alinéa'), choices=TYPE_PARAPGRAPH, max_length=1)
+    text_specific_parapgraph = models.TextField(_("Texte d'alinéa spécifique"))
+    text_motiv = models.TextField(_("Texte de motivation"))
+    impact = models.ManyToManyField(Impact)
+
+    def __str__(self):
+        return _("Paragraphe spécifique n° %s" % self.pk)

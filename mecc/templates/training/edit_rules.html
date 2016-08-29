@@ -1,0 +1,154 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}
+{% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
+
+{% block app_content %}
+<ul class="nav nav-tabs" style="margin-bottom:1em">
+    <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+    <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+</ul>
+<div class="disp-flex ">
+    <div class="has-bottom-border parent disp-flex">
+        <div class="item-80 dir-col">
+            <div class="">
+                {% trans "Intitulé de la formation: "%}
+            </div>
+            <div class="">
+                <strong>{{training.label}}</strong>
+            </div>
+        </div>
+        <div class="item-20 disabled dir-col">
+            <div class="">
+                {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
+            </div>
+            <div class="">
+                {% trans "Régime:"%} {{training.get_MECC_type_display}}
+            </div>
+            <div class="">
+                {{training.get_session_type_display}}
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="training-rules">
+    <h2 class="title-block" style="font-weight: bold;">
+        {% trans 'Règles générales applicables à cette formation'%}
+    </h2>
+    <div class="disp-flex">
+
+    <div class="item-80" style="padding-bottom: 0px;margin-bottom: 0.2em;">
+      {% if rules_list %}
+      <table class="table" id="rule-table">
+        <thead>
+         <tr class="underlined">
+            <th width="15%" class="td-centered no-padding"  style="font-weight: normal;">{% trans "Statut règle standard" %}</th>
+            <th width="47%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
+            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificité pour cette formation </br>(dérogation et alinéas de composantes)' %}</th>
+         </tr>
+       </thead>
+       <tbody class="overflow" >
+      {%for e in rules_list%}
+
+      <tr class="hover-row">
+         <td width="15%" class='no-padding td-centered red' ></td>
+         <td width="47%" class="no-padding border-right"><a class="select" onclick="detail_rule({{e.id}})">{{e.label}}</a></td>
+         <td width="38%" class="no-padding td-centered underlined"> </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+    {% endif %}
+    </div>
+    <div class="item-20 flex-center">
+        <a href="#" class="break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
+
+    </div>
+</div>
+    <div class="has-bottom-border has-top-border buttons_list blue" >
+    {% trans 'Etat de saisie des règles : En cours'%}
+    </div>
+    <div class="buttons_list" >
+<br>
+    <a href="#" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
+    <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
+    <a href="#" class="btn-primary btn btn-sm">{% trans "Envoyer un message à la DES" %}</a>
+    </div>
+
+</div>
+    {% include "training/rule_preview.html"%}
+
+    <style media="screen">
+
+    table {
+      display: flex;
+      flex-flow: column;
+      height: 100%;
+      width: 100%;
+    }
+    table thead {
+      /* head takes the height it requires,
+      and it's not scaled when table is resized */
+      flex: 0 0 auto;
+      width: calc(100% - 0.9em);
+    }
+    table tbody {
+      /* body takes all the remaining available space */
+      flex: 1 1 auto;
+      display: block;
+      overflow: auto;
+      max-height: 50vh;
+
+    }
+    table tbody tr {
+      width: 100%;
+    }
+    table thead,
+    table tbody tr {
+      display: table;
+      table-layout: fixed;
+    }
+    </style>
+
+    <script type="text/javascript">
+        function detail_rule(id){
+            $.ajax({
+                url: "{% url 'rules:details_rule'%}",
+                type: "GET",
+                data: {
+                    val: id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+                    document.getElementById('year').innerHTML = data.year
+                    document.getElementById('title-preview').innerHTML = data.title
+                    document.getElementById('preview-rules').getElementsByTagName('tbody')[0].innerHTML = ''
+                    for (i=0; i < data.paragraphs.length; i++){
+                        var tableRef = document.getElementById('preview-rules').getElementsByTagName('tbody')[0];
+                        var newRow   = tableRef.insertRow(tableRef.rows.length);
+                        newRow.style.marginTop = '1em';
+                        newRow.style.marginBottom = '1em';
+                        var cell0  = newRow.insertCell(0);
+                        var cell1  = newRow.insertCell(1);
+                        var cell2  = newRow.insertCell(2);
+                        cell0.style.width = '10%';
+                        cell0.style.textAlign = "center"
+                        cell1.style.width = '70%';
+                        cell2.style.width = '20%';
+                        cell0.innerHTML = data.paragraphs[i].alinea;
+                        cell1.innerHTML = data.paragraphs[i].text;
+                        if (data.paragraphs[i].is_derog === true){
+                            cell2.className += ' border-left disabled italic td-centered';
+                            cell2.innerHTML = "Dérogation possible"
+                        }
+
+                    }
+
+
+                }
+            });
+            $('#preview').modal('show');
+
+        }
+    </script>
+{%endblock%}

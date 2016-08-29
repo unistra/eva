@@ -12,8 +12,8 @@
 
 {% block app_content %}
     <ul class="nav nav-tabs" style="margin-bottom:1em">
-        <li class="active"><a href="#">{% trans "Général" %}</a></li>
-        <li><a href="#">{% trans "Règles" %}</a></li>
+        <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+        <li><a href="{%if object%}{% url 'training:edit_rules' object.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
         <li><a href="#">{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">

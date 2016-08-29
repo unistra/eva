@@ -6,10 +6,13 @@ from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
 from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required
-
-from mecc.decorators import is_post_request, is_DES1, has_requested_cmp
+from mecc.apps.rules.models import Rule
+from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
+    is_ajax_request
 from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
+from django.db import transaction
+from django.http import JsonResponse
 
 
 def add_current_year(dic):
@@ -46,7 +49,6 @@ class TrainingListView(ListView):
 
     @has_requested_cmp
     def get_queryset(self):
-        # print(self.request.user.meccuser.cmp)
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
             code_year=currentyear().code_year).order_by('degree_type')
@@ -166,27 +168,85 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     return render(request, template, data)
 
 
-def duplqicate_home(request, year=None, template='rules/duplicate.html'):
+def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
-    current_year = currentyear()
-    disp_current_year = "%s/%s" % (
-        current_year.code_year, current_year.code_year + 1)
-    data['current_year'] = disp_current_year
-
-    all_rules = Rule.objects.all()
-
-    data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
-        e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
-
-    data['existing_rules'] = current = all_rules.filter(
-        code_year=current_year.code_year)
-    data['asked_year'] = None if year is None else int(year)
-
-    if year is None:
-        return render(request, template, data)
-    else:
-        [rules] = all_rules.filter(code_year=year)
-
-    data['rules'] = [e for e in rules if e.n_rule not in [
-        a.n_rule for a in current]]
+    data['training'] = training = Training.objects.get(id=id)
+    data['rules_list'] = Rule.objects.filter(degree_type=training.degree_type)
+    print(data['rules_list'])
     return render(request, template, data)
+
+
+@transaction.atomic
+@login_required
+@is_ajax_request
+@is_post_request
+def duplicate_add(request):
+    x = request.POST.getlist('list_id[]')
+    list_train = []
+    for e in x:
+        try:
+            x = Training.objects.get(id=e)
+            list_train.append(x)
+        except Exception:
+            pass
+
+    pass
+
+
+def duplicate_remove(request):
+    pass
+#
+# def duplicaaate_add(request):
+#     current_year = currentyear()
+#     x = request.POST.getlist('list_id[]')
+#
+#     dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
+#     labels = []
+#     for e in dic:
+#
+#         r = Rule.objects.filter(
+#             code_year=e.get('year')).filter(n_rule=e.get('n_rule')).first()
+#         rule = Rule.objects.create(
+#             display_order=r.display_order,
+#             code_year=current_year.code_year,
+#             label=r.label,
+#             is_in_use=r.is_in_use,
+#             is_edited='N',
+#             is_eci=r.is_eci,
+#             is_ccct=r.is_ccct,
+#             n_rule=r.n_rule
+#         )
+#         for a in r.degree_type.all():
+#             degree_type = DegreeType.objects.get(id=a.id)
+#             rule.degree_type.add(degree_type)
+#         rule.save()
+#
+#         paragraphs = Paragraph.objects.filter(
+#             code_year=e.get('year')).filter(rule__id=r.id)
+#
+#         for p in paragraphs:
+#             p.rule.add(rule)
+#             p.save()
+#
+#         labels.append(r.label)
+#     return JsonResponse({'status': 'added', 'n_rule': [
+#         e.get('n_rule') for e in dic], 'labels': labels})
+#
+#
+# @login_required
+# @is_ajax_request
+# @is_post_request
+# def duplicaaaate_remove(request):
+#     x = request.POST.get('id')
+#     rule = Rule.objects.get(id=x)
+#     label = rule.label
+#     # paragraphs = Paragraph.objects.filter(rule__id=x)
+#     # Correct test will be later
+#     # for p in paragraphs:
+#     #     if p.is_cmp or p.is_interaction:
+#     #         return JsonResponse({
+#     #             "error": "%s comporte des dérogations." % (label)})
+#
+#     rule.delete()
+#
+#     return JsonResponse({"status": "removed", "label": label})

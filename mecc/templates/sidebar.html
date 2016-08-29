@@ -114,7 +114,7 @@
 
         <li>
             <a href="{% url 'rules:list' %}"
-            {% if 'rules' in request.path %}
+            {% if 'rules' in request.path and not 'training' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Règles générales' %}</a>
         </li>

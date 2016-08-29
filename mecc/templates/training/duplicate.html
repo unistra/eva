@@ -42,9 +42,9 @@
             <tbody class="tbody" id="source">
                 {%if not trainings%}<tr><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
                 {%for e in trainings%}
-                <tr id="source_{{e.n_rule}}" class="{% if not e.is_used%} grey{%endif%}">
+                <tr id="source_{{e.id}}" class="{% if not e.is_used%} grey{%endif%}">
                     <td width=5% class="td-centered">
-                        <input type="checkbox" id="{{e.code_year}}_{{e.n_rule}}" name="rule_{{e.id}}" class="checkbox_rule">
+                        <input type="checkbox" id="{{e.id}}" name="train_{{e.id}}" class="checkbox_train">
                     </td>
                     <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.code_year}}</td>
                     <td width=15% class=" ">{{e.degree_type}}</td>
@@ -77,7 +77,7 @@
                     <td width=60% >{{e.label}}</td>
                     <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
                     <td width=5% class="td-centered">
-                        <a class="glyphicon glyphicon-trash select" id="{{e.id}} " onclick="del_rule(this, this.id);"></a>
+                        <a class="glyphicon glyphicon-trash select" id="{{e.id}} " onclick="del_train(this, this.id);"></a>
                     </td>
                 </tr>
                 {%endfor%}
@@ -86,11 +86,11 @@
     </div>
 </div>
 <div class="buttons_list">
-<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_rule()">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</button>
+<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</button>
 <a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des règles générales" %}</a>
 </div>
 <script type="text/javascript">
-function del_rule($this, value) {
+function del_train($this, value) {
     $.ajax({
         url: "{% url 'rules:duplicate_remove'%}",
         type: "POST",
@@ -119,22 +119,24 @@ function del_rule($this, value) {
                 console.log(dest);
                 row.id = 'source_' + value;
                 td = row.insertCell(0);
-                td.innerHTML ='<input type="checkbox" class="checkbox_rule" name="rule_' + value +'" id="_+' + value +'+">';
+                td.innerHTML ='<input type="checkbox" class="checkbox_train" name="train' + value +'" id="_+' + value +'+">';
                 td.className += 'td-centered';
                 dest.appendChild(row);
             }
         }
     })
 }
-function add_rule(){
-    checkboxes = document.getElementsByClassName("checkbox_rule");
+function add_training(){
+    checkboxes = document.getElementsByClassName("checkbox_train");
     var notChecked = [], checked = [];
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         id = checkboxes[i].id
+        console.log(id);
         checkboxes[i].checked ? checked.push(id) : notChecked.push(id);
     }
+    console.log(checked);
     $.ajax({
-        url: "{% url 'rules:duplicate_add'%}",
+        url: "{% url 'training:duplicate_add'%}",
         type: "POST",
         data: {
             list_id: checked,
@@ -144,7 +146,7 @@ function add_rule(){
             if (data.status === 'added') {
                 for (var i = 0, n = data.n_rule.length; i < n; i++) {
                     $('.top-right').notify({
-                        message: { text: 'Règle n°'+ data.n_rule[i]+ ' dupliquée.' },
+                        message: { text: 'Formation n°'+ data.n_rule[i]+ ' dupliquée.' },
                         type:'info'
                     }).show();
                     setTimeout(function(){
@@ -155,7 +157,7 @@ function add_rule(){
                     var dest = document.getElementById('current');
                     row.id = 'current_' + data.n_rule[i];
                     td = row.insertCell(4);
-                    td.innerHTML = '<a onclick="del_rule(this, this.id);" id="' + data.n_rule[i] + '" class="glyphicon glyphicon-trash select"></a>';
+                    td.innerHTML = '<a onclick="del_train(this, this.id);" id="' + data.n_rule[i] + '" class="glyphicon glyphicon-trash select"></a>';
                     td.className += 'td-centered';
                     dest.appendChild(row);
                 }
@@ -171,7 +173,7 @@ function select_year(){
 
 // All checkbox take the same state as this checkbox
 function check_all(source) {
-    checkboxes = document.getElementsByClassName("checkbox_rule");
+    checkboxes = document.getElementsByClassName("checkbox_train");
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
