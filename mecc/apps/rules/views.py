@@ -17,6 +17,7 @@ from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from django.core import serializers
 
+
 class RulesListView(ListView):
     """
     Rules list view
@@ -359,7 +360,7 @@ def duplicate_remove(request):
 @is_ajax_request
 def details_rule(request):
     current_year = currentyear()
-    x = request.GET.get('val')
+    x = request.POST.get('val')
     rule = Rule.objects.get(id=x)
     paragraphs = Paragraph.objects.filter(rule__id=x)
     json_response = {
@@ -368,7 +369,8 @@ def details_rule(request):
         'title': rule.label,
         'paragraphs': [
             {'alinea': e.display_order, 'text': e.text_standard,
-             'is_derog': True if e.is_cmp or e.is_interaction else False}
+             'is_cmp': True if e.is_cmp else False,
+             'is_derog': True if e.is_interaction else False}
             for e in paragraphs]
     }
     return JsonResponse(json_response)

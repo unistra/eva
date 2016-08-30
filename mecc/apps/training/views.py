@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Training
+from .models import Training, SpecificParagraph
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
@@ -13,6 +13,7 @@ from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse
+from mecc.apps.adm.models import MeccUser
 
 
 def add_current_year(dic):
@@ -148,6 +149,15 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     """
     View for duplicate training from other year to current year
     """
+    cmp = []
+    try:
+        profiles = request.user.meccuser.cmp.profile.all()
+        for e in profiles:
+            if e.code in 'RESPFORM':
+                cmp.append(e.cmp)
+    except MeccUser.DoesNotExist as e:
+        print(e)
+        pass
     data = {}
     current_year = currentyear()
     data['current_year'] = "%s/%s" % (current_year.code_year,
@@ -157,14 +167,16 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 
     data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
         e.code_year, e.code_year + 1)) for e in all_trainings}, reverse=True)
-    data['existing_trainings'] = current = all_trainings.filter(
+    data['existing_trainings'] = existing = all_trainings.filter(
         code_year=current_year.code_year)
     data['asked_year'] = None if year is None else int(year)
 
     if year is None:
         return render(request, template, data)
     else:
-        data['trainings'] = all_trainings.filter(code_year=year)
+        data['trainings'] = [
+            e for e in all_trainings.filter(code_year=year) if e.label not in [
+                a.label for a in existing]]
     return render(request, template, data)
 
 
@@ -172,7 +184,13 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
     data['rules_list'] = Rule.objects.filter(degree_type=training.degree_type)
-    print(data['rules_list'])
+    return render(request, template, data)
+
+
+def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
+    data = {}
+    data['training'] = training = Training.objects.get(id=training_id)
+    data['rule'] = rule = Rule.objects.get(id=rule_id)
     return render(request, template, data)
 
 
@@ -182,15 +200,14 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 @is_post_request
 def duplicate_add(request):
     x = request.POST.getlist('list_id[]')
-    list_train = []
+    labels = []
     for e in x:
-        try:
-            x = Training.objects.get(id=e)
-            list_train.append(x)
-        except Exception:
-            pass
-
-    pass
+        t = Training.objects.get(pk=e)
+        t.pk = None
+        t.code_year = currentyear().code_year
+        t.save()
+        labels.append(t.label)
+        return JsonResponse({'status': 'added', 'labels': labels})
 
 
 def duplicate_remove(request):

@@ -2,13 +2,15 @@
 {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
 
 {% block app_content %}
+{{training.label}} /
+{{rule}}
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
-<div class="disp-flex ">
-    <div class="has-bottom-border parent disp-flex">
+<div class="disp-flex dir-col has-bottom-border">
+    <div class=" parent disp-flex ">
         <div class="item-80 dir-col">
             <div class="">
                 {% trans "Intitulé de la formation: "%}
@@ -18,66 +20,36 @@
             </div>
         </div>
         <div class="item-20 disabled dir-col">
-            <div class="">
+            <div >
                 {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
             </div>
-            <div class="">
+            <div >
                 {% trans "Régime:"%} {{training.get_MECC_type_display}}
             </div>
-            <div class="">
+            <div >
                 {{training.get_session_type_display}}
 
             </div>
         </div>
     </div>
+    <div class="item-80 disp-flex" style="margin-bottom:1em;">
+        <div class="item-20">
+            {% trans "ID règle (auto) : " %} {{rule.n_rule | stringformat:"05d"}}
+        </div>
+        <div class="item-35">
+            {% trans "Année universitaire : " %} {{rule.code_year}}/{{rule.code_year|add:'1'}}
+        </div>
+        <div class="item-45 bold">
+            {{rule.label}}
+        </div>
+    </div>
 </div>
 <div class="training-rules">
     <h2 class="title-block" style="font-weight: bold;">
-        {% trans 'Règles générales applicables à cette formation'%}
+        {% trans 'Alinéas courants'%}
     </h2>
-    <div class="disp-flex">
+    <div class="">
 
-    <div class="item-80" style="padding-bottom: 0px;margin-bottom: 0.2em;">
-      {% if rules_list %}
-      <table class="table" id="rule-table">
-        <thead>
-         <tr class="underlined">
-            <th width="15%" class="td-centered no-padding"  style="font-weight: normal;">{% trans "Statut règle standard" %}</th>
-            <th width="47%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
-            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificité pour cette formation </br>(dérogation et alinéas de composantes)' %}</th>
-         </tr>
-       </thead>
-       <tbody class="overflow" >
-      {%for e in rules_list%}
-
-      <tr class="hover-row">
-         <td width="15%" class='no-padding td-centered red' >{{e.get_is_edited_display}}</td>
-         <td width="47%" class="no-padding border-right"><a class="select" onclick="detail_rule({{e.id}})">{{e.label}}</a></td>
-         <td width="38%" class="no-padding td-centered underlined">
-                {%if e.has_parag_with_derog%}
-                    <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">Saisir</a>
-                {%endif%}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-    </table>
-    {% endif %}
-    </div>
-    <div class="item-20 flex-center">
-        <a href="#" class="break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
-
-    </div>
-</div>
-    <div class="has-bottom-border has-top-border buttons_list blue" >
-    {% trans 'Etat de saisie des règles : En cours'%}
-    </div>
-    <div class="buttons_list" >
-<br>
-    <a href="#" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
-    <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
-    <a href="#" class="btn-primary btn btn-sm">{% trans "Envoyer un message à la DES" %}</a>
-    </div>
 
 </div>
     {% include "training/rule_preview.html"%}
