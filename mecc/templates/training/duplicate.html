@@ -92,7 +92,7 @@
 <script type="text/javascript">
 function del_train($this, value) {
     $.ajax({
-        url: "{% url 'rules:duplicate_remove'%}",
+        // url: "{% url 'rules:duplicate_remove'%}",
         type: "POST",
         data: {
             id: value,
