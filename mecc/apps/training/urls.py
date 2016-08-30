@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     TrainingEdit, process_respform, list_training, respform_list, \
-    duplicate_home, duplicate_add, duplicate_remove, edit_rules
+    duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
+    specific_paragraph
 from django_cas.decorators import login_required
 
 
@@ -11,11 +12,11 @@ urlpatterns = [
         name='list'),
     url(r'^new/$', login_required(TrainingCreate.as_view()),
         name='new'),
-    url(r'^delete/(?P<id_training>\w+)', login_required(
+    url(r'^delete/(?P<id_training>\w+)/$', login_required(
         TrainingDelete.as_view()), name='delete'),
-    url(r'^edit/(?P<id>\d+)', login_required(TrainingEdit.as_view()),
+    url(r'^edit/(?P<id>\d+)/$', login_required(TrainingEdit.as_view()),
         name='edit'),
-    url(r'^edit_rules/(?P<id>\d+)', edit_rules,
+    url(r'^edit_rules/(?P<id>\d+)/$', edit_rules,
         name='edit_rules'),
     url(r'^process_resp/$', process_respform,
         name='process_resp'),
@@ -29,4 +30,6 @@ urlpatterns = [
         name='duplicate_add'),
     url(r'^duplicate_remove/$', duplicate_remove,
         name='duplicate_remove'),
+    url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/$',
+        specific_paragraph, name='specific_paragraph'),
     ]
