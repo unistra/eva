@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.rules.models import Impact
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Training(models.Model):
@@ -56,10 +57,18 @@ class Training(models.Model):
     institutes = models.ManyToManyField('institute.Institute')
     supply_cmp = models.CharField(_('porteuse'), max_length=3, blank=True)
     resp_formations = models.ManyToManyField('adm.MeccUser')
+    n_train = models.IntegerField(_('Numéro de règle'), unique=False, null=True)
 
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
+        try:
+            self.n_train = Training.objects.all().latest('id').id + 1
+        except ObjectDoesNotExist:
+            self.n_train = 1
+
+    def __str__(self):
+        return self.label
 
     @property
     def input_opening(self):

@@ -89,6 +89,12 @@ class UniversityYearListView(ListView):
 
         return context
 
+    def get_queryset(self, **args):
+        """
+        return query sorted (descending) by code_year
+        """
+        return super(UniversityYearListView, self).get_queryset().order_by('-code_year')
+
     model = UniversityYear
 
 
