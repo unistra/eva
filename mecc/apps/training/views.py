@@ -43,9 +43,11 @@ class TrainingListView(ListView):
     def get_context_data(self, **kwargs):
         id_cmp = self.kwargs.get('cmp')
         context = super(TrainingListView, self).get_context_data(**kwargs)
-        context['label_cmp'] = Institute.objects.get(
+        self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"
         self.request.session['visited_cmp'] = self.kwargs.get('cmp')
+        self.request.session['visited_cmp_id'] = Institute.objects.get(
+            code=id_cmp).pk if id_cmp is not None else None
         return add_current_year(context)
 
     @has_requested_cmp
@@ -98,14 +100,12 @@ class TrainingEdit(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingEdit, self).get_context_data(**kwargs)
-        context['institutes'] = Institute.objects.all()
-
+        context['institutes'] = Institute.objects.all().order_by('label')
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['object'] = self.object
         context['resp_form'] = self.object.resp_formations.all()
-        # context['validation_form'] = ValidationTrainingForm(
-        #     instance=self.object)
+
         return context
 
 
@@ -137,6 +137,7 @@ def respform_list(request, template='training/respform_trainings.html'):
     """
     View for respform list all binded training
     """
+    request.session['visited_cmp'] = 'RESPFORM'
     data = {}
     data['trainings'] = Training.objects.filter(
         resp_formations=request.user.meccuser).filter(
@@ -183,7 +184,10 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
-    data['rules_list'] = Rule.objects.filter(degree_type=training.degree_type)
+    rules = Rule.objects.filter(
+        degree_type=training.degree_type)
+    data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type in 'E' \
+        else rules.filter(is_ccct=True)
     return render(request, template, data)
 
 
