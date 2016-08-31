@@ -2,6 +2,7 @@
 {% load dipstrapfiles %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
+{% load groups%}
 <div class="f-1" style="width:100%">
     <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
     </label>
@@ -47,7 +48,7 @@
 {%endif%}
 <div class="buttons_list">
 
-    <a data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
+    <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
 </div>
 
 <!-- Modal -->
@@ -57,7 +58,7 @@
         <div class="modal-content select-pple">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">{% trans "Rechercher un membre" %}</h4>
+                <h4 class="title-modal">{% trans "Rechercher un membre" %}</h4>
             </div>
             <div class="modal-body">
                 <div id='error'></div>
@@ -108,7 +109,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">{% trans "Confirmer la sélection" %}</h4>
+                <h4 class="title-modal">{% trans "Confirmer la sélection" %}</h4>
             </div>
             <div class="modal-body" style="padding-bottom:0">
                 <form method="post" action="{% url 'training:process_resp' %}" class="">
@@ -127,8 +128,8 @@
                     (<span id="span_cmp"></span>) comme responsable de formation <strong>{{object.label}}</strong> ?
                 </div>
             <div class="modal-footer">
-                        <input type="submit" name="add_respform" value="Ajouter" class="btn btn-primary" id="submit-id-add">
-                        <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+                        <input type="submit" name="add_respform" value="Ok" class="btn btn-primary" id="submit-id-add">
+                        <input type="button" name="cancel" value="Non" class="btn" id="button-id-cancel" data-dismiss="modal">
             </div>
         </form>
             </div>
@@ -137,6 +138,7 @@
 </div>
 
 <script type="text/javascript">
+{% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 function searchMember() {
     var new_tbody = document.createElement('tbody');
@@ -208,15 +210,20 @@ function searchMember() {
                     var id = $(mail).next('td');
                     document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
                     document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-                    document.getElementById('id_firstname').value = first_name.text().replace(/\s+/g, '');
-                    document.getElementById('id_name').value = last_name.text().replace(/\s+/g, '');
+                    document.getElementById('id_firstname').value = first_name.text();
+                    document.getElementById('id_name').value = last_name.text();
                     document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
                     document.getElementById('span_cmp').textContent = institute.text();
-                    document.getElementById('span_name').textContent = last_name.text().replace(/\s+/g, '').toUpperCase();
+                    document.getElementById('span_name').textContent = last_name.text().toUpperCase();
                     document.getElementById('span_first_name').textContent = first_name.text().replace(/\s+/g, '');
                 });
             }
         }
     })
 }
+{%else%}
+document.getElementById("respformtable").className += " disabled-event";
+document.getElementById("add_respform").className += " hidden disabled-event";
+
+{%endif%}
 </script>

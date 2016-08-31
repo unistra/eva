@@ -72,11 +72,10 @@
  <div class="buttons_list has-top-border" style="margin-top:1em;">
      <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Valider et créer une nouvelle formation" %}</button>
  <a href=
- {% if request.user.meccuser%}"{% url 'training:list' request.user.meccuser.cmp %}"
+ {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
  {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
  {% else %}"{%url 'training:list_all' %}"
- {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Retour liste des formations" %}</a>
- </div>
+ {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Retour liste des formations" %}</a></div>
 
 <style media="screen">
     .training-form-validate> .form-group:not(:first-child){
