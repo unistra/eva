@@ -2,13 +2,14 @@
 {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
 
 {% block app_content %}
-{{training.label}} /
-{{rule}}
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
+<h2 class="title-modal" style="font-weight: bold;">
+    {% trans 'Gestion des dérogations et alinéas de composante'%}
+</h2>
 <div class="disp-flex dir-col has-bottom-border">
     <div class=" parent disp-flex ">
         <div class="item-80 dir-col">
