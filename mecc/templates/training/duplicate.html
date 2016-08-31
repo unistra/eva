@@ -2,13 +2,15 @@
 {% load i18n %}
 {% load field_name %}
 {% load staticfiles %}
-
 {% block page-header %}
 <link rel="stylesheet" href="{% static 'css/notif.css' %}">
 <script src="{% static 'js/notif.js' %}"></script>
 
 {% trans 'Duplication des formations vers l’année ' %} {{current_year}} {% endblock %}
 {% block app_content %}
+<h2 class="title-modal">
+    {{request.session.visited_cmp_label}}
+</h2>
 
  <div class='notifications top-right'></div>
 <div class="disp-flex duplicate-h">
@@ -86,13 +88,13 @@
     </div>
 </div>
 <div class="buttons_list">
-<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les règles sélectionnées vers l'année cible" %}</button>
-<a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des règles générales" %}</a>
+<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les foramtions sélectionnées vers l'année cible" %}</button>
+<a href="{%if request.session.visited_cmp %}{% url 'training:list' request.session.visited_cmp %}{%else%} /training/list/{%endif%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des formations" %}</a>
 </div>
 <script type="text/javascript">
 function del_train($this, value) {
     $.ajax({
-        // url: "{% url 'rules:duplicate_remove'%}",
+        url: "{% url 'rules:duplicate_remove'%}",
         type: "POST",
         data: {
             id: value,
@@ -144,20 +146,20 @@ function add_training(){
         },
         success: function(data){
             if (data.status === 'added') {
-                for (var i = 0, n = data.n_rule.length; i < n; i++) {
+                for (var i = 0, n = data.n_trains.length; i < n; i++) {
                     $('.top-right').notify({
-                        message: { text: 'Formation n°'+ data.n_rule[i]+ ' dupliquée.' },
+                        message: { text: 'Formation n°'+ data.n_trains[i]+ ' dupliquée.' },
                         type:'info'
                     }).show();
                     setTimeout(function(){
                         window.location.reload()
                     }, 500);
-                    var row = document.getElementById("source_" + data.n_rule[i]);
+                    var row = document.getElementById("source_" + data.n_trains[i]);
                     row.deleteCell(0);
                     var dest = document.getElementById('current');
-                    row.id = 'current_' + data.n_rule[i];
+                    row.id = 'current_' + data.n_trains[i];
                     td = row.insertCell(4);
-                    td.innerHTML = '<a onclick="del_train(this, this.id);" id="' + data.n_rule[i] + '" class="glyphicon glyphicon-trash select"></a>';
+                    td.innerHTML = '<a onclick="del_train(this, this.id);" id="' + data.n_trains[i] + '" class="glyphicon glyphicon-trash select"></a>';
                     td.className += 'td-centered';
                     dest.appendChild(row);
                 }

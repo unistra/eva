@@ -42,10 +42,10 @@ class TrainingListView(ListView):
 
     def get_context_data(self, **kwargs):
         id_cmp = self.kwargs.get('cmp')
+        self.request.session['visited_cmp'] = id_cmp
         context = super(TrainingListView, self).get_context_data(**kwargs)
         self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"
-        self.request.session['visited_cmp'] = self.kwargs.get('cmp')
         self.request.session['visited_cmp_id'] = Institute.objects.get(
             code=id_cmp).pk if id_cmp is not None else None
         return add_current_year(context)
@@ -150,25 +150,19 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     """
     View for duplicate training from other year to current year
     """
-    cmp = []
-    try:
-        profiles = request.user.meccuser.cmp.profile.all()
-        for e in profiles:
-            if e.code in 'RESPFORM':
-                cmp.append(e.cmp)
-    except MeccUser.DoesNotExist as e:
-        print(e)
-        pass
+    cmp = request.session['visited_cmp']
+    print(cmp)
     data = {}
     current_year = currentyear()
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
 
-    all_trainings = Training.objects.all()
-
+    trainings = Training.objects.all().filter(
+        institutes=Institute.objects.get(code=cmp
+    )) if cmp is not None else Training.objects.all()
     data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
-        e.code_year, e.code_year + 1)) for e in all_trainings}, reverse=True)
-    data['existing_trainings'] = existing = all_trainings.filter(
+        e.code_year, e.code_year + 1)) for e in trainings}, reverse=True)
+    data['existing_trainings'] = existing = trainings.filter(
         code_year=current_year.code_year)
     data['asked_year'] = None if year is None else int(year)
 
@@ -176,7 +170,7 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
         return render(request, template, data)
     else:
         data['trainings'] = [
-            e for e in all_trainings.filter(code_year=year) if e.label not in [
+            e for e in trainings.filter(code_year=year) if e.label not in [
                 a.label for a in existing]]
     return render(request, template, data)
 
@@ -192,26 +186,32 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 
 
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
+
     data = {}
     data['training'] = training = Training.objects.get(id=training_id)
     data['rule'] = rule = Rule.objects.get(id=rule_id)
     return render(request, template, data)
 
 
-@transaction.atomic
 @login_required
 @is_ajax_request
 @is_post_request
 def duplicate_add(request):
     x = request.POST.getlist('list_id[]')
+    print(x)
     labels = []
+    n_trains = []
+    # TODO: remplacer la copie par une redefinition pas à pas parceque ne copie pas les composantes comme ça
     for e in x:
         t = Training.objects.get(pk=e)
         t.pk = None
         t.code_year = currentyear().code_year
         t.save()
         labels.append(t.label)
-        return JsonResponse({'status': 'added', 'labels': labels})
+        n_trains.append(t.n_train)
+
+    return JsonResponse(
+        {'status': 'added', 'n_trains': n_trains, 'labels': labels})
 
 
 def duplicate_remove(request):
