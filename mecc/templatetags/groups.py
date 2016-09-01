@@ -22,7 +22,6 @@ def is_profile(meccuser, profile_code):
 def has_profile(meccuser, profiles):
     INVAR = ['RAC', 'DIRCOMP', 'GESCOL', 'REFAPP', 'DIRETU']
     for e in profiles:
-        print(e)
         profile = Profile.objects.get(code=e)
         if profile in meccuser.profile.all():
             return True

@@ -203,7 +203,6 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 @is_post_request
 def duplicate_add(request):
     x = request.POST.getlist('list_id[]')
-    print(x)
     labels = []
     n_trains = []
     for e in x:
@@ -227,16 +226,10 @@ def duplicate_add(request):
             supply_cmp=t.supply_cmp,
             n_train=t.n_train
         )
-        print('la')
         for cmp in t.institutes.all():
-            print("waht?")
-            a = Institute.objects.get(id=cmp.id)
             training.institutes.add(cmp)
-            print('DONE!')
         for y in t.resp_formations.all():
-            
             training.resp_formations.add(y)
-            print('ici')
 
         labels.append(training.label)
         n_trains.append(training.n_train)
