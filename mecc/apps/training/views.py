@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse
 from mecc.apps.adm.models import MeccUser
+from django.db import transaction
 
 
 def add_current_year(dic):
@@ -196,6 +197,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     return render(request, template, data)
 
 
+@transaction.atomic
 @login_required
 @is_ajax_request
 @is_post_request
@@ -204,18 +206,40 @@ def duplicate_add(request):
     print(x)
     labels = []
     n_trains = []
-    # TODO: remplacer la copie par une redefinition pas à pas parceque ne copie pas les composantes comme ça
     for e in x:
         t = Training.objects.get(pk=e)
-        t.pk = None
-        t.code_year = currentyear().code_year
-        print('ici')
-        print(t.institutes)
+        training = Training.objects.create(
+            code_year=currentyear().code_year,
+            degree_type=t.degree_type,
+            label=t.label,
+            is_used=t.is_used,
+            MECC_tab=t.MECC_tab,
+            MECC_type=t.MECC_type,
+            session_type=t.session_type,
+            ref_cpa_rof=t.ref_cpa_rof,
+            ref_si_scol=t.ref_si_scol,
+            progress_rule=t.progress_rule,
+            progress_table=t.progress_table,
+            date_val_cmp=t.date_val_cmp,
+            date_res_des=t.date_res_des,
+            date_visa_des=t.date_visa_des,
+            date_val_cfvu=t.date_val_cfvu,
+            supply_cmp=t.supply_cmp,
+            n_train=t.n_train
+        )
+        print('la')
+        for cmp in t.institutes.all():
+            print("waht?")
+            a = Institute.objects.get(id=cmp.id)
+            training.institutes.add(cmp)
+            print('DONE!')
+        for y in t.resp_formations.all():
+            
+            training.resp_formations.add(y)
+            print('ici')
 
-        # t.save()
-        labels.append(t.label)
-        n_trains.append(t.n_train)
-
+        labels.append(training.label)
+        n_trains.append(training.n_train)
     return JsonResponse(
         {'status': 'added', 'n_trains': n_trains, 'labels': labels})
 
