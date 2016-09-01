@@ -115,12 +115,16 @@ class TrainingDelete(DeleteView):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
         return add_current_year(context)
 
-    # def get_success_url(self):
+
+    def get_success_url(self):
+        if self.request.session['visited_cmp']:
+            return reverse('training:list', kwargs={
+                'cmp': self.request.session['visited_cmp']})
+        return reverse('training:list')
 
     model = Training
     slug_field = 'id'
     slug_url_kwarg = 'id_training'
-    success_url = '/training/list'
 
 
 @login_required
@@ -151,7 +155,6 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     View for duplicate training from other year to current year
     """
     cmp = request.session['visited_cmp']
-    print(cmp)
     data = {}
     current_year = currentyear()
     data['current_year'] = "%s/%s" % (current_year.code_year,
@@ -206,7 +209,10 @@ def duplicate_add(request):
         t = Training.objects.get(pk=e)
         t.pk = None
         t.code_year = currentyear().code_year
-        t.save()
+        print('ici')
+        print(t.institutes)
+
+        # t.save()
         labels.append(t.label)
         n_trains.append(t.n_train)
 
@@ -215,59 +221,8 @@ def duplicate_add(request):
 
 
 def duplicate_remove(request):
-    pass
-#
-# def duplicaaate_add(request):
-#     current_year = currentyear()
-#     x = request.POST.getlist('list_id[]')
-#
-#     dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
-#     labels = []
-#     for e in dic:
-#
-#         r = Rule.objects.filter(
-#             code_year=e.get('year')).filter(n_rule=e.get('n_rule')).first()
-#         rule = Rule.objects.create(
-#             display_order=r.display_order,
-#             code_year=current_year.code_year,
-#             label=r.label,
-#             is_in_use=r.is_in_use,
-#             is_edited='N',
-#             is_eci=r.is_eci,
-#             is_ccct=r.is_ccct,
-#             n_rule=r.n_rule
-#         )
-#         for a in r.degree_type.all():
-#             degree_type = DegreeType.objects.get(id=a.id)
-#             rule.degree_type.add(degree_type)
-#         rule.save()
-#
-#         paragraphs = Paragraph.objects.filter(
-#             code_year=e.get('year')).filter(rule__id=r.id)
-#
-#         for p in paragraphs:
-#             p.rule.add(rule)
-#             p.save()
-#
-#         labels.append(r.label)
-#     return JsonResponse({'status': 'added', 'n_rule': [
-#         e.get('n_rule') for e in dic], 'labels': labels})
-#
-#
-# @login_required
-# @is_ajax_request
-# @is_post_request
-# def duplicaaaate_remove(request):
-#     x = request.POST.get('id')
-#     rule = Rule.objects.get(id=x)
-#     label = rule.label
-#     # paragraphs = Paragraph.objects.filter(rule__id=x)
-#     # Correct test will be later
-#     # for p in paragraphs:
-#     #     if p.is_cmp or p.is_interaction:
-#     #         return JsonResponse({
-#     #             "error": "%s comporte des dérogations." % (label)})
-#
-#     rule.delete()
-#
-#     return JsonResponse({"status": "removed", "label": label})
+    x = request.POST.get('id')
+    t = Training.objects.get(pk=x)
+    label = t.label
+    t.delete()
+    return JsonResponse({"status": "removed", "label": label})

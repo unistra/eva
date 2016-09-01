@@ -42,13 +42,13 @@
                 </tr>
             </thead>
             <tbody class="tbody" id="source">
-                {%if not trainings%}<tr><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
+                {%if not trainings%}<tr id='empty'><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
                 {%for e in trainings%}
                 <tr id="source_{{e.id}}" class="{% if not e.is_used%} grey{%endif%}">
                     <td width=5% class="td-centered">
                         <input type="checkbox" id="{{e.id}}" name="train_{{e.id}}" class="checkbox_train">
                     </td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.code_year}}</td>
+                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
                     <td width=15% class=" ">{{e.degree_type}}</td>
                     <td width=60% class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
                     <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
@@ -79,7 +79,7 @@
                     <td width=60% >{{e.label}}</td>
                     <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
                     <td width=5% class="td-centered">
-                        <a class="glyphicon glyphicon-trash select" id="{{e.id}} " onclick="del_train(this, this.id);"></a>
+                        <a class="glyphicon glyphicon-trash select" id="{{e.id}}" onclick="del_train(this, this.id);"></a>
                     </td>
                 </tr>
                 {%endfor%}
@@ -90,96 +90,110 @@
 <div class="buttons_list">
 <button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les foramtions sélectionnées vers l'année cible" %}</button>
 <a href="{%if request.session.visited_cmp %}{% url 'training:list' request.session.visited_cmp %}{%else%} /training/list/{%endif%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des formations" %}</a>
-</div>
-<script type="text/javascript">
-function del_train($this, value) {
-    $.ajax({
-        url: "{% url 'rules:duplicate_remove'%}",
-        type: "POST",
-        data: {
-            id: value,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
-        success: function(data){
-            if (data.error){
-                $('.top-right').notify({
-                    message: { text: data.error },
-                    type:'danger'
-                  }).show();
-            } else if (data.status === 'removed') {
-                console.log(value);
-                $('.top-right').notify({
-                    message: { text: data.label + ' a bien été supprimé.'},
-                    type:'info'
-                }).show();
-                setTimeout(function(){
-                    window.location.reload()
-                }, 500);
-                var row = document.getElementById("current_"+ value);
-                row.deleteCell(4);
-                var dest = document.getElementById("source");
-                console.log(dest);
-                row.id = 'source_' + value;
-                td = row.insertCell(0);
-                td.innerHTML ='<input type="checkbox" class="checkbox_train" name="train' + value +'" id="_+' + value +'+">';
-                td.className += 'td-centered';
-                dest.appendChild(row);
-            }
-        }
-    })
-}
-function add_training(){
-    checkboxes = document.getElementsByClassName("checkbox_train");
-    var notChecked = [], checked = [];
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        id = checkboxes[i].id
-        console.log(id);
-        checkboxes[i].checked ? checked.push(id) : notChecked.push(id);
-    }
-    console.log(checked);
-    $.ajax({
-        url: "{% url 'training:duplicate_add'%}",
-        type: "POST",
-        data: {
-            list_id: checked,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
-        success: function(data){
-            if (data.status === 'added') {
-                for (var i = 0, n = data.n_trains.length; i < n; i++) {
+</div><script type="text/javascript">
+    function del_train($this, value) {
+        $.ajax({
+            url: "{% url 'training:duplicate_remove'%}",
+            type: "POST",
+            data: {
+                id: value,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                if (data.error) {
                     $('.top-right').notify({
-                        message: { text: 'Formation n°'+ data.n_trains[i]+ ' dupliquée.' },
-                        type:'info'
+                        message: {
+                            text: data.error
+                        },
+                        type: 'danger'
                     }).show();
-                    setTimeout(function(){
+                } else if (data.status === 'removed') {
+                    $('.top-right').notify({
+                        message: {
+                            text: data.label + ' a bien été supprimé.'
+                        },
+                        type: 'info'
+                    }).show();
+                    setTimeout(function() {
                         window.location.reload()
                     }, 500);
-                    var row = document.getElementById("source_" + data.n_trains[i]);
-                    row.deleteCell(0);
-                    var dest = document.getElementById('current');
-                    row.id = 'current_' + data.n_trains[i];
-                    td = row.insertCell(4);
-                    td.innerHTML = '<a onclick="del_train(this, this.id);" id="' + data.n_trains[i] + '" class="glyphicon glyphicon-trash select"></a>';
-                    td.className += 'td-centered';
-                    dest.appendChild(row);
+                    var row = document.getElementById("current_" + value);
+                    var current_year = row.getElementsByTagName("td")[0].innerHTML;
+                    row.deleteCell(4);
+
+                    var e = document.getElementById("duplicate_select_year");
+                    var source_year = e.options[e.selectedIndex].value;
+                    if (current_year === source_year) {
+                        var dest = document.getElementById("source");
+                        row.id = 'source_' + value;
+                        td = row.insertCell(0);
+                        td.innerHTML = '<input type="checkbox" class="checkbox_train" name="train' + value + '" id="_+' + value + '+">';
+                        td.className += 'td-centered';
+                        dest.appendChild(row);
+                        if (document.contains(document.getElementById("empty"))) {
+                            document.getElementById("empty").remove();
+                        }
+                    } else {
+                        document.getElementById('current').removeChild(row);
+                    }
                 }
             }
-        }
-    });
-}
-function select_year(){
-    var e = document.getElementById("duplicate_select_year");
-    var year = e.options[e.selectedIndex].value;
-    window.location.replace("{% url 'training:duplicate' %}" + year);
-}
-
-// All checkbox take the same state as this checkbox
-function check_all(source) {
-    checkboxes = document.getElementsByClassName("checkbox_train");
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
+        })
     }
-}
- // for the ones that aren't closable and don't fade out there is a .hide() function.
+
+    function add_training() {
+        checkboxes = document.getElementsByClassName("checkbox_train");
+        var notChecked = [],
+            checked = [];
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            id = checkboxes[i].id
+            checkboxes[i].checked ? checked.push(id) : notChecked.push(id);
+        }
+        $.ajax({
+            url: "{% url 'training:duplicate_add'%}",
+            type: "POST",
+            data: {
+                list_id: checked,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                if (data.status === 'added') {
+                    for (var i = 0, n = data.n_trains.length; i < n; i++) {
+                        $('.top-right').notify({
+                            message: {
+                                text: 'Formation n°' + data.n_trains[i] + ' dupliquée.'
+                            },
+                            type: 'info'
+                        }).show();
+                        setTimeout(function() {
+                            window.location.reload()
+                        }, 500);
+                        var row = document.getElementById("source_" + data.n_trains[i]);
+                        row.deleteCell(0);
+                        var dest = document.getElementById('current');
+                        row.id = 'current_' + data.n_trains[i];
+                        td = row.insertCell(4);
+                        td.innerHTML = '<a onclick="del_train(this, this.id);" id="' + data.n_trains[i] + '" class="glyphicon glyphicon-trash select"></a>';
+                        td.className += 'td-centered  ';
+                        dest.appendChild(row);
+                    }
+                }
+            }
+        });
+    }
+
+    function select_year() {
+        var e = document.getElementById("duplicate_select_year");
+        var year = e.options[e.selectedIndex].value;
+        window.location.replace("{% url 'training:duplicate' %}" + year);
+    }
+
+    // All checkbox take the same state as this checkbox
+    function check_all(source) {
+        checkboxes = document.getElementsByClassName("checkbox_train");
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 </script>
 {% endblock %}

@@ -18,9 +18,11 @@ def is_profile(meccuser, profile_code):
         e.code for e in meccuser.profile.all()] else False
 
 
-@register.filter(name='gas_profile')
+@register.filter(name='has_profile')
 def has_profile(meccuser, profiles):
+    INVAR = ['RAC', 'DIRCOMP', 'GESCOL', 'REFAPP', 'DIRETU']
     for e in profiles:
+        print(e)
         profile = Profile.objects.get(code=e)
         if profile in meccuser.profile.all():
             return True
