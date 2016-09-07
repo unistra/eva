@@ -182,8 +182,8 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
-    rules = Rule.objects.filter(
-        degree_type=training.degree_type)
+    rules = Rule.objects.filter(degree_type=training.degree_type).filter(
+        code_year=currentyear().code_year)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type in 'E' \
         else rules.filter(is_ccct=True)
     return render(request, template, data)
