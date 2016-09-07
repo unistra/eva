@@ -42,9 +42,9 @@
       <table class="table" id="rule-table">
         <thead>
          <tr class="underlined">
-            <th width="15%" class="td-centered no-padding"  style="font-weight: normal;">{% trans "Statut règle standard" %}</th>
+            <th width="15%" class="td-centered no-padding"  style="font-weight: normal;"><small>{% trans "Statut règle standard" %}</small></th>
             <th width="47%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
-            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificité pour cette formation </br>(dérogation et alinéas de composantes)' %}</th>
+            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
          </tr>
        </thead>
        <tbody class="overflow" >
@@ -69,8 +69,17 @@
 
     </div>
 </div>
-    <div class="has-bottom-border has-top-border buttons_list blue" >
-    {% trans 'Etat de saisie des règles : En cours'%}
+    <div class="has-bottom-border has-top-border buttons_list dir-col blue "  >
+        <span>
+            {% trans 'Etat de saisie des règles : '%}
+        </span>
+        <span class="margin-left1">
+         {% trans "En cours " %}<input disabled='disabled' type="radio" name="name" value="" checked="checked">
+        </span>
+        <span class="margin-left1">
+        {% trans 'Achevée '%} <input disabled='disabled' type="radio" name="name" value="">
+        </span>
+
     </div>
     <div class="buttons_list" >
 <br>

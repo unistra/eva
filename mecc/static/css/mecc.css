@@ -302,6 +302,9 @@ td.id_member {
     align-items: center;
     justify-content: center;
 }
+.dir-row {
+    flex-direction: row!important;
+}
 .dir-col {
     flex-direction: column!important;
 }

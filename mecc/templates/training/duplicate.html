@@ -73,7 +73,7 @@
                 {%if not existing_trainings%}<tr><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
 
                 {%for e in existing_trainings%}
-                <tr class="{% if not e.is_in_use%} grey{%endif%}" id="current_{{e.id}}">
+                <tr class="{% if not e.is_used%} grey{%endif%}" id="current_{{e.id}}">
                     <td width=10% class="td-centered">{{e.code_year}}</td>
                     <td width=15% >{{e.degree_type}}</td>
                     <td width=60% >{{e.label}}</td>
@@ -88,7 +88,7 @@
     </div>
 </div>
 <div class="buttons_list">
-<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les foramtions sélectionnées vers l'année cible" %}</button>
+<button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les formations sélectionnées vers l'année cible" %}</button>
 <a href="{%if request.session.visited_cmp %}{% url 'training:list' request.session.visited_cmp %}{%else%} /training/list/{%endif%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des formations" %}</a>
 </div><script type="text/javascript">
     function del_train($this, value) {

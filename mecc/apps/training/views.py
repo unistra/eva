@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Training, SpecificParagraph
+from .models import Training
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
@@ -13,8 +13,8 @@ from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse
-from mecc.apps.adm.models import MeccUser
 from django.db import transaction
+from django.contrib.auth.models import User
 
 
 def add_current_year(dic):
@@ -241,5 +241,16 @@ def duplicate_remove(request):
     x = request.POST.get('id')
     t = Training.objects.get(pk=x)
     label = t.label
+    for y in t.resp_formations.all():
+        for profile in y.profile.all():
+            if profile.code in 'RESPFORM' and \
+                currentyear().code_year == profile.year and profile.cmp in \
+                    [e.code for e in t.institutes.all()]:
+                    y.profile.remove(profile)
+                    t.resp_formations.remove(y)
+                    if len(y.profile.all()) < 1:
+                        user = User.objects.get(meccuser=y)
+                        user.delete()
+                        y.delete()
     t.delete()
     return JsonResponse({"status": "removed", "label": label})

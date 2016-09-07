@@ -5,7 +5,6 @@ from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     specific_paragraph
 from django_cas.decorators import login_required
 
-
 urlpatterns = [
     url(r'^list(?:/(?P<cmp>\w+))?/$',
         login_required(TrainingListView.as_view()),
