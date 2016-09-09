@@ -182,11 +182,22 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
+    data['progress_rule'] = training.progress_rule
+
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type in 'E' \
         else rules.filter(is_ccct=True)
     return render(request, template, data)
+
+
+@is_ajax_request
+def update_progress_rule_statut(request):
+    y = request.POST.get('if')
+    x = request.POST.get('progress_rule')
+    print(x)
+    print(y)
+    pass
 
 
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):

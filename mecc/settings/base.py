@@ -182,7 +182,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 
-
 ############################
 # Middleware configuration #
 ############################
@@ -192,11 +191,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas.middleware.CASMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django_cas.middleware.CASMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'mecc.middleware.CanUdoIt',
+
 )
 
 

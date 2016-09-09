@@ -1,11 +1,40 @@
-from django.db.models.signals import pre_save, post_delete
+from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch import receiver
 from mecc.apps.commission.models import ECICommissionMember
+from mecc.apps.adm.models import Profile
 from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError as ie
+from mecc.apps.utils.querries import currentyear
+
+@receiver(post_save, sender=User)
+def User_post_save(sender, **kwargs):
+    """
+    Create MECCUser right after user is created
+    """
+    user = kwargs.get('instance')
+
+    for e in User.objects.all():
+        try:
+            meccuser = MeccUser.objects.get(user=user)
+        except ObjectDoesNotExist:
+            meccuser = MeccUser.objects.create(user=user)
+
+        for y in meccuser.profile.all():
+            print(y)
+            if y.cmp in ['', ' ', None]:
+                prof = Profile.objects.create(
+                    code=y.code,
+                    label=y.label,
+                    year=currentyear().code_year,
+                    cmp=e.cmp,
+                )
+                prof.save()
+                print('%s s MECCUSER CREATED' % e)
+
+
 
 
 @receiver(pre_save, sender=ECICommissionMember)
@@ -15,7 +44,7 @@ def ECI_pre_save(sender, **kwargs):
     """
     if kwargs.get('raw', False):  # Do not proceed if fixture
         return
-    new_user = kwargs['instance']
+    new_user = kwargs.get('instance')
     try:
         user = User.objects.create_user(
             new_user.username, email=new_user.email)

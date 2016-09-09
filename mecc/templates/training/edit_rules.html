@@ -42,8 +42,8 @@
       <table class="table" id="rule-table">
         <thead>
          <tr class="underlined">
-            <th width="15%" class="td-centered no-padding"  style="font-weight: normal;"><small>{% trans "Statut règle standard" %}</small></th>
-            <th width="47%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
+            <th width="10%" class="td-centered no-padding"  style="font-weight: normal;"><small>{% trans "Statut règle standard" %}</small></th>
+            <th width="52%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
             <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
          </tr>
        </thead>
@@ -51,8 +51,8 @@
       {%for e in rules_list%}
 
       <tr class="hover-row">
-         <td width="15%" class='no-padding td-centered red' >{{e.get_is_edited_display}}</td>
-         <td width="47%" class="no-padding border-right"><a class="select" onclick="detail_rule({{e.id}})">{{e.label}}</a></td>
+         <td width="10%" class='no-padding td-centered red' >{{e.get_is_edited_display}}</td>
+         <td width="52%" class="no-padding border-right"><a class="select" onclick="detail_rule({{e.id}})">{{e.label}}</a></td>
          <td width="38%" class="no-padding td-centered underlined">
                 {%if e.has_parag_with_derog%}
                     <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">Saisir</a>
@@ -71,13 +71,13 @@
 </div>
     <div class="has-bottom-border has-top-border buttons_list dir-col blue "  >
         <span>
-            {% trans 'Etat de saisie des règles : '%}
+            {% trans 'Etat de saisie des règles : '%} {{progress_rule}}
         </span>
         <span class="margin-left1">
-         {% trans "En cours " %}<input disabled='disabled' type="radio" name="name" value="" checked="checked">
+         {% trans "En cours " %}<input  type="radio" name="name" value="" checked="checked">
         </span>
         <span class="margin-left1">
-        {% trans 'Achevée '%} <input disabled='disabled' type="radio" name="name" value="">
+        {% trans 'Achevée '%} <input  type="radio" name="name" value="">
         </span>
 
     </div>
