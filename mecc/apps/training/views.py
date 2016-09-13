@@ -182,7 +182,6 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
-    data['progress_rule'] = training.progress_rule
 
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year)
@@ -191,21 +190,22 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     return render(request, template, data)
 
 
-@is_ajax_request
-def update_progress_rule_statut(request):
-    y = request.POST.get('if')
-    x = request.POST.get('progress_rule')
-    print(x)
-    print(y)
-    pass
-
-
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
 
     data = {}
-    data['training'] = training = Training.objects.get(id=training_id)
-    data['rule'] = rule = Rule.objects.get(id=rule_id)
+    data['training'] = Training.objects.get(id=training_id)
+    data['rule'] = Rule.objects.get(id=rule_id)
     return render(request, template, data)
+
+
+@is_post_request
+@is_ajax_request
+def update_progress_rule_statut(request):
+    training = Training.objects.get(pk=request.POST.get('id'))
+    training.progress_rule = request.POST.get('progress')
+    training.save()
+
+    return JsonResponse({'status': 'updated'})
 
 
 @transaction.atomic

@@ -70,15 +70,15 @@
     </div>
 </div>
     <div class="has-bottom-border has-top-border buttons_list dir-col blue "  >
-        <span>
-            {% trans 'Etat de saisie des règles : '%} {{progress_rule}}
-        </span>
-        <span class="margin-left1">
-         {% trans "En cours " %}<input  type="radio" name="name" value="" checked="checked">
-        </span>
-        <span class="margin-left1">
-        {% trans 'Achevée '%} <input  type="radio" name="name" value="">
-        </span>
+        <label>
+            {% trans 'Etat de saisie des règles : '%}
+        </label>
+        <label class="margin-left1">
+         {% trans "En cours " %}<input  type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+     </label>
+        <label class="margin-left1">
+        {% trans 'Achevée '%} <input  type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+    </label>
 
     </div>
     <div class="buttons_list" >
@@ -165,6 +165,22 @@
             });
             $('#preview').modal('show');
 
+
         }
+        $('input[name="progress"]').change(function(){
+            var progress = $('input[name="progress"]:checked').val();
+            $.ajax({
+                url: "{% url 'training:update_progress_rule_statut'%}",
+                type: "POST",
+                data: {
+                    progress: progress,
+                    id: {{training.id}},
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){
+                    // TODO: add a div to says it works =)
+                }
+            });
+        });
     </script>
 {%endblock%}

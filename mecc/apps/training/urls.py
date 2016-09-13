@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     TrainingEdit, process_respform, list_training, respform_list, \
     duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
-    specific_paragraph
+    specific_paragraph, update_progress_rule_statut
 from django_cas.decorators import login_required
 
 urlpatterns = [
@@ -27,6 +27,8 @@ urlpatterns = [
         name='duplicate'),
     url(r'^duplicate_add/$', duplicate_add,
         name='duplicate_add'),
+    url(r'^update_progress_rule_statut/$', update_progress_rule_statut,
+        name='update_progress_rule_statut'),
     url(r'^duplicate_remove/$', duplicate_remove,
         name='duplicate_remove'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/$',
