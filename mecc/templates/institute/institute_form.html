@@ -14,7 +14,6 @@
 {% endblock %}
 
 {% block app_content %}
-
 <link rel="stylesheet" href="{% static 'css/autocomplete.min.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <div class='flex-container'>
@@ -119,7 +118,9 @@
 
 
  <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
+
  <script type="text/javascript">
+ {% if not cannot_edit %}
  // Get cmp code in order to search people
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/ressources/prof/" + code_cmp + ".json"
@@ -259,7 +260,7 @@ $.getJSON(url_prof, function (data) {
 
 {% endif %}
 });
-
+{% endif %}
 check_box = document.getElementById("div_id_is_on_duty");
 id_code = document.getElementById("id_code").parentNode;
 id_code.appendChild(check_box)
