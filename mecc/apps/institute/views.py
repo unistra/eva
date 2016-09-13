@@ -18,6 +18,7 @@ from mecc.apps.utils.ws import get_list_from_cmp
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
+from mecc.apps.utils.querries import currentyear
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -68,6 +69,10 @@ def add_pple(request):
     """
     Process add diretu / gescol ajax querries
     """
+    label_profile = {
+        'DIRETU': "Directeurs d'études",
+        'GESCOL': "Gestionnaire de scolarité",
+        'REFAPP': "Référent d'application"}
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -85,7 +90,12 @@ def add_pple(request):
         except ObjectDoesNotExist:
             meccuser = MeccUser.objects.create(user=user)
 
-        profile = Profile.objects.get(code=request.POST.get('type').upper())
+        profile, created = Profile.objects.get_or_create(
+            code=request.POST.get('type').upper(),
+            cmp=request.POST.get('code_cmp'),
+            year=currentyear().code_year,
+            label=label_profile.get(request.POST.get('type').upper())
+        )
         meccuser.cmp = request.POST.get('code_cmp')
 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
@@ -114,9 +124,12 @@ def add_pple(request):
             meccuser.is_ref_app = False if request.POST.get(
                 'is_ref_app') == 'false' else True
             if meccuser.is_ref_app:
-                profile = Profile.objects.get(code='REFAPP')
+                profile.code = 'REFAPP'
+                profile.label = label_profile.get('REFAPP')
+                profile.save()
             institute.scol_manager.add(meccuser)
             institute.save()
+
         meccuser.profile.add(profile)
         meccuser.save()
 
@@ -136,7 +149,10 @@ def remove_pple(request):
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         meccuser = MeccUser.objects.get(user__username=username)
-        profile = Profile.objects.get(code=request.POST.get('type'))
+        prof = [e for e in meccuser.profile.all() if
+                e.code == request.POST.get('type') and
+                e.cmp == request.POST.get('code_cmp') and
+                e.year == currentyear().code_year][0]
 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         if request.POST.get('type') in ['diretu', 'DIRETU']:
@@ -145,10 +161,8 @@ def remove_pple(request):
         else:
             institute.scol_manager.remove(meccuser)
             institute.save()
-            if meccuser.is_ref_app:
-                profile = Profile.objects.get(code='REFAPP')
 
-        meccuser.profile.remove(profile)
+        meccuser.profile.remove(prof)
         if len(meccuser.profile.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()

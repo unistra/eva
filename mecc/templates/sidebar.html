@@ -5,66 +5,60 @@
 
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
-      {% if request.user.meccuser%}
-      {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
-        <li class="dropdown">
-           <a href="#collapseInstituteDIRCOMP"   class="dropdown-toggle" data-toggle="collapse"
-           aria-expanded="false" aria-controls="collapseInstituteDIRCOMP">
-           {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
-           <ul class="collapse {% if request.user.meccuser.cmp in request.path %} in {% endif %} slump"id="collapseInstituteDIRCOMP">
-             <li><a href="/institute/granted/{{request.user.meccuser.cmp}}"
-              {% if request.user.meccuser.cmp in request.path %}
-                class="item-selected"
-             {% endif %}>{% trans 'Général' %}</a></li>
-             <li><a href=""
-               {% if 'institute/---' in request.path %}
-                class="item-selected"
-             {% endif %}>{% trans 'Validations' %}</a></li>
-
-          </ul>
-       </li>
-      {% endif %}
-
-      {% if request.user.meccuser|is_profile:"DIRETU" or request.user.meccuser|is_profile:"GESCOL"%}
-        <li class="dropdown">
-           <a href="#collapse2"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-          > {% trans 'Composante' %} {{request.user.meccuser.cmp}} <span class="caret"></span></a>
-           <ul class="collapse {% if request.user.meccuser.cmp in request.path %} in {% endif %} slump"id="collapse2">
-             <li><a href="/institute/granted/{{request.user.meccuser.cmp}}"
-              {% if request.user.meccuser.cmp in request.path %}
-                class="item-selected"
-             {% endif %}>{% trans 'Général' %}</a></li>
-             <li><a href="#"
-               {% if 'valid' in request.path %}
-                class="item-selected"
-             {% endif %}>{% trans 'Documents' %}</a></li>
-
-          </ul>
-       </li>
-      {% endif %}
-      {% if request.user.meccuser|is_profile:"RESPFORM"%}
-
-      <li class="dropdown">
-         <a href="#collapse3"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-        >
-        {% for e in request.user.meccuser.profile.all  %}
-              {% if e.code in 'RESPFORM'%}
-              {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
-              <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse3">
-                  <li><a href="/institute/granted/{{e.cmp}}"
+        {% for e in profiles%}
+            {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP'%}
+                <li class="dropdown">
+                   <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse"
+                   aria-expanded="false" aria-controls="collapse{{e.pk}}">
+                   {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                   <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
+                     <li><a href="/institute/granted/{{e.cmp}}"
                       {% if e.cmp in request.path %}
-                      class="item-selected"
-                      {% endif %}>{% trans 'Général' %}</a></li>
-                      <li><a href="#"
-                          {% if 'doc' in request.path %}
-                          class="item-selected"
-                          {% endif %}>{% trans 'Documents' %}</a></li>
+                        class="item-selected"
+                     {% endif %}>{% trans 'Général' %}</a></li>
+                     <li><a href=""
+                       {% if 'institute/---' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Validations' %}</a></li>
+                  </ul>
+               </li>
+            {%endif%}
+            {% if e.code == 'DIRETU' or e.code == 'GESCOL'%}
+                <li class="dropdown">
+                   <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+                  > {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                   <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
+                     <li><a href="/institute/granted/{{e.cmp}}"
+                      {% if e.cmp in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Général' %}</a></li>
+                     <li><a href="#"
+                       {% if 'valid' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Documents' %}</a></li>
 
-                      </ul>
-      {%endif%}
-      {%endfor%}
-      {%endif%}
-      {% endif %}
+                  </ul>
+               </li>
+              {%endif%}
+
+          {% if e.code == "RESPFORM"%}
+          <li class="dropdown">
+             <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree">
+                  {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                  <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
+                      <li><a href="/institute/details/{{e.cmp}}"
+                          {% if e.cmp in request.path %}
+                          class="item-selected"
+                          {% endif %}>{% trans 'Général' %}</a></li>
+                          <li><a href="#"
+                              {% if 'doc' in request.path %}
+                              class="item-selected"
+                              {% endif %}>{% trans 'Documents' %}</a></li>
+
+                          </ul>
+
+          {%endif%}
+      {% endfor %}
       {% if request.user.is_active and request.user.is_staff %}
       <li>
           <a href="/admin"

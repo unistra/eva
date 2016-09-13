@@ -35,33 +35,33 @@ USURPATION D'IDENTITÉ	Y	   N	 N	   N	   N	   N	    N		      N      N	     Y
 ADMINISTRATION		    Y	   N	 N	   N	   N	   N	    N		      N	     N	     N
 """
 
-    def process_request(self, request):
-        authorized = False
-        if "/" == request.path or request.path in '/spoof/release/':
-            authorized = True
-        print(request.user)
-        print(request.path)
-
-        unauthorized = HttpResponseForbidden("<h1>Forbidden</h1>You cannot \
-        access this page.")
-        if request.user.is_superuser:
-            authorized = True
-
-
-        # User does no exist !
-        # print(dir(request))
-        # if not hasattr(request, 'user') and 'accounts' not in request.path:
-        #     print('************************************************')
-        #     return unauthorized
-        # if request.user.is_superuser:
-        #     return response
-        #
-        # if 'institute/granted' in request.path:
-        #     print(request.user.meccuser.profile.all())
-        #     return response
-        # print(request.path)
-
-        return None if authorized else unauthorized
-
-    def process_response(self, request, response):
-        return response
+    # def process_request(self, request):
+    #     authorized = True
+    #     if "/" == request.path or request.path in '/spoof/release/':
+    #         authorized = True
+    #     print(request.user)
+    #     print(request.path)
+    #
+    #     unauthorized = HttpResponseForbidden("<h1>Forbidden</h1>You cannot \
+    #     access this page.")
+    #     if request.user.is_superuser:
+    #         authorized = True
+    #
+    #
+    #     # User does no exist !
+    #     # print(dir(request))
+    #     # if not hasattr(request, 'user') and 'accounts' not in request.path:
+    #     #     print('************************************************')
+    #     #     return unauthorized
+    #     # if request.user.is_superuser:
+    #     #     return response
+    #     #
+    #     # if 'institute/granted' in request.path:
+    #     #     print(request.user.meccuser.profile.all())
+    #     #     return response
+    #     # print(request.path)
+    #
+    #     return None if authorized else unauthorized
+    #
+    # def process_response(self, request, response):
+    #     return response

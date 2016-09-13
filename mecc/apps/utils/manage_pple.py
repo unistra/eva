@@ -11,19 +11,26 @@ def manage_dircomp_rac(new_username, profile, institute, request, name):
     Delete old user if had no more profile/permission
     """
     inst = {'rac': institute.id_rac, 'dircomp': institute.id_dircomp}
-
+    display = {'rac': ' Responsable administratif',
+               'dircomp': 'Directeur de composante'}
     if name == inst[profile]:
         return
 
-    user_profile = Profile.objects.get(code=profile.upper())
+    user_profile, created = Profile.objects.get_or_create(
+        code=profile.upper(),
+        label=display.get(profile),
+        cmp=institute.code,
+        year=currentyear().code_year
+    )
+
     u = MeccUser.objects.filter(
         Q(cmp__contains=institute.code) &
         Q(profile__code__contains=profile.upper())
     )
-
     old = list(u[:1])
     if old:
-        old[0].profile.remove(user_profile)
+        profile_to_del = old[0].profile.filter(code=profile.upper(), cmp=institute.code).first()
+        old[0].profile.remove(profile_to_del)
         profiles = old[0].profile.all()
         if len(profiles) < 1:
             old[0].user.delete()

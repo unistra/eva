@@ -14,5 +14,5 @@ class MeccUserTestCase(TestCase):
 
     def test_meccuser_str(self):
         user = User.objects.create(username='test')
-        meccuser1 = MeccUser.objects.create(user=user, cmp='ECI')
+        meccuser1 = MeccUser.objects.get(user=user)
         self.assertEqual(str(meccuser1), meccuser1.user.username)

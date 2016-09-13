@@ -9,11 +9,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError as ie
 from mecc.apps.utils.querries import currentyear
 
+
 @receiver(post_save, sender=User)
 def User_post_save(sender, **kwargs):
     """
     Create MECCUser right after user is created
     """
+    if kwargs.get('raw', False):  # Do not proceed if fixture
+        return
+
     user = kwargs.get('instance')
 
     for e in User.objects.all():
@@ -21,20 +25,6 @@ def User_post_save(sender, **kwargs):
             meccuser = MeccUser.objects.get(user=user)
         except ObjectDoesNotExist:
             meccuser = MeccUser.objects.create(user=user)
-
-        for y in meccuser.profile.all():
-            print(y)
-            if y.cmp in ['', ' ', None]:
-                prof = Profile.objects.create(
-                    code=y.code,
-                    label=y.label,
-                    year=currentyear().code_year,
-                    cmp=e.cmp,
-                )
-                prof.save()
-                print('%s s MECCUSER CREATED' % e)
-
-
 
 
 @receiver(pre_save, sender=ECICommissionMember)

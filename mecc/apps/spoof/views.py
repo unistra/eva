@@ -45,7 +45,6 @@ def home(request, template='spoof/form.html'):
     """
     Home spoof page.
     """
-    print(request.user)
     try:
         if not request.session['is_spoofed_user']:
             request.session['real_username'] = request.user.username
