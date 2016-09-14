@@ -203,9 +203,9 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 def update_progress_rule_statut(request):
     training = Training.objects.get(pk=request.POST.get('id'))
     training.progress_rule = request.POST.get('progress')
-    training.save()
 
-    return JsonResponse({'status': 'updated'})
+    return JsonResponse({
+        'status': 'updated', 'progress': training.get_progress_rule_display()})
 
 
 @transaction.atomic

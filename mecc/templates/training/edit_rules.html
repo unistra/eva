@@ -1,7 +1,14 @@
 {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}
-{% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
+{% block page-header %}
+<script src="{% static 'js/notif.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/notif.css' %}">
+{% trans 'Fiche Formation' %}
+{% endblock %}
 
 {% block app_content %}
+<div class='notifications top-right'></div>
+
+
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
@@ -178,7 +185,10 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data){
-                    // TODO: add a div to says it works =)
+                    $('.top-right').notify({
+                        message: { text: "Saisie des règles " + data.progress.toLowerCase() },
+                        type: 'info'
+                      }).show();
                 }
             });
         });
