@@ -41,7 +41,7 @@ class Training(models.Model):
         _('Référence SI Scol'), max_length=20, null=True, blank=True)
     progress_rule = models.CharField(
         _('Avancement de la saisie des règles'), choices=PROGRESS_CHOICE,
-        max_length=1)
+        max_length=1, default="E")
     progress_table = models.CharField(
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
         max_length=1)

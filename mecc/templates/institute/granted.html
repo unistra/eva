@@ -25,17 +25,11 @@
   <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
   </div>
   {% crispy form_institute %}
-  {% for e in profiles %}
-
-      {% if  e.code  == "DIRCOMP" or e.code == "RAC" or e.cde == "REFAPP"%}
-        {% if e.cmp == institute.code %}
+  {% if can_edit_diretu %}
             {% include "institute/add_diretu_gescol.html" with institute=institute%}
-
-        {% endif %}
-     {% else %}
+{% else %}
         {% include "institute/view_diretu_gescol.html" with institute=institute%}
-     {%endif%}
-          {% endfor %}
+        {% endif %}
 
 </form>
 

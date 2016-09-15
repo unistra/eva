@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required
 from mecc.apps.rules.models import Rule
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
-    is_ajax_request
+    is_ajax_request, is_correct_respform
 from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
@@ -179,10 +179,10 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     return render(request, template, data)
 
 
+@is_correct_respform
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
-
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type in 'E' \
@@ -203,7 +203,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 def update_progress_rule_statut(request):
     training = Training.objects.get(pk=request.POST.get('id'))
     training.progress_rule = request.POST.get('progress')
-
+    training.save()
     return JsonResponse({
         'status': 'updated', 'progress': training.get_progress_rule_display()})
 

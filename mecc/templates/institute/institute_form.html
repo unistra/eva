@@ -41,6 +41,7 @@
    <input id="input_rac_mail" name="rac_mail" >
    <input id="input_rac_status" name="rac_status"/>
   </div>
+  <span class="glyphicon glyphicon-refresh glyphicon-spin pull-right" id='load-wrap1' style="display:none"></span>
 
 {% include "institute/view_diretu_gescol.html" with institute=institute %}
 
@@ -121,6 +122,16 @@
 
  <script type="text/javascript">
  {% if not cannot_edit %}
+ document.getElementById('load-wrap1').style.display = "true"
+
+var loading = document.getElementById('load-wrap1');
+loading.style.top='-1.65em';
+loading.style.left='-0.5em';
+var clone = loading.cloneNode(true);
+clone.id = 'load-wrap2';
+document.getElementById('id_id_dircomp').parentNode.appendChild(loading);
+document.getElementById('id_id_rac').parentNode.appendChild(clone);
+
  // Get cmp code in order to search people
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/ressources/prof/" + code_cmp + ".json"
@@ -198,7 +209,7 @@ $.getJSON(url_prof, function (data) {
  });
  $(".input_prof").easyAutocomplete(options);
  $(".input_prof").prop('readonly', false);
-
+ document.getElementById('load-wrap1').style.display = "none"
 });
 
 
@@ -253,6 +264,7 @@ $.getJSON(url_prof, function (data) {
      });
     $(".input_adm").easyAutocomplete(options);
     $(".input_adm").prop('readonly', false);
+    document.getElementById('load-wrap2').style.display = "none"
 
    });
 

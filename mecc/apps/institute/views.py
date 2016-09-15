@@ -37,6 +37,13 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['form_institute'] = DircompInstituteForm(instance=institute)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
+
+    profiles = Profile.objects.filter(
+        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC"))
+    if any(True for x in profiles if x in request.user.meccuser.profile.all()):
+        data['can_edit_diretu'] = True
+    else:
+        data['can_edit_diretu'] = False
     try:
         institute_year.date_expected_MECC = datetime.strftime(
             institute_year.date_expected_MECC, '%d/%m/%Y')
@@ -90,16 +97,30 @@ def add_pple(request):
         except ObjectDoesNotExist:
             meccuser = MeccUser.objects.create(user=user)
 
+        # request.POST.get('type').upper()
+        # request.POST.get('code_cmp')
+        # currentyear().code_year
+        # label_profile.get(request.POST.get('type').upper())
+
         profile, created = Profile.objects.get_or_create(
             code=request.POST.get('type').upper(),
             cmp=request.POST.get('code_cmp'),
             year=currentyear().code_year,
             label=label_profile.get(request.POST.get('type').upper())
         )
+        used_profile = []
+        a = [e.profile.all() for e in MeccUser.objects.all()]
+        for e in a:
+            for y in e:
+                used_profile.append(y)
+
+        for e in Profile.objects.all():
+            if e not in used_profile:
+                e.delete()
+
         meccuser.cmp = request.POST.get('code_cmp')
 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
-
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             if meccuser in institute.diretu.all():
                 return JsonResponse({

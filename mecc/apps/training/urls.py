@@ -4,6 +4,7 @@ from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
     specific_paragraph, update_progress_rule_statut
 from django_cas.decorators import login_required
+from mecc.decorators import is_correct_respform
 
 urlpatterns = [
     url(r'^list(?:/(?P<cmp>\w+))?/$',
@@ -13,7 +14,7 @@ urlpatterns = [
         name='new'),
     url(r'^delete/(?P<id_training>\w+)/$', login_required(
         TrainingDelete.as_view()), name='delete'),
-    url(r'^edit/(?P<id>\d+)/$', login_required(TrainingEdit.as_view()),
+    url(r'^edit/(?P<id>\d+)/$', is_correct_respform(TrainingEdit.as_view()),
         name='edit'),
     url(r'^edit_rules/(?P<id>\d+)/$', edit_rules,
         name='edit_rules'),

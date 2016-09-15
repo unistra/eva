@@ -11,6 +11,7 @@
     <tr>
       <th colspan="3">{% trans "Directeurs d'études" %}</th>
       <th>
+          <span class="glyphicon glyphicon-refresh glyphicon-spin pull-right" id='load-diretu'></span>
         <button type="button" class=" table-add btn btn-default pull-right btn-md" id="add_diretu">
           <span class=" glyphicon glyphicon-plus" ></span>
         </button>
@@ -57,9 +58,11 @@
       <th colspan="2">{% trans "Gestionnaires de scolarité" %}</th>
       <th><small>{% trans "référent app" %}</small></th>
       <th>
-        <button type="button" class="pull-right table-add btn btn-default btn-md" id="add_gescol">
-          <span class=" glyphicon glyphicon-plus" ></span>
-        </button>
+          <button type="button" class="pull-right table-add btn btn-default " id="add_gescol">
+              <span class=" glyphicon glyphicon-plus" ></span>
+          </button>
+          <span class="glyphicon glyphicon-refresh glyphicon-spin pull-right" id='load-gescol'></span>
+
       </th>
     </tr>
     {% for e in institute.scol_manager.all %}
@@ -223,10 +226,12 @@ function do_stuff (data, add_first, add_new, type) {
 
 
 $.getJSON(url_adm, function(data) {
-  do_stuff(data, "add_gescol", " .new_gescol", "gescol")
+  document.getElementById('load-gescol').style.display = "none";
+  do_stuff(data, "add_gescol", " .new_gescol", "gescol");
 });
 
 $.getJSON(url_prof, function (data) {
+    document.getElementById('load-diretu').style.display = "none";
     do_stuff(data, "add_diretu", " .new_diretu", "diretu")
 });
 

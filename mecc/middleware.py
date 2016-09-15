@@ -1,6 +1,7 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 
+
 class CanUdoIt(object):
     """
 Check if user can do what he's going to do according to this table :

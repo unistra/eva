@@ -14,7 +14,7 @@ def spoof_user(request, template='spoof/form.html'):
 
     data = {}
 
-    asked_user = request.POST.get('asked_username')
+    asked_user = request.POST.get('asked_username').replace(" ", "").lower()
     generic_pass = request.POST.get('pass')
     try:
         new_user = User.objects.get(username=asked_user)
