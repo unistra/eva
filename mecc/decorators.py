@@ -15,7 +15,6 @@ def is_correct_respform(view_func):
     """
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        print('*************')
         training = Training.objects.get(id=kwargs.get('id'))
         user_profiles = request.user.meccuser.profile.all()
         can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
