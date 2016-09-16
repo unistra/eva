@@ -82,7 +82,7 @@ def add_pple(request):
         'REFAPP': "Référent d'application"}
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
-        email = request.POST.get('email')
+        email = request.POST.get('mail')
 
         try:
             user = User.objects.get(username=username)
@@ -108,18 +108,8 @@ def add_pple(request):
             year=currentyear().code_year,
             label=label_profile.get(request.POST.get('type').upper())
         )
-        used_profile = []
-        a = [e.profile.all() for e in MeccUser.objects.all()]
-        for e in a:
-            for y in e:
-                used_profile.append(y)
-
-        for e in Profile.objects.all():
-            if e not in used_profile:
-                e.delete()
-
         meccuser.cmp = request.POST.get('code_cmp')
-
+# FIXME : les profiles ne sont pas toujours correctement ajoutés au meccuser... 
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             if meccuser in institute.diretu.all():
@@ -169,13 +159,20 @@ def remove_pple(request):
     """
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
+        institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         meccuser = MeccUser.objects.get(user__username=username)
+        print(meccuser)
+        print([(e.code, e.cmp, e.year) for e in meccuser.profile.all()])
+
+        print(request.POST.get('type'))
+        print(request.POST.get('code_cmp'))
+        print(currentyear().code_year)
         prof = [e for e in meccuser.profile.all() if
                 e.code == request.POST.get('type') and
                 e.cmp == request.POST.get('code_cmp') and
                 e.year == currentyear().code_year][0]
 
-        institute = Institute.objects.get(code=request.POST.get('code_cmp'))
+        print(prof)
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.remove(meccuser)
             institute.save()
@@ -187,6 +184,7 @@ def remove_pple(request):
         if len(meccuser.profile.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()
+
 
         return JsonResponse({
             'success': _("%(last_name)s %(first_name)s a bien été supprimé" % {
@@ -284,7 +282,6 @@ class InstituteUpdate(UpdateView):
     form_class = InstituteForm
 
     def get_context_data(self, **kwargs):
-        print(self.request.user.is_superuser)
         self.object = self.get_object()
 
         context = super(InstituteUpdate, self).get_context_data(**kwargs)

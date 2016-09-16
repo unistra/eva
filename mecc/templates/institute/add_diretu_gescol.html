@@ -131,9 +131,7 @@ $('.table-remove').click(function () {
   });
   $(this).parents('tr').detach();
 });
-
-
-
+var mail = null;
 function do_stuff (data, add_first, add_new, type) {
 
   document.getElementById(add_first).style.display = "block";
@@ -165,6 +163,7 @@ function do_stuff (data, add_first, add_new, type) {
           onSelectItemEvent: function() {
             var first_name = auto_comp.getSelectedItemData().first_name;
             var id_member = auto_comp.getSelectedItemData().id_member;
+            mail = auto_comp.getSelectedItemData().mail;
             auto_comp.parents('td').next()[0].innerHTML = first_name;
             auto_comp.parents('td').next().next()[0].innerHTML = id_member;
           }
@@ -198,6 +197,7 @@ function do_stuff (data, add_first, add_new, type) {
                   username: username,
                   code_cmp: code_cmp,
                   type: type,
+                  mail: mail,
                   is_ref_app: refapp.is(":checked")
               },
               success: function(data) {

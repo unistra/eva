@@ -38,7 +38,6 @@ def manage_dircomp_rac(new_username, profile, institute, request, name):
 
     if new_username in ['', ' ', None]:
         return
-
     user, user_created = User.objects.get_or_create(username=new_username)
     if user_created:
         user.first_name = request.POST.get(str(profile) + '_first_name', '')
