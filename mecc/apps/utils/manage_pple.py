@@ -49,7 +49,6 @@ def manage_dircomp_rac(new_username, profile, institute, request, name):
     meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
     meccuser.profile.add(user_profile)
     meccuser.cmp = institute.code
-
     meccuser.save()
 
 

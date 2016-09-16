@@ -284,12 +284,14 @@ class InstituteUpdate(UpdateView):
     form_class = InstituteForm
 
     def get_context_data(self, **kwargs):
+        print(self.request.user.is_superuser)
         self.object = self.get_object()
 
         context = super(InstituteUpdate, self).get_context_data(**kwargs)
 
         if self.kwargs.get('code') in [
-         e.cmp for e in self.request.user.meccuser.profile.all() if e.code == "RESPFORM"] :
+         e.cmp for e in self.request.user.meccuser.profile.all() if
+         e.code == "RESPFORM"]:
             context['cannot_edit'] = True
         else:
             context['cannot_edit'] = False
