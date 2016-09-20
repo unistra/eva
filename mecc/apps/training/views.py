@@ -1,12 +1,13 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Training
+from mecc.apps.adm.models import Profile
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
 from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required
-from mecc.apps.rules.models import Rule
+from mecc.apps.rules.models import Rule, Paragraph
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
 from mecc.apps.utils.manage_pple import manage_respform
@@ -106,7 +107,17 @@ class TrainingEdit(UpdateView):
             currentyear().code_year, currentyear().code_year + 1)
         context['object'] = self.object
         context['resp_form'] = self.object.resp_formations.all()
+        # user_profile = request.user.meccuser.profile.all()
+        expected_profile = Profile.objects.filter(
+            cmp=self.object.supply_cmp,
+            year=currentyear().code_year,
+            code="RESPFORM")
 
+        context['can_edit'] = (True if expected_profile
+                               in self.request.user.meccuser.profile.all()
+                               or self.request.user.is_superuser
+                               else False)
+        print(context['can_edit'])
         return context
 
 
@@ -194,7 +205,18 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
     data = {}
     data['training'] = Training.objects.get(id=training_id)
-    data['rule'] = Rule.objects.get(id=rule_id)
+    data['rule'] = rule = Rule.objects.get(id=rule_id)
+    data['parag'] = Paragraph.objects.filter(rule=data['rule'])
+
+    return render(request, template, data)
+
+
+def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, template="training/form/edit_specific_paragraph.html"):
+    data = {}
+    data['training'] = Training.objects.get(id=training_id)
+    data['rule'] = rule = Rule.objects.get(id=rule_id)
+    p = data['paragraph'] = Paragraph.objects.get(id=paragraph_id)
+    print(p)
     return render(request, template, data)
 
 

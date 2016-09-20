@@ -33,9 +33,7 @@
         </div>
     </div>
     <div class="item-80 disp-flex" style="margin-bottom:1em;">
-        <div class="item-20">
-            {% trans "ID règle (auto) : " %} {{rule.n_rule | stringformat:"05d"}}
-        </div>
+
         <div class="item-35">
             {% trans "Année universitaire : " %} {{rule.code_year}}/{{rule.code_year|add:'1'}}
         </div>
@@ -43,43 +41,28 @@
             {{rule.label}}
         </div>
     </div>
+    <div class="item-100 disp-flex disabled" style="margin-bottom:1em;">
+        <div class="item-10">
+        </div>
+        <div class="item-20 disp-flex">
+            {% trans "Alinéa n°" %} {{paragraph.display_order}} <br> {% trans "standard" %}
+        </div>
+        <div >
+            {{paragraph.text_standard | safe}}
+        </div>
+    </div>
 </div>
 <div class="training-rules">
     <h2 class="title-block" style="font-weight: bold;">
-        {% trans 'Alinéas courants'%}
+        {% if training.is_cmp %}{% trans "Alinéa de composante" %}{%elif training.is_interaction%}{% trans "Dérogation" %}{% endif %}
     </h2>
     <div class="margin-top">
 
-        <table id="specific-rules" class="no-padding">
-            <thead>
-                <tr class="disabled no-padding">
-                    <th width="5%" ></th>
-                    <th width="65%"> </th>
-                    <th width="25%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for e in parag  %}
-                <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
-                    <td style="width: 5%; text-align: center;">{{e.display_order}}</td>
-                    <td style="width: 65%;">{{e.text_standard | safe}}</td>
-                    <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_cmp or e.is_interaction%} border-left {%endif%}">
-                        {% if e.is_cmp %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Sasir un alinéa de composante" %}</a> <br>
-                        <a href="#"> {% trans "Récupperer l'alinéa de composante n-1" %}</a>
-                        {% elif e.is_interaction %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Sasir une une dérogation" %}</a> <br>
-                        <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
-                        {% endif %}
-                    </td>
+        TODEV
 
-                </tr>
-
-                {% endfor %}
-            </tbody>
-        </table>
         <div class="buttons_list">
-            <a class="btn-primary btn btn-sm" href="{% url 'training:edit_rules' training.pk%}">{% trans "Fermer la fenêtre" %}</a>
+            <a class="btn-primary btn btn-sm" href="#">{% trans "Valider et fermer la fenêtre" %}</a>
+            <a class="btn-primary btn btn-sm" href="#">{% trans "Annuler et fermer la fenêtre" %}</a>
             </div>
 </div>
     {% include "training/rule_preview.html"%}
