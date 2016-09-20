@@ -109,7 +109,7 @@ def add_pple(request):
             label=label_profile.get(request.POST.get('type').upper())
         )
         meccuser.cmp = request.POST.get('code_cmp')
-# FIXME : les profiles ne sont pas toujours correctement ajoutés au meccuser... 
+
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             if meccuser in institute.diretu.all():
@@ -135,10 +135,13 @@ def add_pple(request):
             meccuser.is_ref_app = False if request.POST.get(
                 'is_ref_app') == 'false' else True
             if meccuser.is_ref_app:
-                profile.code = 'REFAPP'
-                profile.label = label_profile.get('REFAPP')
-                profile.save()
-            institute.scol_manager.add(meccuser)
+                profile, created = Profile.objects.get_or_create(
+                    code="REFAPP",
+                    cmp=request.POST.get('code_cmp'),
+                    year=currentyear().code_year,
+                    label=label_profile.get('REFAPP')
+                )
+            tempory = []
             institute.save()
 
         meccuser.profile.add(profile)
@@ -161,18 +164,12 @@ def remove_pple(request):
         username = request.POST.get('username')
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         meccuser = MeccUser.objects.get(user__username=username)
-        print(meccuser)
-        print([(e.code, e.cmp, e.year) for e in meccuser.profile.all()])
-
-        print(request.POST.get('type'))
-        print(request.POST.get('code_cmp'))
-        print(currentyear().code_year)
+        code = 'REFAPP' if request.POST.get('type') == 'GESCOL' and meccuser.is_ref_app else request.POST.get('type')
         prof = [e for e in meccuser.profile.all() if
-                e.code == request.POST.get('type') and
+                e.code == code and
                 e.cmp == request.POST.get('code_cmp') and
                 e.year == currentyear().code_year][0]
 
-        print(prof)
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.remove(meccuser)
             institute.save()
@@ -184,7 +181,6 @@ def remove_pple(request):
         if len(meccuser.profile.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()
-
 
         return JsonResponse({
             'success': _("%(last_name)s %(first_name)s a bien été supprimé" % {
