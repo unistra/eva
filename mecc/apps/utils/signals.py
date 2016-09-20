@@ -47,7 +47,9 @@ def ECI_pre_save(sender, **kwargs):
         meccuser = MeccUser.objects.get(user__username=new_user.username)
     except ObjectDoesNotExist:
         meccuser = MeccUser.objects.create(user=user)
-    eci = Profile.objects.get(code='ECI')
+    eci, create = Profile.objects.get_or_create(
+        code='ECI', label="Membre de la Commission ECI",
+        year=currentyear().code_year)
     meccuser.profile.add(eci)
     meccuser.save()
 
