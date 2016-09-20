@@ -105,8 +105,8 @@ def get_from_ldap(val):
     client = create_client('ldap_client', settings.LDAP_TOKEN,
                            settings.LDAP_SPORE, settings.LDAP_BASE_URL)
     ask = client.list_accounts(
-        format='json', establishment='UDS', last_or_birth_name=val
-    )
+        format='json', establishment='UDS', last_or_birth_name=val)
+
     return process_stuff(ask)
 
 

@@ -152,7 +152,7 @@
             {% if request.user|has_group:'DES1' or request.user.is_superuser %}"{% url 'training:list_all'%}"
             {% else %}"{%url 'training:list' request.user.meccuser.cmp%}"
             {%endif%}
-            {% if 'training/list' in request.path %}
+            {% if 'training/list_all/' in request.path or 'training/list/' in request.path%}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>

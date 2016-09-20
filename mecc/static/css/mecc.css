@@ -297,6 +297,9 @@ td.id_member {
 .bottom-2em {
     margin-bottom: 2em;
 }
+.bottom-1em {
+    margin-bottom: 1em;
+}
 .flex-center {
     display: flex;
     align-items: center;
