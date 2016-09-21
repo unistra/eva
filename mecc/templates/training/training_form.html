@@ -19,7 +19,30 @@
   <div class="disp-flex">
         <form action="" method="post" class="border-right training-form-1" id="training_form">
             {%crispy form%}
+            {%if can_edit%}
             {% include "training/form/add_cmp.html" %}
+            {% else %}
+            <label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
+                <span class="pull-right">porteuse</span>
+            </label>
+            <table class = "table " id='degreeTable'>
+
+               <tbody class="overflow" id='tbodyCmp'>
+              {% for e in object.institutes.all%}
+              <tr id='row-{{e.id}}'>
+                 <td style="width: 100%" >{{e.label}}
+                 </td>
+                 <td style="width: 5% " class="td-centered"> <input disabled='disabled' type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
+                 </td>
+
+              </tr>
+              {%endfor%}
+
+               </tbody>
+           </table>
+
+
+            {%endif%}
                 <button name="stay" class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
 
         </form>
@@ -59,7 +82,51 @@
                <span id="input_progress"></span>
            </div>
            <div class="has-top-border margin-top-auto" {% if object %}style="color:black">
+               {% if can_edit  %}
                {% include "training/form/add_respform.html" %}
+               {% else %}
+               <div class="f-1" style="width:100%">
+                   <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
+                   </label>
+
+               </div>
+
+               {%if object.resp_formations%}
+                   <table class="table" id="respformtable">
+
+
+                     <tbody class="overflow" id='repsformtbody'>
+
+                     {% for e in object.resp_formations.all %}
+
+                     <tr>
+                       <td width=42.5% class="v-align-m">{{e.user.last_name}}</td>
+                       <td width="42.5%" class="v-align-m">{{e.user.first_name}}</td>
+                       <td width="10%" class="v-align-m">{{e.cmp}}</td>
+                       <td width="5%" class="v-align-m">
+                           <div class="" action="{% url 'training:process_resp'%}" method="post">
+                               <div class="hidden" hidden >
+                                   {% csrf_token %}
+
+                                       <input type="text" name="formation"  value="{{object.id}}" readonly>
+                                       <input type="text" name="username"  readonly value="{{e.user.username}}">
+
+                                   </div>
+
+                           </div>
+
+
+                       </td>
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                   </table>
+               {% else %}
+               <div class="td-centered padding-1">
+                   {% trans "PAS DE RESPONSABLE DE FORMATION" %}
+               </div>
+               {%endif%}
+               {% endif %}
                {% else %}>
                <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
                    <br><span class="padding-1">{% trans "AUCUN" %}</span>
