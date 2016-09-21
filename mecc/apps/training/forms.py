@@ -1,9 +1,74 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Div
+from crispy_forms.layout import Layout, HTML, Field, Div, Submit
 from django.utils.translation import ugettext as _
-from .models import Training
+from .models import Training, SpecificParagraph
 from django.core.exceptions import ValidationError
+from ckeditor.widgets import CKEditorWidget
+
+
+class SpecificParagraphDerogForm(forms.ModelForm):
+    text_specific_paragraph = forms.CharField(widget=CKEditorWidget(), label='')
+    text_motiv = forms.CharField(widget=CKEditorWidget(), label='')
+
+    def __init__(self, *args, **kwargs):
+        super(SpecificParagraphDerogForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML("{{text_derog|safe}}"),
+            'text_specific_paragraph',
+            HTML("{{text_motiv|safe}}"),
+            'text_motiv',
+            Div(
+                Submit(
+                    'add', _('Valider et fermer la fenêtre'),
+                    css_class="btn-primary btn btn-sm",
+                    ),
+                HTML("""
+                    <a class='btn-primary btn btn-sm'
+                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=rule.id %} >
+                    Annuler et fermer la fenêtre </a>
+                     """),
+                css_class='buttons_list'
+            ),
+            )
+
+    class Meta:
+        model = SpecificParagraph
+        fields = [
+            'text_specific_paragraph',
+            'text_motiv'
+        ]
+
+
+class SpecificParagraphCmpForm(forms.ModelForm):
+    text_specific_paragraph = forms.CharField(widget=CKEditorWidget(), label='')
+
+    def __init__(self, *args, **kwargs):
+        super(SpecificParagraphCmpForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML("{{text_derog|safe}}"),
+            'text_specific_paragraph',
+            Div(
+                Submit(
+                    'add', _('Valider et fermer la fenêtre'),
+                    css_class="btn-primary btn btn-sm",
+                    ),
+                HTML("""
+                    <a class='btn-primary btn btn-sm'
+                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=rule.id %} >
+                    Annuler et fermer la fenêtre </a>
+                     """),
+                css_class='buttons_list'
+            ),
+            )
+
+    class Meta:
+        model = SpecificParagraph
+        fields = [
+            'text_specific_paragraph',
+        ]
 
 
 class RespTrainingForm(forms.ModelForm):

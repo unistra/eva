@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Training
+from .models import Training, SpecificParagraph
 from mecc.apps.adm.models import Profile
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
@@ -14,8 +14,9 @@ from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse
-from django.db import transaction
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
+from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm
 
 
 def add_current_year(dic):
@@ -117,7 +118,6 @@ class TrainingEdit(UpdateView):
                                in self.request.user.meccuser.profile.all()
                                or self.request.user.is_superuser
                                else False)
-        print(context['can_edit'])
         return context
 
 
@@ -212,11 +212,45 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, template="training/form/edit_specific_paragraph.html"):
+
+    # if request.method == 'POST':
+    #
+    #     form = InstituteForm(request.POST, request.FILES, instance=institute)
+    #     if form.is_valid():
+    #         form.save()
+    #         return redirect('institute:home')  # Redirect after POST
+    # else:
+    #     form = InstituteForm(instance=institute)
+
     data = {}
-    data['training'] = Training.objects.get(id=training_id)
-    data['rule'] = rule = Rule.objects.get(id=rule_id)
-    p = data['paragraph'] = Paragraph.objects.get(id=paragraph_id)
-    print(p)
+    data['training'] = t = Training.objects.get(id=training_id)
+    data['rule'] = r = Rule.objects.get(id=rule_id)
+    data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
+    data['title'] = _('Alinéa de composante') if p.is_cmp is True else _('Dérogation')
+
+    sp, created = SpecificParagraph.objects.get_or_create(
+        code_year=currentyear().code_year,
+        training=t,
+        rule_gen_id=r.id,
+        paragraph_gen_id=p.id,
+        type_paragraph="C" if p.is_cmp else "D",
+    )
+    data['form'] = (SpecificParagraphCmpForm(instance=sp) if p.is_cmp
+                    else SpecificParagraphDerogForm(instance=sp))
+
+    data['text_derog'] = p.text_derog
+    data['text_motiv'] = p.text_motiv
+
+
+    if request.method == 'POST':
+        form = (SpecificParagraphCmpForm(request.POST, instance=sp)
+                if p.is_cmp else SpecificParagraphDerogForm(request.POST,
+                instance=sp))
+        if form.is_valid():
+            form.save()
+            return redirect(
+                'training:specific_paragraph', training_id=t.id, rule_id=r.id)
+
     return render(request, template, data)
 
 

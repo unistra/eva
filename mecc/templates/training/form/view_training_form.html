@@ -1,0 +1,91 @@
+<div action="" method="post" class="border-right training-form-1">
+    <div class="form-group" id="div_id_degree_type">
+        <label class="control-label requiredField" for="id_degree_type">Type de diplôme
+            <span class="asteriskField">*</span>
+        </label>
+        <div class="controls">
+            <select class="select form-control" id="id_degree_type" name="degree_type"  disabled="disabled">
+                <option>{{object.degree_type}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="disp-flex">
+        <div class="form-group">
+            <div id="div_id_is_used" class="checkbox">
+                <label for="id_is_used" class="">
+                    <input disabled="disabled"  {%if object.is_used %}checked="checked"{%endif%} type="checkbox"> En service
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div id="div_id_MECC_tab" class="checkbox">
+                <label for="id_MECC_tab" class="">
+                    <input disabled="disabled"  {%if object.MECC_tab %}checked="checked"{%endif%}  type="checkbox"> Témoin Tableau MECC
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="div_id_label" class="form-group"> <label for="id_label" class="control-label  requiredField">
+            Intitulé de la formation<span class="asteriskField">*</span> </label>
+        <div class="controls "> <textarea disabled="disabled" class="textarea form-control" cols="40" id="id_label" name="label" rows="2" style="resize:none;">Master 1 Chimie et biologie</textarea>
+            <p id="hint_id_label" class="help-block">Année/parcours</p>
+        </div>
+    </div>
+    <div class="disp-flex">
+        <div class="control-label"> </div>
+        <div id="div_id_MECC_type" class="form-group"> <label for="id_MECC_type_0" class="control-label ">
+            Régime
+        </label>
+            <div class="controls ">
+                <div class="radio"> <label class=""> <input disabled="disabled"  type="radio" checked="checked" name="MECC_type" id="id_MECC_type_1" value="E">ECI
+    </label> </div>
+                <div class="radio"> <label class=""> <input disabled="disabled"  type="radio" name="MECC_type" id="id_MECC_type_2" value="C">CC/CT
+    </label> </div>
+            </div>
+        </div>
+        <div id="div_id_session_type" class="form-group"> <label for="id_session_type_0" class="control-label ">
+            Session
+        </label>
+            <div class="controls ">
+                <div class="radio"> <label class=""> <input disabled="disabled"  type="radio" checked="checked" name="session_type" id="id_session_type_1" value="2">2 sessions
+    </label> </div>
+                <div class="radio"> <label class=""> <input disabled="disabled"  type="radio" name="session_type" id="id_session_type_2" value="1">Session unique
+    </label> </div>
+            </div>
+        </div>
+    </div>
+    <div id="div_id_ref_cpa_rof" class="form-group"> <label for="id_ref_cpa_rof" class="control-label ">
+            Référence CP Année ROF
+        </label>
+        <div class="controls "> <input disabled="disabled"  class="textinput disabled="disabled"  textinput disabled="disabled"  form-control" id="id_ref_cpa_rof" maxlength="20" name="ref_cpa_rof" type="text"> </div>
+    </div>
+    <div id="div_id_ref_si_scol" class="form-group"> <label for="id_ref_si_scol" class="control-label ">
+            Référence SI Scol
+        </label>
+        <div class="controls "> <input disabled="disabled"  class="textinput disabled="disabled"  textinput disabled="disabled"  form-control" id="id_ref_si_scol" maxlength="20" name="ref_si_scol" type="text"> </div>
+    </div>
+</div>
+<label style="display: inline-block;width:100%"> Composante<span class="asteriskField">*</span>
+<span class="pull-right">porteuse</span>
+</label>
+<table class = "table " id='degreeTable'>
+
+<tbody class="overflow" id='tbodyCmp'>
+{% for e in object.institutes.all%}
+<tr id='row-{{e.id}}'>
+ <td style="width: 100%" >{{e.label}}
+ </td>
+ <td style="width: 5% " class="td-centered"> <input disabled="disabled"  type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
+ </td>
+ <td style="width: 5%" class="td-centered">
+  <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-cmp pull-right" onclick="remove_line(this)" ></a>
+ </td>
+</tr>
+{%endfor%}
+
+</tbody>
+
+</table>
+
+
+</div>

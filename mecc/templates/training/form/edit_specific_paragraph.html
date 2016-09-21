@@ -1,14 +1,16 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}{% load crispy_forms_tags %}
+
 {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
 
 {% block app_content %}
+
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
 <h2 class="title-modal" style="font-weight: bold;">
-    {% trans 'Gestion des dérogations et alinéas de composante'%}
+    {{title}}
 </h2>
 <div class="disp-flex dir-col has-bottom-border">
     <div class=" parent disp-flex ">
@@ -42,12 +44,11 @@
         </div>
     </div>
     <div class="item-100 disp-flex disabled" style="margin-bottom:1em;">
-        <div class="item-10">
-        </div>
-        <div class="item-20 disp-flex">
+
+        <div class="item-20 disp-flex margin-left6">
             {% trans "Alinéa n°" %} {{paragraph.display_order}} <br> {% trans "standard" %}
         </div>
-        <div >
+        <div id ="text_standard">
             {{paragraph.text_standard | safe}}
         </div>
     </div>
@@ -57,15 +58,16 @@
         {% if training.is_cmp %}{% trans "Alinéa de composante" %}{%elif training.is_interaction%}{% trans "Dérogation" %}{% endif %}
     </h2>
     <div class="margin-top">
+        {%crispy form%}
+    </div>
 
-        TODEV
+{% if not paragraph.is_cmp %}
+    <script type="text/javascript">
+    $( document ).ready(function() {
+        var t = document.getElementById('text_standard')
+        CKEDITOR.instances.id_text_specific_paragraph.setData(t.innerHTML);
 
-        <div class="buttons_list">
-            <a class="btn-primary btn btn-sm" href="#">{% trans "Valider et fermer la fenêtre" %}</a>
-            <a class="btn-primary btn btn-sm" href="#">{% trans "Annuler et fermer la fenêtre" %}</a>
-            </div>
-</div>
-    {% include "training/rule_preview.html"%}
-
-
+});
+    </script>
+    {% endif %}
 {%endblock%}

@@ -101,7 +101,7 @@ class SpecificParagraph(models.Model):
     paragraph_gen_id = models.IntegerField(_('ID alinéa général'))
     type_paragraph = models.CharField(
         _('Type alinéa'), choices=TYPE_PARAPGRAPH, max_length=1)
-    text_specific_parapgraph = models.TextField(_("Texte d'alinéa spécifique"))
+    text_specific_paragraph = models.TextField(_("Texte d'alinéa spécifique"))
     text_motiv = models.TextField(_("Texte de motivation"))
     impact = models.ManyToManyField(Impact)
 
