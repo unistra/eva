@@ -65,10 +65,10 @@
                     <td style="width: 65%;">{{e.text_standard | safe}}</td>
                     <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_cmp or e.is_interaction%} border-left {%endif%}">
                         {% if e.is_cmp %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Sasir un alinéa de composante" %}</a> <br>
-                        <a href="#"> {% trans "Récupperer l'alinéa de composante n-1" %}</a>
+                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Saisir un alinéa de composante" %}</a> <br>
+                        <a href="#"> {% trans "Récupérer l'alinéa de composante n-1" %}</a>
                         {% elif e.is_interaction %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Sasir une une dérogation" %}</a> <br>
+                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Saisir une une dérogation" %}</a> <br>
                         <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
                         {% endif %}
                     </td>
