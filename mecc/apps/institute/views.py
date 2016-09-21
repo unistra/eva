@@ -37,7 +37,6 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['form_institute'] = DircompInstituteForm(instance=institute)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-
     profiles = Profile.objects.filter(
         cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC"))
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
@@ -131,7 +130,6 @@ def add_pple(request):
                         'first_name': request.POST.get('first_name')
                     })
                 })
-
             meccuser.is_ref_app = False if request.POST.get(
                 'is_ref_app') == 'false' else True
             if meccuser.is_ref_app:
@@ -141,7 +139,7 @@ def add_pple(request):
                     year=currentyear().code_year,
                     label=label_profile.get('REFAPP')
                 )
-            tempory = []
+            institute.scol_manager.add(meccuser)
             institute.save()
 
         meccuser.profile.add(profile)
