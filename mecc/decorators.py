@@ -10,20 +10,19 @@ from mecc.apps.adm.models import Profile
 
 
 def is_correct_respform(view_func):
-    """
-    Check if the request is ajax
-    """
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         training = Training.objects.get(id=kwargs.get('id'))
         user_profiles = request.user.meccuser.profile.all()
         can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
             year=currentyear().code_year).filter(
-            Q(code='DIRCOMP') | Q(code='RAC'))
-        dircomp_or_rac = any(True for x in can_do_alot if x in user_profiles)
-
+                Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
+                | Q(code='GESCOL') | Q(code='DIRETU'))
+        allowed = any(True for x in can_do_alot if x in user_profiles)
         b = [e.id for e in training.resp_formations.all()]
-        if request.user.meccuser.id in b or request.user.is_superuser or dircomp_or_rac:
+        request.environ['allowed'] = allowed
+        if request.user.meccuser.id in b or request.user.is_superuser or allowed:
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")

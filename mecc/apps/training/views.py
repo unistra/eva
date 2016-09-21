@@ -114,10 +114,13 @@ class TrainingEdit(UpdateView):
             year=currentyear().code_year,
             code="RESPFORM")
 
-        context['can_edit'] = (True if expected_profile
-                               in self.request.user.meccuser.profile.all()
-                               or self.request.user.is_superuser
-                               else False)
+        context['can_edit'] = (self.request.environ['allowed']
+                               or self.request.user.is_superuser)
+        # (True if expected_profile
+        #                        in self.request.user.meccuser.profile.all()
+        #                        or self.request.user.is_superuser
+        #                        else False)
+
         return context
 
 
@@ -126,7 +129,6 @@ class TrainingDelete(DeleteView):
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
         return add_current_year(context)
-
 
     def get_success_url(self):
         if self.request.session['visited_cmp']:
@@ -223,6 +225,7 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
     #     form = InstituteForm(instance=institute)
 
     data = {}
+
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
