@@ -36,42 +36,32 @@ def create_client(name, token, spore, base_url):
     return client
 
 
-def get_list_from_cmp(cmp, employee_type, page_num=1, result=[]):
+def get_list_from_cmp_by_ldap(cmp):
     """
-    Return list of selected employee_type from a selected institute
+    Return list of selected employee_type from a selected affectation
     """
-    if employee_type not in['Enseignant', 'Administratif']:
-        raise Exception(_('Mauvais type pour get_list_from_cmp'))
+    employee_type = {'faculty': 'Enseignant', 'employee': 'Administratif'}
     client = create_client(
-        'camelot_client', settings.CAMELOT_TOKEN, settings.CAMELOT_SPORE,
-        settings.CAMELOT_BASE_URL
+        'ldap_client', settings.LDAP_TOKEN, settings.LDAP_SPORE,
+        settings.LDAP_BASE_URL
     )
-    ask = client.get_persons(
-        format='json', employee_type=employee_type, structure=cmp,
-        page_size=500, page=page_num
-    )
+    ask = client.list_users(format='json', affectation=cmp)
     r = json.loads(ask.text)
-# FIXME: may work with list comprehension
-    if r and 'results' in r and r['results']:
-        for i in r['results']:
-            for e in i['accounts']:
-                if e['is_active'] is True:
-                    person = {
-                        "last_name": i['last_name'],
-                        "birth_name": i['birth_name'],
-                        "first_name": i['first_name'].title(),
-                        "status": employee_type,
-                        "cmp": cmp,
-                        "birth_date": i['birth_date'],
-                        "id_member": e['username'],
-                        "mail": e['mail'],
-                    }
-                    if person not in result and '@etu.unistra.fr' \
-                       not in person['mail'] and person[("status")] == employee_type:
-                        result.append(person)
-    if r['next'] is not None:
-        page_num += 1
-        get_list_from_cmp(cmp, employee_type, page_num=page_num, result=result)
+    result = []
+    for e in r:
+        if e.get('is_active'):
+            person = {
+                "last_name": e['last_name'],
+                "birth_name": e['birth_name'],
+                "first_name": e['first_name'].title(),
+                "status": employee_type.get(e.get('primary_affiliation')),
+                "cmp": cmp,
+                "birth_date": e['birth_date'],
+                "id_member": e['username'],
+                "mail": e['mail'],
+            }
+            if person not in result:
+                result.append(person)
 
     return result
 

@@ -14,7 +14,7 @@ from mecc.apps.years.forms import DircompInstituteYearForm, \
     DircompUniversityYearForm, DisabledInstituteYearForm
 from mecc.apps.institute.models import Institute
 from mecc.apps.years.models import InstituteYear, UniversityYear
-from mecc.apps.utils.ws import get_list_from_cmp
+from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
@@ -193,12 +193,10 @@ def get_list(request, employee_type, pk):
     """
     Return list of professor or administration staff
     """
-    if employee_type == 'prof':
-        type_staff = 'Enseignant'
-    elif employee_type == 'adm':
-        type_staff = 'Administratif'
-    t = get_list_from_cmp(cmp=pk, employee_type=type_staff, result=[])
-    return JsonResponse(t, safe=False)
+    status = {'prof': 'Enseignant', 'adm': 'Administratif'}
+    t = get_list_from_cmp_by_ldap(cmp=pk)
+    result = [e for e in t if e.get('status') == status.get(employee_type)]
+    return JsonResponse(result, safe=False)
 
 
 class InstituteDelete(DeleteView):
