@@ -30,11 +30,13 @@ def update_is_in_use(request):
             })
     else:
         s_year.is_target_year = x
-        request.session['current_year'] = s_year.label_year if x else "Aucune année cible sélectionnée"
+        display = s_year.label_year if x else "Aucune année cible sélectionnée"
+        request.session['current_year'] = display
         s_year.save()
         return JsonResponse({
             "status": "updated",
             "message": "%s a été modifiée" % s_year.label_year,
+            "display": display
             })
 
 

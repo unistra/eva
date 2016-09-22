@@ -92,6 +92,7 @@ $('.select-type').on('change', function() {
             } if (data.status === 'error'){
                 document.getElementById(_id).value = 0;
             }
+            document.getElementById('nav-right').innerHTML = data.display;
     }});
 });
 </script>
