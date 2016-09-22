@@ -23,13 +23,14 @@ def update_is_in_use(request):
         code_year=request.POST.get('code_year'))
     x = True if request.POST.get('value') == '1' else False
     if x and len(UniversityYear.objects.filter(is_target_year=True)) > 0:
-        empty = False
+
         return JsonResponse({
             "status": "error",
             "message": "Veuillez désactiver l'année cible courante",
             })
     else:
         s_year.is_target_year = x
+        request.session['current_year'] = s_year.label_year if x else "Aucune année cible sélectionnée"
         s_year.save()
         return JsonResponse({
             "status": "updated",

@@ -21,7 +21,7 @@ from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm
 
 def add_current_year(dic):
     dic['disp_current_year'] = "%s/%s" % (
-        currentyear().code_year, currentyear().code_year + 1)
+        currentyear().code_year, currentyear().code_year + 1) if currentyear() is not None else ""
     return dic
 
 
@@ -57,7 +57,8 @@ class TrainingListView(ListView):
     def get_queryset(self):
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
-            code_year=currentyear().code_year).order_by('degree_type')
+            code_year=currentyear().code_year
+            if currentyear() is not None else None).order_by('degree_type')
         if self.kwargs['cmp'] is None:
             return trainings
 
@@ -160,7 +161,7 @@ def respform_list(request, template='training/respform_trainings.html'):
     data = {}
     data['trainings'] = Training.objects.filter(
         resp_formations=request.user.meccuser).filter(
-        code_year=currentyear().code_year)
+        code_year=currentyear().code_year if currentyear() is not None else None)
     return render(request, template, data)
 
 
