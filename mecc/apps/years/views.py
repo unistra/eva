@@ -12,6 +12,29 @@ from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from mecc.apps.training.models import Training
+from mecc.decorators import is_post_request, is_ajax_request
+
+from django.http import JsonResponse
+
+
+@is_ajax_request
+def update_is_in_use(request):
+    s_year = UniversityYear.objects.get(
+        code_year=request.POST.get('code_year'))
+    x = True if request.POST.get('value') == '1' else False
+    if x and len(UniversityYear.objects.filter(is_target_year=True)) > 0:
+        empty = False
+        return JsonResponse({
+            "status": "error",
+            "message": "Veuillez désactiver l'année cible courante",
+            })
+    else:
+        s_year.is_target_year = x
+        s_year.save()
+        return JsonResponse({
+            "status": "updated",
+            "message": "%s a été modifiée" % s_year.label_year,
+            })
 
 
 class UniversityYearDelete(DeleteView):

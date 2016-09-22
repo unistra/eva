@@ -2,12 +2,15 @@
 
 {% load i18n %}
 {% load field_name %}
+{% load staticfiles %}
 
 {% block page-header %}
 {% trans 'Années universitaires' %}
 {% endblock %}
 
 {% block app_content %}
+<script src="{% static 'js/notif.js' %}"></script>
+<div class='notifications top-right'></div>
 
 {% if object_list %}
 <table class="table">
@@ -27,11 +30,10 @@
     <td>{{e.code_year}}</td>
     <td>{{e.label_year}}</td>
     <td>
-      {% if e.is_target_year == True %}
-        <strong>{% trans "OUI" %}</strong>
-      {% else %}
-        non
-      {% endif %}
+        <select class='select-type' id="val_{{e.id}}">
+            <option value="1" {% if e.is_target_year%} selected="selected" {% endif %} > {% trans "Oui" %}</option>
+            <option value="0" {% if not e.is_target_year %} selected="selected" {% endif %} >{% trans "Non" %}</option>
+        </select>
     </td>
     <td>{{e.date_validation|date:"d/m/Y"}}</td>
     <td>{{e.date_expected|date:"d/m/Y"}}</td>
@@ -44,7 +46,9 @@
       <strong>{% trans "OUI" %}</strong>
       {% else %}
       {% trans "non" %}
-      {% endif %}</td>
+      {% endif %}
+  </td>
+
     <td>
       <a href="{% url 'years:edit' code_year=e.code_year %}" class="glyphicon glyphicon-pencil"></a>
     </td>
@@ -63,4 +67,33 @@
 <div class='pull-right'>
   <a href="{% url 'years:create' %}" class="btn btn-primary"> {% trans 'Créer une nouvelle année' %}</a>
 </div>
+
+<script type="text/javascript">
+$('.select-type').on('change', function() {
+    var _id = this.id;
+    value = this.value;
+    code_year = $(this).parents('td').prev().prev().text();
+    $.ajax({
+        url: "{% url 'years:update_is_in_use'%}",
+        type: "POST",
+        data: {
+            code_year: code_year,
+            value: value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(data) {
+            if (data) {
+                $('.top-right').notify({
+                    message: {
+                        text: data.message
+                    },
+                    type: data.status === 'updated' ? 'info': 'danger'
+                }).show();
+            } if (data.status === 'error'){
+                document.getElementById(_id).value = 0;
+            }
+    }});
+});
+</script>
+
 {% endblock %}
