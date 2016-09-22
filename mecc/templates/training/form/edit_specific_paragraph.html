@@ -61,13 +61,4 @@
         {%crispy form%}
     </div>
 
-{% if not paragraph.is_cmp %}
-    <script type="text/javascript">
-    $( document ).ready(function() {
-        var t = document.getElementById('text_standard')
-        console.log(CKEDITOR.instances.id_text_specific_paragraph.getData())
-
-});
-    </script>
-    {% endif %}
 {%endblock%}

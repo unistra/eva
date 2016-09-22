@@ -230,12 +230,15 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
         paragraph_gen_id=p.id,
         type_paragraph="C" if p.is_cmp else "D",
     )
-    data['form'] = (SpecificParagraphCmpForm(instance=sp) if p.is_cmp
-                    else SpecificParagraphDerogForm(instance=sp))
 
     data['text_derog'] = p.text_derog
     data['text_motiv'] = p.text_motiv
+    if created:
+        sp.text_specific_paragraph = p.text_derog
+        sp.save()
 
+    data['form'] = (SpecificParagraphCmpForm(instance=sp) if p.is_cmp
+                    else SpecificParagraphDerogForm(instance=sp))
 
     if request.method == 'POST':
         form = (SpecificParagraphCmpForm(request.POST, instance=sp)
