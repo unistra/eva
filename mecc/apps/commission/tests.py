@@ -1,6 +1,7 @@
 from django.test import TestCase, RequestFactory, TransactionTestCase
 from .forms import ECIForm
 from .models import ECICommissionMember
+from ..years.models import UniversityYear
 from .views import home, change_typemember, send_mail
 from ..adm.models import Profile, MeccUser
 from django.contrib.auth.models import User
@@ -30,6 +31,7 @@ class ECIFormTest(TestCase):
 class ECIMemberTest(TestCase):
 
     def setUp(self):
+        UniversityYear.objects.create(code_year=2016, is_target_year=True)
         Profile.objects.create(code='ECI', label="Membre de la commission ECI")
         Profile.objects.create(code='DIRCOMP', label="Directeur de composante")
         User.objects.create_user(username="TEST1")
@@ -40,7 +42,7 @@ class ECIMemberTest(TestCase):
         eci_member = ECICommissionMember.objects.get(username="TEST3")
         u = User.objects.get(username="TEST3")
         self.assertTrue(
-            Profile.objects.get(code="ECI") in MeccUser.objects.get(
+            Profile.objects.get(code="ECI", year=2016) in MeccUser.objects.get(
                 user=u).profile.all())
         self.assertRaises(
             ValidationError,
@@ -59,7 +61,7 @@ class ECIMemberTest(TestCase):
         eci_member2.delete()
 
         self.assertFalse(
-            Profile.objects.get(code="ECI") in mecc_u1.profile.all())
+            Profile.objects.get(code="ECI", year=2016) in mecc_u1.profile.all())
         self.assertTrue(
             "TEST2" not in [e.username for e in User.objects.all()]
         )
@@ -69,6 +71,7 @@ class ECIMemberTest(TestCase):
 class CommissionTrajsitionViewTest(TransactionTestCase):
 
     def setUp(self):
+        UniversityYear.objects.create(code_year=2016, is_target_year=True)
         Profile.objects.create(code='ECI', label="Membre de la commission ECI")
         self.factory = RequestFactory()
 
