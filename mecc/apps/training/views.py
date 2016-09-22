@@ -176,13 +176,13 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
 
-    trainings = Training.objects.all().filter(
-        institutes=Institute.objects.get(code=cmp
-    )) if cmp is not None else Training.objects.all()
+    trainings = (Training.objects.all().filter(
+        institutes=Institute.objects.get(code=cmp)).order_by('label')
+        if cmp is not None else Training.objects.all()).order_by('label')
     data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
         e.code_year, e.code_year + 1)) for e in trainings}, reverse=True)
     data['existing_trainings'] = existing = trainings.filter(
-        code_year=current_year.code_year)
+        code_year=current_year.code_year).order_by('label')
     data['asked_year'] = None if year is None else int(year)
 
     if year is None:
