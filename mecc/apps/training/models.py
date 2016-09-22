@@ -44,7 +44,7 @@ class Training(models.Model):
         max_length=1, default="E")
     progress_table = models.CharField(
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
-        max_length=1)
+        max_length=1, default="E")
     date_val_cmp = models.DateField(
         _('Date de validation en conseil de composante'), blank=True, null=True)
     date_res_des = models.DateField(

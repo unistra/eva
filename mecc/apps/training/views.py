@@ -214,16 +214,6 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, template="training/form/edit_specific_paragraph.html"):
-
-    # if request.method == 'POST':
-    #
-    #     form = InstituteForm(request.POST, request.FILES, instance=institute)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('institute:home')  # Redirect after POST
-    # else:
-    #     form = InstituteForm(instance=institute)
-
     data = {}
 
     data['training'] = t = Training.objects.get(id=training_id)
@@ -282,13 +272,10 @@ def duplicate_add(request):
             degree_type=t.degree_type,
             label=t.label,
             is_used=t.is_used,
-            MECC_tab=t.MECC_tab,
             MECC_type=t.MECC_type,
             session_type=t.session_type,
             ref_cpa_rof=t.ref_cpa_rof,
             ref_si_scol=t.ref_si_scol,
-            progress_rule=t.progress_rule,
-            progress_table=t.progress_table,
             date_val_cmp=t.date_val_cmp,
             date_res_des=t.date_res_des,
             date_visa_des=t.date_visa_des,

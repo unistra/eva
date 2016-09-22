@@ -46,7 +46,7 @@
     <td width="5%" class='no-padding no-border'></td>
     <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
     <td width="10%" class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}} </td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.progress_table}} </td>
+    <td width="10%" class="no-padding td-centered border-bottom">{{item.get_progress_table_display}} </td>
     <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
