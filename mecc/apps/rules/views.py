@@ -29,7 +29,7 @@ class RulesListView(ListView):
         return query rules only for current year
         """
         qs = super(RulesListView, self).get_queryset()
-        return qs.filter(code_year=cy.code_year if currentyear() is not None else None)
+        return qs.filter(code_year=currentyear().code_year if currentyear() is not None else None)
 
     def get_context_data(self, **kwargs):
         context = super(RulesListView, self).get_context_data(**kwargs)

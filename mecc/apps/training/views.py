@@ -111,10 +111,10 @@ class TrainingEdit(UpdateView):
         context['object'] = self.object
         context['resp_form'] = self.object.resp_formations.all()
         # user_profile = request.user.meccuser.profile.all()
-        expected_profile = Profile.objects.filter(
-            cmp=self.object.supply_cmp,
-            year=currentyear().code_year,
-            code="RESPFORM")
+        # expected_profile = Profile.objects.filter(
+        #     cmp=self.object.supply_cmp,
+        #     year=currentyear().code_year,
+        #     code="RESPFORM")
 
         context['can_edit'] = (self.request.environ['allowed']
                                or self.request.user.is_superuser)
