@@ -33,11 +33,12 @@
      </tr>
    </thead>
    <tbody class="overflow" >
-
+{% if object_list %}
 {%regroup object_list by degree_type as trainings %}
 
 
 {%for field in trainings%}
+{% if trainings %}
 <tr>
     <td class='no-border'><strong>{{field.grouper}}</strong></td>
 <tr>
@@ -56,12 +57,15 @@
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
     </td>
 </tr>
+
 {%endfor%}
+{% endif %}
 {%endfor%}
 </tbody>
 
 {%endif%}
 {%endif%}
+{% endif %}
 </table>
 </div>
 

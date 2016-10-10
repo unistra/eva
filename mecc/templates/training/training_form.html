@@ -13,8 +13,9 @@
 {% block app_content %}
     <ul class="nav nav-tabs" style="margin-bottom:1em">
         <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-        <li><a href="{%if object%}{% url 'training:edit_rules' object.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-        <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+
+        <li><a href={%if object%}"{% url 'training:edit_rules' object.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
+        <li><a href={%if object%}"#" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
         <form action="" method="post" class="border-right training-form-1" id="training_form">
@@ -43,7 +44,7 @@
 
 
             {%endif%}
-                <button name="stay" class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
+                <button name="stay" onclick="_isEdited = false;"class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
 
         </form>
         <div class="training-form-validate training-form-1 {%if not validation_form%}grey {%endif%}">
@@ -136,12 +137,13 @@
         </div>
  </div>
  <div class="buttons_list has-top-border" style="margin-top:1em;">
-     <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Valider et créer une nouvelle formation" %}</button>
  <a href=
  {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
  {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
  {% else %}"{%url 'training:list_all' %}"
- {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Retour liste des formations" %}</a></div>
+ {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
+ <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
+</div>
 
 <style media="screen">
     .training-form-validate> .form-group:not(:first-child){
@@ -152,4 +154,26 @@
     }
 </style>
 
+<script type="text/javascript">
+
+
+$(document).ready(function () {
+    var _isEdited = false;
+    $(':input').change(function () {
+        _isEdited = true;
+        if(this.id === 'to-search'){_isEdited = false;}
+    });
+    window.onbeforeunload = function (e) {
+        if (_isEdited === true) {
+        var e = e || window.event;
+        // For IE and Firefox
+        if (e) {
+          e.returnValue = 'Des modifications ont été effectuées.';
+        }
+        // For Safari
+        return 'Des modifications ont été effectuées.';
+        };
+    };
+});
+</script>
 {%endblock%}

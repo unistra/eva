@@ -1,13 +1,17 @@
 {% load i18n %} {% load groups%}
+{% load staticfiles %}
+
+<script src="{% static 'js/srtable.js' %}"></script>
+
 <label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
     <span class="pull-right">porteuse</span>
 </label>
-<table class = "table " id='degreeTable'>
+<table class = "table " id='cmpTable'>
 
    <tbody class="overflow" id='tbodyCmp'>
   {% for e in object.institutes.all%}
   <tr id='row-{{e.id}}'>
-     <td style="width: 100%" >{{e.label}}
+     <td style="width: 100%" class='sort-default' >{{e.label}}
      </td>
      <td style="width: 5% " class="td-centered"> <input type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
      </td>
@@ -35,17 +39,17 @@
 </table>
 
 <style media="screen">
-#degreeTable .table{
+#cmpTable .table{
   width: 22vw;
 
 }
-#degreeTable .overflow{
+#cmpTable .overflow{
     display:block;
   }
  caption{
   padding-top: 0;
 }
-#degreeTable td{
+#cmpTable td{
   width: 100vw;
 }
 .table>tbody>tr>td {
@@ -53,6 +57,8 @@
 }
 </style>
 <script type="text/javascript">
+var sort = new Tablesort(document.getElementById('cmpTable'));
+
 {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 var institute_val = $('#id_institutes').val() === null ? [] : $('#id_institutes').val();
@@ -97,6 +103,7 @@ $('#select-cmp').on('change', function() {
         var cmp = parts[0]
         var val = parts[1]
         row.id = 'row-' + val
+        row.className += 'bold italic'
         var cell1 = row.insertCell(0);
         cell1.style.width = '100%'
         cell1.innerHTML = label;
@@ -111,34 +118,11 @@ $('#select-cmp').on('change', function() {
         institute_val.push(val);
         $('#id_institutes').val(institute_val)
         set_suppply()
+        console.log('yo:!');
     }
-
+    sort.refresh()
+    console.log(document.getElementById('cmpTable'));
 });
-//
-// var x = document.getElementById("select-cmp");
-// var parts = this.value.split('-', 2);
-// var label = this.options[this.selectedIndex].innerHTML;
-// if (this.value != "default") {
-//     x.remove(x.selectedIndex);
-//     var tbody = document.getElementById('tbodyCmp');
-//     var row = tbody.insertRow(0);
-//     var cmp = parts[0]
-//     var val = parts[1]
-//     row.id = 'row-' + val
-//     var cell1 = row.insertCell(0);
-//     cell1.style.width = '100%'
-//     cell1.innerHTML = label;
-//     var cell2 = row.insertCell(1);
-//     cell2.className += 'td-centered'
-//     cell2.style.width = '5%'
-//     cell2.innerHTML = '<input type="radio" name="supply" value="' + cmp + '">';
-//     var cell3 = row.insertCell(2);
-//     cell3.className += 'td-centered'
-//     cell3.style.width = '5%'
-//     cell3.innerHTML = '<a id=" ' + val + '" class="glyphicon glyphicon-trash select remove-cmp pull-right" onclick="remove_line(this)" ></a>';
-//     institute_val.push(val);
-//     $('#id_institutes').val(institute_val)
-//     set_suppply()}
 {% if request.session.visited_cmp_id and not object%}
     var _id = '{{request.session.visited_cmp}}'+'-'+'{{request.session.visited_cmp_id}}'
     var label = '{{request.session.visited_cmp_label}}'
@@ -171,7 +155,7 @@ remove_line();
 
 {%else%}
 document.getElementById("select-cmp").disabled = true;
-document.getElementById("degreeTable").className += " disabled-event";
+document.getElementById("cmpTable").className += " disabled-event";
 
 {%endif%}
 </script>

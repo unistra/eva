@@ -19,10 +19,8 @@
 
 {% for field in institute_list %}
 <li>
-
-        <ul>
-            {{ field.grouper }}
-
+    <ul>
+        {{ field.grouper }}
         {% for item in field.list %}
         <br>
         <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}

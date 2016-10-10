@@ -28,7 +28,7 @@
 <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
 </div>
   {% crispy form %}
-  <div style="display:none">
+  <div style="">
    <input id="input_dircomp_username_member" name="dircomp_username"  />
    <input id="input_dircomp_last_name" name="dircomp_last_name" />
    <input id="input_dircomp_first_name" name="dircomp_first_name" />
@@ -44,10 +44,11 @@
   <span class="glyphicon glyphicon-refresh glyphicon-spin pull-right" id='load-wrap1' style="display:none"></span>
 
 {% include "institute/view_diretu_gescol.html" with institute=institute %}
-
-    <input id="btn-add-composante"  comp-right-btn-close class="btn btn-primary btn-lines"
+<div class="buttons_list" style="">
+    <input id="btn-add-composante"  class="btn btn-primary"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
      onclick="_isEdited=false"/>
+     <button href="{% url 'institute:home'%}"  class="btn-primary btn ">{% trans "Annuler et fermer la fiche" %}</button></div>
 </form>
 <div id='first'></div>
 <div class="comp-right">
@@ -202,6 +203,19 @@ $.getJSON(url_prof, function (data) {
         $("#input_dircomp_status").val(status).trigger("change");
         $("#id_id_dircomp").val(last_name + " " + first_name).trigger("change");
       },
+      onHideListEvent: function(){
+          // remove hidden input value if somehow doesnt match
+          var a = document.getElementById('id_id_dircomp').value;
+          var b = document.getElementById('input_dircomp_last_name').value;
+          if (a.indexOf(b) == -1){
+              $("#input_dircomp_username_member").val("");
+              $("#input_dircomp_last_name").val("");
+              $("#input_dircomp_first_name").val("");
+              $("#input_dircomp_mail").val("");
+              $("#input_dircomp_status").val("");
+              $("#id_id_dircomp").val("");
+          }
+      }
    	}
   };
  $(".input_prof").click(function () {
@@ -257,6 +271,19 @@ $.getJSON(url_prof, function (data) {
            $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
 
          },
+         onHideListEvent: function(){
+             // remove hidden input value if somehow doesnt match
+             var a = document.getElementById('id_id_rac').value;
+             var b = document.getElementById('input_rac_last_name').value;
+             if (a.indexOf(b) == -1){
+                 $("#input_rac_username_member").val("");
+                 $("#input_rac_last_name").val("");
+                 $("#input_rac_first_name").val("");
+                 $("#input_rac_mail").val("");
+                 $("#input_rac_status").val("");
+                 $("#id_id_rac").val("");
+             }
+         }
       	}
      };
      $(".input_adm").click(function () {

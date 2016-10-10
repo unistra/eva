@@ -21,7 +21,7 @@
    <th style="border-style:none" width=40%></th>
    <th width=20%>{% trans "Directeur" %}</th>
    <th width=20%>{% trans 'Responsable admin' %}</th>
-   <th width=7%>{% trans 'Date prév Conseil' %}</th>
+   <th width=7%>{% trans 'Date prév Conseil Cmp MECC' %}</th>
    <th width=7%>{% trans 'Date dernière notif MECC' %}</th>
    <th width=6%>{% trans "Appui ROF" %}</th>
 </tr>
@@ -36,9 +36,9 @@
           <td></td>
         </tr>
         {% for item in field.list %}
-        <tr class="hover-row">
+        <tr class="hover-row {%if item.is_hs%} disabled grey italic{%endif%}">
           <td style="border-style:none;padding-left:2em">
-              <a class='cmp' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.labelled }}
+              <a class='cmp {%if item.is_hs%} disabled grey italic{%endif%}' id='{{item.code}}' href="{% url 'institute:edit' item.code %}">{{ item.labelled }}
               </a>
           </td>
           <td>{{item.dircomp}}</td>

@@ -135,14 +135,19 @@ var mail = null;
 function do_stuff (data, add_first, add_new, type) {
 
   document.getElementById(add_first).style.display = "block";
-
     $("#" + add_first + ", "+ add_new).click(function () {
+        console.log($('td:first', $(this).parents('tr')).find('input').val());
+        if(this.className.indexOf('new_') != -1 && $('td:first', $(this).parents('tr')).find('input').val() == ""){
+            console.log('uo');
+            return;
+        };
+        console.log("ixix");
       var clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
       var g_table =   $(this).parents('div').find(  $(this).parents('table'));
       var a = clone.find('.name');
       g_table.append(clone);
-      $(this).next().removeClass('hidden ');
-      $(this).addClass(' hidden');
+      $(this).next().removeClass('hidden');
+      $(this).addClass(' hidden ');
 
       var auto_comp = g_table.find(a);
       var options = {
@@ -186,6 +191,8 @@ function do_stuff (data, add_first, add_new, type) {
             }
           }
           if (this.parentNode != null) {
+              if (username != ""){
+          }
             this.parentNode.removeChild(this);
             $.ajax({
               url: "{% url 'institute:add_pple' %}",

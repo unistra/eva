@@ -16,8 +16,7 @@
               <th>
 
                 <select id='filterText' onchange='filterCol(this)'>
-                    <option disabled="true"selected>{% trans 'Type' %}</option>
-                    <option value='all'>{% trans "Tous" %}</option>
+                    <option value='all' selected>{% trans "Tous" %}</option>
                     <option value='commission'>{% trans "Commission ECI" %}</option>
                     <option value='supply'>{% trans "Étudiant CFVU suppléant" %}</option>
                     <option value='tenured'>{% trans "Étudiant CFVU titulaire" %}</option
@@ -60,33 +59,54 @@
 {% include "commission/delete_member.html" %}
 {% include "commission/send_mail.html" %}
 <script>
-$('.select-type').on('change', function() {
-    new_type = this.value;
-    id = $(this).parents('td').prev().text();
-    $.ajax({
-        url: "{% url 'commission:change_typemember'%}",
-        type: "POST",
-        data: {
-            username: id,
-            type_member: new_type,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
+    $('#searchMember').on('shown.bs.modal', function () {
+        $('#to-search').focus();
     });
-});
 
-function filterCol(selected) {
-  var a = selected.value
-$('#commission-member tr').each(function() {
-    var b = $(this).find("#val");
-    if (a === b.val()) {
-      b.parent().parent().show();
-    } else {
-      b.parent().parent().hide();
-    }
-    if (a === 'all'){
-      b.parent().parent().show();
-    }
- });
-}
+    $('.select-type').on('change', function() {
+        new_type = this.value;
+        id = $(this).parents('td').prev().text();
+        $.ajax({
+            url: "{% url 'commission:change_typemember'%}",
+            type: "POST",
+            data: {
+                username: id,
+                type_member: new_type,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+        });
+    });
+
+    function filterCol(selected) {
+      var a = selected.value
+    $('#commission-member tr').each(function() {
+        var b = $(this).find("#val");
+        if (a === b.val()) {
+          b.parent().parent().show();
+        } else {
+          b.parent().parent().hide();
+        }
+        if (a === 'all'){
+          b.parent().parent().show();
+        }
+     });
+     var mails = null;
+     if (a === 'all'){
+         mails = '{%for e in staff_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+     if (a === 'commission'){
+         mails = '{%for e in commission_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+     if (a === 'tenured'){
+         mails = '{%for e in tenured_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+     if (a === 'supply'){
+         mails = '{%for e in supply_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+  }
 </script>
 {% endblock %}
