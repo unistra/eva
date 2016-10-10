@@ -20,6 +20,9 @@ def User_post_save(sender, **kwargs):
 
     user = kwargs.get('instance')
 
+    # CAPITALIZE USERS' LASTNAME
+    User.objects.filter(id=user.id).update(last_name=user.last_name.upper())
+
     for e in User.objects.all():
         try:
             meccuser = MeccUser.objects.get(user=user)
