@@ -30,7 +30,7 @@
     color: red;
 }
 .grey {
-    color: grey:
+    color: grey!important:
 }
 .black {
     color: black:
@@ -436,21 +436,12 @@ ul {
 .flex-container {
     display: flex;
 }
-#btn-add-composante {
-    order: 12;
-    align-self: center;
-    margin-top: 2em;
-}
+
 .btn-lines {
     white-space: normal;
     margin: 2px;
     width: 48%;
 }
-#btn-sbmt * {}
-
-/*#btn-add-composante  {
-  width: 14em;
-}*/
 
 label {
     margin-bottom: 0.5em;
