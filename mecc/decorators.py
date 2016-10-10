@@ -2,7 +2,6 @@ from functools import wraps
 # from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group
-from django.core.exceptions import ObjectDoesNotExist
 from mecc.apps.training.models import Training
 from mecc.apps.utils.querries import currentyear
 from django.db.models import Q
@@ -19,7 +18,8 @@ def is_correct_respform(view_func):
             year=currentyear().code_year).filter(
                 Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
                 | Q(code='GESCOL') | Q(code='DIRETU'))
-        allowed = any(True for x in can_do_alot if x in user_profiles)
+        allowed = any(True for x in can_do_alot if x in user_profiles)  \
+            or 'DES1' in [e.name for e in request.user.groups.all()]
         b = [e.id for e in training.resp_formations.all()]
         request.environ['allowed'] = allowed
         if request.user.meccuser.id in b or request.user.is_superuser or allowed:
@@ -73,16 +73,8 @@ def is_DES1(view_func):
 def has_requested_cmp(view_func):
     @wraps(view_func)
     def wrapper(self, *args, **kwargs):
-        try:
-            if self.kwargs.get('cmp') == self.request.user.meccuser.cmp:
-                return view_func(self, *args, **kwargs)
-        except ObjectDoesNotExist:
-            # Nothin to do here since user such as superuser can not having
-            # meccuser informations
-            pass
-
         if self.request.user.is_superuser or \
-           'DES1' in self.request.user.groups.all():
+           'DES1' in [e.name for e in self.request.user.groups.all()]:
             return view_func(self, *args, **kwargs)
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
