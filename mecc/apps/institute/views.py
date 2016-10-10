@@ -38,7 +38,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
     profiles = Profile.objects.filter(
-        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC"))
+        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP"))
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
         data['can_edit_diretu'] = True
     else:
@@ -333,6 +333,7 @@ class InstituteListView(ListView):
                         'date_last_notif': iy.date_last_notif,
                         'is_late': iy.is_expected_date_late,
                         'ROF_support': institute.ROF_support,
+                        'is_hs': not institute.is_on_duty,
                     }
                     institute_list.append(field)
                 except:
