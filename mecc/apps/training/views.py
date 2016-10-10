@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm
+from django.contrib.auth.models import User
 
 
 def add_current_year(dic):
@@ -78,7 +79,7 @@ class TrainingCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingCreate, self).get_context_data(**kwargs)
-        context['institutes'] = Institute.objects.all()
+        context['institutes'] = Institute.objects.all().order_by('label')
         context['can_edit'] = True
         return add_current_year(context)
 
