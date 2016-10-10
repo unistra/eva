@@ -38,9 +38,11 @@ def home(request, template='commission/home.html'):
             instance = form_data.save(commit=False)
             instance.save()
 
-    data['commission_staff'] = ECICommissionMember.objects.all()
+    data['commission_staff'] = ECICommissionMember.objects.all().order_by('last_name')
     data['staff_mails'] = [e.email for e in data['commission_staff']]
-
+    data['supply_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'supply']
+    data['tenured_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'tenured']
+    data['commission_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'commission']
     return render(request, template, data)
 
 
