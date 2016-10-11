@@ -22,7 +22,8 @@ def is_correct_respform(view_func):
             or 'DES1' in [e.name for e in request.user.groups.all()]
         b = [e.id for e in training.resp_formations.all()]
         request.environ['allowed'] = allowed
-        if request.user.meccuser.id in b or request.user.is_superuser or allowed:
+        if request.user.meccuser.id in b or request.user.is_superuser or \
+           allowed:
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
@@ -73,12 +74,18 @@ def is_DES1(view_func):
 def has_requested_cmp(view_func):
     @wraps(view_func)
     def wrapper(self, *args, **kwargs):
-        profiles = self.request.user.meccuser.profile.all()
-        if self.request.user.is_superuser or \
-           'DES1' in [e.name for e in self.request.user.groups.all()] or \
-           any(True for x in [e.cmp for e in profiles if e.code == 'DIRCOMP'] if
-               x in self.request.path):
+
+        authorized = any(
+            True for x in [
+                e.cmp for e in self.request.user.meccuser.profile.all()
+                if e.code in ['DIRETU', 'REFAPP', 'GESCOL', 'DIRCOMP', 'RAC']
+            ] if x in self.request.path
+        )
+
+        if self.request.user.is_superuser or authorized or \
+           'DES1' in [e.name for e in self.request.user.groups.all()]:
             return view_func(self, *args, **kwargs)
+
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
     return wrapper
