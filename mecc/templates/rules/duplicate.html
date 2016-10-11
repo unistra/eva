@@ -105,7 +105,6 @@ function del_rule($this, value) {
                     type:'danger'
                   }).show();
             } else if (data.status === 'removed') {
-                console.log(value);
                 $('.top-right').notify({
                     message: { text: data.label + ' a bien été supprimé.'},
                     type:'info'
@@ -116,7 +115,6 @@ function del_rule($this, value) {
                 var row = document.getElementById("current_"+ value);
                 row.deleteCell(4);
                 var dest = document.getElementById("source");
-                console.log(dest);
                 row.id = 'source_' + value;
                 td = row.insertCell(0);
                 td.innerHTML ='<input type="checkbox" class="checkbox_rule" name="rule_' + value +'" id="_+' + value +'+">';

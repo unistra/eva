@@ -165,7 +165,7 @@ $.getJSON(url_prof, function (data) {
  var options = {
    data: data,
    getValue: function (element) {
-     return element.last_name + " " + element.first_name + " ";
+     return element.last_name.toUpperCase() + " " + element.first_name + " ";
 
    },
    template: {
@@ -191,7 +191,7 @@ $.getJSON(url_prof, function (data) {
    		},
       onSelectItemEvent: function() {
         var username = $(".input_prof").getSelectedItemData().id_member;
-        var last_name = $(".input_prof").getSelectedItemData().last_name;
+        var last_name = $(".input_prof").getSelectedItemData().last_name.toUpperCase();
         var first_name = $(".input_prof").getSelectedItemData().first_name;
         var email = $(".input_prof").getSelectedItemData().mail;
         var status = $(".input_prof").getSelectedItemData().status;
@@ -233,7 +233,7 @@ $.getJSON(url_prof, function (data) {
     var options = {
       data: data,
       getValue: function (element) {
-        return element.last_name + " " + element.first_name + " ";
+        return element.last_name.toUpperCase() + " " + element.first_name + " ";
       },
       template: {
         type: "description",
@@ -258,7 +258,7 @@ $.getJSON(url_prof, function (data) {
       		},
          onSelectItemEvent: function() {
            var username = $(".input_adm").getSelectedItemData().id_member;
-           var last_name = $(".input_adm").getSelectedItemData().last_name;
+           var last_name = $(".input_adm").getSelectedItemData().last_name.toUpperCase();
            var first_name = $(".input_adm").getSelectedItemData().first_name;
            var email = $(".input_adm").getSelectedItemData().mail;
            var status = $(".input_adm").getSelectedItemData().status;

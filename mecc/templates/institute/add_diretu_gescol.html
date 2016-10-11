@@ -136,12 +136,9 @@ function do_stuff (data, add_first, add_new, type) {
 
   document.getElementById(add_first).style.display = "block";
     $("#" + add_first + ", "+ add_new).click(function () {
-        console.log($('td:first', $(this).parents('tr')).find('input').val());
         if(this.className.indexOf('new_') != -1 && $('td:first', $(this).parents('tr')).find('input').val() == ""){
-            console.log('uo');
             return;
         };
-        console.log("ixix");
       var clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
       var g_table =   $(this).parents('div').find(  $(this).parents('table'));
       var a = clone.find('.name');

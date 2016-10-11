@@ -118,10 +118,8 @@ $('#select-cmp').on('change', function() {
         institute_val.push(val);
         $('#id_institutes').val(institute_val)
         set_suppply()
-        console.log('yo:!');
     }
     sort.refresh()
-    console.log(document.getElementById('cmpTable'));
 });
 {% if request.session.visited_cmp_id and not object%}
     var _id = '{{request.session.visited_cmp}}'+'-'+'{{request.session.visited_cmp_id}}'

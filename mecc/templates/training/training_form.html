@@ -156,9 +156,8 @@
 
 <script type="text/javascript">
 
-
+var _isEdited = false;
 $(document).ready(function () {
-    var _isEdited = false;
     $(':input').change(function () {
         _isEdited = true;
         if(this.id === 'to-search'){_isEdited = false;}
