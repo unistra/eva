@@ -22,6 +22,9 @@
 <ul>
 {%for e in rules%}
 <li>
+    <i>
+        {{e.code_year}}/{{e.code_year|add:"1"}} :
+    </i>
   {{e.label}}
 </li>
 {%endfor%}
@@ -32,6 +35,9 @@
 <ul>
 {%for e in trainings%}
 <li>
+    <i>
+        {{e.code_year}}/{{e.code_year|add:"1"}} :
+    </i>
   {{e.label}}
 </li>
 {%endfor%}

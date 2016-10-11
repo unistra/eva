@@ -8,14 +8,27 @@
 {% endblock %}
 
 {% block app_content %}
-
-
+{% if trainings == None %}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression de la composante " %}{{ object.label }} ?</p>
-    <input type="submit" value="Confirmer" class="btn btn-primary"/>
-    <a href="{% url 'institute:home' %}" type="button"  class="btn btn-default">Retour</a>
+    <input type="submit" value='{% trans "Oui" %}' class="btn btn-primary"/>
+    <a href="{% url 'institute:home' %}" type="button"  class="btn btn-default">{% trans "Non" %}</a>
 </form>
-
+{%else%}
+{% if trainings%}
+<p>{% trans "Vous ne pouvez pas supprimer cette composante tant que des formations y sont rattachées : " %}</p>
+<ul>
+{%for e in trainings%}
+<li>
+    <i>
+        {{e.code_year}}/{{e.code_year|add:"1"}} :
+    </i>
+  {{e.label}}</li>
+{%endfor%}
+{%endif%}
+</ul>
+<a href="{% url 'institute:home' %}" type="button"  class="btn btn-default">{% trans "Retour" %}</a>
+{%endif%}
 
 {% endblock %}

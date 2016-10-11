@@ -19,6 +19,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
 from mecc.apps.utils.querries import currentyear
+from mecc.apps.training.models import Training
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -209,6 +210,12 @@ class InstituteDelete(DeleteView):
     slug_url_kwarg = 'code'
 
     success_url = '/institute'
+
+    def get_context_data(self, **kwargs):
+        context = super(InstituteDelete, self).get_context_data(**kwargs)
+        trainings = Training.objects.filter(institutes=kwargs['object'])
+        context['trainings'] = trainings if len(trainings) > 0 else None
+        return context
 
 
 class InstituteCreate(CreateView):

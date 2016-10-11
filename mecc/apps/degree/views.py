@@ -7,6 +7,7 @@ from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
 from mecc.apps.utils.querries import rules_since_ever
+from mecc.apps.training.models import Training
 
 
 class DegreeListView(ListView):
@@ -110,6 +111,8 @@ class DegreeTypeDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(DegreeTypeDelete, self).get_context_data(**kwargs)
+        trainings = Training.objects.filter(degree_type=kwargs['object'])
+        context['trainings'] = trainings if len(trainings) > 0 else None
         context['rules'] = rules_since_ever(
             kwargs['object'].id) if kwargs['object'].id is not None else None
         return context

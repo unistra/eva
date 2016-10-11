@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block app_content %}
-{% if rules == None %}
+{% if rules == None and trainings == None %}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression du diplôme " %}{{ object }} - {{ object.long_label }} ?</p>
@@ -20,9 +20,25 @@
 <ul>
 {%for e in rules%}
 <li>
+    <i>
+        {{e.code_year}}/{{e.code_year|add:"1"}} :
+    </i>
   {{e.label}}
 </li>
 {%endfor%}
+</ul>
+{% if trainings%}
+<p>{% trans "Vous ne pouvez pas supprimer ce type de diplôme tant que des formations y sont rattachées : " %}</p>
+<ul>
+{%for e in trainings%}
+<li>
+    <i>
+        {{e.code_year}}/{{e.code_year|add:"1"}} :
+    </i>
+    {{e.label}}
+</li>
+{%endfor%}
+{%endif%}
 </ul>
 <a href="{% url 'degree:type' %}" type="button"  class="btn btn-default pull-right">{% trans 'Retour à la liste des types de diplôme'%}</a>
 {%endif%}
