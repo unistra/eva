@@ -73,8 +73,11 @@ def is_DES1(view_func):
 def has_requested_cmp(view_func):
     @wraps(view_func)
     def wrapper(self, *args, **kwargs):
+        profiles = self.request.user.meccuser.profile.all()
         if self.request.user.is_superuser or \
-           'DES1' in [e.name for e in self.request.user.groups.all()]:
+           'DES1' in [e.name for e in self.request.user.groups.all()] or \
+           any(True for x in [e.cmp for e in profiles if e.code == 'DIRCOMP'] if
+               x in self.request.path):
             return view_func(self, *args, **kwargs)
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
