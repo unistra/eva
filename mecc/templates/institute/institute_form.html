@@ -28,7 +28,7 @@
 <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value={% if object%}"{{object.id}}"{%else%}"{{latest_instit_id}}" {% endif %}readonly=True type="text"> </div>
 </div>
   {% crispy form %}
-  <div style="">
+  <div style="display:none">
    <input id="input_dircomp_username_member" name="dircomp_username"  />
    <input id="input_dircomp_last_name" name="dircomp_last_name" />
    <input id="input_dircomp_first_name" name="dircomp_first_name" />
