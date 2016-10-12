@@ -29,7 +29,9 @@
 
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top">
-        <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
+        <a href="#menu-toggle" id="menu-toggle">
+            <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
+        </a>
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
@@ -47,9 +49,6 @@
 
          <div id="page-content-wrapper">
              <div class="container-fluid">
-               <a href="#menu-toggle" id="menu-toggle">
-                 <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
-               </a>
                <div class="page-header" style="margin:0 0 20px">
                  {% include "head_button.html"%}
 

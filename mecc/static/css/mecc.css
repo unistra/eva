@@ -1,3 +1,6 @@
+.page-header{
+    margin-top: 0.5em;
+}
 .underlined{
     text-decoration: underline;
     font-weight:normal!important;
@@ -28,6 +31,9 @@
 }
 .red {
     color: red;
+}
+.green {
+    color: green;
 }
 .grey {
     color: grey!important:
@@ -577,19 +583,6 @@ label[for=id_is_on_duty] {
 /*******************************************************************************
 /* Hamburger menu */
 
-.glyphicon.glyphicon-menu-hamburger {
-    font-size: 1.5em;
-    color: #004A87;
-}
-.glyphicon-menu-hamburger:before {
-    position: fixed;
-}
-#menu-toggle {
-    text-decoration: none;
-    position: relative;
-    top: 1em;
-    left: -4em;
-}
 .disabled-event * {
     pointer-events: none;
     color: #BBBBBB;
@@ -634,7 +627,7 @@ label[for=id_is_on_duty] {
 }
 #page-content-wrapper {
     width: 100%;
-    padding: 0 1.5em 0 5em;
+    padding: 1.5em;
 }
 #wrapper.toggled #page-content-wrapper {
     position: relative;
