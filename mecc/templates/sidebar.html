@@ -5,6 +5,25 @@
 
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
+        {% if request.user.is_active and request.user.is_staff %}
+        <li>
+            <a href="/admin"
+            {% if 'admin' in request.path %}
+               class="item-selected"
+            {% endif %}>{% trans 'Administration' %}</a>
+
+        </li>
+        {% endif %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+
+          <li>
+              <a href="/"
+              {% if 'board' in request.path %}
+                 class="item-selected"
+              {% endif %}>{% trans 'Tableau de bord général' %}</a>
+
+          </li>
+          {% endif %}
         {% for e in profiles%}
             {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP'%}
                 <li class="dropdown">
@@ -20,6 +39,10 @@
                        {% if 'institute/---' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Validations' %}</a></li>
+                     <li><a href="/"
+                       {% if 'valid' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Tableau de bord' %}</a></li>
                   </ul>
                </li>
             {%endif%}
@@ -36,7 +59,10 @@
                        {% if 'valid' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Documents' %}</a></li>
-
+                     <li><a href="/"
+                       {% if 'valid' in request.path %}
+                        class="item-selected"
+                     {% endif %}>{% trans 'Tableau de bord' %}</a></li>
                   </ul>
                </li>
               {%endif%}
@@ -59,15 +85,7 @@
 
           {%endif%}
       {% endfor %}
-      {% if request.user.is_active and request.user.is_staff %}
-      <li>
-          <a href="/admin"
-          {% if 'admin' in request.path %}
-             class="item-selected"
-          {% endif %}>{% trans 'Administration' %}</a>
 
-      </li>
-      {% endif %}
       {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
       <li>
           <a href="/spoof"
@@ -76,16 +94,7 @@
           {% endif %}>{% trans "Usurpation d'identité" %}</a>
       </li>
       {% endif %}
-      {% if perms.adm.can_spoof_user %}
 
-        <li>
-            <a href="/"
-            {% if 'board' in request.path %}
-               class="item-selected"
-            {% endif %}>{% trans 'Tableau de bord' %}</a>
-
-        </li>
-        {% endif %}
         {% if request.user|has_group:'DES1' or request.user.is_superuser%}
 
         <li>
