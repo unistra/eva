@@ -22,7 +22,7 @@ class Institute(models.Model):
     field_choice = AcademicField.objects.all()
 
     code = models.CharField(_('Code composante'), max_length=3)
-    is_on_duty = models.BooleanField(_('En service'))
+    is_on_duty = models.BooleanField(_('En service'), default=True)
     label = models.CharField(_('Libellé composante'), max_length=85)
     field = models.ForeignKey(AcademicField, blank=False)
     id_dircomp = models.CharField(
