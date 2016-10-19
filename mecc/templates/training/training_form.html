@@ -11,6 +11,9 @@
 
 
 {% block app_content %}
+
+    <link rel="stylesheet" href="{% static 'css/training-form.css' %}">
+
     <ul class="nav nav-tabs" style="margin-bottom:1em">
         <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
 
@@ -18,132 +21,119 @@
         <li><a href={%if object%}"#" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
-        <form action="" method="post" class="border-right training-form-1" id="training_form">
-            {%crispy form%}
-            {%if can_edit%}
-            {% include "training/form/add_cmp.html" %}
-            {% else %}
-            <label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
-                <span class="pull-right">porteuse</span>
-            </label>
-            <table class = "table " id='degreeTable'>
+      <div class="item-70">
+          <form action="" method="post" class="border-right " id="training_form" style="margin:1em">
+              {%crispy form%}
+              {%if can_edit%}
+              {% include "training/form/add_cmp.html" %}
+              {% else %}
+              <label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
+                  <span class="pull-right">porteuse</span>
+              </label>
+              <table class = "table " id='degreeTable'>
 
-               <tbody class="overflow" id='tbodyCmp'>
-              {% for e in object.institutes.all%}
-              <tr id='row-{{e.id}}'>
-                 <td style="width: 100%" >{{e.label}}
-                 </td>
-                 <td style="width: 5% " class="td-centered"> <input disabled='disabled' type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
-                 </td>
+                 <tbody class="overflow" id='tbodyCmp'>
+                {% for e in object.institutes.all%}
+                <tr id='row-{{e.id}}'>
+                   <td style="width: 100%" >{{e.label}}
+                   </td>
+                   <td style="width: 5% " class="td-centered"> <input disabled='disabled' type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
+                   </td>
 
-              </tr>
-              {%endfor%}
+                </tr>
+                {%endfor%}
 
-               </tbody>
-           </table>
+                 </tbody>
+             </table>
+              {%endif%}
+          {% if can_edit  %}
+          <div class="margin-right1">
 
+          {% include "training/form/add_respform.html" %}
+          {% else %}
+          <div class="f-1" style="width:100%">
+              <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
+              </label>
 
-            {%endif%}
-                <button name="stay" onclick="_isEdited = false;"class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
+          </div>
+              {%if object.resp_formations%}
 
-        </form>
-        <div class="training-form-validate training-form-1 {%if not validation_form%}grey {%endif%}">
-            <h2 class="title-block">{% trans "Étapes de validation" %} {{disp_current_year}}</h2></br>
-           <div class="form-group">
-              <label>
-              {% trans "Etat d'avancement Saisie des règles" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div class="form-group">
-              <label>
-              {% trans "Etat d'avancement Saisie Tableau MECC" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div class="form-group">
-              <label>
-              {% trans "Date de validation en Conseil de Composante" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div class="form-group">
-              <label>
-              {% trans "Date Réserve DES" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div class="form-group">
-              <label>
-              {% trans "Date Visa DES" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div class="form-group fill-space">
-              <label>
-              {% trans "Date de validation en CFVU" %}</label>
-              <div> <input class="form-control" disabled="true"> </div>
-           </div>
-           <div>
-               <span id="input_progress"></span>
-           </div>
-           <div class="has-top-border margin-top-auto" {% if object %}style="color:black">
-               {% if can_edit  %}
-               {% include "training/form/add_respform.html" %}
-               {% else %}
-               <div class="f-1" style="width:100%">
-                   <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
-                   </label>
+              <table class="table" id="respformtable">
+                  <tbody class="overflow" id='repsformtbody'>
+                      {% for e in object.resp_formations.all %}
 
-               </div>
+                      <tr>
+                        <td width=42.5% class="v-align-m">{{e.user.last_name}}</td>
+                        <td width="42.5%" class="v-align-m">{{e.user.first_name}}</td>
+                        <td width="10%" class="v-align-m">{{e.cmp}}</td>
+                        <td width="5%" class="v-align-m">
+                            <div class="" action="{% url 'training:process_resp'%}" method="post">
+                                <div class="hidden" hidden >
+                                    {% csrf_token %}
 
-               {%if object.resp_formations%}
-                   <table class="table" id="respformtable">
+                                        <input type="text" name="formation"  value="{{object.id}}" readonly>
+                                        <input type="text" name="username"  readonly value="{{e.user.username}}">
+
+                                    </div>
+
+                            </div>
 
 
-                     <tbody class="overflow" id='repsformtbody'>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                     </tbody>
+              </table>
+              {% else %}
+              <div class="td-centered padding-1">
+                  {% trans "PAS DE RESPONSABLE DE FORMATION" %}
+              </div>
+              {%endif%}
+              {%endif%}
+              <button name="stay" onclick="_isEdited=false;"class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
+          </div>
 
-                     {% for e in object.resp_formations.all %}
+          </form>
+      </div>
+      <div class="item-30">
+          <div class=" {%if not validation_form%}grey {%endif%}">
+              <h2 class="title-block">{% trans "Étapes de validation" %} {{disp_current_year}}</h2></br>
+             <div class="form-group">
+                <label>
+                {% trans "Etat d'avancement Saisie des règles" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="form-group">
+                <label>
+                {% trans "Etat d'avancement Saisie Tableau MECC" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="form-group">
+                <label>
+                {% trans "Date de validation en Conseil de Composante" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="form-group">
+                <label>
+                {% trans "Date Réserve DES" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="form-group">
+                <label>
+                {% trans "Date Visa DES" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="form-group fill-space">
+                <label>
+                {% trans "Date de validation en CFVU" %}</label>
+                <div> <input class="form-control" disabled="true"> </div>
+             </div>
+             <div class="buttons_list bold italic {% if object.input_opening == 'ouverte'%} green{%else%} red{%endif%} ">
+                 <span id="input_progress">{% if object %}Saisie {{object.input_opening}}{% endif %}</span>
+             </div>
+      </div>
+  </div>
 
-                     <tr>
-                       <td width=42.5% class="v-align-m">{{e.user.last_name}}</td>
-                       <td width="42.5%" class="v-align-m">{{e.user.first_name}}</td>
-                       <td width="10%" class="v-align-m">{{e.cmp}}</td>
-                       <td width="5%" class="v-align-m">
-                           <div class="" action="{% url 'training:process_resp'%}" method="post">
-                               <div class="hidden" hidden >
-                                   {% csrf_token %}
-
-                                       <input type="text" name="formation"  value="{{object.id}}" readonly>
-                                       <input type="text" name="username"  readonly value="{{e.user.username}}">
-
-                                   </div>
-
-                           </div>
-
-
-                       </td>
-                     </tr>
-                     {% endfor %}
-                   </tbody>
-                   </table>
-               {% else %}
-               <div class="td-centered padding-1">
-                   {% trans "PAS DE RESPONSABLE DE FORMATION" %}
-               </div>
-               {%endif%}
-               {% endif %}
-               {% else %}>
-               <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
-                   <br><span class="padding-1">{% trans "AUCUN" %}</span>
-
-               {%endif%}
-           </div>
-        </div>
- </div>
- <div class="buttons_list has-top-border" style="margin-top:1em;">
- <a href=
- {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
- {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
- {% else %}"{%url 'training:list_all' %}"
- {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
- <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
-</div>
 
 <style media="screen">
     .training-form-validate> .form-group:not(:first-child){
@@ -157,6 +147,7 @@
 <script type="text/javascript">
 
 var _isEdited = false;
+
 $(document).ready(function () {
     $(':input').change(function () {
         _isEdited = true;

@@ -2,11 +2,12 @@
 {% load staticfiles %}
 
 <script src="{% static 'js/srtable.js' %}"></script>
+<div style="margin-right:1em;">
 
 <label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
     <span class="pull-right">porteuse</span>
 </label>
-<table class = "table " id='cmpTable'>
+<table class = "table " id='cmpTable' >
 
    <tbody class="overflow" id='tbodyCmp'>
   {% for e in object.institutes.all%}
@@ -38,6 +39,7 @@
    </tr>
 </table>
 
+</div>
 <style media="screen">
 #cmpTable .table{
   width: 22vw;
