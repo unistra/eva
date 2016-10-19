@@ -154,38 +154,39 @@ class TrainingForm(forms.ModelForm):
 
         self.helper.layout = Layout(
             Div(
-
                 'degree_type',
-
+                Div(
+                    'label',
+                    Div(
+                        'is_used',
+                        'MECC_tab',
+                    ),
+                ),
                 Div(
                     HTML("""
-                        <div class="control-label"> </div>
+                        <div> &nbsp; </div>
                         """),
-                    'is_used',
-                    'MECC_tab',
-                    css_class="disp-flex"
+                    Div(
+                        'MECC_type',
+                        'session_type',
+                        Div(
+                            HTML("""
+                                <label> &nbsp; </label>
+                                """),
+                            Div(
+                                'ref_cpa_rof',
+                                'ref_si_scol',
+                                css_class='controls'
+                            ),
+                            css_class="form-group"
+                        ),
+                    )
                 ),
-                'label',
-                Div(
-                    HTML("""
-                        <div class="control-label"> </div>
-                        """),
-                    'MECC_type',
-                    'session_type',
-                    css_class="disp-flex"
-                ),
-                'ref_cpa_rof',
-                'ref_si_scol',
                 Div(
                     'institutes',
                     'supply_cmp',
                     css_class="hidden"
                 ),
-                # Div(
-                #     Submit('add', _('Valider'),
-                #            css_class="pull-right btn-warning"),
-                # ),
-                css_class="training-form",
             ),
         )
 
