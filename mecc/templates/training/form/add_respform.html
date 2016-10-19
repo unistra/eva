@@ -3,18 +3,15 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 {% load groups%}
-<div class="f-1" style="width:100%">
+<div class="form-group item-70">
     <label style="display: inline-block;width:100%" > {% trans "Responsables de formation" %}
     </label>
 
-</div>
 
-{%if object.resp_formations%}
     <table class="table" id="respformtable">
-
-
       <tbody class="overflow" id='repsformtbody'>
 
+          {%if object.resp_formations%}
       {% for e in object.resp_formations.all %}
 
       <tr>
@@ -39,14 +36,13 @@
       </tr>
       {% endfor %}
     </tbody>
+    {% else %}
+    {% trans "Pas de responsable de formation" %}
+    {%endif%}
     </table>
-{% else %}
-<div class="td-centered padding-1">
-    {% trans "PAS DE RESPONSABLE DE FORMATION" %}
-</div>
-{%endif%}
-<div class="buttons_list">
 
+</div>
+<div class="flex-center item-30" style="margin:1em;">
     <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
 </div>
 
@@ -61,16 +57,17 @@
             </div>
             <div class="modal-body">
                 <div id='error'></div>
+                <form class="">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="{% trans 'Nom' %}" onKeyPress="if (event.keyCode == 13) searchMember()" id="to-search">
+                    <span contenteditable="true" type="text" class="form-control" placeholder="{% trans 'Nom' %}" id="to-search"></span>
                     <span class="input-group-btn">
-               <button class="btn btn-default" type="button" onclick="searchMember()">
+               <a class="btn btn-default" type="button" onclick="searchMember()">
                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    </button>
+                </a>
                     </span>
                 </div>
-                <table>
-                </table>
+                </form>
+
                 <!-- /input-group -->
 
                 <div class="table-responsive" style="display:none" id="table-resp">
@@ -134,94 +131,93 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+    {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
-<script type="text/javascript">
-{% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
-
-function searchMember() {
-    var new_tbody = document.createElement('tbody');
-    old_tbody = document.getElementById('table')
-    new_tbody.setAttribute("id", "table");
-    old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
-    search = document.getElementById("to-search").value;
-    document.getElementById('load-wrap').style.display = '';
-    $.ajax({
-        url: "{% url 'commission:get_pple'%}",
-        type: "GET",
-        data: {
-            member: search,
-            research_type : 'RESPFORM',
-            id_training: {{object.id}}
-
-        },
-        success: function(data) {
-            document.getElementById('load-wrap').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
-            if (data.message) {
-                document.getElementById('confirm').style.display = 'none';
-                $('#error').html("<div class='alert alert-warning fade in'>" +
-                    "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-                    data.message + "</div>");
-                document.getElementById('error').style.display = '';
-
-            } else {
-                document.getElementById('table-resp').style.display = '';
-                parent_table = document.getElementById('table');
-                for (var i = 0; i < data.pple.length; i++) {
-                    if (data.pple[i].status === 'Enseignant'){
-
-                        var tr = document.createElement('tr');
-                        tr.appendChild(document.createElement('td'))
-                        tr.appendChild(document.createElement('td'))
-                        tr.appendChild(document.createElement('td'))
-                        tr.appendChild(document.createElement('td'))
-                        tr.appendChild(document.createElement('td'))
-                        tr.appendChild(document.createElement('td'))
-                        tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
-                        tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
-                        tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
-                        tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
-                        tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
-                        tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
-                        tr.cells[2].className += 'hidden';
-                        tr.cells[4].className += 'hidden';
-                        tr.cells[5].className += 'hidden';
-
-                        tr.className += 'hover-row hit select gen-table'
-                        parent_table.appendChild(tr)
-                    }
-                };
-
-                $(".modal").on("hidden.bs.modal", function() {
-                    document.getElementById('table-resp').style.display = 'none';
-                    document.getElementById("to-search").value = "";
-                });
-
-                $(".hit").click(function() {
-                    $('#selectedMember').modal('show');
-                    $('#searchMember').modal('hide');
-                    var last_name = $(this).closest('tr').children('td:first');
-                    var first_name = $(last_name).next('td');
-                    var status = $(first_name).next('td');
-                    var institute = $(first_name).next('td').next('td');
-                    var mail = $(institute).next('td');
-                    var id = $(mail).next('td');
-                    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
-                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-                    document.getElementById('id_firstname').value = first_name.text();
-                    document.getElementById('id_name').value = last_name.text();
-                    document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
-                    document.getElementById('span_cmp').textContent = institute.text();
-                    document.getElementById('span_name').textContent = last_name.text().toUpperCase();
-                    document.getElementById('span_first_name').textContent = first_name.text().replace(/\s+/g, '');
-                });
-            }
+    document.getElementById('to-search').addEventListener('keypress', function(evt) {
+        if (evt.which === 13) {
+            evt.preventDefault();
+            searchMember();
         }
-    })
-}
-{%else%}
-document.getElementById("respformtable").className += " disabled-event";
-document.getElementById("add_respform").className += " hidden disabled-event";
+    });
 
-{%endif%}
-</script>
+    function searchMember() {
+        var new_tbody = document.createElement('tbody');
+        old_tbody = document.getElementById('table')
+        new_tbody.setAttribute("id", "table");
+        old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
+        search = document.getElementById("to-search").innerHTML;
+        document.getElementById('load-wrap').style.display = '';
+        $.ajax({
+            url: "{% url 'commission:get_pple'%}",
+            type: "GET",
+            data: {
+                member: search,
+                research_type : 'RESPFORM',
+                id_training: {{object.id}}
+            },
+            success: function(data) {
+                document.getElementById('load-wrap').style.display = 'none';
+                document.getElementById('error').style.display = 'none';
+                if (data.message) {
+                    document.getElementById('confirm').style.display = 'none';
+                    $('#error').html("<div class='alert alert-warning fade in'>" +
+                        "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                        data.message + "</div>");
+                    document.getElementById('error').style.display = '';
+                } else {
+                    document.getElementById('table-resp').style.display = '';
+                    parent_table = document.getElementById('table');
+                    for (var i = 0; i < data.pple.length; i++) {
+                        if (data.pple[i].status === 'Enseignant'){
+                            var tr = document.createElement('tr');
+                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'))
+                            tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
+                            tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
+                            tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
+                            tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
+                            tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
+                            tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
+                            tr.cells[2].className += 'hidden';
+                            tr.cells[4].className += 'hidden';
+                            tr.cells[5].className += 'hidden';
+                            tr.className += 'hover-row hit select gen-table'
+                            parent_table.appendChild(tr)
+                        }
+                    };
+                    $(".modal").on("hidden.bs.modal", function() {
+                        document.getElementById('table-resp').style.display = 'none';
+                        document.getElementById("to-search").value = "";
+                    });
+                    $(".hit").click(function() {
+                        $('#selectedMember').modal('show');
+                        $('#searchMember').modal('hide');
+                        var last_name = $(this).closest('tr').children('td:first');
+                        var first_name = $(last_name).next('td');
+                        var status = $(first_name).next('td');
+                        var institute = $(first_name).next('td').next('td');
+                        var mail = $(institute).next('td');
+                        var id = $(mail).next('td');
+                        document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+                        document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+                        document.getElementById('id_firstname').value = first_name.text();
+                        document.getElementById('id_name').value = last_name.text();
+                        document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+                        document.getElementById('span_cmp').textContent = institute.text();
+                        document.getElementById('span_name').textContent = last_name.text().toUpperCase();
+                        document.getElementById('span_first_name').textContent = first_name.text().replace(/\s+/g, '');
+                    });
+                }
+            }
+        })
+    }
+    {%else%}
+    document.getElementById("respformtable").className += " disabled-event";
+    document.getElementById("add_respform").className += " hidden disabled-event";
+    {%endif%}
+    </script>

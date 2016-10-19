@@ -79,6 +79,11 @@
 .border-right {
     border-right: 1px solid #dddddd!important;
 }
+.border-right-blue {
+    border-right-style: solid;
+    border-right-color: #358CD3;
+    border-right-width: 0.15em;
+}
 .border-right-left {
     border-right: 1px solid #dddddd;
     border-left: 1px solid #dddddd;

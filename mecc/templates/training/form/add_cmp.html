@@ -2,11 +2,16 @@
 {% load staticfiles %}
 
 <script src="{% static 'js/srtable.js' %}"></script>
-<div style="margin-right:1em;">
+<div class="disp-flex">
 
-<label style="display: inline-block;width:100%" > {% trans "Composantes" %}<span class="asteriskField">*</span>
-    <span class="pull-right">porteuse</span>
-</label>
+<div class="form-group item-70">
+
+    <label > {% trans "Composantes" %}<span class="asteriskField">*</span>
+    </label>
+    <label class="pull-right">
+        {% trans "porteuse" %}
+    </label>
+
 <table class = "table " id='cmpTable' >
 
    <tbody class="overflow" id='tbodyCmp'>
@@ -23,41 +28,24 @@
   {%endfor%}
 
    </tbody>
-   <tr >
-     <td>
-       <select name="select-degreetype" style="width:100%;margin-top:1em;padding:0.5em;" id='select-cmp' >
-       <option selected value="default">{% trans "Ajouter une composante" %}</option>
-       {% for e in institutes%}
-       {% if e not in object.institutes.all or object == null%}
-       <option value="{{e.code}}-{{e.id}}">
-         {{e.label}}
-       </option>
-       {%endif%}
-       {%endfor%}
-     </select>
-   </td>
-   </tr>
+
+
 </table>
-
 </div>
-<style media="screen">
-#cmpTable .table{
-  width: 22vw;
+<div class="item-30 " style="margin:1em;">
 
-}
-#cmpTable .overflow{
-    display:block;
-  }
- caption{
-  padding-top: 0;
-}
-#cmpTable td{
-  width: 100vw;
-}
-.table>tbody>tr>td {
-  padding: 0.2em;
-}
-</style>
+           <select name="select-degreetype" style="width:100%;margin-top:1em;padding:0.5em;" id='select-cmp' >
+           <option selected value="default">{% trans "Ajouter une composante" %}</option>
+           {% for e in institutes%}
+           {% if e not in object.institutes.all or object == null%}
+           <option value="{{e.code}}-{{e.id}}">
+             {{e.label}}
+           </option>
+           {%endif%}
+           {%endfor%}
+         </select>
+</div>
+</div>
 <script type="text/javascript">
 var sort = new Tablesort(document.getElementById('cmpTable'));
 

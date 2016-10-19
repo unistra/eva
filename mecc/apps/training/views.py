@@ -22,7 +22,8 @@ from django.contrib.auth.models import User
 
 def add_current_year(dic):
     dic['disp_current_year'] = "%s/%s" % (
-        currentyear().code_year, currentyear().code_year + 1) if currentyear() is not None else ""
+        currentyear().code_year, currentyear().code_year + 1
+        ) if currentyear() is not None else ""
     return dic
 
 

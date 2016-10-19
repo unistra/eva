@@ -21,8 +21,8 @@
         <li><a href={%if object%}"#" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
-      <div class="item-70">
-          <form action="" method="post" class="border-right " id="training_form" style="margin:1em">
+      <div class="item-70 border-right-blue" style="margin-right:1em">
+          <form action="" method="post" id="training_form" >
               {%crispy form%}
               {%if can_edit%}
               {% include "training/form/add_cmp.html" %}
@@ -47,7 +47,7 @@
              </table>
               {%endif%}
           {% if can_edit  %}
-          <div class="margin-right1">
+          <div class="disp-flex">
 
           {% include "training/form/add_respform.html" %}
           {% else %}
@@ -90,8 +90,8 @@
               </div>
               {%endif%}
               {%endif%}
-              <button name="stay" onclick="_isEdited=false;"class="btn-primary btn btn-sm pull-right" id="stay" type="Submit">{% trans "Valider" %}</button>
           </div>
+          <button name="stay" onclick="_isEdited=false;"class="btn-primary btn btn-sm pull-right" style='margin-top:1em;' id="stay" type="Submit">{% trans "Valider" %}</button>
 
           </form>
       </div>
@@ -133,7 +133,16 @@
              </div>
       </div>
   </div>
+</div>
 
+<div class="buttons_list has-top-border" style="margin-top:1em;">
+<a href=
+{% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
+{%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
+{% else %}"{%url 'training:list_all' %}"
+{% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
+<button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
+</div>
 
 <style media="screen">
     .training-form-validate> .form-group:not(:first-child){
