@@ -1,7 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Training, SpecificParagraph
-from mecc.apps.adm.models import Profile
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
@@ -17,7 +16,6 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm
-from django.contrib.auth.models import User
 
 
 def add_current_year(dic):
@@ -112,18 +110,8 @@ class TrainingEdit(UpdateView):
             currentyear().code_year, currentyear().code_year + 1)
         context['object'] = self.object
         context['resp_form'] = self.object.resp_formations.all()
-        # user_profile = request.user.meccuser.profile.all()
-        # expected_profile = Profile.objects.filter(
-        #     cmp=self.object.supply_cmp,
-        #     year=currentyear().code_year,
-        #     code="RESPFORM")
-
         context['can_edit'] = (self.request.environ['allowed']
                                or self.request.user.is_superuser)
-        # (True if expected_profile
-        #                        in self.request.user.meccuser.profile.all()
-        #                        or self.request.user.is_superuser
-        #                        else False)
 
         return context
 
@@ -149,7 +137,6 @@ class TrainingDelete(DeleteView):
 @is_post_request
 def process_respform(request):
     t_id = request.POST.dict().get('formation')
-
     manage_respform(request.POST.dict(), t_id)
     return redirect('training:edit', id=t_id)
 
@@ -202,16 +189,15 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year)
-    data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type in 'E' \
-        else rules.filter(is_ccct=True)
+    data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
+        in 'E' else rules.filter(is_ccct=True)
     return render(request, template, data)
 
 
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
-
     data = {}
     data['training'] = Training.objects.get(id=training_id)
-    data['rule'] = rule = Rule.objects.get(id=rule_id)
+    data['rule'] = Rule.objects.get(id=rule_id)
     data['parag'] = Paragraph.objects.filter(rule=data['rule'])
 
     return render(request, template, data)
@@ -219,11 +205,11 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, template="training/form/edit_specific_paragraph.html"):
     data = {}
-
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
-    data['title'] = _('Alinéa de composante') if p.is_cmp is True else _('Dérogation')
+    data['title'] = _(
+        'Alinéa de composante') if p.is_cmp is True else _('Dérogation')
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,

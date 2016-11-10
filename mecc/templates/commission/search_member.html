@@ -97,7 +97,6 @@ function searchMember() {
             document.getElementById('load-wrap').style.display = 'none';
             document.getElementById('error').style.display = 'none';
             if (data.message) {
-                document.getElementById('confirm').style.display = 'none';
                 $('#error').html("<div class='alert alert-warning fade in'>" +
                     "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
                     data.message + "</div>");

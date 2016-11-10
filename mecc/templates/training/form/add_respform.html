@@ -164,7 +164,6 @@
                 document.getElementById('load-wrap').style.display = 'none';
                 document.getElementById('error').style.display = 'none';
                 if (data.message) {
-                    document.getElementById('confirm').style.display = 'none';
                     $('#error').html("<div class='alert alert-warning fade in'>" +
                         "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
                         data.message + "</div>");
@@ -172,15 +171,17 @@
                 } else {
                     document.getElementById('table-resp').style.display = '';
                     parent_table = document.getElementById('table');
+                    var results = 0
                     for (var i = 0; i < data.pple.length; i++) {
                         if (data.pple[i].status === 'Enseignant'){
+                            results = 1
                             var tr = document.createElement('tr');
-                            tr.appendChild(document.createElement('td'))
-                            tr.appendChild(document.createElement('td'))
-                            tr.appendChild(document.createElement('td'))
-                            tr.appendChild(document.createElement('td'))
-                            tr.appendChild(document.createElement('td'))
-                            tr.appendChild(document.createElement('td'))
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
                             tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
                             tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
                             tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
@@ -194,6 +195,13 @@
                             parent_table.appendChild(tr)
                         }
                     };
+                    if (!results){
+                        var tr = document.createElement('tr');
+                        tr.appendChild(document.createElement('td'));
+                        tr.cells[0].appendChild(document.createTextNode('{% trans "Aucun résultat" %}'));
+                        parent_table.appendChild(tr)
+
+                    }
                     $(".modal").on("hidden.bs.modal", function() {
                         document.getElementById('table-resp').style.display = 'none';
                         document.getElementById("to-search").value = "";
