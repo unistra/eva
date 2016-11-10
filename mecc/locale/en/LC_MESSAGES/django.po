@@ -388,9 +388,6 @@ msgstr "Dispensation paragraph text input"
 msgid "Texte de         consigne pour la saisie des motivations"
 msgstr "Motivation text input"
 
-#: mecc/apps/rules/forms.py:30 mecc/templates/rules/create/bottom.html:27
-msgid "Impact TM"
-msgstr "TM impact"
 
 #: mecc/apps/rules/forms.py:87
 msgid "Valider et retourner à la règle"
@@ -434,13 +431,7 @@ msgstr "Type here new rule label"
 msgid "N° d'ordre d'affichage"
 msgstr "Display order"
 
-#: mecc/apps/rules/models.py:13
-msgid "Code impact"
-msgstr "Impact code"
 
-#: mecc/apps/rules/models.py:14
-msgid "Description impact "
-msgstr "Impact description"
 
 #: mecc/apps/rules/models.py:31 mecc/apps/rules/models.py:77
 #: mecc/apps/years/models.py:14 mecc/apps/years/models.py:35
@@ -506,7 +497,7 @@ msgid "Vous ne pouvez pas usurper                 l'identité de %s."
 msgstr "You cannot hijack %s"
 
 #: mecc/apps/spoof/views.py:50
-msgid "Le mot de passe est érroné."
+msgid "Le mot de passe est erroné."
 msgstr "Wrong password"
 
 #: mecc/apps/utils/ws.py:37
