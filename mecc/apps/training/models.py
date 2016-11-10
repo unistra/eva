@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.utils.querries import currentyear
-from mecc.apps.rules.models import Impact
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -103,7 +102,6 @@ class SpecificParagraph(models.Model):
         _('Type alinéa'), choices=TYPE_PARAPGRAPH, max_length=1)
     text_specific_paragraph = models.TextField(_("Texte d'alinéa spécifique"))
     text_motiv = models.TextField(_("Texte de motivation"))
-    impact = models.ManyToManyField(Impact)
 
     def __str__(self):
         return _("Paragraphe spécifique n° %s" % self.pk)

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Rule, Paragraph, Impact
+from .models import Rule, Paragraph
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Submit
@@ -26,10 +26,6 @@ class ParagraphForm(forms.ModelForm):
 
     text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         consigne pour la saisie des motivations"), required=False)
-
-    impact = forms.ChoiceField(
-        choices=((e.code, e.description) for e in Impact.objects.all()),
-        label=_('Impact TM'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(ParagraphForm, self).__init__(*args, **kwargs)
@@ -59,8 +55,6 @@ class ParagraphForm(forms.ModelForm):
                         'is_cmp',
                         Div(
                             Div('is_interaction', css_class="is_interaction"),
-                            Div(Field('impact', css_class="flex-end "),
-                                css_class=" item disabled-event "),
                             css_class="parent"
                         ),
                         css_class="item item-35 paraph-cmp",
@@ -113,7 +107,6 @@ class ParagraphForm(forms.ModelForm):
             'is_in_use',
             'is_cmp',
             'is_interaction',
-            'impact',
             'text_standard',
             'text_derog',
             'text_motiv',

@@ -7,15 +7,6 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 
-class Impact(models.Model):
-    """
-    Impact model
-    """
-    code = models.IntegerField(_("Code impact"), unique=True)
-    description = models.CharField(_("Description impact "), max_length=250)
-
-    def __str__(self):
-        return "%s - %s" % (self.code, self.description)
 
 
 class Rule(models.Model):
@@ -95,7 +86,6 @@ class Paragraph(models.Model):
         l'alinéa dérogatoire (ou de composante)"), blank=True)
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"), blank=True)
-    impact = models.ManyToManyField(Impact)
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk
