@@ -43,7 +43,11 @@
 
 </div>
 <div class="flex-center item-30" style="margin:1em;">
+    {% if object %}
     <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
+    {% else %}
+    <span class="btn btn-sm btn-primary" disabled> {% trans 'Associer un responsable' %}</span>
+    {% endif %}
 </div>
 
 <!-- Modal -->

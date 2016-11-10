@@ -17,21 +17,28 @@
 <div class="table_list list-training">
   {% if object_list %}
   <table class="table" id="rule-table">
-    <thead>
-     <tr>
-
-        <th width="5%" class="td-centered"></th>
-        <th width="20%" class="td-centered"></th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie règles' %}</th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Saisie Tableau MECC' %}</th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans 'Date de validation en Conseil de composante' %}</th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date reserve DES" %}</th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date visa DES" %}</th>
-        <th width="10%" class="td-centered border-right-left no-padding">{% trans "Date Validation en CFVU" %}</th>
-        <th width="10%" class="td-centered"></th>
-        <th width="5%" class="td-centered"></th>
-     </tr>
-   </thead>
+      <thead>
+         <tr>
+            <th width="5%" class=" no-padding td-centered no-border"></th>
+            <th width="20%" class=" no-padding td-centered no-border"></th>
+            <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Avancement" %}</th>
+            <th colspan="4" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+            <th width="10%" class=" no-padding td-centered no-border"></th>
+            <th width="5%" class=" no-padding td-centered no-border"></th>
+         </tr>
+         <tr>
+            <th width="5%" class=" no-padding td-centered no-border-top"></th>
+            <th width="20%" class=" no-padding td-centered no-border-top"></th>
+            <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Règles' %}</th>
+            <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Tableau MECC' %}</th>
+            <th class="td-centered border-right-left no-padding ">{% trans 'Conseil de composante' %}</th>
+            <th class="td-centered border-right-left no-padding ">{% trans "Réserve DES" %}</th>
+            <th class="td-centered border-right-left no-padding ">{% trans "Visa DES" %}</th>
+            <th class="td-centered border-right-left no-padding ">{% trans "Validation en CFVU" %}</th>
+            <th width="10%" class=" no-padding td-centered no-border-top"></th>
+            <th width="5%" class=" no-padding td-centered no-border-top"></th>
+         </tr>
+       </thead>
    <tbody class="overflow" >
 {% if object_list %}
 {%regroup object_list by degree_type as trainings %}
@@ -46,12 +53,12 @@
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
     <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}} </td>
-    <td width="10%" class="no-padding td-centered border-bottom">{{item.get_progress_table_display}} </td>
-    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
+    <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}}</td>
+    <td class="no-padding td-centered border-bottom">{{item.get_progress_table_display}}</td>
+    <td class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
+    <td class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
+    <td class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
+    <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
     <td width="5%" class="no-padding td-centered no-border">
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
@@ -71,7 +78,7 @@
 
 <div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
     <span class="title-block" style="width=20%">
-        <strong>Préparation</strong>
+        <strong>{% trans "Préparation" %}</strong>
     </span>
     <div class="" style="width:80%">
         <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">Dupliquer les formations des années précédentes</a>

@@ -33,11 +33,9 @@
             <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
         </a>
         <div class="container">
-            <div class="navbar-header">
                 <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
-            </div>
-             </ul>
-                <span id='nav-right'>{{request.session.current_year}}</span>
+                <span class="nav-bar-txt" style="font-size:1em;">{% if request.user %} {{request.display.user.last_name}} {{request.display.user.first_name}}{% endif %}</span>
+                <span class='nav-bar-txt pull-right'>{{request.session.current_year}}</span>
 
         </div>
     </div>
@@ -55,7 +53,7 @@
     </div>
                <div id='title'>
                    {% block page-header %}
-                   MECC
+
                    {% endblock %}
                </div>
                </div>

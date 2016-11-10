@@ -58,7 +58,6 @@ if (document.getElementById("id_is_interaction").checked){
 $('#id_is_cmp').on('change', function() {
     if (this.checked) {
       document.getElementById("id_is_interaction").checked = true;
-      $("#div_id_impact").parent().removeClass("disabled-event");
       $("#text_derog").removeClass("disabled-event");
       $("#text_motiv").addClass("disabled-event");
       CKEDITOR.instances.id_text_motiv.setData('')
@@ -68,7 +67,6 @@ $('#id_is_cmp').on('change', function() {
       $("#text_motiv").addClass("disabled-event");
       CKEDITOR.instances.id_text_motiv.setData('')
 
-      $("#div_id_impact").parent().addClass("disabled-event");
       $("#text_derog").addClass("disabled-event");
       CKEDITOR.instances.id_text_derog.setData('')
 
@@ -83,9 +81,7 @@ $('#id_is_interaction').on('change', function() {
   if (this.checked){
     $("#text_motiv").removeClass("disabled-event");
     $("#text_derog").removeClass("disabled-event");
-    $("#div_id_impact").parent().removeClass("disabled-event");
   } else {
-    $("#div_id_impact").parent().addClass("disabled-event");
     $("#text_motiv").addClass("disabled-event");
     $("#text_derog").addClass("disabled-event");
     CKEDITOR.instances.id_text_derog.setData('')
