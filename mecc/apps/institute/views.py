@@ -115,7 +115,7 @@ def add_pple(request):
             if meccuser in institute.diretu.all():
                 return JsonResponse({
                     'message': _("%(last_name)s %(first_name)s est déjà \
-                    directeur de scolarité" % {
+                    directeur d'études" % {
                         'last_name': request.POST.get('last_name'),
                         'first_name': request.POST.get('first_name')
                     })
