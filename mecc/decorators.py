@@ -3,7 +3,6 @@ from functools import wraps
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group
 from mecc.apps.training.models import Training
-from mecc.apps.utils.querries import currentyear
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
 
@@ -15,7 +14,6 @@ def is_correct_respform(view_func):
         training = Training.objects.get(id=kwargs.get('id'))
         user_profiles = request.user.meccuser.profile.all()
         can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
-            year=currentyear().code_year).filter(
                 Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
                 | Q(code='GESCOL') | Q(code='DIRETU'))
         allowed = any(True for x in can_do_alot if x in user_profiles)  \

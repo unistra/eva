@@ -35,7 +35,7 @@ def spoof_user(request, template='spoof/form.html'):
         r.session['is_spoofed_user'] = True
         return redirect("/", request=r)
     else:
-        data['error'] = _('Le mot de passe est érroné.')
+        data['error'] = _('Le mot de passe est erroné.')
     return render(request, template, data)
 
 
