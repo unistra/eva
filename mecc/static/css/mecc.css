@@ -1,3 +1,14 @@
+.nav-bar-txt{
+    float: left;
+        padding: 10px 15px;
+        font-size: 18px;
+        line-height: 20px;
+        height: 40px;
+    color: #fff;
+}
+.no-border-top{
+    border-top: none!important;
+}
 .page-header{
     margin-top: 0.5em;
 }

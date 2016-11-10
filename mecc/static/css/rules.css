@@ -51,16 +51,11 @@ label{
 .item-100, .div_is_concerned{
   width:100%;
 }
- #div_id_display_order, #div_id_is_edited, #div_id_impact {
+ #div_id_display_order, #div_id_is_edited {
    display:flex;
    width: 100%
  }
- #div_id_impact > div {
-   width: 100%;
- }
- #div_id_impact > label {
-   width:8em;;
- }
+
  .disp #div_id_display_order > label{
    width: 7em;
  }
