@@ -27,8 +27,10 @@
                         <input type="text" name="username"  readonly value="{{e.user.username}}">
 
                     </div>
+                    {% if can_edit %}
                     <button type="submit" class="btn-link" name="remove">
                         <strong><a class="glyphicon glyphicon-trash"></a></strong></button>
+                    {% endif %}
             </form>
 
 
@@ -40,10 +42,9 @@
     {% trans "Pas de responsable de formation" %}
     {%endif%}
     </table>
-
 </div>
 <div class="flex-center item-30" style="margin:1em;">
-    {% if object %}
+    {% if can_edit and object%}
     <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
     {% else %}
     <span class="btn btn-sm btn-primary" disabled style="width:100%"> {% trans 'Associer un responsable' %}</span>
@@ -135,6 +136,7 @@
             </div>
         </div>
     </div>
+    {% if can_edit %}
     <script type="text/javascript">
     {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
@@ -233,3 +235,4 @@
     document.getElementById("add_respform").className += " hidden disabled-event";
     {%endif%}
     </script>
+{%endif%}

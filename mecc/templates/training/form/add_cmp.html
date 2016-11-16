@@ -22,7 +22,9 @@
      <td style="width: 5% " class="td-centered"> <input type="radio" name="supply" value="{{e.code}}" {%if e.code == object.supply_cmp%} checked="checked"{%endif%}>
      </td>
      <td style="width: 5%" class="td-centered">
-      <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-cmp pull-right" onclick="remove_line(this)" ></a>
+         {% if can_edit %}
+         <a id="{{e.id}}" class="glyphicon glyphicon-trash select remove-cmp pull-right" onclick="remove_line(this)" ></a>
+         {% endif %}
      </td>
   </tr>
   {%endfor%}
@@ -46,6 +48,7 @@
          </select>
 </div>
 </div>
+{% if can_edit %}
 <script type="text/javascript">
 var sort = new Tablesort(document.getElementById('cmpTable'));
 
@@ -147,3 +150,5 @@ document.getElementById("cmpTable").className += " disabled-event";
 
 {%endif%}
 </script>
+{% else %}
+{% endif %}
