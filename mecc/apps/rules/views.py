@@ -16,6 +16,7 @@ from mecc.apps.utils.querries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from django.core import serializers
+from mecc.apps.training.models import SpecificParagraph
 
 
 class RulesListView(ListView):
@@ -358,18 +359,35 @@ def duplicate_remove(request):
 @login_required
 @is_ajax_request
 def details_rule(request):
-    current_year = currentyear()
+
+    def gimme_txt(paraid, rulid):
+        o = SpecificParagraph.objects.get(
+                paragraph_gen_id=paraid,
+                rule_gen_id=rulid,
+                code_year=currentyear().code_year,
+            )
+        return o.text_specific_paragraph
+
     x = request.POST.get('val')
     rule = Rule.objects.get(id=x)
     paragraphs = Paragraph.objects.filter(rule__id=x)
+    specific = True if request.POST.get('type') == 'specific' else False
     json_response = {
         'id': x,
-        'year': "%s/%s" % (current_year.code_year, current_year.code_year + 1),
+        'year': "%s/%s" % (
+            currentyear().code_year, currentyear().code_year + 1),
         'title': rule.label,
         'paragraphs': [
-            {'alinea': e.display_order, 'text': e.text_standard,
+            {'alinea': e.display_order,
+             'text': e.text_standard if not (e.is_cmp or e.is_interaction) else gimme_txt(e.id, x),
              'is_cmp': True if e.is_cmp else False,
-             'is_derog': True if e.is_interaction else False}
+             'is_derog': True if e.is_interaction else False,
+             'is_specific': specific,
+             'info': _('Dérogation')}
             for e in paragraphs]
     }
+    # for e in SpecificParagraph.objects.all():
+    #     print(e)
+    #     e.delete()
+    # print('DELETED')
     return JsonResponse(json_response)

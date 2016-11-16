@@ -83,6 +83,9 @@ def add_pple(request):
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('mail')
+        if any(True for x in [username, email] if x in ['', ' ', None]):
+            return JsonResponse({
+                'message': _('Veuillez remplir la zone de recherche')})
 
         try:
             user = User.objects.get(username=username)
@@ -96,11 +99,6 @@ def add_pple(request):
             meccuser = MeccUser.objects.get(user__username=username)
         except ObjectDoesNotExist:
             meccuser = MeccUser.objects.create(user=user)
-
-        # request.POST.get('type').upper()
-        # request.POST.get('code_cmp')
-        # currentyear().code_year
-        # label_profile.get(request.POST.get('type').upper())
 
         profile, created = Profile.objects.get_or_create(
             code=request.POST.get('type').upper(),

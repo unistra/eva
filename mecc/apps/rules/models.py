@@ -7,8 +7,6 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 
-
-
 class Rule(models.Model):
     """
     Rule model
