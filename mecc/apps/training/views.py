@@ -191,6 +191,12 @@ def edit_rules(request, id, template="training/edit_rules.html"):
         code_year=currentyear().code_year)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
+
+    data['custom'] = [a for a in [
+        e.rule_gen_id for e in SpecificParagraph.objects.filter(
+            code_year=currentyear().code_year)]
+        ]
+
     return render(request, template, data)
 
 
@@ -219,10 +225,10 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
         type_paragraph="C" if p.is_cmp else "D",
     )
 
-    data['text_derog'] = p.text_derog
-    data['text_motiv'] = p.text_motiv
+    # data['text_derog'] = p.text_derog
+    # data['text_motiv'] = p.text_motiv
     if created:
-        sp.text_specific_paragraph = p.text_derog
+        sp.text_specific_paragraph = p.text_standard
         sp.save()
 
     data['form'] = (SpecificParagraphCmpForm(instance=sp) if p.is_cmp

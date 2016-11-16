@@ -8,8 +8,10 @@ from ckeditor.widgets import CKEditorWidget
 
 
 class SpecificParagraphDerogForm(forms.ModelForm):
-    text_specific_paragraph = forms.CharField(widget=CKEditorWidget(), label='')
-    text_motiv = forms.CharField(widget=CKEditorWidget(), label='')
+    text_specific_paragraph = forms.CharField(
+        widget=CKEditorWidget(), label='', required=True)
+    text_motiv = forms.CharField(
+        widget=CKEditorWidget(), label='', required=True)
 
     def __init__(self, *args, **kwargs):
         super(SpecificParagraphDerogForm, self).__init__(*args, **kwargs)
@@ -40,9 +42,18 @@ class SpecificParagraphDerogForm(forms.ModelForm):
             'text_motiv'
         ]
 
+    def clean(self):
+        if self.cleaned_data.get('text_specific_paragraph') in ['', ' ', None]:
+            raise ValidationError(_("Veuillez remplir le texte de dérogation"))
+        if self.cleaned_data.get('text_motiv') in ['', ' ', None]:
+            raise ValidationError(_("Veuillez remplir le texte de motivation"))
+
+        return self.cleaned_data
+
 
 class SpecificParagraphCmpForm(forms.ModelForm):
-    text_specific_paragraph = forms.CharField(widget=CKEditorWidget(), label='')
+    text_specific_paragraph = forms.CharField(
+        widget=CKEditorWidget(), label='', required=True)
 
     def __init__(self, *args, **kwargs):
         super(SpecificParagraphCmpForm, self).__init__(*args, **kwargs)
