@@ -130,13 +130,13 @@ class TrainingForm(forms.ModelForm):
 
     def clean(self):
         if self.cleaned_data.get('institutes') is None:
-            raise ValidationError(_("Veuillez selectionner au \
-                moins une composante."))
+            raise ValidationError(("Veuillez selectionner \
+moins une composante."))
         available_institues = self.cleaned_data.get('institutes').all()
         available_code = [e.code for e in available_institues]
         if self.cleaned_data.get('supply_cmp') not in available_code:
-            raise ValidationError(_('Veuillez selectionner une composante \
-                porteuse'))
+            raise ValidationError(("Veuillez selectionner au \
+moins une composante porteuse."))
 
         return self.cleaned_data
 
@@ -193,11 +193,8 @@ class TrainingForm(forms.ModelForm):
                         ),
                     )
                 ),
-                Div(
-                    'institutes',
-                    'supply_cmp',
-                    css_class="hidden"
-                ),
+                Div('institutes', css_class="hidden"),
+                Div('supply_cmp', css_class="hidden"),
             ),
         )
 

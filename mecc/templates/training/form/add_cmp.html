@@ -4,7 +4,7 @@
 <script src="{% static 'js/srtable.js' %}"></script>
 <div class="disp-flex">
 
-<div class="form-group item-70">
+<div class="form-group item-70" id="div_id_cmp" >
 
     <label > {% trans "Composantes" %}<span class="asteriskField">*</span>
     </label>
@@ -35,7 +35,7 @@
 </table>
 </div>
 <div class="item-30 " style="margin:1em;">
-
+    {% if can_edit %}
            <select name="select-degreetype" style="width:100%;margin-top:1em;padding:0.5em;" id='select-cmp' >
            <option selected value="default">{% trans "Ajouter une composante" %}</option>
            {% for e in institutes%}
@@ -46,6 +46,7 @@
            {%endif%}
            {%endfor%}
          </select>
+    {% endif %}
 </div>
 </div>
 {% if can_edit %}
