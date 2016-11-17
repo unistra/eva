@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block page-header %}
+{{label_cmp}} : {% trans 'Validation en conseil de composante' %}
+{% endblock %}
+{% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<div class="disp-flex">
+    <form method="post" class=''>
+        <legend class="no-border">{% trans 'ETAPE 1 : Saisir des dates de validation' %}</legend>
+
+            <div class="row">
+                <div class='col-sm-2 border-right-blue'>
+                    <div class="form-group">
+                        <label for="id_datepicker">Saisir une date</label>
+                        <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
+                            <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA'/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-sm-8 border-right-blue'>
+                    {% include 'institute/view_formation_list.html' %}
+                </div>
+            </div>
+
+
+        <div class="buttons_list has_top_border">
+            <a href="" id="select-all" class="btn btn-info">{% trans 'Tout sélectionner' %}</a>
+            <a href="" id="unselect-all" class="btn btn-info">{% trans 'Tout désélectionner' %}</a>
+            <a href="" class="btn btn-primary"> {% trans 'Appliquer la date' %}</a>
+        </div>
+    </form>
+</div>
+    <div class="row">
+        <div class='col-sm-6 border-right-blue'>
+            <legend class="no-border">{% trans 'ETAPE 2 : Dépôt de documents (format pdf) ' %}</legend>
+        </div>
+        <div class='col-sm-6 border-right-blue'>
+            <legend class="no-border">{% trans 'ETAPE 3 : Notification DES' %}</legend>
+        </div>
+    </div>
+<script>
+// toma ugly fix autoclose is not working for now !!!!
+$.fn.datepicker.defaults.autoclose = true;
+</script>
+{% endblock %}

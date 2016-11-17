@@ -35,7 +35,7 @@
                       {% if e.cmp in request.path and 'institute' in request.path%}
                         class="item-selected"
                      {% endif %}>{% trans 'Général' %}</a></li>
-                     <li><a href=""
+                     <li><a href="/institute/validate/{{e.cmp}}"
                        {% if 'institute/---' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Validations' %}</a></li>

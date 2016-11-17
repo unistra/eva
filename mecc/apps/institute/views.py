@@ -356,3 +356,39 @@ class InstituteListView(ListView):
         context['ordered_list'] = institute_list
         return context
     model = Institute
+
+
+@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def validate_institute(request, code, template='institute/validate.html'):
+    """
+    Validate MECC in institute
+    """
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    data['university_year'] = current_year
+    institute = Institute.objects.get(code=code)
+    data['institute'] = institute
+    data['latest_instit_id'] = institute.id
+    data['label_cmp'] = institute.label
+    data['form_institute'] = DircompInstituteForm(instance=institute)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    profiles = Profile.objects.filter(
+        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP"))
+
+    try:
+        institute_year.date_expected_MECC = datetime.strftime(
+            institute_year.date_expected_MECC, '%d/%m/%Y')
+    except TypeError:
+        institute_year.date_expected_MECC = ''
+    data['form_university_year'] = DircompUniversityYearForm(
+        instance=current_year)
+    data['form_institute_year'] = DircompInstituteYearForm(
+        instance=institute_year)
+    data['disabled_institute_year'] = DisabledInstituteYearForm(
+        instance=institute_year)
+    data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
+
+
+    return render(request, template, data)

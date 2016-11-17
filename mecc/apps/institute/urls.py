@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
     InstituteListView,  edit_insitute, granted_edit_institute, \
-    add_pple, remove_pple
+    add_pple, remove_pple, validate_institute
 from django_cas.decorators import login_required
 
 
@@ -22,5 +22,6 @@ urlpatterns = [
         name="add_pple"),
     url(r'^remove_pple/$', remove_pple,
         name="remove_pple"),
-
+    url(r'^validate/(?P<code>\w+)/$', validate_institute,
+        name='validate'),
 ]
