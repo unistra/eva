@@ -62,14 +62,35 @@
                 {% for e in parag  %}
                 <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
                     <td style="width: 5%; text-align: center;">{{e.display_order}}</td>
-                    <td style="width: 65%;">{{e.text_standard | safe}}</td>
+                    <td style="width: 65%;">
+                        {% if e.id in specific_ids  %}
+                            {% for sp in specific_paragraph  %}
+                                {% if sp.paragraph_gen_id == e.id  %}
+                                    <span class="blue">
+                                        {{sp.text_specific_paragraph|safe}}
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        {{e.text_standard | safe}}
+                        {% endif %}
+
+                    </td>
                     <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_cmp or e.is_interaction%} border-left {%endif%}">
                         {% if e.is_cmp %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Saisir un alinéa de composante" %}</a> <br>
-                        <a href="#"> {% trans "Récupérer l'alinéa de composante n-1" %}</a>
+                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier l'" %} {% else %}{% trans "Saisir un " %}{%endif%}{% trans "alinéa de composante" %}</a> <br>
+                            {% if e.id in specific_ids  %}
+                                <a href="#"> {% trans "Supprimer l'alinéa de composante" %}</a>
+                            {% else %}
+                            <a href="#"> {% trans "Récupérer l'alinéa de composante n-1" %}</a>
+                            {%endif%}
                         {% elif e.is_interaction %}
-                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}"> {% trans "Saisir une dérogation" %}</a> <br>
-                        <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
+                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                            {% if e.id in specific_ids  %}
+                                <a href="#"> {% trans "Supprimer la dérogation" %}</a>
+                            {% else %}
+                                <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
+                            {% endif %}
                         {% endif %}
                     </td>
 

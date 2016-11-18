@@ -377,12 +377,14 @@ def details_rule(request):
         'year': "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1),
         'title': rule.label,
+        'is_specific': specific,
         'paragraphs': [
             {'alinea': e.display_order,
-             'text': e.text_standard if not (e.is_cmp or e.is_interaction) else gimme_txt(e.id, x),
+             'text': e.text_standard if not (
+                (e.is_cmp or e.is_interaction)
+                and specific) else gimme_txt(e.id, x),
              'is_cmp': True if e.is_cmp else False,
              'is_derog': True if e.is_interaction else False,
-             'is_specific': specific,
              'info': _('Dérogation')}
             for e in paragraphs]
     }

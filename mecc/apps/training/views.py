@@ -202,10 +202,12 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
     data = {}
-    data['training'] = Training.objects.get(id=training_id)
+    data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = Rule.objects.get(id=rule_id)
     data['parag'] = Paragraph.objects.filter(rule=data['rule'])
-
+    data['specific_paragraph'] = SpecificParagraph.objects.filter(
+        code_year=currentyear().code_year, training=t)
+    data['specific_ids'] = [e.paragraph_gen_id for e in data['specific_paragraph']]
     return render(request, template, data)
 
 
@@ -217,6 +219,7 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
     data['title'] = _(
         'Alinéa de composante') if p.is_cmp is True else _('Dérogation')
 
+
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         training=t,
@@ -225,8 +228,6 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
         type_paragraph="C" if p.is_cmp else "D",
     )
 
-    # data['text_derog'] = p.text_derog
-    # data['text_motiv'] = p.text_motiv
     if created:
         sp.text_specific_paragraph = p.text_standard
         sp.save()

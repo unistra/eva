@@ -11,11 +11,12 @@
                 <button type="button" class="close" data-dismiss="modal"> &times;</button>
                 <div class="title-modal" style='margin-left:1em;' >
                   <div class="flex-container-preview">
-                  <h1 class="title-block"> Règle standard</h1>
+                  <h1 class="title-block" id='big-title-preview'> </h1>
                 </div>
                 <div class="flex-container-preview">
                   <span class="disabled"> {% trans "Année universitaire : " %} <span id="year"></span> </span> <br>
                   <span id='title-preview'></span>
+                  <div id='subtitle-preview' class="blue bold ">{% trans "FORMATION : " %}{{training.label}}</div>
                 </div>
               </div>
             </div>
