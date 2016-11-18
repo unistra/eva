@@ -99,11 +99,12 @@ def send_mail(request):
     #     ',') if request.POST.get('to') is not None else None
     # cc = request.POST.get('cc').split(
     #     ',') if request.POST.get('cc') is not None else None
-    # bcc = request.POST.get('bcc').split(
-    #     ',') if request.POST.get('bcc') is not None else None
+    bcc = request.POST.get('bcc').split(
+        ',') if request.POST.get('bcc') is not None else None
     to = ['ibis.ismail@unistra.fr',
     #  'weible@unistra.fr'
         ]
+    bcc.append(settings.MAIL_FROM)
     cc = bcc = ['ibis.ismail@unistra.fr']
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
@@ -119,5 +120,5 @@ def send_mail(request):
         bcc=to,
         headers={"Reply-To": settings.MAIL_FROM}
     )
-    mail.send()
+    # mail.send()
     return redirect('commission:home')
