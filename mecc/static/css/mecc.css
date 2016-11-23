@@ -289,6 +289,9 @@ td.id_member {
     display: inline-block;
     flex-grow: 1;
 }
+.item-100 {
+    width: 100%;
+}
 .item-20 {
     width: 20%;
 }

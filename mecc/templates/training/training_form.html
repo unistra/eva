@@ -25,14 +25,20 @@
           <form action="" method="post" id="training_form" >
               {%crispy form%}
               {% include "training/form/add_cmp.html" %}
-          <div>
+              <div>
+              <div class="disp-flex">
+                  <div class="item-100">
+
+
+                      <input name="stay" onclick="_isEdited=false;"class="btn-warning btn btn-sm pull-right" style='margin-bottom:1em;' id="stay" type="submit" value={% trans "Valider" %}>
+                  </div>
+              </div>
 
               <div class="disp-flex">
 
               {% include "training/form/add_respform.html" %}
 
               </div>
-              <input name="stay" onclick="_isEdited=false;"class="btn-warning btn btn-sm pull-right" style='margin-top:1em;' id="stay" type="submit" value={% trans "Valider" %}>
       </div>
           </form>
       </div>

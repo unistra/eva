@@ -76,15 +76,9 @@
                         {% endif %}
 
                     </td>
-                    <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_cmp or e.is_interaction%} border-left {%endif%}">
-                        {% if e.is_cmp %}
-                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier l'" %} {% else %}{% trans "Saisir un " %}{%endif%}{% trans "alinéa de composante" %}</a> <br>
-                            {% if e.id in specific_ids  %}
-                                <a href="#"> {% trans "Supprimer l'alinéa de composante" %}</a>
-                            {% else %}
-                            <a href="#"> {% trans "Récupérer l'alinéa de composante n-1" %}</a>
-                            {%endif%}
-                        {% elif e.is_interaction %}
+                    <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_interaction%} border-left {%endif%}">
+
+                        {% if e.is_interaction %}
                             <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
                             {% if e.id in specific_ids  %}
                                 <a href="#"> {% trans "Supprimer la dérogation" %}</a>
@@ -103,7 +97,31 @@
             <a class="btn-primary btn btn-sm" href="{% url 'training:edit_rules' training.pk%}">{% trans "Fermer la fenêtre" %}</a>
             </div>
 </div>
+    {% include "generic/modal_confirm_delete.html"%}
     {% include "training/rule_preview.html"%}
+
+
+<script type="text/javascript">
+$('#submit-id-add').on('click', function(event) {
+  var proceed = true;
+  if (CKEDITOR.instances.id_text_standard.getData() == ''){
+    event.preventDefault();
+    $("#div_id_text_standard").addClass("all-in-red");
+    proceed = false;
+}else{
+  $("#div_id_text_standard").removeClass("all-in-red")
+}
+
+  if (document.getElementById('id_is_interaction').checked ){
+    if(CKEDITOR.instances.id_text_derog.getData() == ''){
+      event.preventDefault();
+      $("#text_derog").addClass("all-in-red");
+      proceed = false;
+    }else {
+      $("#text_derog").removeClass("all-in-red");
+    }
+});
+</script>
 
 
 {%endblock%}
