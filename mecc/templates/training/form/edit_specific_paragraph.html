@@ -16,7 +16,7 @@
     <div class=" parent disp-flex ">
         <div class="item-80 dir-col">
             <div class="">
-                {% trans "Intitulé de la formation: "%}
+                {% trans "Intitulé de la formation:"%}
             </div>
             <div class="">
                 <strong>{{training.label}}</strong>
@@ -55,10 +55,28 @@
 </div>
 <div class="training-rules">
     <h2 class="title-block" style="font-weight: bold;">
-        {% if training.is_cmp %}{% trans "Alinéa de composante" %}{%elif training.is_interaction%}{% trans "Dérogation" %}{% endif %}
+        {%if training.is_interaction%}{% trans "Dérogation" %}{% endif %}
     </h2>
     <div class="margin-top">
         {%crispy form%}
     </div>
+<script type="text/javascript">
 
+$('#submit-id-add').on('click', function(event) {
+    var proceed = true;
+    if (typeof CKEDITOR.instances.id_text_motiv !== 'undefined') {
+        if (CKEDITOR.instances.id_text_motiv.getData() == ''){
+            $("#div_id_text_motiv").addClass("all-in-red");
+            proceed = false;
+        }else{
+            $("#div_id_text_motiv").removeClass("all-in-red")
+        }
+    }
+    if (!proceed) {
+        event.preventDefault();
+    }
+
+
+});
+</script>
 {%endblock%}

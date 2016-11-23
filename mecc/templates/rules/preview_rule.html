@@ -65,9 +65,6 @@
 
                 <div class ="blue" style="margin-top:0.5em;padding-left:2em;">
                 {% if e.is_interaction %}
-                {% if e.is_cmp %}
-                  {% trans "Interaction type alinéa de composante" %}
-                {%else%}
                   {% trans "Interaction type dérogation" %}
                 {% endif %}
                 {%endif%}
@@ -75,7 +72,7 @@
                   </div>
                 <ul>
                 {%if e.text_derog %}
-                <li><h3 style="font-size:1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire (ou de composante)" %}</h3>
+                <li><h3 style="font-size:1em;margin-top:0.5em;margin-bottom:0.5em " class="grey-font">{% trans "Texte consigne règle dérogatoire" %}</h3>
                 {{ e.text_derog | safe }}</li>
                 {%endif%}
                 {%if e.text_motiv%}

@@ -216,29 +216,25 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
-    data['title'] = _(
-        'Alinéa de composante') if p.is_cmp is True else _('Dérogation')
-
+    # data['title'] = _(
+    #     'Alinéa de composante') if p.is_cmp is True else _('Dérogation')
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         training=t,
         rule_gen_id=r.id,
         paragraph_gen_id=p.id,
-        type_paragraph="C" if p.is_cmp else "D",
+        # type_paragraph="C" if p.is_cmp else "D",
     )
 
     if created:
         sp.text_specific_paragraph = p.text_standard
         sp.save()
 
-    data['form'] = (SpecificParagraphCmpForm(instance=sp) if p.is_cmp
-                    else SpecificParagraphDerogForm(instance=sp))
+    data['form'] = SpecificParagraphDerogForm(instance=sp)
 
     if request.method == 'POST':
-        form = (SpecificParagraphCmpForm(request.POST, instance=sp)
-                if p.is_cmp else SpecificParagraphDerogForm(request.POST,
-                instance=sp))
+        form = SpecificParagraphDerogForm(request.POST, instance=sp)
         if form.is_valid():
             form.save()
             return redirect(

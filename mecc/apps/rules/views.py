@@ -93,7 +93,7 @@ def manage_paragraph(request, rule_id,
             parag = Paragraph.objects.create(
                 code_year=current_year.code_year,
                 display_order=request.POST.get('display_order'),
-                is_cmp=True if request.POST.get('is_cmp') == 'on' else False,
+                # is_cmp=True if request.POST.get('is_cmp') == 'on' else False,
                 is_interaction=True if request.POST.get(
                     'is_interaction') == 'on' else False
             )
@@ -101,7 +101,7 @@ def manage_paragraph(request, rule_id,
         parag.is_in_use = True if request.POST.get(
             'is_in_use') == 'on' else False
         parag.display_order = request.POST.get('display_order')
-        parag.is_cmp = True if request.POST.get('is_cmp') == 'on' else False
+        # parag.is_cmp = True if request.POST.get('is_cmp') == 'on' else False
         parag.is_interaction = True if request.POST.get(
             'is_interaction') == 'on' else False
         parag.text_derog = request.POST.get('text_derog')
@@ -381,9 +381,8 @@ def details_rule(request):
         'paragraphs': [
             {'alinea': e.display_order,
              'text': e.text_standard if not (
-                (e.is_cmp or e.is_interaction)
-                and specific) else gimme_txt(e.id, x),
-             'is_cmp': True if e.is_cmp else False,
+                e.is_interaction and specific) else gimme_txt(e.id, x),
+            #  'is_cmp': True if e.is_cmp else False,
              'is_derog': True if e.is_interaction else False,
              'info': _('Dérogation')}
             for e in paragraphs]

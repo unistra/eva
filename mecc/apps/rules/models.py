@@ -78,7 +78,7 @@ class Paragraph(models.Model):
     is_in_use = models.BooleanField(_('En service'), default=True)
     display_order = models.IntegerField(
         _('Numéro ordre affichage'), unique=False)
-    is_cmp = models.BooleanField(_('Alinéa de composante'))
+    # is_cmp = models.BooleanField(_('Alinéa de composante'))
     is_interaction = models.BooleanField(_('Interaction'))
     text_derog = models.TextField(_("Texte de consigne pour la saisie de \
         l'alinéa dérogatoire (ou de composante)"), blank=True)
