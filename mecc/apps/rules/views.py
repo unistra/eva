@@ -175,7 +175,7 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     data = {}
 
     rule = get_object_or_404(Rule, id=id)
-
+    request.session['visited_rule'] = rule.id
     data['paragraphs'] = Paragraph.objects.filter((Q(rule=rule)))
     data['editing'] = True
     current_year = currentyear()
@@ -212,6 +212,11 @@ class ParagraphDelete(DeleteView):
     model = Paragraph
     pk_url_kwarg = 'id'
     success_url = '/rules/list'
+
+    def get_success_url(self):
+        rule = self.request.session['visited_rule'] if \
+         self.request.session['visited_rule'] else self.object.rule.all()[0].id
+        return reverse('rules:rule_edit', kwargs={'id': rule})
 
 
 class RuleDelete(DeleteView):
