@@ -94,18 +94,19 @@ def send_mail(request):
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-    # A decommenter pour envoyer aux bonnes personnes
+
+    # TODO: A decommenter pour envoyer aux bonnes personnes
     # to = request.POST.get('to').split(
     #     ',') if request.POST.get('to') is not None else None
     # cc = request.POST.get('cc').split(
     #     ',') if request.POST.get('cc') is not None else None
-    bcc = request.POST.get('bcc').split(
-        ',') if request.POST.get('bcc') is not None else None
-    to = ['ibis.ismail@unistra.fr',
-    #  'weible@unistra.fr'
+    # TODO: remove the following lines in production
+    to = [
+        'ibis.ismail@unistra.fr',
+        # 'weible@unistra.fr'
         ]
-    bcc.append(settings.MAIL_FROM)
-    cc = bcc = ['ibis.ismail@unistra.fr']
+    cc = ['ibis.ismail@unistra.fr']
+
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
     body = request.POST.get('body', b) if request.POST.get(
@@ -115,9 +116,9 @@ def send_mail(request):
         subject=subject,
         body=body,
         from_email="MECC Admin<%s>" % settings.MAIL_FROM,
-        to=bcc,
+        to=to,
         cc=cc,
-        bcc=to,
+        bcc=[settings.MAIL_ARCHIVES],
         headers={"Reply-To": settings.MAIL_FROM}
     )
     # mail.send()

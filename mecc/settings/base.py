@@ -392,3 +392,4 @@ APOGEEWS_TOKEN = None
 ########
 
 MAIL_FROM = 'des-admin-mecc@unistra.fr'
+MAIL_ARCHIVES = 'des-mecc-archives@unistra.fr'
