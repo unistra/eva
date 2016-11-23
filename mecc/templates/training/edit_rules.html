@@ -51,7 +51,7 @@
          <tr class="underlined">
             <th width="10%" class="td-centered no-padding"  style="font-weight: normal;"><small>{% trans "Statut règle standard" %}</small></th>
             <th width="52%" class="v-align-m no-padding" style="font-weight: normal;">{% trans "Libellé de règle" %}</th>
-            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
+            <th width="38%" class="td-centered no-padding" style="font-weight: normal;" >{% trans 'Spécificités pour cette formation </br>(dérogations)' %}</th>
          </tr>
        </thead>
        <tbody class="overflow" >
@@ -156,8 +156,8 @@
                            document.getElementById('subtitle-preview').innerHTML = "";
                            document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
                        } else {
-                           document.getElementById('subtitle-preview').innerHTML = "{% trans 'FORMATION '%} : {{training.label}}";
-                           document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle avec dérogation et alinéa de composante' %}";
+                           document.getElementById('subtitle-preview').innerHTML = "{% trans 'FORMATION'%} : {{training.label}}";
+                           document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle avec dérogation' %}";
 
                        }
                        for (i=0; i < data.paragraphs.length; i++){
@@ -179,7 +179,7 @@
                            };
                            if (data.paragraphs[i].is_derog === true){
                                if (data.is_specific) {
-                                   cell1.className += 'blue bold';
+                                   cell1.className += 'blue ';
                                    cell2.style.padding = '1em 0 0 0';
                                    cell2.innerHTML = '({% trans "Dérogation" %})';
                                } else {
@@ -187,15 +187,7 @@
                                    cell2.innerHTML = '{% trans "Dérogation possible"%}'
                                }
                            }
-                           if (data.paragraphs[i].is_cmp === true){
-                               if (data.is_specific) {
-                                   cell2.innerHTML = '({% trans "Alinéa de composante" %})';
-                               }else {
-                                   cell2.className += ' border-left disabled italic td-centered';
-                                   cell2.innerHTML = "Alinéa de composante possible"
-                               }
-                           }
-                           if (data.is_specific & (!data.paragraphs[i].is_derog === true & !data.paragraphs[i].is_cmp === true)) {
+                           if (data.is_specific & (!data.paragraphs[i].is_derog === true )) {
                                cell2.innerHTML = '({% trans "Standard" %})';
 
                            }

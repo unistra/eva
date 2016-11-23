@@ -88,11 +88,11 @@ def add_paragraph(e, story):
     for p in paragraphs:
         if p.is_in_use:
             txt = ''
-            cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
+            # cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
             derog = _("Dérogation <br></br> possible") if \
                 p.is_interaction else ''
             if p.is_interaction:
-                txt = derog if not p.is_cmp else cmp
+                txt = derog  # if not p.is_cmp else cmp
 
             t.append(
                 [

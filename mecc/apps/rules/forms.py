@@ -27,6 +27,9 @@ class ParagraphForm(forms.ModelForm):
     text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
         consigne pour la saisie des motivations"), required=False)
 
+    is_interaction = forms.BooleanField(required=False, label=_('Dérogation \
+        possible'))
+
     def __init__(self, *args, **kwargs):
         super(ParagraphForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -52,11 +55,7 @@ class ParagraphForm(forms.ModelForm):
                         css_class="item aligned-left flex-start"
                     ),
                     Div(
-                        'is_cmp',
-                        Div(
-                            Div('is_interaction', css_class="is_interaction"),
-                            css_class="parent"
-                        ),
+                        'is_interaction',
                         css_class="item item-35 paraph-cmp",
                     ),
 
@@ -95,8 +94,8 @@ class ParagraphForm(forms.ModelForm):
         )
 
     def clean(self):
-        if self.cleaned_data.get('is_cmp') is False:
-            raise ValidationError(_("Veuillez selectionner un régime."))
+        # if self.cleaned_data.get('is_cmp') is False:
+        #     raise ValidationError(_("Veuillez selectionner un régime."))
 
         return self.cleaned_data
 
@@ -105,7 +104,7 @@ class ParagraphForm(forms.ModelForm):
         fields = [
             'display_order',
             'is_in_use',
-            'is_cmp',
+            # 'is_cmp',
             'is_interaction',
             'text_standard',
             'text_derog',
