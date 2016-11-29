@@ -21,7 +21,7 @@ class ParagraphForm(forms.ModelForm):
         >Champ obligatoire</span>"), required=False)
 
     text_derog = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
-        consigne pour la saisie de l'alinéa dérogatoire (ou de composante)"),
+        consigne pour la saisie de l'alinéa dérogatoire"),
                                  required=False)
 
     text_motiv = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \

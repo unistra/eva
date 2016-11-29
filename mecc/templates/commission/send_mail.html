@@ -21,13 +21,13 @@
                     <div class="form-group">
                         <label for="text" class="control-label col-lg-2">{% trans "À :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id='send-to' type="text" name="to" class="form-control" value="{%for e in staff_mails%}{{e}}, {%endfor%}" placeholder="Destinataire"></input>
+                            <input id='send-to' type="email" multiple required name="to" class="form-control" value="{%for e in staff_mails%}{{e}}, {%endfor%}" placeholder="Destinataire"></input>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cc" class="control-label col-lg-2">{% trans "CC :" %}</label>
                         <div class="controls col-lg-10">
-                            <input type="text" name="cc" class="form-control" placeholder="Copie à"></input>
+                            <input type="email" multiple  name="cc" class="form-control" placeholder="Copie à"></input>
                         </div>
                     </div>
                     <div class="form-group">
