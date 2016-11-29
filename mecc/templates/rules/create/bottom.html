@@ -23,7 +23,7 @@
         <th width="9%" class="td-centered aligned-left">{% trans "En service" %}</th>
         <th width="8%" class='sort-default td-centered aligned-left'>{% trans 'N° Affichage' %}</th>
         <th width="9%" class="td-centered">{% trans 'Dérogation possible' %}</th>
-        <th width="18%" class="td-centered aligned-left">{% trans 'Texte consigne' %}<br>{% trans "Règle dérogatoire (ou de composante)" %}</th>
+        <th width="18%" class="td-centered aligned-left">{% trans 'Texte consigne' %}<br>{% trans "Règle dérogatoire" %}</th>
         <th width="18%"class="td-centered aligned-left">{% trans 'Texte consigne' %}<br>{% trans "Motivations" %}</th>
         <th width="4%"class="borderless"></th>
 
@@ -75,7 +75,6 @@
 <a href="{% url 'rules:list'%}" class="btn-primary btn btn-sm" >{% trans "Retourner à la liste des règles" %}</a>
 {% endif %}
 </div>
-
 {% include "rules/preview_rule.html" %}
 
 <style media="screen">

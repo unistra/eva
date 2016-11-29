@@ -1004,7 +1004,7 @@ msgid "Interaction type dérogation"
 msgstr ""
 
 #: mecc/templates/rules/preview_rule.html:80
-msgid "Texte consigne règle dérogatoire (ou de composante)"
+msgid "Texte consigne règle dérogatoire "
 msgstr ""
 
 #: mecc/templates/rules/preview_rule.html:84

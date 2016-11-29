@@ -49,34 +49,12 @@
 <script type="text/javascript">
 if (document.getElementById("id_is_interaction").checked){
   $("#text_derog").removeClass("disabled-event");
-  // if(!document.getElementById('id_is_cmp').checked){
-  //   $("#text_motiv").removeClass("disabled-event");
-  // }
+  $("#text_motiv").removeClass("disabled-event");
 
 }
-// $('#id_is_cmp').on('change', function() {
-//     if (this.checked) {
-//       document.getElementById("id_is_interaction").checked = true;
-//       $("#text_derog").removeClass("disabled-event");
-//       $("#text_motiv").addClass("disabled-event");
-//       CKEDITOR.instances.id_text_motiv.setData('')
-//
-//     } else {
-//       document.getElementById("id_is_interaction").checked = false;
-//       $("#text_motiv").addClass("disabled-event");
-//       CKEDITOR.instances.id_text_motiv.setData('')
-//
-//       $("#text_derog").addClass("disabled-event");
-//       CKEDITOR.instances.id_text_derog.setData('')
-//
-//
-//     }
-// })
+
 $('#id_is_interaction').on('change', function() {
-  // if (document.getElementById("id_is_cmp").checked){
-  //   this.checked = true;
-  //   return
-  // }
+
   if (this.checked){
     $("#text_motiv").removeClass("disabled-event");
     $("#text_derog").removeClass("disabled-event");
@@ -109,15 +87,6 @@ $('#submit-id-add').on('click', function(event) {
     }
   }
 
-  // if(!document.getElementById('id_is_cmp').checked && document.getElementById('id_is_interaction').checked ){
-  //   if(CKEDITOR.instances.id_text_motiv.getData() == ''){
-  //   event.preventDefault();
-  //   $("#text_motiv").addClass("all-in-red");
-  //   proceed = false;
-  // }else{
-  //   $("#text_motiv").removeClass("all-in-red")
-  // }
-  // }
   if (proceed === true){
     document.getElementById('paragraph_form').submit()
   }

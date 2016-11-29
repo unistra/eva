@@ -376,6 +376,7 @@ def details_rule(request):
                 )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard
+
         derog.append(paraid)
         return o.text_specific_paragraph
 
