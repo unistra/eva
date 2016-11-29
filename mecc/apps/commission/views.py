@@ -94,16 +94,16 @@ def send_mail(request):
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-
+    nobody = ['', ' ', None]
     # TODO: A decommenter pour envoyer aux bonnes personnes
-    # to = request.POST.get('to').split(
-    #     ',') if request.POST.get('to') is not None else None
-    # cc = request.POST.get('cc').split(
-    #     ',') if request.POST.get('cc') is not None else None
+    # to = [e.replace(' ', '') for e in request.POST.get('to').split(
+    #     ',')] if request.POST.get('to') not in nobody else None
+    # cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
+    #     ',')] if request.POST.get('cc') not in nobody else None
     # TODO: remove the following lines in production
     to = [
-        'ibis.ismail@unistra.fr',
-        # 'weible@unistra.fr'
+    #     'ibis.ismail@unistra.fr',
+        'weible@unistra.fr'
         ]
     cc = ['ibis.ismail@unistra.fr']
 
@@ -121,5 +121,6 @@ def send_mail(request):
         bcc=[settings.MAIL_ARCHIVES],
         headers={"Reply-To": settings.MAIL_FROM}
     )
-    # mail.send()
+
+    mail.send()
     return redirect('commission:home')
