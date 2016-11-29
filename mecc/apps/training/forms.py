@@ -1,10 +1,41 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div, Submit
+from crispy_forms.layout import Layout, HTML, Div, Submit
 from django.utils.translation import ugettext as _
-from .models import Training, SpecificParagraph
+from .models import Training, SpecificParagraph, AdditionalParagraph
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
+
+
+class AdditionalParagraphForm(forms.ModelForm):
+    text_additional_paragraph = forms.CharField(
+        widget=CKEditorWidget(), label='', required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(AdditionalParagraphForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML("{{additional}}"),
+            'text_additional_paragraph',
+            Div(
+                Submit(
+                    'add', _('Valider et fermer la fenêtre'),
+                    css_class="btn-primary btn btn-sm",
+                    ),
+                HTML("""
+                    <a class='btn-primary btn btn-sm'
+                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=rule.id %} >
+                    Annuler et fermer la fenêtre </a>
+                     """),
+                css_class='buttons_list'
+            ),
+            )
+
+    class Meta:
+        model = AdditionalParagraph
+        fields = [
+            'text_additional_paragraph'
+        ]
 
 
 class SpecificParagraphDerogForm(forms.ModelForm):

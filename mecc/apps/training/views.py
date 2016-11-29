@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Training, SpecificParagraph
+from .models import Training, SpecificParagraph, AdditionalParagraph
 from .forms import TrainingForm
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.institute.models import Institute
@@ -12,10 +12,11 @@ from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
 from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm
+from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm, \
+    AdditionalParagraphForm
 
 
 def add_current_year(dic):
@@ -195,19 +196,91 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year)]
-        ]
+        ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
+                training=training, code_year=currentyear().code_year)]
 
     return render(request, template, data)
 
 
+@login_required
+@is_post_request
+def delete_specific(request):
+    val = request.POST.get('id')
+    if request.POST.get('type') == 'D':
+        to_del = SpecificParagraph.objects.get(id=val)
+    elif request.POST.get('type') == 'A':
+        to_del = AdditionalParagraph.objects.get(id=val)
+    else:
+        raise Exception('Not a correct type')
+    to_del.delete()
+    return HttpResponseRedirect(request.environ.get('HTTP_REFERER'))
+
+
+@is_ajax_request
+def ask_delete_specific(request):
+    if request.GET.get('type') in 'A':
+        p = AdditionalParagraph.objects.filter(
+            code_year=currentyear().code_year).get(id=request.GET.get('val'))
+        text = p.text_additional_paragraph
+    elif request.GET.get('type') in 'D':
+        p = SpecificParagraph.objects.filter(
+            code_year=currentyear().code_year,
+            training=Training.objects.get(id=request.GET.get('training_id')),
+            rule_gen_id=request.GET.get('rule_id')
+        ).get(paragraph_gen_id=request.GET.get('val'))
+        text = p.text_specific_paragraph
+    else:
+        raise Exception("%s is not a correct value" % request.GET.get('type'))
+
+    json_response = {
+        'text': text,
+        'title': str(p),
+        'id': p.id
+    }
+    return JsonResponse(json_response)
+
+
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
     data = {}
+    data['url_to_del'] = "/training/delete_specific/"
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = Rule.objects.get(id=rule_id)
     data['parag'] = Paragraph.objects.filter(rule=data['rule'])
     data['specific_paragraph'] = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year, training=t)
+    try:
+        data['additional_paragraph'] = AdditionalParagraph.objects.get(
+            code_year=currentyear().code_year, training=t, rule_gen_id=rule_id)
+    except AdditionalParagraph.DoesNotExist as e:
+        pass
+    data['gen_id_to_id'] = [{"id": e.id, "gen_id": e.paragraph_gen_id} for
+                            e in data['specific_paragraph']]
     data['specific_ids'] = [e.paragraph_gen_id for e in data['specific_paragraph']]
+    return render(request, template, data)
+
+
+def edit_additional_paragraph(request, training_id, rule_id, template="training/form/edit_specific_paragraph.html"):
+    data = {}
+    data['training'] = t = Training.objects.get(id=training_id)
+    data['rule'] = r = Rule.objects.get(id=rule_id)
+    data['title'] = _("Alinéa additionel")
+
+    additional, created = AdditionalParagraph.objects.get_or_create(
+        code_year=currentyear().code_year,
+        training=t,
+        rule_gen_id=r.id
+    )
+
+    data['form'] = AdditionalParagraphForm(instance=additional)
+    data['additional'] = _("Vous souhaitez ajouter un alinéa à cette règle pour \
+votre formation. Merci de la rédiger ci-dessous :")
+    if request.method == 'POST':
+        form = AdditionalParagraphForm(request.POST, instance=additional)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                'training:specific_paragraph', training_id=t.id, rule_id=r.id)
+
     return render(request, template, data)
 
 
@@ -216,8 +289,10 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, templat
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
-    # data['title'] = _(
-    #     'Alinéa de composante') if p.is_cmp is True else _('Dérogation')
+    data['title'] = _("Dérogation")
+
+    data['text_derog'] = p.text_derog
+    data['text_motiv'] = p.text_motiv
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,

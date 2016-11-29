@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="" id="preview" role="dialog" style="z-index: 1400;">
+<div class="fade modal" id="preview" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
@@ -12,15 +12,14 @@
                 </div>
             </div>
             <div class="modal-body">
-                <span style="margin-bottom:0.2em">{% trans "Êtes vous sûr de vouloir supprimer " %}</span> <span id='type'></span>?</br>
+                <span style="margin-bottom:0.2em">{% trans "Êtes vous sûr de vouloir supprimer : " %}</span> <span id='type'></span>?</br>
                 <ul>
                     <li id='to_del'></li>
                 </ul>
             </div>
             <div class="modal-footer" id="confirm" style="padding-bottom:1em">
-                <form method="POST" id="delete_form" action="delete_specific_rule">
+                <form method="POST" id="delete_form" action="{{url_to_del}}" name='gen_form'>
                     {% csrf_token %}
-                    <input type="hidden" name="name" value="">
                     <input type="submit" value='{% trans "Oui" %}' class="btn btn-primary" />
                     <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "No" %}</button>
                 </form>

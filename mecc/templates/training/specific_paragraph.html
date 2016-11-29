@@ -81,7 +81,7 @@
                         {% if e.is_interaction %}
                             <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
                             {% if e.id in specific_ids  %}
-                                <a href="#"> {% trans "Supprimer la dérogation" %}</a>
+                                <a data-toggle="modal" data-target="#preview" onclick="ask_delete('D', {{e.id}}, {{training.id}}, {{rule.id}})"> {% trans "Supprimer la dérogation" %}</a>
                             {% else %}
                                 <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
                             {% endif %}
@@ -91,6 +91,21 @@
                 </tr>
 
                 {% endfor %}
+                <tr style="margin-top: 1em; margin-bottom: 1em;" class="green">
+                    <td style="width: 5%; text-align: center;">{{parag|length|add:'1'}}</td>
+                    <td style="width: 65%;">
+                        {{additional_paragraph.text_additional_paragraph|safe}}
+                    </td>
+                    <td style="width: 25%;text-align:left;" class="td-centered border-left ">
+                        <a href="{% url 'training:edit_additional_paragraph' training_id=training.id rule_id=rule.id%}" class="green">{% if additional_paragraph  %}{% trans "Modifier l'alinéa" %} {% else %}{% trans "Saisir un alinéa" %}{%endif%}{% trans " additionnel" %}</a> <br>
+                            {% if additional_paragraph %}
+                                <a data-toggle="modal" data-target="#preview" onclick="ask_delete('A', {{additional_paragraph.id}})" class="green"> {% trans "Supprimer l'alinéa additionel" %}</a>
+                            {% else %}
+                                <a href="#" class="green"> {% trans "Récupérer l'alinéa additionel n-1" %}</a>
+                            {% endif %}
+                    </td>
+
+                </tr>
             </tbody>
         </table>
         <div class="buttons_list">
@@ -98,29 +113,42 @@
             </div>
 </div>
     {% include "generic/modal_confirm_delete.html"%}
-    {% include "training/rule_preview.html"%}
 
 
 <script type="text/javascript">
-$('#submit-id-add').on('click', function(event) {
-  var proceed = true;
-  if (CKEDITOR.instances.id_text_standard.getData() == ''){
-    event.preventDefault();
-    $("#div_id_text_standard").addClass("all-in-red");
-    proceed = false;
-}else{
-  $("#div_id_text_standard").removeClass("all-in-red")
-}
+// Create hidden input elements
+    var al = document.forms['gen_form'];
 
-  if (document.getElementById('id_is_interaction').checked ){
-    if(CKEDITOR.instances.id_text_derog.getData() == ''){
-      event.preventDefault();
-      $("#text_derog").addClass("all-in-red");
-      proceed = false;
-    }else {
-      $("#text_derog").removeClass("all-in-red");
-    }
-});
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = "type";
+    al.appendChild(input);
+
+    var input2 = document.createElement('input');
+    input2.type = 'hidden';
+    input2.name = "id";
+    al.appendChild(input2);
+
+
+function ask_delete(type, paragraph_id, training_id, rule_id) {
+    $.ajax({
+        url: "{% url 'training:ask_delete_specific'%}",
+        type: "GET",
+        data: {
+            val: paragraph_id,
+            training_id: training_id,
+            rule_id: rule_id,
+            type: type,
+        },
+        success: function(data){
+            document.getElementById('type').innerHTML = data.title;
+            document.getElementById('to_del').innerHTML = data.text;
+            input.value = type;
+            input2.value = data.id;
+        }
+    });
+
+}
 </script>
 
 

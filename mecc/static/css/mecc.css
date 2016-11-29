@@ -46,7 +46,10 @@
 .red {
     color: red;
 }
-.green {
+a.green:hover {
+    color: #1A4A00;
+}
+.green{
     color: green;
 }
 .grey {
@@ -376,6 +379,9 @@ td.id_member {
     text-align: center;
     align-self: center;
     vertical-align: middle!important;
+}
+.centered{
+    text-align: center;
 }
 .input-red {
     border-color: red;

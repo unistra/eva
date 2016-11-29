@@ -43,6 +43,7 @@
             {{rule.label}}
         </div>
     </div>
+    {% if not additional %}
     <div class="item-100 disp-flex disabled" style="margin-bottom:1em;">
 
         <div class="item-20 disp-flex margin-left6">
@@ -52,10 +53,11 @@
             {{paragraph.text_standard | safe}}
         </div>
     </div>
+    {% endif %}
 </div>
 <div class="training-rules">
-    <h2 class="title-block" style="font-weight: bold;">
-        {%if training.is_interaction%}{% trans "Dérogation" %}{% endif %}
+    <h2 class="title-block blue" style="font-weight: bold;">
+        {{title}}
     </h2>
     <div class="margin-top">
         {%crispy form%}

@@ -45,7 +45,8 @@ class Training(models.Model):
         _('Avancement de la saisie du tableau MECC'), choices=PROGRESS_CHOICE,
         max_length=1, default="E")
     date_val_cmp = models.DateField(
-        _('Date de validation en conseil de composante'), blank=True, null=True)
+        _('Date de validation en conseil de composante'),
+        blank=True, null=True)
     date_res_des = models.DateField(
         _('Date de réserve DES'), blank=True, null=True)
     date_visa_des = models.DateField(
@@ -56,7 +57,8 @@ class Training(models.Model):
     institutes = models.ManyToManyField('institute.Institute')
     supply_cmp = models.CharField(_('porteuse'), max_length=3, blank=True)
     resp_formations = models.ManyToManyField('adm.MeccUser')
-    n_train = models.IntegerField(_('Numéro de règle'), unique=False, null=True)
+    n_train = models.IntegerField(
+        _('Numéro de règle'), unique=False, null=True)
 
     def clean_fields(self, exclude=None):
         if self.code_year is None:
@@ -104,4 +106,15 @@ class SpecificParagraph(models.Model):
     text_motiv = models.TextField(_("Texte de motivation"))
 
     def __str__(self):
-        return _("Paragraphe spécifique n° %s" % self.pk)
+        return _("Alinéa spécifique n° %s" % self.pk)
+
+
+class AdditionalParagraph(models.Model):
+    code_year = models.IntegerField(_('Code année'), unique=False)
+    training = models.ForeignKey(Training)
+    rule_gen_id = models.IntegerField(_('ID règle générale'))
+    text_additional_paragraph = models.TextField(
+        _("Texte d'alinéa additionnel"))
+
+    def __str__(self):
+        return _("Alinéa additionel n° %s" % self.pk)

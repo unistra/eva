@@ -16,7 +16,8 @@ from mecc.apps.utils.querries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from django.core import serializers
-from mecc.apps.training.models import SpecificParagraph
+from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
+    Training
 
 
 class RulesListView(ListView):
@@ -364,18 +365,34 @@ def duplicate_remove(request):
 @login_required
 @is_ajax_request
 def details_rule(request):
+    derog = []
 
     def gimme_txt(paraid, rulid):
-        o = SpecificParagraph.objects.get(
-                paragraph_gen_id=paraid,
-                rule_gen_id=rulid,
-                code_year=currentyear().code_year,
-            )
+        try:
+            o = SpecificParagraph.objects.get(
+                    paragraph_gen_id=paraid,
+                    rule_gen_id=rulid,
+                    code_year=currentyear().code_year,
+                )
+        except SpecificParagraph.DoesNotExist:
+            return Paragraph.objects.get(id=paraid).text_standard
+        derog.append(paraid)
         return o.text_specific_paragraph
 
     x = request.POST.get('val')
     rule = Rule.objects.get(id=x)
+
     paragraphs = Paragraph.objects.filter(rule__id=x)
+    # Give required additional paragraph or None
+    try:
+        additional = AdditionalParagraph.objects.get(
+            training=Training.objects.get(id=request.POST.get('training_id')),
+            rule_gen_id=x, code_year=currentyear().code_year
+
+        )
+    except AdditionalParagraph.DoesNotExist:
+        additional = None
+
     specific = True if request.POST.get('type') == 'specific' else False
     json_response = {
         'id': x,
@@ -387,13 +404,15 @@ def details_rule(request):
             {'alinea': e.display_order,
              'text': e.text_standard if not (
                 e.is_interaction and specific) else gimme_txt(e.id, x),
-            #  'is_cmp': True if e.is_cmp else False,
-             'is_derog': True if e.is_interaction else False,
+             'is_derog': True if e.id in derog else False,
              'info': _('Dérogation')}
-            for e in paragraphs]
+            for e in paragraphs],
+
     }
-    # for e in SpecificParagraph.objects.all():
-    #     print(e)
-    #     e.delete()
-    # print('DELETED')
+    if specific:
+        json_response["additional"] = {
+            "alinea": int(len(paragraphs)) + 1,
+            "text": additional.text_additional_paragraph
+        } if additional is not None else None
+
     return JsonResponse(json_response)
