@@ -7,6 +7,8 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django_cas.decorators import login_required, user_passes_test
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
 from mecc.apps.institute.forms import InstituteForm,  \
     DircompInstituteForm
@@ -20,6 +22,7 @@ from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.training.models import Training
+from mecc.decorators import is_post_request
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -161,7 +164,8 @@ def remove_pple(request):
         username = request.POST.get('username')
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
         meccuser = MeccUser.objects.get(user__username=username)
-        code = 'REFAPP' if request.POST.get('type') == 'GESCOL' and meccuser.is_ref_app else request.POST.get('type')
+        code = 'REFAPP' if request.POST.get(
+            'type') == 'GESCOL' and meccuser.is_ref_app else request.POST.get('type')
         prof = [e for e in meccuser.profile.all() if
                 e.code == code and
                 e.cmp == request.POST.get('code_cmp') and
@@ -220,6 +224,7 @@ class InstituteCreate(CreateView):
     """
     Create institute view
     """
+
     def get_context_data(self, **kwargs):
         context = super(InstituteCreate, self).get_context_data(**kwargs)
         try:
@@ -237,7 +242,7 @@ class InstituteCreate(CreateView):
         current_year = UniversityYear.objects.get(
             is_target_year=True).code_year
         context['university_year'] = UniversityYear.objects.get(
-                code_year=current_year)
+            code_year=current_year)
         return context
 
     model = Institute
@@ -284,8 +289,8 @@ class InstituteUpdate(UpdateView):
         context = super(InstituteUpdate, self).get_context_data(**kwargs)
 
         if self.kwargs.get('code') in [
-         e.cmp for e in self.request.user.meccuser.profile.all() if
-         e.code == "RESPFORM"]:
+                e.cmp for e in self.request.user.meccuser.profile.all() if
+                e.code == "RESPFORM"]:
             context['cannot_edit'] = True
         else:
             context['cannot_edit'] = False
@@ -316,6 +321,7 @@ class InstituteListView(ListView):
     """
     Institute List view
     """
+
     def get_context_data(self, **kwargs):
         context = super(InstituteListView, self).get_context_data(**kwargs)
         institute_list = []
@@ -342,7 +348,8 @@ class InstituteListView(ListView):
                     }
                     institute_list.append(field)
                 except:
-                    warnme.append("%s - %s" % (institute.label, institute.ROF_code) if institute.ROF_code not in ['', ' ', None] else institute.label,)
+                    warnme.append("%s - %s" % (institute.label, institute.ROF_code)
+                                  if institute.ROF_code not in ['', ' ', None] else institute.label,)
 
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée.')
@@ -374,21 +381,49 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['form_institute'] = DircompInstituteForm(instance=institute)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-    profiles = Profile.objects.filter(
-        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP"))
+
+    data['trainings'] = Training.objects.filter(
+        code_year=currentyear().code_year if currentyear() is not None else None,
+        institutes__code=code).order_by('degree_type')
 
     try:
         institute_year.date_expected_MECC = datetime.strftime(
             institute_year.date_expected_MECC, '%d/%m/%Y')
     except TypeError:
         institute_year.date_expected_MECC = ''
-    data['form_university_year'] = DircompUniversityYearForm(
-        instance=current_year)
-    data['form_institute_year'] = DircompInstituteYearForm(
-        instance=institute_year)
-    data['disabled_institute_year'] = DisabledInstituteYearForm(
-        instance=institute_year)
-    data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
-
 
     return render(request, template, data)
+
+
+@is_post_request
+@login_required
+def send_mail(request):
+    """
+    Send mail
+    """
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+
+    s = "[MECC] Notification"
+    b = _("""
+    Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+    Merci.
+    """)
+    to = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr']
+    cc = bcc = ['ibis.ismail@unistra.fr']
+    subject = request.POST.get('subject', s) if request.POST.get(
+        'subject') not in ['', ' '] else s
+    body = request.POST.get('body', b) if request.POST.get(
+        'body') not in ['', ' '] else b
+
+    mail = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email="MECC Admin<%s>" % settings.MAIL_FROM,
+        to=[settings.MAIL_FROM],
+        cc=cc,
+        bcc=to,
+        headers={"Reply-To": request.user.email}
+    )
+    mail.send()
+
+    return redirect('/institute/validate/%s' % meccuser.cmp)

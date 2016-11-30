@@ -3,50 +3,92 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% block page-header %}
+{{ university_year }} <br>
 {{label_cmp}} : {% trans 'Validation en conseil de composante' %}
 {% endblock %}
 {% block app_content %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
-<div class="disp-flex">
+<div class="disp-flex has-top-border">
     <form method="post" class=''>
         <legend class="no-border">{% trans 'ETAPE 1 : Saisir des dates de validation' %}</legend>
-
             <div class="row">
-                <div class='col-sm-2 border-right-blue'>
+                <div class='col-sm-2 '>
                     <div class="form-group">
-                        <label for="id_datepicker">Saisir une date</label>
+                        <label for="id_datepicker">{% trans 'Saisir une date' %} :</label>
                         <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
                             <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA'/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
                         </div>
+                        <small id="datepickerHelp" class="text-muted italic">
+                            <span class="bold">{% trans 'Attention' %} :</span>
+                            {% trans "L'enregistrement de la date de validation d'une formation en conseil de composante clôt l'accès à la saisie des MECC de cette formation." %}
+                        </small>
                     </div>
                 </div>
-                <div class='col-sm-8 border-right-blue'>
-                    {% include 'institute/view_formation_list.html' %}
+                <div class='col-sm-8'>
+                    {% include 'institute/validate_training_list.html' %}
                 </div>
             </div>
-
-
-        <div class="buttons_list has_top_border">
-            <a href="" id="select-all" class="btn btn-info">{% trans 'Tout sélectionner' %}</a>
-            <a href="" id="unselect-all" class="btn btn-info">{% trans 'Tout désélectionner' %}</a>
+        <div class="buttons_list">
             <a href="" class="btn btn-primary"> {% trans 'Appliquer la date' %}</a>
         </div>
     </form>
 </div>
-    <div class="row">
+    <div class="row has-top-border has-bottom-border">
         <div class='col-sm-6 border-right-blue'>
-            <legend class="no-border">{% trans 'ETAPE 2 : Dépôt de documents (format pdf) ' %}</legend>
+            <form method="post">
+                <legend class="no-border">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
+                <div class="form-group" style="margin-bottom: 2em;">
+                    {% trans 'Lettre de présentation' %} :
+                    <label class="btn btn-primary pull-right" for="my-file-selector">
+                        <input id="my-file-selector" type="file" style="display:none;">
+                        {% trans 'Déposer la lettre' %}
+                    </label>
+                </div>
+                <div class="form-group has-top-border">
+                    {% trans 'Autres documents (PV, émargement, ...)' %} :
+                    <label class="btn btn-primary pull-right" for="my-file-selector">
+                        <input id="my-file-selector" type="file" style="display:none;" multiple>
+                        {% trans 'Déposer un document' %}
+                    </label>
+                </div>
+            </form>
         </div>
-        <div class='col-sm-6 border-right-blue'>
-            <legend class="no-border">{% trans 'ETAPE 3 : Notification DES' %}</legend>
+        <div class='col-sm-6' style="margin-bottom: 2em;">
+            <legend class="no-border">{% trans 'ETAPE' %} 3 : {% trans 'Notification DES' %}</legend>
+            <div class="form-group">
+                <small id="datepickerHelp" class="text-muted italic">
+                {% trans "Après avoir appliqué les dates de validation en Conseil de composante et déposé les documents requis (lettre de présentation des MECC de la composante, extraits de PV et listes d'émargement des Conseils de composante, ...) prévenez la DES de la disponibilité des MECC." %}
+                </small>
+            </div>
+            <div class="form-group"></div>
+            <div class="form-group">
+                <div>
+                {% trans 'Date de dernière notification MECC'%} : <button data-toggle="modal" data-target="#send_mail" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
+                </div>
+            </div>
         </div>
     </div>
+    {% include "institute/send_mail.html" %}
 <script>
 // toma ugly fix autoclose is not working for now !!!!
 $.fn.datepicker.defaults.autoclose = true;
+// select/unselect all
+$('#select-all').click(function(event) {
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;
+        });
+    } else {
+    $(':checkbox').each(function() {
+          this.checked = false;
+      });
+  }
+});
+
 </script>
 {% endblock %}
