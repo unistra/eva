@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+
+<div class="">
+    <table class="table" id="rule-table">
+        <thead>
+            <tr class='table-head'>
+                <th><input type="checkbox" name="select-all" id="select-all"></th>
+                <th>{% trans 'Type Diplôme' %}</th>
+                <th>{% trans "Intitulé Formation" %}</th>
+                <th>{% trans 'Saisie Règles' %}</th>
+                <th>{% trans 'Saisie Tableau MECC' %}</th>
+                <th>{% trans 'Date de validation CC' %}</th>
+            </tr>
+        </thead>
+        <tbody class="overflow">
+                {%regroup trainings by degree_type as trainings %}
+                {%for field in trainings%}
+                    {% if trainings %}
+                        {% for item in field.list %}
+                            <tr class="hover-row">
+                                <td><input type="checkbox" name=chkbox[]></td>
+                                <td><strong>{{field.grouper}}</strong></td>
+                                <td class='no-padding v-align-m'>{{item.label}}</td>
+                                <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display|redify:"En cours"|safe}}</td>
+                                <td class="no-padding td-centered border-bottom">{{item.get_progress_table_display|redify:"En cours"|safe}}</td>
+                                <td class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
+                            </tr>
+                        {%endfor%}
+                    {% endif %}
+                {%endfor%}
+        </tbody>
+    </table>
+</div>
