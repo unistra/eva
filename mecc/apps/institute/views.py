@@ -247,7 +247,7 @@ class InstituteCreate(CreateView):
 
 
 @login_required
-def edit_insitute(request, template='institute/institute_form.html', code=None):
+def edit_institute(request, template='institute/institute_form.html', code=None):
     """
     Edit instiute view
     """
