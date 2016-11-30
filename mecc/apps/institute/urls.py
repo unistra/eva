@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
-    InstituteListView,  edit_insitute, granted_edit_institute, \
+    InstituteListView,  edit_institute, granted_edit_institute, \
     add_pple, remove_pple
 from django_cas.decorators import login_required
 
@@ -16,7 +16,7 @@ urlpatterns = [
         name='dircomp_edit'),
     url(r'^delete/(?P<code>\w+)/$', login_required(InstituteDelete.as_view()),
         name='delete'),
-    url(r'^modify/(?P<code>\w+)/$', edit_insitute,
+    url(r'^modify/(?P<code>\w+)/$', edit_institute,
         name='modify'),
     url(r'^add_pple/$', add_pple,
         name="add_pple"),
