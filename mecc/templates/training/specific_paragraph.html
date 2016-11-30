@@ -79,11 +79,12 @@
                     <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_interaction%} border-left {%endif%}">
 
                         {% if e.is_interaction %}
-                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id %}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id old=False%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
                             {% if e.id in specific_ids  %}
                                 <a data-toggle="modal" data-target="#preview" onclick="ask_delete('D', {{e.id}}, {{training.id}}, {{rule.id}})"> {% trans "Supprimer la dérogation" %}</a>
                             {% else %}
-                                <a href="#"> {% trans "Récupérer la dérogation n-1" %}</a>
+                                <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.n_rule paragraph_id=e.id old='N' %}">{% trans "Récupérer la dérogation n-1" %}</a>
+
                             {% endif %}
                         {% endif %}
                     </td>

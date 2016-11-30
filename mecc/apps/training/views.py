@@ -284,15 +284,20 @@ votre formation. Merci de la rédiger ci-dessous :")
     return render(request, template, data)
 
 
-def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, template="training/form/edit_specific_paragraph.html"):
+def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, old ,template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
     data['title'] = _("Dérogation")
+    if old == "Y":
+        year = currentyear().code_year - 1
+        rule = Rule.objects.filter(code_year=year).get(n_rule=rule_id)
+        paragraph = Paragraph.objects.filter(code_year=year)
+        a = (SpecificParagraph.objects.filter(code_year=year, paragraph_gen_id=paragraph_id))
 
-    data['text_derog'] = p.text_derog
-    data['text_motiv'] = p.text_motiv
+    data['text_derog'] = p.text_derog if old != "Y" else old_sp.text_specific_paragraph
+    data['text_motiv'] = p.text_motiv if old != "y" else old_sp.text_motiv
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,

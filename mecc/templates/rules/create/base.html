@@ -32,8 +32,11 @@
 <script type="text/javascript">
 
 var _isEdited = false;
-$(':input').not('.display-order').change(function () {
+$(':input').not('.display-order', '#selectDegree').change(function () {
   _isEdited = true;
+  if (this.id === "selectDegree") {
+      _isEdited = false;
+  }
 });
 
 

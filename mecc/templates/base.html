@@ -34,8 +34,8 @@
         </a>
         <div class="container">
                 <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
-                <span class="nav-bar-txt" style="font-size:1em;">{% if request.user %} {{request.display.user.last_name}} {{request.display.user.first_name}}{% endif %}</span>
-                <span class='nav-bar-txt pull-right'>{{request.session.current_year}}</span>
+                <span class="nav-bar-txt" style="font-size:1em;">{{request.display.user.last_name}} {{request.display.user.first_name}}</span>
+                <span class='nav-bar-txt pull-right'>{% trans "Année universitaire " %}{{request.display.current_year}}</span>
 
         </div>
     </div>

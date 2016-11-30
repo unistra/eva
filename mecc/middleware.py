@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from mecc.apps.years.models import UniversityYear
 
 
 class UsefullDisplay(object):
@@ -10,6 +11,10 @@ class UsefullDisplay(object):
         else:
             u = request.user
         request.display = {'user': u}
+
+        # give current year
+        y = UniversityYear.objects.filter(is_target_year=True).first().code_year
+        request.display.update({'current_year': "%s/%s" % (y, y+1)})
 
     def process_response(self, request, response):
         return response
