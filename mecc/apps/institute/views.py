@@ -373,15 +373,16 @@ def validate_institute(request, code, template='institute/validate.html'):
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
-    data['university_year'] = current_year
     institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    #
+    data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
-    institute_year = InstituteYear.objects.get(
-        id_cmp=institute.id, code_year=current_year.code_year)
-
+    data['date_last_notif'] = institute_year.date_last_notif
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
         institutes__code=code).order_by('degree_type')
@@ -401,7 +402,18 @@ def send_mail(request):
     """
     Send mail
     """
+
     meccuser = MeccUser.objects.get(user__username=request.user.username)
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    code = meccuser.cmp
+
+    institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+
+    institute_year.date_last_notif = datetime.now()
+    institute_year.save()
 
     s = "[MECC] Notification"
     b = _("""
@@ -426,4 +438,4 @@ def send_mail(request):
     )
     mail.send()
 
-    return redirect('/institute/validate/%s' % meccuser.cmp)
+    return redirect('/institute/validate/%s' % code)
