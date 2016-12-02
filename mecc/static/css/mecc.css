@@ -386,6 +386,7 @@ td.id_member {
 .input-red {
     border-color: red;
     color: red;
+    background-color :rgba(255, 0, 0, 0.1) ;
 }
 .paddin-top {
     padding-top: 1em;

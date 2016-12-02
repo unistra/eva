@@ -47,7 +47,7 @@
 <div class="buttons_list" style="">
     <input id="btn-add-composante"  class="btn btn-primary"
      type="submit" value="{% trans 'Valider et fermer la fiche' %}"
-     onclick="_isEdited=false"/>
+     onclick="_isEdited=false;"/>
      <a href="{% url 'institute:home'%}"  class="btn-primary btn ">{% trans "Annuler et fermer la fiche" %}</a></div>
 </form>
 <div id='first'></div>
@@ -130,6 +130,7 @@ loading.style.top='-1.65em';
 loading.style.left='-0.5em';
 var clone = loading.cloneNode(true);
 clone.id = 'load-wrap2';
+
 document.getElementById('id_id_dircomp').parentNode.appendChild(loading);
 document.getElementById('id_id_rac').parentNode.appendChild(clone);
 
@@ -159,14 +160,14 @@ var url_adm = "/ressources/adm/" + code_cmp + ".json"
    return 'Des modifications ont été effectuées.';
  };
    };
-
+var prof_fill = document.getElementById('id_id_dircomp').value;
+var rac_fill = document.getElementById('id_id_rac').value;
 {% if object %}
 $.getJSON(url_prof, function (data) {
  var options = {
    data: data,
    getValue: function (element) {
-     return element.last_name.toUpperCase() + " " + element.first_name + " ";
-
+     return element.last_name.toUpperCase() + " " + element.first_name;
    },
    template: {
 		type: "description",
@@ -175,6 +176,9 @@ $.getJSON(url_prof, function (data) {
 		}
 	},
    list: {
+        onClickEvent : function(){
+            prof_fill = document.getElementById('id_id_dircomp').value;
+        },
 		showAnimation: {
 			type: "slide", //normal|slide|fade
 			time: 400,
@@ -195,7 +199,6 @@ $.getJSON(url_prof, function (data) {
         var first_name = $(".input_prof").getSelectedItemData().first_name;
         var email = $(".input_prof").getSelectedItemData().mail;
         var status = $(".input_prof").getSelectedItemData().status;
-
         $("#input_dircomp_username_member").val(username).trigger("change");
         $("#input_dircomp_last_name").val(last_name).trigger("change");
         $("#input_dircomp_first_name").val(first_name).trigger("change");
@@ -207,6 +210,14 @@ $.getJSON(url_prof, function (data) {
           // remove hidden input value if somehow doesnt match
           var a = document.getElementById('id_id_dircomp').value;
           var b = document.getElementById('input_dircomp_last_name').value;
+          if (a != prof_fill) {
+              document.getElementById('id_id_dircomp').className +=' input-red';
+            document.getElementById('btn-add-composante').disabled = true;
+        } else {
+            document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
+            document.getElementById('btn-add-composante').disabled = false;
+        }
+
           if (a.indexOf(b) == -1){
               $("#input_dircomp_username_member").val("");
               $("#input_dircomp_last_name").val("");
@@ -242,6 +253,9 @@ $.getJSON(url_prof, function (data) {
    		}
    	},
        list: {
+        onClickEvent : function(){
+           rac_fill = document.getElementById('id_id_rac').value;
+        },
 		showAnimation: {
 			type: "slide", //normal|slide|fade
 			time: 400,
@@ -275,6 +289,13 @@ $.getJSON(url_prof, function (data) {
              // remove hidden input value if somehow doesnt match
              var a = document.getElementById('id_id_rac').value;
              var b = document.getElementById('input_rac_last_name').value;
+             if (a != rac_fill) {
+               document.getElementById('id_id_rac').className +=' input-red'
+               document.getElementById('btn-add-composante').disabled = true;
+           } else {
+               document.getElementById('id_id_rac').className ='input_adm textinput textInput form-control'
+               document.getElementById('btn-add-composante').disabled = false;
+           }
              if (a.indexOf(b) == -1){
                  $("#input_rac_username_member").val("");
                  $("#input_rac_last_name").val("");
