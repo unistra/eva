@@ -370,13 +370,13 @@ def validate_institute(request, code, template='institute/validate.html'):
     """
     Validate MECC in institute
     """
+
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-    #
     data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
@@ -386,6 +386,15 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
         institutes__code=code).order_by('degree_type')
+    data['notification_to'] = settings.MAIL_FROM
+    data['notification_object'] = "%s - %s %s" % (
+        institute.label, request.user.first_name, request.user.last_name)
+
+    if hasattr(settings, 'EMAIL_TEST'):
+        data['test_mail'] =  _("""
+Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+Merci.
+        """)
 
     try:
         institute_year.date_expected_MECC = datetime.strftime(
@@ -407,25 +416,20 @@ def send_mail(request):
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     code = meccuser.cmp
-
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-
     institute_year.date_last_notif = datetime.now()
     institute_year.save()
+    to = [settings.EMAIL_TEST] if hasattr(
+        settings, 'EMAIL_TEST') else ['']
+    cc = [request.POST.get('cc')]
+    subject = "%s %s - %s %s" % (settings.EMAIL_SUBJECT_PREFIX,
+                                 institute.label,
+                                 request.user.first_name,
+                                 request.user.last_name)
 
-    s = "[MECC] Notification"
-    b = _("""
-    Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
-    Merci.
-    """)
-    to = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr']
-    cc = bcc = ['ibis.ismail@unistra.fr']
-    subject = request.POST.get('subject', s) if request.POST.get(
-        'subject') not in ['', ' '] else s
-    body = request.POST.get('body', b) if request.POST.get(
-        'body') not in ['', ' '] else b
+    body = request.POST.get('body')
 
     mail = EmailMultiAlternatives(
         subject=subject,
@@ -436,6 +440,7 @@ def send_mail(request):
         bcc=to,
         headers={"Reply-To": request.user.email}
     )
+
     mail.send()
 
     return redirect('/institute/validate/%s' % code)

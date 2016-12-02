@@ -15,7 +15,13 @@
                     <div class="form-group">
                         <label for="subject" class="control-label col-lg-2">{% trans "Sujet :" %}</label>
                         <div class="controls col-lg-10">
-                            <input name="subject" class="form-control" value='[MECC] Notification' placeholder="Sujet du mail"></input>
+                            <input name="subject" class="form-control" value='[MECC] {{notification_object}}' placeholder="Sujet du mail" readonly></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="text" class="control-label col-lg-2">{% trans "À :" %}</label>
+                        <div class="controls col-lg-10">
+                            <input id='send-to' type="email" name="to" class="form-control" value="{{notification_to}}" placeholder="Destinataire" readonly></input>
                         </div>
                     </div>
                     <div class="form-group">
@@ -25,15 +31,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="bcc" class="control-label col-lg-2">{% trans "CCI :" %}</label>
-                        <div class="controls col-lg-10">
-                            <input type="text" name="bcc" class="form-control" placeholder="Copie invisible à"></input>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="body" class="control-label col-lg-2">{% trans "Message :" %}</label>
                         <div class="controls col-lg-10">
-                            <textarea name="body" rows="8" class="form-control" placeholder="Message de notification"></textarea>
+                            <textarea name="body" rows="8" class="form-control" required placeholder="Message de notification" >{% if test_mail %}{{test_mail}}{% endif %}</textarea>
                         </div>
                     </div>
                           <div class="modal-footer">
