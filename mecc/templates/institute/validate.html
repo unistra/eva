@@ -3,7 +3,7 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% block page-header %}
-{{ university_year }} <br>
+MECC {{ request.display.current_year }} <br>
 {{label_cmp}} : {% trans 'Validation en conseil de composante' %}
 {% endblock %}
 {% block app_content %}
@@ -28,7 +28,7 @@
                         </small>
                     </div>
                 </div>
-                <div class='col-sm-8'>
+                <div class='col-sm-10'>
                     {% include 'institute/validate_training_list.html' %}
                 </div>
             </div>
@@ -67,7 +67,7 @@
             <div class="form-group"></div>
             <div class="form-group">
                 <div>
-                {% trans 'Date de dernière notification MECC'%} : <button data-toggle="modal" data-target="#send_mail" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
+                {% trans 'Date de dernière notification MECC'%} : {% if date_last_notif %} {{date_last_notif|date:"DATE_FORMAT"}} {% else %} {% trans 'Aucune' %} {% endif %} <button data-toggle="modal" data-target="#send_mail" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
                 </div>
             </div>
         </div>

@@ -86,7 +86,6 @@ LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/desc
 LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
 LDAP_TOKEN = environ.get('LDAP_TOKEN', 'S3CR3T')
 
-
 #######################
 # Email configuration #
 #######################
@@ -99,4 +98,5 @@ LDAP_TOKEN = environ.get('LDAP_TOKEN', 'S3CR3T')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'localhost'
 SERVER_EMAIL = 'root@localhost'
-EMAIL_SUBJECT_PREFIX = "MECC"
+EMAIL_SUBJECT_PREFIX = "[MECC]"
+EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr'] # For test purpose comment if not needed
