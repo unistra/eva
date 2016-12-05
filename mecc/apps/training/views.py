@@ -192,13 +192,11 @@ def edit_rules(request, id, template="training/edit_rules.html"):
         code_year=currentyear().code_year)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
-
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year)]
         ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
                 training=training, code_year=currentyear().code_year)]
-
     return render(request, template, data)
 
 
@@ -226,7 +224,6 @@ def ask_delete_specific(request):
         p = SpecificParagraph.objects.filter(
             code_year=currentyear().code_year,
             training=Training.objects.get(id=request.GET.get('training_id')),
-            rule_gen_id=request.GET.get('rule_id')
         ).get(paragraph_gen_id=request.GET.get('val'))
         text = p.text_specific_paragraph
     else:
@@ -287,22 +284,25 @@ votre formation. Merci de la rédiger ci-dessous :")
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, old ,template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
-    data['rule'] = r = Rule.objects.get(id=rule_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
+    data['rule'] = r = Rule.objects.get(id=rule_id)
     data['title'] = _("Dérogation")
-    if old == "Y":
-        year = currentyear().code_year - 1
-        rule = Rule.objects.filter(code_year=year).get(n_rule=rule_id)
-        paragraph = Paragraph.objects.filter(code_year=year)
-        a = (SpecificParagraph.objects.filter(code_year=year, paragraph_gen_id=paragraph_id))
+    data['text_derog'] = p.text_derog
+    data['text_motiv'] = p.text_motiv
 
-    data['text_derog'] = p.text_derog if old != "Y" else old_sp.text_specific_paragraph
-    data['text_motiv'] = p.text_motiv if old != "y" else old_sp.text_motiv
+    old_year = currentyear().code_year - 1 if old == "Y" else None
+    old_rule = Rule.objects.filter(
+        code_year=old_year).get(n_rule=rule_id) if old == "Y" else None
+    old_sp = SpecificParagraph.objects.get(
+        code_year=old_year,
+        rule_gen_id=rule_id,
+        paragraph_gen_id=paragraph_id) if old == "Y" else None
+
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         training=t,
-        rule_gen_id=r.id,
+        rule_gen_id=rule_id,
         paragraph_gen_id=p.id,
         # type_paragraph="C" if p.is_cmp else "D",
     )

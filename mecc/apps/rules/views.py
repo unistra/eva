@@ -402,17 +402,17 @@ def details_rule(request):
         'title': rule.label,
         'is_specific': specific,
         'paragraphs': [
-            {'alinea': e.display_order,
+            {'alinea': e.id,
              'text': e.text_standard if not (
                 e.is_interaction and specific) else gimme_txt(e.id, x),
-             'is_derog': True if e.id in derog else False,
+             'is_derog': True if e.is_interaction else False,
              'info': _('Dérogation')}
             for e in paragraphs],
 
     }
     if specific:
         json_response["additional"] = {
-            "alinea": int(len(paragraphs)) + 1,
+            "alinea": "",
             "text": additional.text_additional_paragraph
         } if additional is not None else None
 

@@ -35,6 +35,15 @@ class Rule(models.Model):
         """
         return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
 
+    @property
+    def has_parag_with_derog(self):
+        """
+        Return true if there is at least one derogation in paragraphs concerned
+        by the rule
+        """
+        return True if True in [e.is_interaction for e in
+                                Paragraph.objects.filter(
+                                    rule=self)] else False
 
     def __str__(self):
         return self.label
