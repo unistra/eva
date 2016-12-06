@@ -117,4 +117,4 @@ class AdditionalParagraph(models.Model):
         _("Texte d'alinéa additionnel"))
 
     def __str__(self):
-        return _("Alinéa additionel n° %s" % self.pk)
+        return _("Alinéa additionnel n° %s" % self.pk)

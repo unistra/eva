@@ -15,7 +15,7 @@ from django.db import transaction
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from .forms import SpecificParagraphCmpForm, SpecificParagraphDerogForm, \
+from .forms import SpecificParagraphDerogForm, \
     AdditionalParagraphForm
 
 
@@ -238,6 +238,7 @@ def ask_delete_specific(request):
 
 
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
+
     data = {}
     data['url_to_del'] = "/training/delete_specific/"
     data['training'] = t = Training.objects.get(id=training_id)
@@ -256,19 +257,26 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     return render(request, template, data)
 
 
-def edit_additional_paragraph(request, training_id, rule_id, template="training/form/edit_specific_paragraph.html"):
+def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
-    data['rule'] = r = Rule.objects.get(id=rule_id)
-    data['title'] = _("Alinéa additionel")
+    data['title'] = _("Alinéa additionnel")
+    data['rule'] = Rule.objects.get(id=rule_id)
+    data['from_id'] = rule_id
+
+    old_additional = AdditionalParagraph.objects.filter(
+        code_year=currentyear().code_year-1).get(
+            rule_gen_id=n_rule) if old == 'Y' else None
 
     additional, created = AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
+        rule_gen_id=rule_id,
         training=t,
-        rule_gen_id=r.id
+        text_additional_paragraph=old_additional.text_additional_paragraph if old == 'Y' else ''
     )
-
     data['form'] = AdditionalParagraphForm(instance=additional)
+    if created:
+        additional.delete()
     data['additional'] = _("Vous souhaitez ajouter un alinéa à cette règle pour \
 votre formation. Merci de la rédiger ci-dessous :")
     if request.method == 'POST':
@@ -276,49 +284,52 @@ votre formation. Merci de la rédiger ci-dessous :")
         if form.is_valid():
             form.save()
             return redirect(
-                'training:specific_paragraph', training_id=t.id, rule_id=r.id)
+                'training:specific_paragraph',
+                training_id=training_id, rule_id=rule_id)
 
     return render(request, template, data)
 
 
-def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, old ,template="training/form/edit_specific_paragraph.html"):
+def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule, old='N', template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['title'] = _("Dérogation")
+    data['from_id'] = rule_id
+
     data['text_derog'] = p.text_derog
     data['text_motiv'] = p.text_motiv
 
     old_year = currentyear().code_year - 1 if old == "Y" else None
-    old_rule = Rule.objects.filter(
-        code_year=old_year).get(n_rule=rule_id) if old == "Y" else None
+
     old_sp = SpecificParagraph.objects.get(
         code_year=old_year,
-        rule_gen_id=rule_id,
+        rule_gen_id=n_rule,
         paragraph_gen_id=paragraph_id) if old == "Y" else None
-
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         training=t,
         rule_gen_id=rule_id,
         paragraph_gen_id=p.id,
-        # type_paragraph="C" if p.is_cmp else "D",
     )
 
     if created:
-        sp.text_specific_paragraph = p.text_standard
+        sp.text_specific_paragraph = p.text_standard if old_sp in [
+            None] else old_sp.text_specific_paragraph
+        sp.text_motiv = "" if old_sp in [None] else old_sp.text_motiv
         sp.save()
 
     data['form'] = SpecificParagraphDerogForm(instance=sp)
-
+    if created:
+        sp.delete()
     if request.method == 'POST':
         form = SpecificParagraphDerogForm(request.POST, instance=sp)
         if form.is_valid():
             form.save()
             return redirect(
-                'training:specific_paragraph', training_id=t.id, rule_id=r.id)
+                'training:specific_paragraph', training_id=t.id, rule_id=rule_id)
 
     return render(request, template, data)
 

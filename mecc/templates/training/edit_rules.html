@@ -69,11 +69,11 @@
       <tr class="hover-row">
          <td width="10%" class='no-padding border-bottom td-centered red' >{% if e.is_edited == "O" %} {% trans "Modifiée" %}{%elif e.is_edited == "N"%}{% else %}{{e.get_is_edited_display}}{% endif %}</td>
          <td width="52%" class="no-padding border-right border-bottom"><a class="select" onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
-         <td width="18%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "dérogation possible" %}{% endif %}</td>
-         <td width="10%" class="no-padding td-centered border-bottom underlined">
+         <td width="10%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "(D)" %}{% endif %}</td>
+         <td width="14%" class="no-padding td-centered border-bottom underlined">
             <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">{% trans "Saisir" %}</a>
         </td>
-        <td width="10%" class="no-padding border-bottom">
+        <td width="14%" class="no-padding border-bottom">
                {% if e.id in custom %}
                <a class="select" onclick="detail_rule({{e.id}}, 'specific')">{% trans "Voir" %}</a>
                {% endif %}
