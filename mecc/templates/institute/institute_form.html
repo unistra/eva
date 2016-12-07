@@ -212,10 +212,10 @@ $.getJSON(url_prof, function (data) {
           var b = document.getElementById('input_dircomp_last_name').value;
           if (a != prof_fill) {
               document.getElementById('id_id_dircomp').className +=' input-red';
-            document.getElementById('btn-add-composante').disabled = true;
+            document.getElementById('id_id_dircomp').disabled = true;
         } else {
             document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
-            document.getElementById('btn-add-composante').disabled = false;
+            document.getElementById('id_id_dircomp').disabled = false;
         }
 
           if (a.indexOf(b) == -1){
@@ -254,7 +254,7 @@ $.getJSON(url_prof, function (data) {
    	},
        list: {
         onClickEvent : function(){
-           rac_fill = document.getElementById('id_id_rac').value;
+           prof_fill = document.getElementById('id_id_rac').value;
         },
 		showAnimation: {
 			type: "slide", //normal|slide|fade
@@ -291,10 +291,10 @@ $.getJSON(url_prof, function (data) {
              var b = document.getElementById('input_rac_last_name').value;
              if (a != rac_fill) {
                document.getElementById('id_id_rac').className +=' input-red'
-               document.getElementById('btn-add-composante').disabled = true;
+               document.getElementById('id_id_dircomp').disabled = true;
            } else {
-               document.getElementById('id_id_rac').className ='input_adm textinput textInput form-control'
-               document.getElementById('btn-add-composante').disabled = false;
+               document.getElementById('id_id_rac').className ='input_prof textinput textInput form-control'
+               document.getElementById('id_id_dircomp').disabled = false;
            }
              if (a.indexOf(b) == -1){
                  $("#input_rac_username_member").val("");
