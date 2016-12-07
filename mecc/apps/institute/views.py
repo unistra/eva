@@ -421,7 +421,7 @@ def send_mail(request):
         id_cmp=institute.id, code_year=current_year.code_year)
     institute_year.date_last_notif = datetime.now()
     institute_year.save()
-    to = [settings.EMAIL_TEST] if hasattr(
+    to = settings.EMAIL_TEST if hasattr(
         settings, 'EMAIL_TEST') else ['']
     cc = [request.POST.get('cc')]
     subject = "%s %s - %s %s" % (settings.EMAIL_SUBJECT_PREFIX,
@@ -434,11 +434,10 @@ def send_mail(request):
     mail = EmailMultiAlternatives(
         subject=subject,
         body=body,
-        from_email="MECC Admin<%s>" % settings.MAIL_FROM,
+        from_email="%s %s <%s> " % (request.user.first_name, request.user.last_name, request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
-        bcc=to,
-        headers={"Reply-To": request.user.email}
+        bcc=to
     )
 
     mail.send()
