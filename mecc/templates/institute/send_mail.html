@@ -27,7 +27,7 @@
                     <div class="form-group">
                         <label for="cc" class="control-label col-lg-2">{% trans "CC :" %}</label>
                         <div class="controls col-lg-10">
-                            <input type="text" name="cc" class="form-control" placeholder="Copie à"></input>
+                            <input type="text" name="cc" class="form-control" placeholder="Copie à" value="{{request.user.email}}"></input>
                         </div>
                     </div>
                     <div class="form-group">
