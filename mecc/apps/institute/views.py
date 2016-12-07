@@ -6,6 +6,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django_cas.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -434,12 +435,13 @@ def send_mail(request):
     mail = EmailMultiAlternatives(
         subject=subject,
         body=body,
-        from_email="%s %s <%s> " % (request.user.first_name, request.user.last_name, request.user.email),
+        from_email="%s %s <%s> " % (
+            request.user.first_name, request.user.last_name, request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
         bcc=to
     )
 
     mail.send()
-
+    messages.success(request, _('Notification envoyée.'))
     return redirect('/institute/validate/%s' % code)
