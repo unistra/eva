@@ -63,10 +63,11 @@ class Training(models.Model):
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
-        try:
-            self.n_train = Training.objects.all().latest('id').id + 1
-        except ObjectDoesNotExist:
-            self.n_train = 1
+        if self.n_train in ['', ' ', 0, None]:
+            try:
+                self.n_train = Training.objects.all().latest('id').id + 1
+            except ObjectDoesNotExist:
+                self.n_train = 1
 
     def __str__(self):
         return self.label

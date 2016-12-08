@@ -11,7 +11,12 @@ def is_correct_respform(view_func):
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        training = Training.objects.get(id=kwargs.get('id'))
+        t_id = kwargs.get('training_id')
+        if t_id is None:
+            t_id = kwargs.get('id')
+        if t_id is None:
+            raise Exception('Cannot retrive correct Formation')
+        training = Training.objects.get(id=t_id)
         user_profiles = request.user.meccuser.profile.all()
         can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
                 Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')

@@ -55,23 +55,28 @@ class NumberedCanvas(canvas.Canvas):
                 (self._pageNumber, page_count))
 
 
-def block_rules(title, rules, story):
+def block_rules(title, rules, story, styled=True):
+    style = [
+        ('BOX', (0, 1), (-1, 1), 1, colors.black),
+        ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
+    ]
     if len(rules) > 0:
         t = [
             [""],
             [Paragraph(title, styles["Normal"])]
         ]
 
-        table = Table(t, colWidths=(550), style=[
-            ('BOX', (0, 1), (-1, 1), 1, colors.black),
-            ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
-        ])
+        table = Table(t, colWidths=(550), style=style if styled else [])
         story.append(table)
 
         for paragraph in rules:
             add_paragraph(paragraph, story)
 
     return story
+
+
+def add_simple_paragraph(story, paragraph, sp, ap):
+    pass
 
 
 def add_paragraph(e, story):
@@ -83,16 +88,16 @@ def add_paragraph(e, story):
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
                   ID %s</para>" % e.pk, styles['Normal'])])
 
-    paragraphs = ParagraphRules.objects.filter((Q(rule=e)))
-
+    paragraphs = ParagraphRules.objects.filter(rule=e, code_year=2015)
+    # print(e.code_year)
     for p in paragraphs:
+        # print(p.code_year)
         if p.is_in_use:
             txt = ''
-            # cmp = _("Alinéa de composante (facultatif)") if p.is_cmp else ''
             derog = _("Dérogation <br></br> possible") if \
                 p.is_interaction else ''
             if p.is_interaction:
-                txt = derog  # if not p.is_cmp else cmp
+                txt = derog
 
             t.append(
                 [
@@ -111,6 +116,45 @@ def add_paragraph(e, story):
         ('LINEBELOW', (0, 2), (-1, -1), 0.75, colors.lightgrey),
     ])
     story.append(table)
+    return story
+
+
+def complete_rule(year, title, training, rules, parag, specific, add):
+    story = []
+    f = rules.first()
+    # print(f.id)
+    # print(rules.first())
+    # print(parag.first().)
+# ############ TITLE ################################
+    header = [
+        _("Année universitaire %s/%s" % (year, year + 1)),
+        _("%s" % training.label),
+        _("Récapitualtif des règles de la formation(avec spécificités)"),
+    ]
+    ttle = []
+    for e in header:
+        ttle.append(Paragraph("<para align=right fontSize=14 spaceAfter=14 textColor=\
+            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
+
+    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
+
+    table = Table(t, colWidths=(145, 405))
+
+    story.append(table)
+
+    story.append(Spacer(0, 12))
+
+
+# ############ No rules case ################################
+
+    if not rules:
+        story.append(Spacer(0, 24))
+        story.append(Paragraph(_("Aucune règle."), styles['Normal']))
+        return story
+
+    for e in rules:
+        add_paragraph(e, story)
+
     return story
 
 

@@ -177,7 +177,7 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
 
     rule = get_object_or_404(Rule, id=id)
     request.session['visited_rule'] = rule.id
-    data['paragraphs'] = Paragraph.objects.filter((Q(rule=rule)))
+    data['paragraphs'] = Paragraph.objects.filter(Q(rule=rule))
     data['editing'] = True
     current_year = currentyear()
     data['current_year'] = "%s/%s" % (rule.code_year,
@@ -373,17 +373,19 @@ def details_rule(request):
                     paragraph_gen_id=paraid,
                     rule_gen_id=rulid,
                     code_year=currentyear().code_year,
+                    training=Training.objects.get(
+                        id=request.POST.get('training_id')),
                 )
         except SpecificParagraph.DoesNotExist:
-            return Paragraph.objects.get(id=paraid).text_standard
+            return Paragraph.objects.get(id=paraid).text_standard, False
 
         derog.append(paraid)
-        return o.text_specific_paragraph
+        return o.text_specific_paragraph, True
 
     x = request.POST.get('val')
     rule = Rule.objects.get(id=x)
+    paragraphs = Paragraph.objects.filter(Q(rule=rule))
 
-    paragraphs = Paragraph.objects.filter(rule__id=x)
     # Give required additional paragraph or None
     try:
         additional = AdditionalParagraph.objects.get(
@@ -404,8 +406,8 @@ def details_rule(request):
         'paragraphs': [
             {'alinea': e.id,
              'text': e.text_standard if not (
-                e.is_interaction and specific) else gimme_txt(e.id, x),
-             'is_derog': True if e.is_interaction else False,
+                e.is_interaction and specific) else gimme_txt(e.id, x)[0],
+             'is_derog': gimme_txt(e.id, x)[1],
              'info': _('Dérogation')}
             for e in paragraphs],
 

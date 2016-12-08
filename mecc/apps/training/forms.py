@@ -227,6 +227,7 @@ moins une composante porteuse."))
                 Div('institutes', css_class="hidden"),
                 Div('supply_cmp', css_class="hidden"),
             ),
+            'n_train',
         )
 
     class Meta:
@@ -242,4 +243,5 @@ moins une composante porteuse."))
             'ref_si_scol',
             'institutes',
             'supply_cmp',
+            'n_train',
         ]

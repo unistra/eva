@@ -58,10 +58,11 @@ class Rule(models.Model):
             raise ValidationError({'display_order': [
                 _('L\'ordre d\'affichage doit être positif.'),
             ]})
-        try:
-            self.n_rule = Rule.objects.all().latest('id').id + 1
-        except ObjectDoesNotExist:
-            self.n_rule = 1
+        if self.n_rule in ['', ' ', 0, None]:
+            try:
+                self.n_rule = Rule.objects.all().latest('id').id + 1
+            except ObjectDoesNotExist:
+                self.n_rule = 1
 
     class Meta:
         ordering = ['display_order']

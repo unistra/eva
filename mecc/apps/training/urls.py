@@ -3,7 +3,8 @@ from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     TrainingEdit, process_respform, list_training, respform_list, \
     duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
     specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
-    edit_additional_paragraph, ask_delete_specific, delete_specific
+    edit_additional_paragraph, ask_delete_specific, delete_specific, \
+    recover_everything, gen_pdf_all_rules
 from django_cas.decorators import login_required
 from mecc.decorators import is_correct_respform
 
@@ -19,6 +20,8 @@ urlpatterns = [
         name='edit'),
     url(r'^edit_rules/(?P<id>\d+)/$', edit_rules,
         name='edit_rules'),
+    url(r'^recover_everything/(?P<training_id>\d+)/$', recover_everything,
+        name='recover_everything'),
     url(r'^process_resp/$', process_respform,
         name='process_resp'),
     url(r'^list_all/$', list_training,
@@ -43,4 +46,6 @@ urlpatterns = [
         name='ask_delete_specific'),
     url(r'^delete_specific/$', delete_specific,
         name='delete_specific'),
+    url(r'^gen_pdf_all_rules/(?P<training_id>\d+)$', gen_pdf_all_rules,
+        name='gen_pdf_all_rules'),
 ]

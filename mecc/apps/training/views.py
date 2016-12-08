@@ -18,6 +18,8 @@ from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphDerogForm, \
     AdditionalParagraphForm
 
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule
+
 
 def add_current_year(dic):
     dic['disp_current_year'] = "%s/%s" % (
@@ -194,10 +196,32 @@ def edit_rules(request, id, template="training/edit_rules.html"):
         in 'E' else rules.filter(is_ccct=True)
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
-            code_year=currentyear().code_year)]
+            code_year=currentyear().code_year, training=training)]
         ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
                 training=training, code_year=currentyear().code_year)]
     return render(request, template, data)
+
+
+def recover_everything(request, training_id):
+    training = Training.objects.get(id=training_id)
+    print('*****************************************************************')
+    print('WIP')
+    old_year = currentyear().code_year - 1
+    old_training = Training.objects.filter(
+        code_year=old_year).get(n_train=training_id)
+    old_derog = SpecificParagraph.objects.filter(
+        code_year=old_year, training=old_training)
+    old_additional = AdditionalParagraph.objects.filter(
+        code_year=old_year, training=old_training)
+    print('*****************************************************************')
+    print(old_year)
+    print(training)
+    print('*****************************************************************')
+    print(old_derog)
+    print(old_additional)
+
+    return HttpResponseRedirect(
+        reverse('training:edit_rules', args=(training_id,)))
 
 
 @login_required
@@ -237,26 +261,69 @@ def ask_delete_specific(request):
     return JsonResponse(json_response)
 
 
+@is_correct_respform
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
-
     data = {}
+    print('ici')
     data['url_to_del'] = "/training/delete_specific/"
     data['training'] = t = Training.objects.get(id=training_id)
-    data['rule'] = Rule.objects.get(id=rule_id)
+    data['rule'] = r = Rule.objects.get(id=rule_id)
     data['parag'] = Paragraph.objects.filter(rule=data['rule'])
     data['specific_paragraph'] = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year, training=t)
+
+    old_specific = SpecificParagraph.objects.filter(
+        code_year=currentyear().code_year-1).filter(rule_gen_id=r.n_rule)
+
+    try:
+        old_additional = AdditionalParagraph.objects.filter(
+            code_year=currentyear().code_year-1,
+            training=t).get(rule_gen_id=r.n_rule)
+    except AdditionalParagraph.DoesNotExist:
+        old_additional = None
+
+    can_be_recup = True if r.is_edited == 'N' else False
+
+    data['old_additional'] = True if old_additional and can_be_recup else False
+    data['old_specific'] = [
+        e.paragraph_gen_id for e in old_specific] if can_be_recup else False
+
     try:
         data['additional_paragraph'] = AdditionalParagraph.objects.get(
             code_year=currentyear().code_year, training=t, rule_gen_id=rule_id)
-    except AdditionalParagraph.DoesNotExist as e:
+    except AdditionalParagraph.DoesNotExist:
         pass
-    data['gen_id_to_id'] = [{"id": e.id, "gen_id": e.paragraph_gen_id} for
-                            e in data['specific_paragraph']]
-    data['specific_ids'] = [e.paragraph_gen_id for e in data['specific_paragraph']]
+
+    data['specific_ids'] = [a.paragraph_gen_id for a in data['specific_paragraph']]
+
     return render(request, template, data)
 
 
+def gen_pdf_all_rules(request, training_id):
+    year = currentyear().code_year
+
+    training = Training.objects.get(id=training_id)
+
+    rules = Rule.objects.filter(
+        degree_type=training.degree_type, code_year=year)
+
+    p = Paragraph.objects.filter(code_year=year)
+    paragraphs = []
+    for e in rules:
+        paragraphs.append(p.filter(rule=e))
+    print(paragraphs)
+    sp = SpecificParagraph.objects.filter(code_year=year, training=training)
+    ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
+    # PDF gen
+    title = training.label
+    response, doc = setting_up_pdf(title, margin=42)
+    story = complete_rule(year, title, training, rules, p, sp, ap)
+
+    doc.build(story, canvasmaker=NumberedCanvas)
+    return response
+
+
+@is_correct_respform
 def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
@@ -265,7 +332,7 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['from_id'] = rule_id
 
     old_additional = AdditionalParagraph.objects.filter(
-        code_year=currentyear().code_year-1).get(
+        code_year=currentyear().code_year-1, training=t).get(
             rule_gen_id=n_rule) if old == 'Y' else None
 
     additional, created = AdditionalParagraph.objects.get_or_create(
@@ -290,17 +357,17 @@ votre formation. Merci de la rédiger ci-dessous :")
     return render(request, template, data)
 
 
+@is_correct_respform
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule, old='N', template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
-    data['rule'] = r = Rule.objects.get(id=rule_id)
+    data['rule'] = Rule.objects.get(id=rule_id)
     data['title'] = _("Dérogation")
     data['from_id'] = rule_id
 
     data['text_derog'] = p.text_derog
     data['text_motiv'] = p.text_motiv
-
     old_year = currentyear().code_year - 1 if old == "Y" else None
 
     old_sp = SpecificParagraph.objects.get(

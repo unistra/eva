@@ -57,7 +57,7 @@
                       <div class="disp-flex  border-bottom">
                           <div id="title-status" class="centered" >{% trans "Statut" %}</div>
                           <div id="title-label" >{% trans "Libellé" %}</div>
-                          <div id="title-spec" class="centered border-left" style="border-left-width:2px">{% trans "Spécificités pour la formation </br> (Dérogations et alinéas aditionnels)" %}</div>
+                          <div id="title-spec" class="centered border-left" style="border-left-width:2px">{% trans "Spécificités pour la formation </br> (Dérogations et alinéas additionnels)" %}</div>
                       </div>
                     </div>
                 </tr>
@@ -65,7 +65,6 @@
 
        <tbody class="overflow" >
       {%for e in rules_list%}
-
       <tr class="hover-row">
          <td width="10%" class='no-padding border-bottom td-centered red' >{% if e.is_edited == "O" %} {% trans "Modifiée" %}{%elif e.is_edited == "N"%}{% else %}{{e.get_is_edited_display}}{% endif %}</td>
          <td width="52%" class="no-padding border-right border-bottom"><a class="select" onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
@@ -85,7 +84,7 @@
     {% endif %}
     </div>
     <div class="item-20 flex-center">
-        <a href="#" class="break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
+        <a href="{% url 'training:recover_everything' training.id %}" class="break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
 
     </div>
 </div>
@@ -103,7 +102,7 @@
     </div>
     <div class="buttons_list" >
 <br>
-    <a href="#" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
+    <a href="{% url 'training:gen_pdf_all_rules' training.id%}" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
     <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
     <a href="#" class="btn-primary btn btn-sm">{% trans "Envoyer un message à la DES" %}</a>
     </div>
@@ -114,8 +113,6 @@
     <style media="screen">
 
     table {
-
-      height: 100%;
       width: 100%;
     }
 
@@ -154,6 +151,7 @@
     correct_width()
 
         function detail_rule(id, type){
+            console.log(id);
             $.ajax({
                 url: "{% url 'rules:details_rule'%}",
                 type: "POST",
