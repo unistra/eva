@@ -90,8 +90,15 @@ def block_rules(title, rules, story, styled=True):
 
 
 def add_simple_paragraph(story, rule, sp, ap):
+    """
+    print content of paragraph with Specific and additionnel values in state of
+    standard values
+    """
 
-    def append_text(story, text, style, motiv):
+    def append_text(story, text, style, motiv, spacer=6):
+        """
+        print content of paragraph no matter what
+        """
         if motiv:
             story.append(
                 Paragraph(
@@ -101,7 +108,7 @@ def add_simple_paragraph(story, rule, sp, ap):
             story.append(
                 Paragraph("<para %s leftIndent=20>%s</para>" % (
                     style, text), styles["Justify"]))
-        story.append(Spacer(0, 6))
+        story.append(Spacer(0, spacer))
 
     story.append(Spacer(0, 6))
     story.append(Paragraph("<para fontSize=11><strong>%s</strong></para>" % rule.label, styles['Normal']))
@@ -111,19 +118,22 @@ def add_simple_paragraph(story, rule, sp, ap):
     for p in paragraphs:
         if p.is_in_use:
             motiv = False
-            if ap:
-                text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
-                style = "textColor=green"
             if p.id in [e.paragraph_gen_id for e in sp]:
                 text = sp.get(paragraph_gen_id=p.id).text_specific_paragraph
-                append_text(story, text, "textColor=blue", motiv)
+                append_text(story, text, "textColor=blue", motiv, spacer=0)
                 text = sp.get(paragraph_gen_id=p.id).text_motiv
                 style = 'textColor=red'
                 motiv = True
+                append_text(story, text, style, motiv)
             else:
                 text = p.text_standard
                 style = ''
-            append_text(story, text, style, motiv)
+                append_text(story, text, style, motiv)
+
+    if ap:
+        text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
+        style = "textColor=green"
+        append_text(story, text, style, motiv)
 
 
 def add_paragraph(e, story, sp=None, ap=None, styled=True):
@@ -165,12 +175,14 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
 
 
 def complete_rule(year, title, training, rules, specific, add):
+    """
+    Story to get all rule for a slected training
+    """
     # ############ define usefull stuff ################################
     story = []
     id_ap = [e.rule_gen_id for e in add]
 
-
-# ############ TITLE ################################
+    # ############ TITLE ################################
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
         _("%s" % training.label),
@@ -182,23 +194,17 @@ def complete_rule(year, title, training, rules, specific, add):
             darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
     t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
-
     table = Table(t, colWidths=(145, 405))
-
     story.append(table)
-
     story.append(Spacer(0, 24))
 
-    # rules = None
-# ############ No rules case ################################
-
+    # ############ No rules case ################################
     if not rules:
         story.append(Spacer(0, 12))
-
         story.append(Paragraph(_("Aucune règle."), styles['Normal']))
         return story
 
-# ############ add rules one by one ################################
+    # ############ add rules one by one ################################
     for e in rules:
         a = add if e.id in id_ap else None
         add_simple_paragraph(story, e, specific, a)
