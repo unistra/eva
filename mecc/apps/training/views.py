@@ -278,7 +278,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year-1,
-            training=t).get(rule_gen_id=r.n_rule)
+            rule_gen_id=r.n_rule)
     except AdditionalParagraph.DoesNotExist:
         old_additional = None
 
@@ -340,7 +340,6 @@ def gen_pdf_all_rules(request, training_id):
     return response
 
 
-@is_correct_respform
 def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", template="training/form/edit_specific_paragraph.html"):
     data = {}
     data['training'] = t = Training.objects.get(id=training_id)
@@ -349,7 +348,7 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['from_id'] = rule_id
 
     old_additional = AdditionalParagraph.objects.filter(
-        code_year=currentyear().code_year-1, training=t).get(
+        code_year=currentyear().code_year-1).get(
             rule_gen_id=n_rule) if old == 'Y' else None
 
     additional, created = AdditionalParagraph.objects.get_or_create(
@@ -396,7 +395,6 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
             training=old_training,
             paragraph_gen_id=paragraph_id)
     except SpecificParagraph.DoesNotExist:
-        print('icic')
         old_sp = None
 
     sp, created = SpecificParagraph.objects.get_or_create(

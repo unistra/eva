@@ -35,8 +35,8 @@ def watermark_do_not_distribute(canvas, doc):
     Add a watermark
     """
     canvas.saveState()
-    canvas.setFont("Helvetica", 80)
-    canvas.setFillGray(0.85)
+    canvas.setFont("Helvetica", 45)
+    canvas.setFillGray(0.80)
     canvas.rotate(45)
     canvas.drawCentredString(550, 100, "NE PAS DIFFUSER")
     canvas.restoreState()
@@ -186,7 +186,7 @@ def complete_rule(year, title, training, rules, specific, add):
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
         _("%s" % training.label),
-        _("Récapitualtif des règles de la formation (avec spécificités)"),
+        _("Récapitulatif des règles de la formation (avec spécificités)"),
     ]
     ttle = []
     for e in header:
