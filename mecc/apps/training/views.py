@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphDerogForm, \
     AdditionalParagraphForm
-
+from django.db.models import Q
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule, \
     watermark_do_not_distribute
 
@@ -204,23 +204,39 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 
 
 def recover_everything(request, training_id):
-    training = Training.objects.get(id=training_id)
-    print('*****************************************************************')
+    # TODO: finir la récupération de TOUS les éléments
+    return HttpResponseRedirect(
+        reverse('training:edit_rules', args=(training_id,)))
     print('WIP')
     old_year = currentyear().code_year - 1
-    old_training = Training.objects.filter(
-        code_year=old_year).get(n_train=training_id)
+    training = Training.objects.get(id=training_id)
+    old_training = Training.objects.get(
+        code_year=old_year, n_train=training.n_train)
     old_derog = SpecificParagraph.objects.filter(
         code_year=old_year, training=old_training)
+    derog = SpecificParagraph.objects.filter(
+        code_year=currentyear().code_year, training=training)
     old_additional = AdditionalParagraph.objects.filter(
         code_year=old_year, training=old_training)
-    print('*****************************************************************')
-    print(old_year)
-    print(training)
-    print('*****************************************************************')
-    print(old_derog)
-    print(old_additional)
+    additional = AdditionalParagraph.objects.filter(
+        code_year=currentyear().code_year, training=training)
 
+    old_rules_with_additional = {k.n_rule: k for k in [
+        Rule.objects.get(code_year=old_year, id=a.rule_gen_id) for a
+        in old_additional]
+    }
+    current_rules_with_additional = {k.n_rule: k for k in [
+        Rule.objects.get(
+            code_year=currentyear().code_year, id=e.rule_gen_id) for e
+        in additional]
+    }
+    add_to_recover = {e for e in old_rules_with_additional} - {e for e in current_rules_with_additional}
+    print(add_to_recover)
+    to = [v for k, v in old_rules_with_additional if k in list(add_to_recover)]
+    print(to)
+    #
+    # print(add_to_recover)
+    #
     return HttpResponseRedirect(
         reverse('training:edit_rules', args=(training_id,)))
 
