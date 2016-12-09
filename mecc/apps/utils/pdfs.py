@@ -11,6 +11,8 @@ from .querries import rules_degree_for_year
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from mecc.apps.rules.models import Paragraph as ParagraphRules
 from django.utils.translation import ugettext as _
+from django.db.models import Q
+
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -26,6 +28,18 @@ def setting_up_pdf(title, margin=72):
     doc = SimpleDocTemplate(response, rightMargin=margin, leftMargin=margin,
                             topMargin=margin, bottomMargin=18)
     return response, doc
+
+
+def watermark_do_not_distribute(canvas, doc):
+    """
+    Add a watermark
+    """
+    canvas.saveState()
+    canvas.setFont("Helvetica", 80)
+    canvas.setFillGray(0.85)
+    canvas.rotate(45)
+    canvas.drawCentredString(550, 100, "NE PAS DIFFUSER")
+    canvas.restoreState()
 
 
 class NumberedCanvas(canvas.Canvas):
@@ -75,23 +89,54 @@ def block_rules(title, rules, story, styled=True):
     return story
 
 
-def add_simple_paragraph(story, paragraph, sp, ap):
-    pass
+def add_simple_paragraph(story, rule, sp, ap):
+
+    def append_text(story, text, style, motiv):
+        if motiv:
+            story.append(
+                Paragraph(
+                    "<para %s leftIndent=20><u>Motifs de la dérogation</u> : %s</para>" % (
+                        style, text), styles["Justify"]))
+        else:
+            story.append(
+                Paragraph("<para %s leftIndent=20>%s</para>" % (
+                    style, text), styles["Justify"]))
+        story.append(Spacer(0, 6))
+
+    story.append(Spacer(0, 6))
+    story.append(Paragraph("<para fontSize=11><strong>%s</strong></para>" % rule.label, styles['Normal']))
+    story.append(Spacer(0, 6))
+
+    paragraphs = ParagraphRules.objects.filter(Q(rule=rule))
+    for p in paragraphs:
+        if p.is_in_use:
+            motiv = False
+            if ap:
+                text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
+                style = "textColor=green"
+            if p.id in [e.paragraph_gen_id for e in sp]:
+                text = sp.get(paragraph_gen_id=p.id).text_specific_paragraph
+                append_text(story, text, "textColor=blue", motiv)
+                text = sp.get(paragraph_gen_id=p.id).text_motiv
+                style = 'textColor=red'
+                motiv = True
+            else:
+                text = p.text_standard
+                style = ''
+            append_text(story, text, style, motiv)
 
 
-def add_paragraph(e, story):
+def add_paragraph(e, story, sp=None, ap=None, styled=True):
     t = [["", ""]]
 
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
-                  ID %s</para>" % e.pk, styles['Normal'])])
+                  ID %s</para>" % e.pk, styles['Normal']) if styled else ' '])
 
-    paragraphs = ParagraphRules.objects.filter(rule=e, code_year=2015)
-    # print(e.code_year)
+    paragraphs = ParagraphRules.objects.filter(Q(rule=e))
     for p in paragraphs:
-        # print(p.code_year)
         if p.is_in_use:
             txt = ''
             derog = _("Dérogation <br></br> possible") if \
@@ -119,17 +164,17 @@ def add_paragraph(e, story):
     return story
 
 
-def complete_rule(year, title, training, rules, parag, specific, add):
+def complete_rule(year, title, training, rules, specific, add):
+    # ############ define usefull stuff ################################
     story = []
-    f = rules.first()
-    # print(f.id)
-    # print(rules.first())
-    # print(parag.first().)
+    id_ap = [e.rule_gen_id for e in add]
+
+
 # ############ TITLE ################################
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
         _("%s" % training.label),
-        _("Récapitualtif des règles de la formation(avec spécificités)"),
+        _("Récapitualtif des règles de la formation (avec spécificités)"),
     ]
     ttle = []
     for e in header:
@@ -142,18 +187,21 @@ def complete_rule(year, title, training, rules, parag, specific, add):
 
     story.append(table)
 
-    story.append(Spacer(0, 12))
+    story.append(Spacer(0, 24))
 
-
+    # rules = None
 # ############ No rules case ################################
 
     if not rules:
-        story.append(Spacer(0, 24))
+        story.append(Spacer(0, 12))
+
         story.append(Paragraph(_("Aucune règle."), styles['Normal']))
         return story
 
+# ############ add rules one by one ################################
     for e in rules:
-        add_paragraph(e, story)
+        a = add if e.id in id_ap else None
+        add_simple_paragraph(story, e, specific, a)
 
     return story
 

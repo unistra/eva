@@ -18,7 +18,8 @@ from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphDerogForm, \
     AdditionalParagraphForm
 
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule, \
+    watermark_do_not_distribute
 
 
 def add_current_year(dic):
@@ -264,7 +265,6 @@ def ask_delete_specific(request):
 @is_correct_respform
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
     data = {}
-    print('ici')
     data['url_to_del'] = "/training/delete_specific/"
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
@@ -300,26 +300,43 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 
 def gen_pdf_all_rules(request, training_id):
+    # data = {}
     year = currentyear().code_year
-
     training = Training.objects.get(id=training_id)
+    r = Rule.objects.filter(degree_type=training.degree_type).filter(
+        code_year=currentyear().code_year)
+    rules = r.filter(is_eci=True) if training.MECC_type \
+        in 'E' else r.filter(is_ccct=True)
+    # specific_additional = [a for a in [
+    #     e.rule_gen_id for e in SpecificParagraph.objects.filter(
+    #         code_year=currentyear().code_year, training=training)]
+    #     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
+    #             training=training, code_year=currentyear().code_year)]
 
-    rules = Rule.objects.filter(
-        degree_type=training.degree_type, code_year=year)
+    # training = Training.objects.get(id=training_id)
+    # rules = Rule.objects.filter(
+    #     degree_type=training.degree_type, code_year=year)
+    # old_rules = Rule.objects.filter(
+    #     degree_type=training.degree_type, code_year=year-1)
+    #
+    # p = Paragraph.objects.filter(code_year=year)
+    # paragraphs = []
+    # for e in rules:
+    #     if e.is_edited:
+    #         paragraphs.append(p.filter(rule=e))
+    #     paragraphs.append(p.filter(rule=e))
+    # # print(paragraphs)
 
-    p = Paragraph.objects.filter(code_year=year)
-    paragraphs = []
-    for e in rules:
-        paragraphs.append(p.filter(rule=e))
-    print(paragraphs)
+
     sp = SpecificParagraph.objects.filter(code_year=year, training=training)
     ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
     # PDF gen
     title = training.label
     response, doc = setting_up_pdf(title, margin=42)
-    story = complete_rule(year, title, training, rules, p, sp, ap)
+    story = complete_rule(year, title, training, rules, sp, ap)
 
-    doc.build(story, canvasmaker=NumberedCanvas)
+    doc.build(story, onFirstPage=watermark_do_not_distribute,
+              onLaterPages=watermark_do_not_distribute, canvasmaker=NumberedCanvas)
     return response
 
 
@@ -369,11 +386,18 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     data['text_derog'] = p.text_derog
     data['text_motiv'] = p.text_motiv
     old_year = currentyear().code_year - 1 if old == "Y" else None
+    old_training = Training.objects.get(
+        code_year=old_year, n_train=t.n_train) if old == "Y" else None
 
-    old_sp = SpecificParagraph.objects.get(
-        code_year=old_year,
-        rule_gen_id=n_rule,
-        paragraph_gen_id=paragraph_id) if old == "Y" else None
+    try:
+        old_sp = SpecificParagraph.objects.get(
+            code_year=old_year,
+            rule_gen_id=n_rule,
+            training=old_training,
+            paragraph_gen_id=paragraph_id)
+    except SpecificParagraph.DoesNotExist:
+        print('icic')
+        old_sp = None
 
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
@@ -383,9 +407,9 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     )
 
     if created:
-        sp.text_specific_paragraph = p.text_standard if old_sp in [
-            None] else old_sp.text_specific_paragraph
-        sp.text_motiv = "" if old_sp in [None] else old_sp.text_motiv
+        sp.text_specific_paragraph = p.text_standard if old_sp is None \
+            else old_sp.text_specific_paragraph
+        sp.text_motiv = "" if old_sp is None else old_sp.text_motiv
         sp.save()
 
     data['form'] = SpecificParagraphDerogForm(instance=sp)
