@@ -360,16 +360,23 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     old_additional = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year-1).get(
             rule_gen_id=n_rule) if old == 'Y' else None
-
+# Create temporary additional; just in order to fill the form with ease
     additional, created = AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         rule_gen_id=rule_id,
         training=t,
-        text_additional_paragraph=old_additional.text_additional_paragraph if old == 'Y' else ''
+    ) if old != "Y" else AdditionalParagraph.objects.get_or_create(
+        code_year=currentyear().code_year,
+        rule_gen_id=rule_id,
+        training=t,
+        text_additional_paragraph=old_additional.text_additional_paragraph
     )
+
     data['form'] = AdditionalParagraphForm(instance=additional)
+# Delete th temporary additional if created
     if created:
         additional.delete()
+
     data['additional'] = _("Vous souhaitez ajouter un alinéa à cette règle pour \
 votre formation. Merci de la rédiger ci-dessous :")
     if request.method == 'POST':

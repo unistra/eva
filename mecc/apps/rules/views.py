@@ -408,6 +408,7 @@ def details_rule(request):
              'text': e.text_standard if not (
                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
              'is_derog': gimme_txt(e.id, x)[1],
+             'can_be_derog': e.is_interaction,
              'info': _('Dérogation')}
             for e in paragraphs],
 

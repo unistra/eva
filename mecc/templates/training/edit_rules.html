@@ -93,6 +93,11 @@
     </div>
     <div class="buttons_list" >
 <br>
+    <a href=
+    {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
+    {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
+    {% else %}"{%url 'training:list_all' %}"
+    {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
     <a href="{% url 'training:gen_pdf_all_rules' training.id%}" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
     <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
     <a href="#" class="btn-primary btn btn-sm">{% trans "Envoyer un message à la DES" %}</a>
@@ -135,7 +140,6 @@
 
     <script type="text/javascript">
         function detail_rule(id, type){
-            console.log(id);
             $.ajax({
                 url: "{% url 'rules:details_rule'%}",
                 type: "POST",
@@ -187,20 +191,19 @@
                            cell1.innerHTML = data.paragraphs[i].text;
                            if (data.is_specific) {
                                cell2.style.padding = '0 0 0 2em';
-                           };
-                           if (data.paragraphs[i].is_derog === true){
-                               if (data.is_specific === true) {
+                               if (data.paragraphs[i].is_derog === true) {
                                    cell1.className += 'blue ';
-                                   cell2.style.padding = '0 0 0 2em;';
+                                   cell2.className += 'blue ';
                                    cell2.innerHTML = '({% trans "Dérogation" %})';
-                               } else {
+                               }else {
+                                   cell2.innerHTML = '({% trans "Standard" %})';
+                               }
+
+                           }else {
+                               if (data.paragraphs[i].can_be_derog === true) {
                                    cell2.className += ' border-left disabled italic td-centered';
                                    cell2.innerHTML = '{% trans "Dérogation possible"%}'
                                }
-                           }
-                           if (data.is_specific & (!data.paragraphs[i].is_derog === true )) {
-                               cell2.innerHTML = '({% trans "Standard" %})';
-
                            }
                        }
                    }

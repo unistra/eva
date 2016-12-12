@@ -6,7 +6,7 @@
       <tr>
         <td>
           <select {%if not editing%}disabled{%endif%}  name="select-degreetype" class='select-type' id='selectDegree'>
-          <option selected value="default">{% trans "Ajouter un type de diplôme" %}</option>
+          <option selected value="0">{% trans "Ajouter un type de diplôme" %}</option>
           {% for e in available_degreetype%}
           <option value="{{e.id}}">
             {{e.short_label}}
@@ -74,6 +74,16 @@ function delete_degreetype(id){
         var rowId = 'row-' + data.degree_id;
         var row = document.getElementById(rowId);
         row.parentNode.removeChild(row);
+        // Lets sort it !
+        var my_options = $('#selectDegree option');
+        var selected = 0;
+        my_options.sort(function(a,b) {
+            if (a.text > b.text) return 1;
+            if (a.text < b.text) return -1;
+            return 0
+        })
+        $("#selectDegree").empty().append( my_options );
+        $("#selectDegree").val(selected);
       }
   });
 }

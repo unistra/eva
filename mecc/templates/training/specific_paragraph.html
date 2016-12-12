@@ -80,7 +80,7 @@
                         {% if e.is_interaction %}
                             <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
                             {% if e.id in specific_ids  %}
-                                <a data-toggle="modal" data-target="#preview" onclick="ask_delete('D', {{e.id}}, {{training.id}}, {{rule.id}})"> {% trans "Supprimer la dérogation" %}</a>
+                                <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{e.id}}, {{training.id}}, {{rule.id}})"> {% trans "Supprimer la dérogation" %}</a>
                             {% else %}
                                 {% if e.id in old_specific %}
                                     <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=rule.n_rule old='Y' %}">{% trans "Récupérer la dérogation n-1" %}</a>
@@ -101,7 +101,7 @@
                     <td style="width: 25%;text-align:left;" class="td-centered border-left ">
                         <a href="{% url 'training:edit_additional_paragraph' training_id=training.id rule_id=rule.id n_rule=0 old='N'%}" class="green">{% if additional_paragraph  %}{% trans "Modifier l'alinéa" %} {% else %}{% trans "Saisir un alinéa" %}{%endif%}{% trans " additionnel" %}</a> <br>
                             {% if additional_paragraph %}
-                                <a data-toggle="modal" data-target="#preview" onclick="ask_delete('A', {{additional_paragraph.id}})" class="green"> {% trans "Supprimer l'alinéa additionnel" %}</a>
+                                <a data-toggle="modal" data-target="#preview" onclick="ask_delete('A', {{additional_paragraph.id}})" class="green hand"> {% trans "Supprimer l'alinéa additionnel" %}</a>
                             {% else %}
                                 {% if old_additional %}
                                     <a href="{% url 'training:edit_additional_paragraph' training_id=training.id rule_id=rule.id n_rule=rule.n_rule old='Y'%}" class="green"> {% trans "Récupérer l'alinéa additionnel n-1" %}</a>
