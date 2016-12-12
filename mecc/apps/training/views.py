@@ -205,8 +205,8 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 
 def recover_everything(request, training_id):
     # TODO: finir la récupération de TOUS les éléments
-    return HttpResponseRedirect(
-        reverse('training:edit_rules', args=(training_id,)))
+
+
     print('WIP')
     old_year = currentyear().code_year - 1
     training = Training.objects.get(id=training_id)
@@ -216,27 +216,21 @@ def recover_everything(request, training_id):
         code_year=old_year, training=old_training)
     derog = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year, training=training)
-    old_additional = AdditionalParagraph.objects.filter(
-        code_year=old_year, training=old_training)
-    additional = AdditionalParagraph.objects.filter(
-        code_year=currentyear().code_year, training=training)
-
     old_rules_with_additional = {k.n_rule: k for k in [
         Rule.objects.get(code_year=old_year, id=a.rule_gen_id) for a
-        in old_additional]
+        in AdditionalParagraph.objects.filter(
+            code_year=old_year, training=old_training)]
     }
     current_rules_with_additional = {k.n_rule: k for k in [
         Rule.objects.get(
             code_year=currentyear().code_year, id=e.rule_gen_id) for e
-        in additional]
+        in AdditionalParagraph.objects.filter(
+            code_year=currentyear().code_year, training=training)]
     }
     add_to_recover = {e for e in old_rules_with_additional} - {e for e in current_rules_with_additional}
-    print(add_to_recover)
-    to = [v for k, v in old_rules_with_additional if k in list(add_to_recover)]
-    print(to)
-    #
-    # print(add_to_recover)
-    #
+    to_additional = [old_rules_with_additional[k] for k in
+                     old_rules_with_additional if k in add_to_recover]
+
     return HttpResponseRedirect(
         reverse('training:edit_rules', args=(training_id,)))
 

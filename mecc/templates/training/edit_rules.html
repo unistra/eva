@@ -48,19 +48,10 @@
       {% if rules_list %}
       <table>
           <thead >
-              <tr class="">
-                  <div class="dir-row underlined ">
-                      <div class="disp-flex" >
-                          <div id='title-regle' class="centered"> {%trans "Règle standard" %}</div>
-                          <div id='title-empty'class="border-left" style="border-left-width:2px"></div>
-                      </div>
-                      <div class="disp-flex  border-bottom">
-                          <div id="title-status" class="centered" >{% trans "Statut" %}</div>
-                          <div id="title-label" >{% trans "Libellé" %}</div>
-                          <div id="title-spec" class="centered border-left" style="border-left-width:2px">{% trans "Spécificités pour la formation </br> (Dérogations et alinéas additionnels)" %}</div>
-                      </div>
-                    </div>
-                </tr>
+              <tr>
+                <th width="62%" class="td-centered no-padding" >{% trans "Statut règle standard" %}</th>
+                <th width="38%" class="td-centered no-padding"  >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
+              </tr>
           </thead>
 
        <tbody class="overflow" >
@@ -70,7 +61,7 @@
          <td width="52%" class="no-padding border-right border-bottom"><a class="select" onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
          <td width="10%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "(D)" %}{% endif %}</td>
          <td width="14%" class="no-padding td-centered border-bottom underlined">
-            <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">{% trans "Saisir" %}</a>
+            <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">{% trans "Modifier" %}</a>
         </td>
         <td width="14%" class="no-padding border-bottom">
                {% if e.id in custom %}
@@ -111,45 +102,38 @@
     {% include "training/rule_preview.html"%}
 
     <style media="screen">
+      table {
+        display: flex;
+        flex-flow: column;
+        height: 100%;
+        width: 100%;
+      }
+      table thead {
+        /* head takes the height it requires,
+        and it's not scaled when table is resized */
+        flex: 0 0 auto;
+        width: calc(100% - 0.9em);
+      }
+      table tbody {
+        /* body takes all the remaining available space */
+        flex: 1 1 auto;
+        display: block;
+        overflow: auto;
+        max-height: 50vh;
+      }
+      table tbody tr {
+        width: 100%;
+      }
+      table thead,
+      table tbody tr {
+        display: table;
+        table-layout: fixed;
+      }
 
-    table {
-      width: 100%;
-    }
-
-    .overflow {
-      /* body takes all the remaining available space */
-      display: flex;
-      flex-flow: column;
-
-      flex: 1 1 auto;
-      display: block;
-      overflow: auto;
-      max-height: 50vh;
-
-    }
 
     </style>
 
     <script type="text/javascript">
-    function correct_width(){
-        var td1 = $('.overflow').find('tr').children('td:first');
-        var td2 = td1.next();
-        var td3 = td2.next();
-        var td4 = td3.next();
-        document.getElementById('title-regle').style.width = (td1.width() + td2.width()) + 'px';
-        document.getElementById('title-status').style.width = td1.width() + 'px';
-        document.getElementById('title-label').style.width = td2.width() + 'px';
-        document.getElementById('title-spec').style.width = (td3.width() + td4.width()) + 'px';
-    }
-    $( '#menu-toggle' ).on('click', function() {
-        setTimeout("correct_width()",900)
-
-    });
-    $(window ).on('resize', function() {
-        setTimeout("correct_width()",900)
-    });
-    correct_width()
-
         function detail_rule(id, type){
             console.log(id);
             $.ajax({

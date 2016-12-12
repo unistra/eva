@@ -74,6 +74,14 @@ def get_list_of_pple(request):
              Training.objects.get(id=z).resp_formations.all()]
     elif y is None:
         r = []
+    if x.count('*') > 1:
+        return JsonResponse(
+            {'message': _('Afin de ne pas effectuer trop de requetes, veuillez\
+            ne pas utiliser "*" plus d\'une fois.')})
+    else:
+        if x.count("*") is 1 and len(x) < 4:
+            return JsonResponse(
+                {'message': _('Veuillez entrer au moins trois caractères.')})
     if len(x) > 1:
         ppl = [e for e in get_from_ldap(x) if e['username'] not in r]
         data['pple'] = sorted(ppl, key=lambda x: x['first_name'])

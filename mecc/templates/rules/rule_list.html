@@ -16,7 +16,6 @@
   <table class="table" id="rule-table">
     <thead>
      <tr>
-
         <th width="5%"style="color:grey" class="td-center">{% trans 'ID règle (auto)' %}</th>
         <th width="33%">{% trans "Libellé de règle" %}</th>
         <th width="6%" class='sort-default'>{% trans 'N° affichage' %}</th>
@@ -37,7 +36,7 @@
      <td width="6%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="10%" class="td-centered "> <span class='red'>{% if e.is_empty%}(vide) {%endif%}</span></td>
      <td width="11%" class="td-centered">{%if not e.is_in_use%}Hors service{%endif%}</td>
-     <td width="11%" class="td-centered">{% if e.is_edited == 'O'%}<span class="blue">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="blue">{% trans "Nouvelle" %}</span>{%endif%}</td>
+     <td width="11%" class="td-centered">{% if e.is_edited == 'O'%}<span class="red">{% trans "Modifiée" %}</span>{%elif e.is_edited == 'X'%}<span class="blue">{% trans "Nouvelle" %}</span>{%endif%}</td>
      <td width="11%" class="td-centered">{% if e.is_eci%} ECI {%else%}{%endif%}</td>
      <td width="11%" class="td-centered">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%" >
@@ -49,7 +48,7 @@
 </table>
 {% endif %}
 </div>
-<div class="buttons_list">
+<div class="buttons_list margin-top">
 <a href="{% url 'rules:duplicate'%}" class="btn-primary btn btn-sm btn-1">{% trans "Dupliquer les règles générales des années précédentes" %}</a>
 <a href="{% url 'rules:new'%}" class="btn-primary btn btn-sm">{% trans "Créer une nouvelle règle" %}</a>
 <a data-toggle="modal" data-target="#select_degreetype" class="btn-primary btn btn-sm">{% trans "Générer pdf des règles de l'année" %}</a>
