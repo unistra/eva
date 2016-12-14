@@ -4,7 +4,7 @@ from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
     specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
     edit_additional_paragraph, ask_delete_specific, delete_specific, \
-    recover_everything, gen_pdf_all_rules
+    recover_everything, gen_pdf_all_rules, send_mail
 from django_cas.decorators import login_required
 from mecc.decorators import is_correct_respform
 
@@ -48,4 +48,6 @@ urlpatterns = [
         name='delete_specific'),
     url(r'^gen_pdf_all_rules/(?P<training_id>\d+)$', gen_pdf_all_rules,
         name='gen_pdf_all_rules'),
+    url(r'^send_mail/$', send_mail,
+        name='send_mail'),
 ]

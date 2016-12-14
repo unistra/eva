@@ -40,17 +40,17 @@
         </div>
     </div>
          <!-- Sidebar -->
+            {% include "sidebar.html" %}
                {% if request.session.is_spoofed_user%}
                       {% include "spoof/notification_bar.html" %}
                {% endif %}
-         {% include "sidebar.html" %}
 
          <div id="page-content-wrapper">
              <div class="container-fluid">
                <div class="page-header" style="margin:0 0 20px">
                  {% include "head_button.html"%}
 
-    </div>
+             </div>
                <div id='title'>
                    {% block page-header %}
 

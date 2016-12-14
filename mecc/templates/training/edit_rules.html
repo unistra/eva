@@ -49,7 +49,7 @@
       <table>
           <thead >
               <tr>
-                <th width="62%" class="td-centered no-padding" >{% trans "Statut règle standard" %}</th>
+                <th width="62%" class="td-centered no-padding" >{% trans "Règle standard" %}</th>
                 <th width="38%" class="td-centered no-padding"  >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
               </tr>
           </thead>
@@ -61,7 +61,8 @@
          <td width="52%" class="no-padding border-right border-bottom"><a class="select" onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
          <td width="10%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "(D)" %}{% endif %}</td>
          <td width="14%" class="no-padding td-centered border-bottom underlined">
-            <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">{% trans "Modifier" %}</a>
+            <a class="select" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">{% if e.id in custom %}
+{% trans "Modifier" %}{% else %}{% trans "Saisir" %}{%endif%}</a>
         </td>
         <td width="14%" class="no-padding border-bottom">
                {% if e.id in custom %}
@@ -98,12 +99,13 @@
     {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
     {% else %}"{%url 'training:list_all' %}"
     {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
-    <a href="{% url 'training:gen_pdf_all_rules' training.id%}" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
+    <a href="{% url 'training:gen_pdf_all_rules' training.id%}" target="_blank" class="btn-primary btn btn-sm btn-1">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
     <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
-    <a href="#" class="btn-primary btn btn-sm">{% trans "Envoyer un message à la DES" %}</a>
+    <a data-toggle="modal" class="btn-primary btn btn-sm" data-target="#send_mail">{% trans "Envoyer un message à la DES" %}</a>
     </div>
 
 </div>
+    {% include "training/send_mail.html"%}
     {% include "training/rule_preview.html"%}
 
     <style media="screen">

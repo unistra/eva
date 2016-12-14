@@ -237,7 +237,6 @@ THIRD_PARTY_APPS = (
     'crispy_forms',
     'django_cas',
     'ckeditor',
-
 )
 
 LOCAL_APPS = (

@@ -20,6 +20,10 @@ from .forms import SpecificParagraphDerogForm, \
 from django.db.models import Q
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule, \
     watermark_do_not_distribute
+from django.contrib import messages
+
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
 
 def add_current_year(dic):
@@ -200,12 +204,17 @@ def edit_rules(request, id, template="training/edit_rules.html"):
             code_year=currentyear().code_year, training=training)]
         ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
                 training=training, code_year=currentyear().code_year)]
+
+    if hasattr(settings, 'EMAIL_TEST'):
+        data['test_mail'] = _("""
+Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
+Merci.
+        """)
     return render(request, template, data)
 
 
 def recover_everything(request, training_id):
     # TODO: finir la récupération de TOUS les éléments
-
 
     print('WIP')
     old_year = currentyear().code_year - 1
@@ -284,7 +293,6 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
     old_specific = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year-1).filter(rule_gen_id=r.n_rule)
-
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year-1,
@@ -310,43 +318,25 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 
 def gen_pdf_all_rules(request, training_id):
-    # data = {}
+
     year = currentyear().code_year
     training = Training.objects.get(id=training_id)
     r = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year)
     rules = r.filter(is_eci=True) if training.MECC_type \
         in 'E' else r.filter(is_ccct=True)
-    # specific_additional = [a for a in [
-    #     e.rule_gen_id for e in SpecificParagraph.objects.filter(
-    #         code_year=currentyear().code_year, training=training)]
-    #     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
-    #             training=training, code_year=currentyear().code_year)]
-
-    # training = Training.objects.get(id=training_id)
-    # rules = Rule.objects.filter(
-    #     degree_type=training.degree_type, code_year=year)
-    # old_rules = Rule.objects.filter(
-    #     degree_type=training.degree_type, code_year=year-1)
-    #
-    # p = Paragraph.objects.filter(code_year=year)
-    # paragraphs = []
-    # for e in rules:
-    #     if e.is_edited:
-    #         paragraphs.append(p.filter(rule=e))
-    #     paragraphs.append(p.filter(rule=e))
-    # # print(paragraphs)
-
 
     sp = SpecificParagraph.objects.filter(code_year=year, training=training)
     ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
+
     # PDF gen
     title = training.label
     response, doc = setting_up_pdf(title, margin=42)
     story = complete_rule(year, title, training, rules, sp, ap)
 
-    doc.build(story, onFirstPage=watermark_do_not_distribute,
-              onLaterPages=watermark_do_not_distribute, canvasmaker=NumberedCanvas)
+    doc.build(
+        story, onFirstPage=watermark_do_not_distribute,
+        onLaterPages=watermark_do_not_distribute, canvasmaker=NumberedCanvas)
     return response
 
 
@@ -504,3 +494,35 @@ def duplicate_remove(request):
                         y.delete()
     t.delete()
     return JsonResponse({"status": "removed", "label": label})
+
+
+@is_post_request
+@login_required
+def send_mail(request):
+    """
+    Send mail
+    """
+
+    to = settings.EMAIL_TEST if hasattr(
+        settings, 'EMAIL_TEST') else ['']
+    cc = [request.POST.get('cc')]
+    subject = "%s - %s - %s %s" % (
+        settings.EMAIL_SUBJECT_PREFIX,
+        request.POST.get('training_label'),
+        request.user.first_name,
+        request.user.last_name,
+    )
+    body = request.POST.get('body')
+
+    mail = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email="%s %s <%s> " % (
+            request.user.first_name, request.user.last_name, request.user.email),
+        to=[settings.MAIL_FROM],
+        cc=cc,
+        bcc=to
+    )
+    # mail.send()
+    messages.success(request, _('Notification envoyée.'))
+    return redirect(request.META.get('HTTP_REFERER'))

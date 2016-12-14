@@ -582,6 +582,8 @@ label[for=id_is_on_duty] {
     font-weight: normal;
     font-size: 1.75em;
     line-height: 1.1em;
+    margin: 0.5em 0 0 0;
+
 }
 #title-hr {
     margin: 0.5em 0 1.2em 0;
@@ -660,7 +662,7 @@ label[for=id_is_on_duty] {
 }
 #page-content-wrapper {
     width: 100%;
-    padding: 1.5em;
+    padding: 0 1em 0 1em;
 }
 #wrapper.toggled #page-content-wrapper {
     position: relative;
