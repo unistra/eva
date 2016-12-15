@@ -3,7 +3,15 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'rules:list'%}">{% trans "Règles générales" %}</a></li>
+        <li class="active">{{rule.label}}</li>
+    </ol>
+{% endblock %}
+
 {% block page-header %}
+
 <link rel="stylesheet" type="text/css" href="{% static 'css/rules.css' %}" />
 {% trans "Fiche détaillée d'une règle générale" %}
 {% endblock %}

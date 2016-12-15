@@ -6,6 +6,14 @@
 {% load crispy_forms_tags %}
 {% load dipstrapfiles %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'rules:list'%}">{% trans "Règles générales" %}</a></li>
+        <li><a href="{% url 'rules:rule_edit' id=rule.id %}">{{rule.label}}</a></li>
+        <li class="active">{% trans "Edition d' alinéa" %}</li>
+    </ol>
+{% endblock %}
+
 {% block page-header %}
 {% trans "Fiche détaillée d'un alinéa de règle générale" %}
 {% endblock %}
@@ -47,6 +55,31 @@
 
 
 <script type="text/javascript">
+$(document).ready(function () {
+    _isEdited = false;
+    for (var i in CKEDITOR.instances) {
+        CKEDITOR.instances[i].on('change', function() {_isEdited = true});
+    }
+
+  window.onbeforeunload = function (e) {
+  if (_isEdited === true) {
+  var e = e || window.event;
+
+  // For IE and Firefox
+  if (e) {
+    e.returnValue = 'Des données non enregistrées seront perdues.';
+  }
+
+  // For Safari
+  return 'Des données non enregistrées seront perdues.';
+  };
+  };
+});
+
+
+
+
+
 if (document.getElementById("id_is_interaction").checked){
   $("#text_derog").removeClass("disabled-event");
   $("#text_motiv").removeClass("disabled-event");

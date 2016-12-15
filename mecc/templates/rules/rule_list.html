@@ -4,6 +4,12 @@
 {% load field_name %}
 {% load staticfiles %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="active">{% trans "Règles générales" %}</li>
+    </ol>
+{% endblock %}
+
 {% block page-header %}
 {% trans 'Règles générales' %}
 {% endblock %}

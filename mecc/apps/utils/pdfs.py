@@ -6,16 +6,16 @@ from django.db.models import Q
 from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY
-
+import re
 from .querries import rules_degree_for_year
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from mecc.apps.rules.models import Paragraph as ParagraphRules
 from django.utils.translation import ugettext as _
-from django.db.models import Q
 
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 
 
 def setting_up_pdf(title, margin=72):
@@ -95,45 +95,61 @@ def add_simple_paragraph(story, rule, sp, ap):
     standard values
     """
 
-    def append_text(story, text, style, motiv, spacer=6):
+    def append_text(story, text, style, special=False, spacer=6):
         """
-        print content of paragraph no matter what
+        print content of paragraph or list with bullet
         """
-        if motiv:
+        # REGEX ME !
+        reg = re.compile(r'>(.*?)</(p|li)>')
+        # r_p = re.compile(r'<p>(.*?)</p>')
+        # r_ul = re.compile(r'<ul>(.*?)</ul>')
+        # r_ol = re.compile(r'<ol>(.*?)</ol>')
+        # r_li = re.compile(r'<li>(.*?)</li>')
+
+        r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
+
+        if special == 'motiv':
             story.append(
                 Paragraph(
-                    "<para %s leftIndent=20><u>Motifs de la dérogation</u> : %s</para>" % (
-                        style, text), styles["Justify"]))
-        else:
-            story.append(
-                Paragraph("<para %s leftIndent=20>%s</para>" % (
-                    style, text), styles["Justify"]))
+                    "<para textColor=red leftIndent=20><u>Motifs de la dérogation</u> :\
+                    </para>", styles["Justify"]))
+        for t, v in r:
+            if v == 'li':
+                story.append(Paragraph(
+                    "<para %s leftIndent=20>%s</para>" % (
+                        style, t), styles['Bullet_1']))
+            else:
+                story.append(Paragraph(
+                    "<para %s leftIndent=20>%s</para>" % (
+                        style, t), styles['Justify']))
         story.append(Spacer(0, spacer))
 
     story.append(Spacer(0, 6))
-    story.append(Paragraph("<para fontSize=11><strong>%s</strong></para>" % rule.label, styles['Normal']))
+    story.append(Paragraph("<para fontSize=11><strong>%s</strong></para>\
+        " % rule.label, styles['Normal']))
     story.append(Spacer(0, 6))
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=rule))
+
     for p in paragraphs:
         if p.is_in_use:
-            motiv = False
             if p.id in [e.paragraph_gen_id for e in sp]:
                 text = sp.get(paragraph_gen_id=p.id).text_specific_paragraph
-                append_text(story, text, "textColor=blue", motiv, spacer=0)
+                append_text(
+                    story, text,
+                    "textColor=blue", spacer=0)
                 text = sp.get(paragraph_gen_id=p.id).text_motiv
                 style = 'textColor=red'
-                motiv = True
-                append_text(story, text, style, motiv)
+                append_text(story, text, style, special="motiv")
             else:
                 text = p.text_standard
                 style = ''
-                append_text(story, text, style, motiv)
+                append_text(story, text, style)
 
     if ap:
         text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
         style = "textColor=green"
-        append_text(story, text, style, motiv)
+        append_text(story, text, style)
 
 
 def add_paragraph(e, story, sp=None, ap=None, styled=True):

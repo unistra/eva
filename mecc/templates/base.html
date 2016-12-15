@@ -41,6 +41,9 @@
     </div>
          <!-- Sidebar -->
             {% include "sidebar.html" %}
+            {% block breadcrumb %}
+
+            {% endblock %}
                {% if request.session.is_spoofed_user%}
                       {% include "spoof/notification_bar.html" %}
                {% endif %}

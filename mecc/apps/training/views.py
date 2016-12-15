@@ -204,7 +204,7 @@ def edit_rules(request, id, template="training/edit_rules.html"):
             code_year=currentyear().code_year, training=training)]
         ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
                 training=training, code_year=currentyear().code_year)]
-
+    data['notification_to'] = settings.MAIL_FROM
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
@@ -215,16 +215,29 @@ Merci.
 
 def recover_everything(request, training_id):
     # TODO: finir la récupération de TOUS les éléments
-
-    print('WIP')
     old_year = currentyear().code_year - 1
     training = Training.objects.get(id=training_id)
-    old_training = Training.objects.get(
-        code_year=old_year, n_train=training.n_train)
-    old_derog = SpecificParagraph.objects.filter(
-        code_year=old_year, training=old_training)
-    derog = SpecificParagraph.objects.filter(
-        code_year=currentyear().code_year, training=training)
+    try:
+        old_training = Training.objects.get(
+            code_year=old_year, n_train=training.n_train)
+        old_derog = SpecificParagraph.objects.filter(
+            code_year=old_year, training=old_training)
+    except (Training.DoesNotExist, SpecificParagraph.DoesNotExist):
+        return HttpResponseRedirect(
+            reverse('training:edit_rules', args=(training_id,)))
+    # derog = SpecificParagraph.objects.filter(
+    #     code_year=currentyear().code_year, training=training)
+    # for e in old_derog:
+    #     SpecificParagraph.objects.get_or_create(
+    #         TYPE_PARAPGRAPH=e.TYPE_PARAPGRAPH,
+    #         code_year=e.currentyear().code_year,
+    #         training=training,
+    #         rule_gen_id=e.rule_gen_id,
+    #         paragraph_gen_id=e.paragraph_gen_id,
+    #         type_paragraph=e.type_paragraph,
+    #         text_specific_paragraph=e.text_specific_paragraph,
+    #         text_motiv=e.text_motiv,
+    #     )
     old_rules_with_additional = {k.n_rule: k for k in [
         Rule.objects.get(code_year=old_year, id=a.rule_gen_id) for a
         in AdditionalParagraph.objects.filter(
@@ -236,9 +249,21 @@ def recover_everything(request, training_id):
         in AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
     }
-    add_to_recover = {e for e in old_rules_with_additional} - {e for e in current_rules_with_additional}
-    to_additional = [old_rules_with_additional[k] for k in
-                     old_rules_with_additional if k in add_to_recover]
+    add_to_recover = {e for e in old_rules_with_additional} - {
+        e for e in current_rules_with_additional}
+
+    old_additionals = [AdditionalParagraph.objects.get(
+        rule_gen_id=old_rules_with_additional[k].id) for k in
+        old_rules_with_additional if k in add_to_recover]
+
+    # for e in old_additionals:
+    #     AdditionalParagraph.objects.get_or_create(
+    #         code_year=currentyear().code_year,
+    #         training=training,
+    #         rule_gen_id=e.rule_gen_id,
+    #         text_additional_paragraph=e.text_additional_paragraph,
+    #     )
+
 
     return HttpResponseRedirect(
         reverse('training:edit_rules', args=(training_id,)))
@@ -500,11 +525,9 @@ def duplicate_remove(request):
 @login_required
 def send_mail(request):
     """
-    Send mail
+    Send notification mail to des-admin-mecc@unistra.fr
     """
 
-    to = settings.EMAIL_TEST if hasattr(
-        settings, 'EMAIL_TEST') else ['']
     cc = [request.POST.get('cc')]
     subject = "%s - %s - %s %s" % (
         settings.EMAIL_SUBJECT_PREFIX,
@@ -521,8 +544,7 @@ def send_mail(request):
             request.user.first_name, request.user.last_name, request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
-        bcc=to
     )
-    # mail.send()
+    mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect(request.META.get('HTTP_REFERER'))

@@ -175,7 +175,7 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     """
     data = {}
 
-    rule = get_object_or_404(Rule, id=id)
+    data['rule'] = rule = get_object_or_404(Rule, id=id)
     request.session['visited_rule'] = rule.id
     data['paragraphs'] = Paragraph.objects.filter(Q(rule=rule))
     data['editing'] = True

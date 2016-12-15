@@ -80,6 +80,7 @@ class ParagraphForm(forms.ModelForm):
                 Div(
                     Submit(
                         'add', _('Valider et retourner à la règle'),
+                        onclick="_isEdited=false;",
                         css_class="form-submit-paraph-item btn-lines",
                         style=""),
                     HTML("""
