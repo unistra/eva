@@ -155,7 +155,7 @@ class RuleForm(forms.ModelForm):
             Div(
                 HTML("""
             <div class="item item-3 grey-font">
-              <label class="">ID rddègle <sma..ll>(auto)</small> : </label>
+              <label class="">ID règle <small>(auto)</small> : </label>
               <span id="rule_id"> {{latest_id | stringformat:"05d"}}</span>
             </div>
             <div class="item item-3 grey-font">

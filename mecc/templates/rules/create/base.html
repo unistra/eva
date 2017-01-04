@@ -11,16 +11,20 @@
 {% endblock %}
 
 {% block page-header %}
-
 <link rel="stylesheet" type="text/css" href="{% static 'css/rules.css' %}" />
 {% trans "Fiche détaillée d'une règle générale" %}
 {% endblock %}
 
 {% block app_content %}
-
 <div class="upper-part">
 
   <div class="parent-rule">
+      
+      <div class="alert alert-danger" role="alert" {%if not error%}hidden="true"{%endif%}>
+          <p>
+              {{error}}
+          </p>
+      </div>
 
   <form class="" action="" method="post">
     {% crispy form %}
