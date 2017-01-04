@@ -17,9 +17,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from .forms import SpecificParagraphDerogForm, \
     AdditionalParagraphForm
-from django.db.models import Q
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, complete_rule, \
-    watermark_do_not_distribute
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
+    complete_rule, watermark_do_not_distribute
 from django.contrib import messages
 
 from django.conf import settings
@@ -214,56 +213,53 @@ Merci.
 
 
 def recover_everything(request, training_id):
-    # TODO: finir la récupération de TOUS les éléments
-    old_year = currentyear().code_year - 1
+
     training = Training.objects.get(id=training_id)
-    try:
-        old_training = Training.objects.get(
-            code_year=old_year, n_train=training.n_train)
-        old_derog = SpecificParagraph.objects.filter(
-            code_year=old_year, training=old_training)
-    except (Training.DoesNotExist, SpecificParagraph.DoesNotExist):
-        return HttpResponseRedirect(
-            reverse('training:edit_rules', args=(training_id,)))
-    # derog = SpecificParagraph.objects.filter(
-    #     code_year=currentyear().code_year, training=training)
-    # for e in old_derog:
-    #     SpecificParagraph.objects.get_or_create(
-    #         TYPE_PARAPGRAPH=e.TYPE_PARAPGRAPH,
-    #         code_year=e.currentyear().code_year,
-    #         training=training,
-    #         rule_gen_id=e.rule_gen_id,
-    #         paragraph_gen_id=e.paragraph_gen_id,
-    #         type_paragraph=e.type_paragraph,
-    #         text_specific_paragraph=e.text_specific_paragraph,
-    #         text_motiv=e.text_motiv,
-    #     )
-    old_rules_with_additional = {k.n_rule: k for k in [
-        Rule.objects.get(code_year=old_year, id=a.rule_gen_id) for a
-        in AdditionalParagraph.objects.filter(
-            code_year=old_year, training=old_training)]
-    }
-    current_rules_with_additional = {k.n_rule: k for k in [
-        Rule.objects.get(
-            code_year=currentyear().code_year, id=e.rule_gen_id) for e
-        in AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year, training=training)]
-    }
-    add_to_recover = {e for e in old_rules_with_additional} - {
-        e for e in current_rules_with_additional}
+    rules = Rule.objects.filter(degree_type=training.degree_type).filter(
+        code_year=currentyear().code_year)
+    old_year = currentyear().code_year - 1
+    old_training = Training.objects.get(
+        n_train=training.n_train, code_year=old_year)
 
-    old_additionals = [AdditionalParagraph.objects.get(
-        rule_gen_id=old_rules_with_additional[k].id) for k in
-        old_rules_with_additional if k in add_to_recover]
+    # Recover old additional paragraph if there isn't during current year
+    current_additional = AdditionalParagraph.objects.filter(
+        code_year=currentyear().code_year,
+        training=training)
+    old_additional = AdditionalParagraph.objects.filter(
+        code_year=old_year,
+        training=old_training)
+    for e in old_additional:
+        if e.rule_gen_id not in [c.rule_gen_id for c in current_additional]:
+            r_add, created = AdditionalParagraph.objects.get_or_create(
+                code_year=currentyear().code_year,
+                training=training,
+                rule_gen_id=e.rule_gen_id,
+                text_additional_paragraph=e.text_additional_paragraph,
+            )
 
-    # for e in old_additionals:
-    #     AdditionalParagraph.objects.get_or_create(
-    #         code_year=currentyear().code_year,
-    #         training=training,
-    #         rule_gen_id=e.rule_gen_id,
-    #         text_additional_paragraph=e.text_additional_paragraph,
-    #     )
+    # Recover old specific paragraph if there isn't during current year
+    for e in rules:
+        try:
+            old_rule = Rule.objects.get(code_year=old_year, n_rule=e.n_rule)
+        except Rule.DoesNotExist:
+            continue
 
+        if e.has_parag_with_derog and old_rule.has_parag_with_derog:
+            old_sp = SpecificParagraph.objects.filter(
+                rule_gen_id=old_rule.n_rule, code_year=old_year)
+            for s in old_sp:
+                if s.training == old_training:
+                    r_derog, created = SpecificParagraph.objects.get_or_create(
+                        code_year=currentyear().code_year,
+                        training=training,
+                        rule_gen_id=e.n_rule,
+                        paragraph_gen_id=s.paragraph_gen_id
+                    )
+                    if created:
+                        r_derog.type_paragraph = s.type_paragraph
+                        r_derog.text_specific_paragraph = s.text_specific_paragraph
+                        r_derog.text_motiv = s.text_motiv
+                        r_derog.save()
 
     return HttpResponseRedirect(
         reverse('training:edit_rules', args=(training_id,)))
@@ -279,6 +275,7 @@ def delete_specific(request):
         to_del = AdditionalParagraph.objects.get(id=val)
     else:
         raise Exception('Not a correct type')
+        # pass
     to_del.delete()
     return HttpResponseRedirect(request.environ.get('HTTP_REFERER'))
 
@@ -286,14 +283,10 @@ def delete_specific(request):
 @is_ajax_request
 def ask_delete_specific(request):
     if request.GET.get('type') in 'A':
-        p = AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year).get(id=request.GET.get('val'))
+        p = AdditionalParagraph.objects.get(id=request.GET.get('val'))
         text = p.text_additional_paragraph
     elif request.GET.get('type') in 'D':
-        p = SpecificParagraph.objects.filter(
-            code_year=currentyear().code_year,
-            training=Training.objects.get(id=request.GET.get('training_id')),
-        ).get(paragraph_gen_id=request.GET.get('val'))
+        p = SpecificParagraph.objects.get(id=request.GET.get('val'))
         text = p.text_specific_paragraph
     else:
         raise Exception("%s is not a correct value" % request.GET.get('type'))
@@ -314,8 +307,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['parag'] = Paragraph.objects.filter(rule=data['rule'])
     data['specific_paragraph'] = SpecificParagraph.objects.filter(
-        code_year=currentyear().code_year, training=t)
-
+        code_year=currentyear().code_year, training=t, rule_gen_id=r.n_rule)
     old_specific = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year-1).filter(rule_gen_id=r.n_rule)
     try:
@@ -333,10 +325,9 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
     try:
         data['additional_paragraph'] = AdditionalParagraph.objects.get(
-            code_year=currentyear().code_year, training=t, rule_gen_id=rule_id)
+            code_year=currentyear().code_year, training=t, rule_gen_id=r.n_rule)
     except AdditionalParagraph.DoesNotExist:
         pass
-
     data['specific_ids'] = [a.paragraph_gen_id for a in data['specific_paragraph']]
 
     return render(request, template, data)
@@ -372,17 +363,18 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['rule'] = Rule.objects.get(id=rule_id)
     data['from_id'] = rule_id
 
+    rule_gen_id = Rule.objects.get(id=rule_id).n_rule
     old_additional = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year-1).get(
             rule_gen_id=n_rule) if old == 'Y' else None
 # Create temporary additional; just in order to fill the form with ease
     additional, created = AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
-        rule_gen_id=rule_id,
+        rule_gen_id=rule_gen_id,
         training=t,
     ) if old != "Y" else AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
-        rule_gen_id=rule_id,
+        rule_gen_id=rule_gen_id,
         training=t,
         text_additional_paragraph=old_additional.text_additional_paragraph
     )
@@ -408,9 +400,10 @@ votre formation. Merci de la rédiger ci-dessous :")
 @is_correct_respform
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule, old='N', template="training/form/edit_specific_paragraph.html"):
     data = {}
+
     data['training'] = t = Training.objects.get(id=training_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
-    data['rule'] = Rule.objects.get(id=rule_id)
+    data['rule'] = r = Rule.objects.get(id=rule_id)
     data['title'] = _("Dérogation")
     data['from_id'] = rule_id
 
@@ -432,8 +425,8 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     sp, created = SpecificParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
         training=t,
-        rule_gen_id=rule_id,
-        paragraph_gen_id=p.id,
+        rule_gen_id=r.n_rule,
+        paragraph_gen_id=paragraph_id,
     )
 
     if created:

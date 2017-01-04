@@ -70,25 +70,25 @@
                                         {{sp.text_specific_paragraph|safe}}
                                     </span>
                                 {% endif %}
+                            </td>
+                        <td style="width: 25%;text-align:left;" class="td-centered border-left">
+                                <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                                <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{sp.id}})"> {% trans "Supprimer la dérogation" %}</a>
+
                             {% endfor %}
                         {% else %}
                         {{e.text_standard | safe}}
-                        {% endif %}
 
                     </td>
-                    <td style="width: 25%;text-align:left;" class="td-centered {%if e.is_interaction%} border-left {%endif%}">
+                    <td style="width: 25%;text-align:left;" class="td-centered ">
                         {% if e.is_interaction %}
-                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
-                            {% if e.id in specific_ids  %}
-                                <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{e.id}}, {{training.id}}, {{rule.id}})"> {% trans "Supprimer la dérogation" %}</a>
-                            {% else %}
-                                {% if e.id in old_specific %}
-                                    <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=rule.n_rule old='Y' %}">{% trans "Récupérer la dérogation n-1" %}</a>
-                                {% endif %}
-
-                            {% endif %}
+                        <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                        {%endif%}
+                        {% if e.id in old_specific %}
+                            <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=rule.n_rule old='Y' %}">{% trans "Récupérer la dérogation n-1" %}</a>
                         {% endif %}
                     </td>
+                    {% endif %}
 
                 </tr>
 
@@ -134,14 +134,12 @@
     al.appendChild(input2);
 
 
-function ask_delete(type, paragraph_id, training_id, rule_id) {
+function ask_delete(type, paragraph_id) {
     $.ajax({
         url: "{% url 'training:ask_delete_specific'%}",
         type: "GET",
         data: {
             val: paragraph_id,
-            training_id: training_id,
-            rule_id: rule_id,
             type: type,
         },
         success: function(data){
