@@ -8,10 +8,39 @@
 {% endblock %}
 
 {% block app_content %}
+{% if not derog and not additional %}
+
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression de la règle : " %}{{ object.label }} ?</p>
     <input type="submit" value="{% trans 'Oui'%}" class="btn btn-primary"/>
     <a href="{% url 'rules:list' %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
 </form>
+{%else%}
+    {% if derog %}
+    <p>{% trans "Vous ne pouvez pas supprimer  <strong>" %} {{object.label}}{% trans "</strong> tant que des dérogations y sont rattachées : " %}</p>
+        <ul>
+            {% for e in derog  %}
+                <li>
+                    {{e.training.label}}
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
+    {% endif %}
+
+    {% if additional %}
+    <p>{% trans "Vous ne pouvez pas supprimer  <strong>" %} {{object.label}}{% trans "</strong> tant que des alinéas additionnels y sont rattachés :" %}</p>
+        <ul>
+            {% for e in additional  %}
+                <li>
+                    {{e.training.label}}
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
+    {% endif %}
+    <a href="{% url 'rules:list' %}" type="button"  class="btn btn-default">{% trans 'Retour'%}</a>
+
+{%endif%}
 {% endblock %}

@@ -7,11 +7,26 @@
 {% trans "Suppression d'un alinéa" %}
 {% endblock %}
 {% block app_content %}
+{% if  not derog%}
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression de l'alinéa : " %}{{ object.id }} ?</p>
     {{object.text_standard | safe}}
     <input type="submit" value="{% trans 'Oui'%}" class="btn btn-primary"/>
-    <a href="{% url 'rules:list' %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
+    <a href="{% url 'rules:rule_edit' request.session.visited_rule %}" type="button"  class="btn btn-default">{% trans 'Non'%}</a>
 </form>
+{% else %}
+<p>{% trans "Vous ne pouvez pas supprimer cet alinéa tant que des dérogations y sont rattachées : " %}</p>
+{{object.text_standard | safe}}
+
+    <ul>
+        {% for e in derog  %}
+            <li>
+                <u>{{e.training.label}}:</u> {{e.text_specific_paragraph|safe}}
+            </li>
+        {% endfor %}
+    </ul>
+<a href="{% url 'rules:rule_edit' request.session.visited_rule %}" type="button"  class="btn btn-default">{% trans 'Retour'%}</a>
+
+{% endif %}
 {% endblock %}

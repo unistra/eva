@@ -179,20 +179,35 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
     request.session['visited_rule'] = rule.id
     data['paragraphs'] = Paragraph.objects.filter(Q(rule=rule))
     data['editing'] = True
-    current_year = currentyear()
+    data['form'] = RuleForm(instance=rule)
     data['current_year'] = "%s/%s" % (rule.code_year,
                                       rule.code_year + 1)
+
+    def check_specific():
+        derog = SpecificParagraph.objects.filter(
+            code_year=rule.code_year,
+            rule_gen_id=rule.n_rule)
+        additional = AdditionalParagraph.objects.filter(
+            code_year=rule.code_year,
+            rule_gen_id=rule.n_rule)
+        return True if len(additional) + len(derog) != 0 else False
+
     if request.POST and request.POST.get('label'):
+        # form = RuleForm(request.POST, instance=rule)
+        # if form.is_valid():
+        #     form.save()
         rule.display_order = request.POST.get('display_order')
         rule.label = request.POST.get('label')
         rule.is_in_use = True if request.POST.get(
             'is_in_use') == 'on' else False
+        if rule.is_in_use is False and check_specific():
+            rule.is_in_use = True
+            data['error'] = _('La règle est en service lorsqu\'il y a des dérogations et/ou alinéas additionnels.')
         rule.is_edited = request.POST.get('is_edited')
         rule.is_eci = True if request.POST.get('is_eci') == 'on' else False
         rule.is_ccct = True if request.POST.get('is_ccct') == 'on' else False
-        rule.code_year = current_year.code_year
+        rule.code_year = currentyear().code_year
         rule.save()
-    data['form'] = RuleForm(instance=rule)
     data['latest_id'] = rule.id
     data['degreetype_form'] = AddDegreeTypeToRule(instance=rule)
     data['rule_degreetype'] = [e for e in rule.degree_type.all()]
@@ -202,6 +217,7 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
         # not (e.short_label.upper().startswith('CATALOGUE') or
         #      e.long_label.upper().startswith('CATALOGUE'))
     ]
+
 
     return render(request, template, data)
 
@@ -219,6 +235,15 @@ class ParagraphDelete(DeleteView):
          self.request.session['visited_rule'] else self.object.rule.all()[0].id
         return reverse('rules:rule_edit', kwargs={'id': rule})
 
+    def get_context_data(self, **kwargs):
+        paragraph = kwargs['object']
+        context = super(ParagraphDelete, self).get_context_data(**kwargs)
+        context['derog'] = SpecificParagraph.objects.filter(
+            paragraph_gen_id=paragraph.id,
+            code_year=paragraph.code_year)
+
+        return context
+
 
 class RuleDelete(DeleteView):
     """
@@ -228,6 +253,14 @@ class RuleDelete(DeleteView):
     pk_url_kwarg = 'id'
     success_url = '/rules/list'
 
+    def get_context_data(self, **kwargs):
+        rule = kwargs['object']
+        context = super(RuleDelete, self).get_context_data(**kwargs)
+        context['derog'] = SpecificParagraph.objects.filter(
+            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+        context['additional'] = AdditionalParagraph.objects.filter(
+            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+        return context
 
 @login_required
 def gen_pdf(request, id_degreetype, year=None):
