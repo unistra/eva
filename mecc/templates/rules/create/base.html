@@ -19,10 +19,23 @@
 <div class="upper-part">
 
   <div class="parent-rule">
-      
+
       <div class="alert alert-danger" role="alert" {%if not error%}hidden="true"{%endif%}>
           <p>
-              {{error}}
+
+              {% trans "Il existe des dérogations et/ou alinéas additionnels qui empêchent la mise hors service:" %}
+              <ul>
+                  {% for e in error.specifics  %}
+                      <li>
+                          {{e.training.label}}
+                      </li>
+                  {% endfor %}
+                  {% for e in error.additional  %}
+                      <li>
+                          {{e.training.label}}
+                      </li>
+                  {% endfor %}
+              </ul>
           </p>
       </div>
 

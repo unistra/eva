@@ -60,10 +60,11 @@
             </thead>
             <tbody>
                 {% for e in parag  %}
+                {% if e.is_in_use %}
                 <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
                     <td style="width: 5%; text-align: center;">{{e.id}}</td>
                     <td style="width: 65%;">
-                        {% if e.id in specific_ids  %}
+                        {% if e.id in specific_ids %}
                             {% for sp in specific_paragraph  %}
                                 {% if sp.paragraph_gen_id == e.id  %}
                                     <span class="blue">
@@ -92,6 +93,7 @@
 
                 </tr>
 
+                {% endif %}
                 {% endfor %}
                 <tr style="margin-top: 1em; margin-bottom: 1em;" class="green">
                     <td style="width: 5%; text-align: center;"></td>

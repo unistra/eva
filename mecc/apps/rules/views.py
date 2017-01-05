@@ -139,8 +139,13 @@ def manage_degreetype(request):
             return JsonResponse(data)
 
         elif todo == 'del':
-            rule.degree_type.remove(degree_type)
-            return JsonResponse(data)
+            has_current, customized = rule.has_current_exceptions
+            if not has_current:
+                rule.degree_type.remove(degree_type)
+                return JsonResponse(data)
+            else:
+
+                return JsonResponse({'customized': len(customized)})
 
 
 @login_required
@@ -200,9 +205,10 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
         rule.label = request.POST.get('label')
         rule.is_in_use = True if request.POST.get(
             'is_in_use') == 'on' else False
-        if rule.is_in_use is False and check_specific():
+        has_current, customs = rule.has_current_exceptions
+        if rule.is_in_use is False and has_current:
             rule.is_in_use = True
-            data['error'] = _('La règle est en service lorsqu\'il y a des dérogations et/ou alinéas additionnels.')
+            data['error'] = customs
         rule.is_edited = request.POST.get('is_edited')
         rule.is_eci = True if request.POST.get('is_eci') == 'on' else False
         rule.is_ccct = True if request.POST.get('is_ccct') == 'on' else False

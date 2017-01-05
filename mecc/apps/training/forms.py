@@ -82,36 +82,6 @@ class SpecificParagraphDerogForm(forms.ModelForm):
         return self.cleaned_data
 
 
-# class SpecificParagraphCmpForm(forms.ModelForm):
-#     text_specific_paragraph = forms.CharField(
-#         widget=CKEditorWidget(), label='', required=True)
-#
-#     def __init__(self, *args, **kwargs):
-#         super(SpecificParagraphCmpForm, self).__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.layout = Layout(
-#             HTML("{{text_derog|safe}}"),
-#             'text_specific_paragraph',
-#             Div(
-#                 Submit(
-#                     'add', _('Valider et fermer la fenêtre'),
-#                     css_class="btn-primary btn btn-sm",
-#                     ),
-#                 HTML("""
-#                     <a class='btn-primary btn btn-sm'
-#                     href={% url 'training:specific_paragraph' training_id=training.id rule_id=from_id %} >
-#                     Annuler et fermer la fenêtre </a>
-#                      """),
-#                 css_class='buttons_list'
-#             ),
-#             )
-    #
-    # class Meta:
-    #     model = SpecificParagraph
-    #     fields = [
-    #         'text_specific_paragraph',
-    #     ]
-    #
 
 class RespTrainingForm(forms.ModelForm):
     class Meta:

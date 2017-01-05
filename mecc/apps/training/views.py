@@ -195,7 +195,7 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
-        code_year=currentyear().code_year)
+        code_year=currentyear().code_year, is_in_use=True)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
     data['custom'] = [a for a in [
@@ -216,7 +216,7 @@ def recover_everything(request, training_id):
 
     training = Training.objects.get(id=training_id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
-        code_year=currentyear().code_year)
+        code_year=currentyear().code_year, is_in_use=True)
     old_year = currentyear().code_year - 1
     old_training = Training.objects.get(
         n_train=training.n_train, code_year=old_year)
@@ -337,7 +337,9 @@ def gen_pdf_all_rules(request, training_id):
 
     year = currentyear().code_year
     training = Training.objects.get(id=training_id)
-    r = Rule.objects.filter(degree_type=training.degree_type).filter(
+    r = Rule.objects.filter(
+        degree_type=training.degree_type,
+        is_in_use=True,
         code_year=currentyear().code_year)
     rules = r.filter(is_eci=True) if training.MECC_type \
         in 'E' else r.filter(is_ccct=True)

@@ -4,7 +4,14 @@
 {% load field_name %}
 
 {% block page-header %}
-{% trans 'Fiche type de diplôme' %}
+{% trans "Suppression de règle" %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="{% url 'rules:list'%}">{% trans "Règles générales" %}</a></li>
+        <li class="active">{{rule.label}}</li>
+    </ol>
 {% endblock %}
 
 {% block app_content %}
@@ -18,7 +25,7 @@
 </form>
 {%else%}
     {% if derog %}
-    <p>{% trans "Vous ne pouvez pas supprimer  <strong>" %} {{object.label}}{% trans "</strong> tant que des dérogations y sont rattachées : " %}</p>
+    <p>{% trans "Vous ne pouvez pas supprimer la règle  <strong>" %} {{object.label}}{% trans "</strong> tant que des dérogations y sont rattachées : " %}</p>
         <ul>
             {% for e in derog  %}
                 <li>
@@ -30,7 +37,7 @@
     {% endif %}
 
     {% if additional %}
-    <p>{% trans "Vous ne pouvez pas supprimer  <strong>" %} {{object.label}}{% trans "</strong> tant que des alinéas additionnels y sont rattachés :" %}</p>
+    <p>{% trans "Vous ne pouvez pas supprimer la règle <strong>" %} {{object.label}}{% trans "</strong> tant que des alinéas additionnels y sont rattachés :" %}</p>
         <ul>
             {% for e in additional  %}
                 <li>

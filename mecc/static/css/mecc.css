@@ -167,11 +167,13 @@ a.green:hover {
     width: 100%;
 }
 .table_list {
+    max-height: 75vh;
+}
+.hr_blue{
+    margin-top: 1em;
+    margin-bottom: 1em;
     border-bottom-style: solid;
     border-bottom-color: #358CD3;
-    max-height: 75vh;
-    padding-bottom: 1em;
-    margin-bottom: 1em;
     border-bottom-width: 0.15em;
     -webkit-box-shadow: 0 10px 5px -9px #888888;
     box-shadow: 0 10px 5px -9px #888888;

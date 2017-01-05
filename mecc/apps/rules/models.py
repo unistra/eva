@@ -5,7 +5,9 @@ from django.core.exceptions import ValidationError
 from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.apps import apps
+import operator
+from functools import reduce
 
 class Rule(models.Model):
     """
@@ -44,6 +46,24 @@ class Rule(models.Model):
         return True if True in [e.is_interaction for e in
                                 Paragraph.objects.filter(
                                     rule=self)] else False
+
+    @property
+    def has_current_exceptions(self):
+        """
+        Return two values :
+            - bool if there is additionals and/or derogations
+            - list of additionals and derogations
+        """
+        AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
+        additionals = [e for e in AdditionalParagraph.objects.filter(
+            code_year=self.code_year,
+            rule_gen_id=self.n_rule)]
+        sp = [e.specific_involved for e in Paragraph.objects.filter(
+            rule=self) if len(e.specific_involved) > 0]
+        give = {
+            'additionals': additionals,
+            'specifics': reduce(operator.concat, sp)}
+        return True if len(sp + additionals) > 0 else False, give
 
     def __str__(self):
         return self.label
@@ -88,6 +108,11 @@ class Paragraph(models.Model):
 
     def __str__(self):
         return "Alinéa n° %s" % self.pk
+
+    @property
+    def specific_involved(self):
+        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
+        return SpecificParagraph.objects.filter(paragraph_gen_id=self.id)
 
     def get_absolute_url(self):
         return reverse('rules:rule_edit', id=Rule.object.all()[0].id)

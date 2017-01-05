@@ -1,4 +1,8 @@
 {% load i18n %}
+{% load staticfiles %}
+
+<script src="{% static 'js/notif.js' %}"></script>
+
 
 <div class="col-xs-12">
 <table class = "table table-striped" style="white-space: nowrap" id='degreeTable'>
@@ -29,6 +33,7 @@
    </tbody>
 
 </table>
+<div class='notifications top-right'></div>
 </div>
 
 <style media="screen">
@@ -67,6 +72,15 @@ function delete_degreetype(id){
           csrfmiddlewaretoken: '{{ csrf_token }}'
       },
       success: function(data){
+          if (data.customized){
+              $('.top-right').notify({
+                  message: {
+                      text: "Il y a des dérogations et/ou alinéas additionnels rattachés à cette règle."
+                  },
+                  type: 'danger'
+              }).show();
+          }else {
+
         var opt = document.createElement('option');
         opt.value = data.degree_id;
         opt.innerHTML = data.degree;
@@ -84,6 +98,7 @@ function delete_degreetype(id){
         })
         $("#selectDegree").empty().append( my_options );
         $("#selectDegree").val(selected);
+    }
       }
   });
 }
@@ -101,14 +116,14 @@ $('.select-type').on('change', function() {
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function(data) {
-          x.remove(x.selectedIndex);
-          var tbody = document.getElementById('tbodyDegree');
-          var row = tbody.insertRow(0);
-          row.id = 'row-' + data.degree_id
-          var cell1 = row.insertCell(0);
-          var cell2 = row.insertCell(1);
-          cell1.innerHTML = data.degree;
-          cell2.innerHTML =   '<a id=" '+ data.degree_id +'" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>';
+                x.remove(x.selectedIndex);
+                var tbody = document.getElementById('tbodyDegree');
+                var row = tbody.insertRow(0);
+                row.id = 'row-' + data.degree_id
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                cell1.innerHTML = data.degree;
+                cell2.innerHTML =   '<a id=" '+ data.degree_id +'" class="glyphicon glyphicon-trash select" onclick="delete_degreetype(this.id);"></a>';
         }
     });
 });
