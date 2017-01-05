@@ -344,7 +344,6 @@ def gen_pdf_all_rules(request, training_id):
 
     sp = SpecificParagraph.objects.filter(code_year=year, training=training)
     ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
-
     # PDF gen
     title = training.label
     response, doc = setting_up_pdf(title, margin=42)

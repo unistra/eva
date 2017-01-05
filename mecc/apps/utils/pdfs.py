@@ -147,7 +147,7 @@ def add_simple_paragraph(story, rule, sp, ap):
                 append_text(story, text, style)
 
     if ap:
-        text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
+        text = ap.get(rule_gen_id=rule.n_rule).text_additional_paragraph
         style = "textColor=green"
         append_text(story, text, style)
 
@@ -222,7 +222,7 @@ def complete_rule(year, title, training, rules, specific, add):
 
     # ############ add rules one by one ################################
     for e in rules:
-        a = add if e.id in id_ap else None
+        a = add if e.n_rule in id_ap else None
         add_simple_paragraph(story, e, specific, a)
 
     return story
