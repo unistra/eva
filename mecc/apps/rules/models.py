@@ -9,6 +9,7 @@ from django.apps import apps
 import operator
 from functools import reduce
 
+
 class Rule(models.Model):
     """
     Rule model
@@ -58,11 +59,13 @@ class Rule(models.Model):
         additionals = [e for e in AdditionalParagraph.objects.filter(
             code_year=self.code_year,
             rule_gen_id=self.n_rule)]
-        sp = [e.specific_involved for e in Paragraph.objects.filter(
-            rule=self) if len(e.specific_involved) > 0]
+        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
+        sp = [e for e in SpecificParagraph.objects.filter(
+            code_year=self.code_year,
+            rule_gen_id=self.n_rule)]
         give = {
             'additionals': additionals,
-            'specifics': reduce(operator.concat, sp)}
+            'specifics': sp}
         return True if len(sp + additionals) > 0 else False, give
 
     def __str__(self):
