@@ -77,7 +77,7 @@
     {% endif %}
     </div>
     <div class="item-20 flex-center">
-        <a href="{% url 'training:recover_everything' training.id %}" class="break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
+        <a class=" select break-line btn-primary btn " style="white-space: normal;margin:0.5em" onclick="recover({{training.id}})">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
 
     </div>
 </div>
@@ -142,6 +142,18 @@
     </style>
 
     <script type="text/javascript">
+        function recover(training_id){
+            $.ajax({
+                url: "/training/recover_everything/" + training_id + "/",
+                type: "POST",
+                data:{
+                    csrfmiddlewaretoken: '{{csrf_token}}'
+                },
+                success: function(data){
+                    console.log('YOP');
+                }
+            })
+        };
         function detail_rule(id, type){
             $.ajax({
                 url: "{% url 'rules:details_rule'%}",

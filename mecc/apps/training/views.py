@@ -23,6 +23,8 @@ from django.contrib import messages
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.apps import apps
+from django.http import JsonResponse
 
 
 def add_current_year(dic):
@@ -127,7 +129,14 @@ class TrainingDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
+        AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
+        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
+        additionals = AdditionalParagraph.objects.filter(training=self.object)
+        specifics = SpecificParagraph.objects.filter(training=self.object)
+        context['additionals'] = additionals
+        context['specifics'] = specifics
         return add_current_year(context)
+
 
     def get_success_url(self):
         if self.request.session['visited_cmp']:
@@ -261,8 +270,11 @@ def recover_everything(request, training_id):
                         r_derog.text_motiv = s.text_motiv
                         r_derog.save()
 
-    return HttpResponseRedirect(
-        reverse('training:edit_rules', args=(training_id,)))
+    return JsonResponse({'status': 'ok', 'text': "Le traitement de récupération globale des spécificités de l'année précédente est terminé.\n\
+Nb : sans écrasement des spécificités déjà saisies pour la nouvelle année."})
+    # 
+    # return HttpResponseRedirect(
+    #     reverse('training:edit_rules', args=(training_id,)))
 
 
 @login_required

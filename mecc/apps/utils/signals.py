@@ -1,13 +1,30 @@
 from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch import receiver
 from mecc.apps.commission.models import ECICommissionMember
-from mecc.apps.adm.models import Profile
 from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError as ie
 from mecc.apps.utils.querries import currentyear
+from mecc.apps.training.models import Training, AdditionalParagraph, \
+    SpecificParagraph
+
+
+@receiver(post_delete, sender=Training)
+def Training_post_delete(sender, **kwargs):
+    """
+    When a Training is deleted, derogations and additional paragraphs are
+    useless and so need to be deleted
+    """
+    additionals = AdditionalParagraph.objects.filter(
+        training=kwargs.get('instance'))
+    derog = SpecificParagraph.objects.filter(
+        training=kwargs.get('instance'))
+    for e in additionals:
+        e.delete()
+    for e in derog:
+        e.delete()
 
 
 @receiver(post_save, sender=User)
@@ -25,9 +42,9 @@ def User_post_save(sender, **kwargs):
 
     for e in User.objects.all():
         try:
-            meccuser = MeccUser.objects.get(user=user)
+            MeccUser.objects.get(user=user)
         except ObjectDoesNotExist:
-            meccuser = MeccUser.objects.create(user=user)
+            MeccUser.objects.create(user=user)
 
 
 @receiver(pre_save, sender=ECICommissionMember)

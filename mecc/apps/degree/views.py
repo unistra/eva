@@ -8,6 +8,8 @@ from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
 from mecc.apps.utils.querries import rules_since_ever
 from mecc.apps.training.models import Training
+import operator
+from functools import reduce
 
 
 class DegreeListView(ListView):
@@ -113,6 +115,14 @@ class DegreeTypeDelete(DeleteView):
         context = super(DegreeTypeDelete, self).get_context_data(**kwargs)
         trainings = Training.objects.filter(degree_type=kwargs['object'])
         context['trainings'] = trainings if len(trainings) > 0 else None
-        context['rules'] = rules_since_ever(
+        context['rules'] = r = rules_since_ever(
             kwargs['object'].id) if kwargs['object'].id is not None else None
+        _all = [e.has_current_exceptions[1] for e in
+                r if e.has_current_exceptions[0] is True]
+        additionals = []
+        specifics = []
+        [(additionals.append(e.get('additionals')),
+            specifics.append(e.get('specifics'))) for e in _all]
+        context['additionals'] = reduce(operator.concat, additionals)
+        context['specifics'] = reduce(operator.concat, specifics)
         return context

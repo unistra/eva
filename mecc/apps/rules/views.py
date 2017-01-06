@@ -15,7 +15,6 @@ from django.db import transaction
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
-from django.core import serializers
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
     Training
 
@@ -101,6 +100,9 @@ def manage_paragraph(request, rule_id,
         parag.text_standard = request.POST.get('text_standard')
         parag.is_in_use = True if request.POST.get(
             'is_in_use') == 'on' else False
+        if not parag.is_in_use and len(parag.specific_involved) > 0:
+            data['error'] = parag.specific_involved
+            return render(request, template, data)
         parag.display_order = request.POST.get('display_order')
         # parag.is_cmp = True if request.POST.get('is_cmp') == 'on' else False
         parag.is_interaction = True if request.POST.get(
@@ -140,12 +142,16 @@ def manage_degreetype(request):
 
         elif todo == 'del':
             has_current, customized = rule.has_current_exceptions
-            if not has_current:
+            if has_current:
+                text = [e.training.label for e in customized.get(
+                    'specifics')] + [e.training.label for e in customized.get(
+                        'additionals')]
+                return JsonResponse({
+                    'customized': len(customized),
+                    'text': ", ".join(text)})
+            else:
                 rule.degree_type.remove(degree_type)
                 return JsonResponse(data)
-            else:
-
-                return JsonResponse({'customized': len(customized)})
 
 
 @login_required
@@ -388,17 +394,12 @@ def duplicate_add(request):
 def duplicate_remove(request):
     x = request.POST.get('id')
     rule = Rule.objects.get(id=x)
-    label = rule.label
-    # paragraphs = Paragraph.objects.filter(rule__id=x)
-    # Correct test will be later
-    # for p in paragraphs:
-    #     if p.is_cmp or p.is_interaction:
-    #         return JsonResponse({
-    #             "error": "%s comporte des dérogations." % (label)})
-
+    if rule.has_current_exceptions[0]:
+        return JsonResponse({
+            "error": "%s comporte des dérogations" % rule.label
+        })
     rule.delete()
-
-    return JsonResponse({"status": "removed", "label": label})
+    return JsonResponse({"status": "removed", "label": rule.label})
 
 
 @login_required

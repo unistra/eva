@@ -10,13 +10,33 @@
 
 
 {% block app_content %}
-
 <form action="" method="post" >
   {% csrf_token %}
     <p> {% trans "Confirmer la suppression de la formation " %}{{ object.label }} ?</p>
-    <input type="submit" value="Confirmer" class="btn btn-primary"/>
-    <a href="{% url 'training:list' %}" type="button"  class="btn btn-default">Retour</a>
+{% if specifics %}
+<p>{% trans "Cela entraînera la suppression de dérogations : " %}</p>
+    <ul>
+        {% for e in specifics  %}
+            <li>
+                {{e.text_specific_paragraph | safe}}
+            </li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+
+{% if additionals %}
+<p>{% trans "Cela entraînera la suppression d'alinéas additionnels :" %}</p>
+    <ul>
+        {% for e in additionals  %}
+            <li>
+                {{e.text_additional_paragraph | safe}}
+            </li>
+        {% endfor %}
+    </ul>
+</p>
+{% endif %}
+<input type="submit" value="Confirmer" class="btn btn-primary"/>
+<a href="{% url 'training:list' %}" type="button"  class="btn btn-default">{% trans "Retour" %}</a>
 </form>
-
-
 {% endblock %}

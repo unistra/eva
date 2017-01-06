@@ -151,7 +151,7 @@
             searchMember();
         }
     });
-
+    {% if object %}
     function searchMember() {
         var new_tbody = document.createElement('tbody');
         old_tbody = document.getElementById('table')
@@ -235,6 +235,7 @@
             }
         })
     }
+    {%endif%}
     {%else%}
     document.getElementById("respformtable").className += " disabled-event";
     document.getElementById("add_respform").className += " hidden disabled-event";

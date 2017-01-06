@@ -49,6 +49,20 @@
 </div>
 </div>
 <!--- Rule recap--->
+<div class="alert alert-danger row" role="alert" {%if not error%}hidden="true"{%endif%}>
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <p>
+
+        {% trans "Il existe des dérogations qui empêchent la mise hors service: de cet alinéa : " %}
+        <ul>
+            {% for e in error  %}
+                <li>
+                    {{e.training.label}}
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
+</div>
 <form method="post" id="paragraph_form">
 {%crispy paragraph_form%}
 </form>

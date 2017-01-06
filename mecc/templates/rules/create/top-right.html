@@ -75,7 +75,7 @@ function delete_degreetype(id){
           if (data.customized){
               $('.top-right').notify({
                   message: {
-                      text: "Il y a des dérogations et/ou alinéas additionnels rattachés à cette règle."
+                      text: "Il y a des dérogations et/ou alinéas additionnels rattachés à cette règle dans les formations : " + data.text
                   },
                   type: 'danger'
               }).show();

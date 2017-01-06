@@ -6,8 +6,6 @@ from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
-import operator
-from functools import reduce
 
 
 class Rule(models.Model):
@@ -115,7 +113,8 @@ class Paragraph(models.Model):
     @property
     def specific_involved(self):
         SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
-        return SpecificParagraph.objects.filter(paragraph_gen_id=self.id)
+        return SpecificParagraph.objects.filter(
+            paragraph_gen_id=self.id, code_year=self.code_year)
 
     def get_absolute_url(self):
         return reverse('rules:rule_edit', id=Rule.object.all()[0].id)
