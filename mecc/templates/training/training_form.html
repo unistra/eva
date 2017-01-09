@@ -21,7 +21,7 @@
         <li><a href={%if object%}"#" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
-      <div class="item-70 border-right-blue" style="margin-right:1em">
+      <div class="item-70 border-right-blue {% if not can_edit %}disabled {%endif%}" style="margin-right:1em">
           <form action="" method="post" id="training_form" >
               {%crispy form%}
               {% include "training/form/add_cmp.html" %}
@@ -102,6 +102,7 @@
 
 <script type="text/javascript">
 
+ {%if can_edit%}
 var _isEdited = false;
 
 $(document).ready(function () {
@@ -122,9 +123,10 @@ $(document).ready(function () {
     };
 
 var x = document.getElementsByClassName("alert");
-$('.nav-tabs').after($('.alert'));
-
 });
+{%else%}
+$(":input:not(#new_training)").prop("disabled", true);
+{%endif%}
 
 </script>
 {%endblock%}

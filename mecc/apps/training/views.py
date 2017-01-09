@@ -137,7 +137,6 @@ class TrainingDelete(DeleteView):
         context['specifics'] = specifics
         return add_current_year(context)
 
-
     def get_success_url(self):
         if self.request.session['visited_cmp']:
             return reverse('training:list', kwargs={
@@ -170,6 +169,7 @@ def respform_list(request, template='training/respform_trainings.html'):
     return render(request, template, data)
 
 
+@is_correct_respform
 @login_required
 def duplicate_home(request, year=None, template='training/duplicate.html'):
     """
@@ -222,6 +222,8 @@ def edit_rules(request, id, template="training/edit_rules.html"):
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
+    data['can_edit'] = (request.environ['allowed']
+                        or request.user.is_superuser)
     return render(request, template, data)
 
 
@@ -230,10 +232,13 @@ def recover_everything(request, training_id):
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
     old_year = currentyear().code_year - 1
-    old_training = Training.objects.get(
-        n_train=training.n_train, code_year=old_year)
-
-    # Recover old additional paragraph if there isn't during current year
+    try:
+        old_training = Training.objects.get(
+            n_train=training.n_train, code_year=old_year)
+    except Training.DoesNotExist:
+        return HttpResponseRedirect(reverse('training:edit_rules',
+                                    args=(training_id,)))
+     # Recover old additional paragraph if there isn't during current year
     current_additional = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year,
         training=training)
@@ -274,9 +279,8 @@ def recover_everything(request, training_id):
                         r_derog.save()
     request.session['recovered'] = True
 
-    return HttpResponseRedirect(
-        reverse('training:edit_rules',
-                args=(training_id,)))
+    return HttpResponseRedirect(reverse('training:edit_rules',
+                                args=(training_id,)))
 
 
 @login_required
@@ -537,14 +541,8 @@ def send_mail(request):
     """
 
     cc = [request.POST.get('cc')]
-    subject = "%s - %s - %s %s" % (
-        settings.EMAIL_SUBJECT_PREFIX,
-        request.POST.get('training_label'),
-        request.user.first_name,
-        request.user.last_name,
-    )
+    subject = request.POST.get('subject')
     body = request.POST.get('body')
-
     mail = EmailMultiAlternatives(
         subject=subject,
         body=body,

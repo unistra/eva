@@ -1,8 +1,12 @@
 {% load i18n %}
 
 <div class="pull-right">
-  <button  data-toggle="modal" data-target="#contact_modal" class="btn btn-default btn-xs  no-print">Contact</button>
-  <a href="/accounts/logout" class="btn btn-warning btn-xs no-print" type='button'>Déconnexion</a>
+    {% if request.session.is_spoofed_user%}
+    {% include "spoof/notification_bar.html" %}
+    {% else %}
+    <button  data-toggle="modal" data-target="#contact_modal" class="btn btn-default btn-xs  no-print">Contact</button>
+    <a href="/accounts/logout" class="btn btn-warning btn-xs no-print" type='button'>Déconnexion</a>
+    {% endif %}
 </div>
 <div class="modal fade" id="contact_modal" role="dialog">
 <div class="modal-dialog">
