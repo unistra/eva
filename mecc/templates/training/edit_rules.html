@@ -8,7 +8,6 @@
 {% block app_content %}
 <div class='notifications top-right'></div>
 
-
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
@@ -76,9 +75,14 @@
     </table>
     {% endif %}
     </div>
-    <div class="item-20 flex-center">
-        <a class=" select break-line btn-primary btn " style="white-space: normal;margin:0.5em" onclick="recover({{training.id}})">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
-
+    <div class="item-20 flex-center dir-col">
+        <a href="{% url 'training:recover_everything' training.id %}"class=" select break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
+        {% if rec %}
+        <div class="alert alert-info alert-dismissable" style="margin:0.5em;">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          {{rec|safe}}
+        </div>
+        {% endif %}
     </div>
 </div>
     <div class="has-bottom-border has-top-border buttons_list dir-col blue "  >
@@ -142,18 +146,7 @@
     </style>
 
     <script type="text/javascript">
-        function recover(training_id){
-            $.ajax({
-                url: "/training/recover_everything/" + training_id + "/",
-                type: "POST",
-                data:{
-                    csrfmiddlewaretoken: '{{csrf_token}}'
-                },
-                success: function(data){
-                    console.log('YOP');
-                }
-            })
-        };
+
         function detail_rule(id, type){
             $.ajax({
                 url: "{% url 'rules:details_rule'%}",

@@ -202,6 +202,10 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 @is_correct_respform
 def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
+    recovered = request.session.pop('recovered', False)
+    if recovered:
+        data['rec'] = "Le traitement de récupération globale des spécificités de l'année précédente est terminé.<br>\
+<u>NB</u> : sans écrasement des spécificités déjà saisies pour la nouvelle année."
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
@@ -222,7 +226,6 @@ Merci.
 
 
 def recover_everything(request, training_id):
-
     training = Training.objects.get(id=training_id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
@@ -269,12 +272,11 @@ def recover_everything(request, training_id):
                         r_derog.text_specific_paragraph = s.text_specific_paragraph
                         r_derog.text_motiv = s.text_motiv
                         r_derog.save()
+    request.session['recovered'] = True
 
-    return JsonResponse({'status': 'ok', 'text': "Le traitement de récupération globale des spécificités de l'année précédente est terminé.\n\
-Nb : sans écrasement des spécificités déjà saisies pour la nouvelle année."})
-    # 
-    # return HttpResponseRedirect(
-    #     reverse('training:edit_rules', args=(training_id,)))
+    return HttpResponseRedirect(
+        reverse('training:edit_rules',
+                args=(training_id,)))
 
 
 @login_required
