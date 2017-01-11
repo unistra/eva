@@ -3,7 +3,10 @@ from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.utils.querries import currentyear
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.db.models import Q
+from mecc.apps.adm.models import Profile
+import operator
+from functools import reduce
 
 class Training(models.Model):
     """
@@ -71,6 +74,18 @@ class Training(models.Model):
 
     def __str__(self):
         return self.label
+
+    @property
+    def list_respform_id(self):
+        return [e.id for e in self.resp_formations.all()]
+
+    @property
+    def list_editable_pple(self):
+        can_do_alot = Profile.objects.filter(cmp=self.supply_cmp).filter(
+                Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
+                | Q(code='GESCOL') | Q(code='DIRETU'))
+        return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
+
 
     @property
     def input_opening(self):

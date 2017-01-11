@@ -9,7 +9,6 @@
 
 {% endblock %}
 
-
 {% block app_content %}
 <h2 class='title-block bold'>{{label_cmp}}</h2>
 <br>
@@ -61,7 +60,10 @@
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
     <td width="5%" class="no-padding td-centered no-border">
+
+        {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user.is_superuser%}
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
+        {% endif %}
     </td>
 </tr>
 

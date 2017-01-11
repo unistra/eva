@@ -143,12 +143,16 @@ def manage_degreetype(request):
         elif todo == 'del':
             has_current, customized = rule.has_current_exceptions
             if has_current:
-                text = [e.training.label for e in customized.get(
-                    'specifics')] + [e.training.label for e in customized.get(
-                        'additionals')]
+                specifics = [e.training.label for e in customized.get(
+                             'specifics')]
+                additionals = [e.training.label for e in customized.get(
+                              'additionals')]
                 return JsonResponse({
                     'customized': len(customized),
-                    'text': ", ".join(text)})
+                    'text': ", ".join(specifics + additionals),
+                    'specifics': specifics,
+                    'additionals': additionals
+                    })
             else:
                 rule.degree_type.remove(degree_type)
                 return JsonResponse(data)

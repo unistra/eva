@@ -16,28 +16,35 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="upper-part">
-
-  <div class="parent-rule">
-
+<div id='message'></div>
       <div class="alert alert-danger" role="alert" {%if not error%}hidden="true"{%endif%}>
-          <p>
-
-              {% trans "Il existe des dérogations et/ou alinéas additionnels qui empêchent la mise hors service:" %}
+          <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+          {% if error.specifics %}
+          <p>{% trans "Il existe des dérogations qui empêchent la mise hors service:" %}
               <ul>
                   {% for e in error.specifics  %}
                       <li>
                           {{e.training.label}}
                       </li>
                   {% endfor %}
-                  {% for e in error.additional  %}
+              </ul>
+
+          </p>
+          {% endif %}
+          {% if error.additionals %}
+          <p>{% trans "Il existe des alinéas additionnels qui empêchent la mise hors service:" %}
+              <ul>
+                  {% for e in error.additionals  %}
                       <li>
                           {{e.training.label}}
                       </li>
                   {% endfor %}
               </ul>
           </p>
+          {% endif %}
       </div>
+      <div class="upper-part">
+      <div class="parent-rule">
 
   <form class="" action="" method="post">
     {% crispy form %}
@@ -73,14 +80,14 @@ if (_isEdited === true) {
 var e = e || window.event;
 
 // For IE and Firefox
-if (e) {
-  e.returnValue = 'Des modifications ont été effectuées.';
-}
+        if (e) {
+          e.returnValue = 'Des modifications ont été effectuées.';
+        }
 
-// For Safari
-return 'Des modifications ont été effectuées.';
-};
-};
+        // For Safari
+        return 'Des modifications ont été effectuées.';
+        };
+    };
 });
 
 </script>

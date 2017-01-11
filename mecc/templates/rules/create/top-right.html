@@ -73,12 +73,25 @@ function delete_degreetype(id){
       },
       success: function(data){
           if (data.customized){
-              $('.top-right').notify({
-                  message: {
-                      text: "Il y a des dérogations et/ou alinéas additionnels rattachés à cette règle dans les formations : " + data.text
-                  },
-                  type: 'danger'
-              }).show();
+              var specifics = '';
+              var additionals = '';
+              var text = '';
+              for (i = 0; i < data.specifics.length; i++) {
+                  specifics += "<li>"+ data.specifics[i] + "</li>";
+              }
+              for (i = 0; i < data.additionals.length; i++) {
+                  additionals += "<li>"+ data.additionals[i] + "</li>";
+              }
+              if (specifics.length > 0) {
+                  text += "<p>Vous ne pouvez pas supprimer ce type de diplôme tant que des dérogations sont rattachées à cette règle en :<ul>" + specifics + "</ul></p>"
+              }
+              if (additionals.length > 0) {
+                  text += "<p>Vous ne pouvez pas supprimer ce type de diplôme tant que alinéas additionnels sont rattachées à cette règle en :<ul>" + additionals + "</ul></p>"
+              }
+              $('#message').html("<div class='alert alert-danger fade in'>" +
+                  "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                  text + "</div>");
+
           }else {
 
         var opt = document.createElement('option');

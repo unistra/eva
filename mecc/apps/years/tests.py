@@ -1,9 +1,6 @@
 from django.test import TestCase
 from .forms import DisabledInstituteYearForm, DircompInstituteYearForm, \
     DircompUniversityYearForm, UniversityYearFormCreate, InstituteYearForm
-# from django.test import RequestFactory
-#
-# from .view import UniversityYearDelete
 
 
 class YearFormsTest(TestCase):
