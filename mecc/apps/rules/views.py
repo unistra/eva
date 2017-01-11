@@ -400,7 +400,7 @@ def duplicate_remove(request):
     rule = Rule.objects.get(id=x)
     if rule.has_current_exceptions[0]:
         return JsonResponse({
-            "error": "%s comporte des dérogations" % rule.label
+            "error": "%s comporte des dérogations et/ou alinéas addditionnels" % rule.label
         })
     rule.delete()
     return JsonResponse({"status": "removed", "label": rule.label})

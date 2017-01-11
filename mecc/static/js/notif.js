@@ -76,5 +76,5 @@
     message: null,
     onClose: function () {},
     onClosed: function () {}
-  }
+};
 })(window.jQuery);

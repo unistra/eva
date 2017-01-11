@@ -9,7 +9,7 @@
 
 {% trans 'Duplication des règles générales vers l’année ' %} {{current_year}} {% endblock %}
 {% block app_content %}
-
+<div id='message'></div>
  <div class='notifications top-right'></div>
 <div class="disp-flex duplicate-h">
     <span class="subtitle-duplicate">{% trans "Sélectionner une année source" %}
@@ -26,7 +26,6 @@
 </div>
 <div class="disp-flex">
     <div class="duplicate-2">
-
         <table class="duplicate-table duplicate-table-1">
             <thead class="thead">
                 <tr class="row-head">
@@ -100,10 +99,9 @@ function del_rule($this, value) {
         },
         success: function(data){
             if (data.error){
-                $('.top-right').notify({
-                    message: { text: data.error },
-                    type:'danger'
-                  }).show();
+                $('#message').html("<div class='alert alert-danger fade in'>" +
+                    "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
+                    data.error + "</div>");
             } else if (data.status === 'removed') {
                 $('.top-right').notify({
                     message: { text: data.label + ' a bien été supprimé.'},
@@ -174,6 +172,5 @@ function check_all(source) {
         checkboxes[i].checked = source.checked;
     }
 }
- // for the ones that aren't closable and don't fade out there is a .hide() function.
 </script>
 {% endblock %}
