@@ -400,9 +400,6 @@ Merci.
     try:
         errors = False
 
-        institute_year.date_expected_MECC = datetime.strftime(
-            institute_year.date_expected_MECC, '%d/%m/%Y')
-
         if request.POST:
 
             data['date_mecc'] = request.POST.get('date_mecc')
