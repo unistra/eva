@@ -398,10 +398,45 @@ Merci.
         """)
 
     try:
+        errors = False
+
         institute_year.date_expected_MECC = datetime.strftime(
             institute_year.date_expected_MECC, '%d/%m/%Y')
-    except TypeError:
-        institute_year.date_expected_MECC = ''
+
+        if request.POST:
+
+            data['date_mecc'] = request.POST.get('date_mecc')
+
+            data['selected_trainings'] = Training.objects.filter(
+                pk__in=request.POST.getlist('chkbox[]'))
+
+            if not data['selected_trainings']:
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'Veuillez selectionner au moins un diplôme!'))
+
+            for training in data['selected_trainings']:
+                if training.progress_rule == 'E' or training.progress_table == 'E':
+                    errors = True
+                    messages.add_message(request, messages.ERROR, _(
+                        'La saisie des rêgles ou du tableau pour les élements selectionnés n\'est pas terminée'))
+
+                if training.date_val_cmp:
+                    errors = True
+                    messages.add_message(request, messages.ERROR, _(
+                        'La date de validation en conseil est déja renseignée'))
+
+            if not errors:
+                # TODO tz needed (???)
+                date_mecc = datetime.strftime(datetime.strptime(
+                    data['date_mecc'], '%d/%m/%Y'), '%Y-%m-%d')
+                data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
+                    date_val_cmp=date_mecc)
+                messages.success(request, _('Opération effectuée.'))
+
+    except (ValueError, TypeError) as e:
+        messages.add_message(request, messages.ERROR, _(
+            'Veuillez renseigner une date de validation valide'))
 
     return render(request, template, data)
 

@@ -14,3 +14,8 @@ def redify(value, redvalue):
 def redorgreenify(value, redvalue):
     color = "green" if value == _(redvalue) else "red"
     return '<span class="%s">%s</span>' % {color, value}
+
+@register.assignment_tag
+def get_bootstrap_alert_msg_css_name(tags):
+    # in bootstrap the class danger is for error !!!
+    return 'danger' if tags == 'error' else tags

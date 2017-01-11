@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load mecc_tags %}
 {% block page-header %}
 MECC {{ request.display.current_year }} <br>
 {{label_cmp}} : {% trans 'Validation en conseil de composante' %}
@@ -11,7 +12,8 @@ MECC {{ request.display.current_year }} <br>
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 {% if messages %}
 {% for message in messages %}
-<div class="messages{% if message.tags %} alert alert-{{ message.tags }}{% endif %} alert-dismissible">
+{% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
+<div class="messages{% if alert_tag %} alert alert-{{ alert_tag }}{% endif %} alert-dismissible">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     {{ message }}
 </div>
@@ -25,7 +27,7 @@ MECC {{ request.display.current_year }} <br>
                     <div class="form-group">
                         <label for="id_datepicker">{% trans 'Saisir une date' %} :</label>
                         <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
-                            <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA'/>
+                            <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA' name="date_mecc" value="{{ date_mecc }}" required/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -40,8 +42,9 @@ MECC {{ request.display.current_year }} <br>
                     {% include 'institute/validate_training_list.html' %}
                 </div>
             </div>
+            {% csrf_token %}
         <div class="buttons_list">
-            <a href="" class="btn btn-primary"> {% trans 'Appliquer la date' %}</a>
+            <input type="submit" class="btn btn-primary" value="{% trans 'Appliquer la date' %}">
         </div>
     </form>
 </div>
@@ -88,11 +91,11 @@ $.fn.datepicker.defaults.autoclose = true;
 $('#select-all').click(function(event) {
     if(this.checked) {
         // Iterate each checkbox
-        $(':checkbox').each(function() {
+        $(':checkbox').not(':disabled').each(function() {
             this.checked = true;
         });
     } else {
-    $(':checkbox').each(function() {
+    $(':checkbox').not(':disabled').each(function() {
           this.checked = false;
       });
   }

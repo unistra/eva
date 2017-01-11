@@ -22,7 +22,7 @@
                     {% if trainings %}
                         {% for item in field.list %}
                             <tr class="hover-row">
-                                <td><input type="checkbox" name=chkbox[]></td>
+                                <td><input type="checkbox" name="chkbox[]"" value="{{item.id}}" {% if item.progress_rule == "E" or item.progress_table == "E" or item.date_val_cmp %} disabled readonly  {% endif %}</td>
                                 <td><strong>{{field.grouper}}</strong></td>
                                 <td class='no-padding v-align-m'>{{item.label}}</td>
                                 <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display|redify:"En cours"|safe}}</td>
