@@ -89,11 +89,30 @@ def block_rules(title, rules, story, styled=True):
     return story
 
 
+def list_of_parag_with_bullet(text):
+    """
+    Return correct string in order to be displayed as list
+    """
+    reg = re.compile(r'>(.*?)</(p|li)>')
+    r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
+    _list = []
+    for t, v in r:
+        if v == 'li':
+            _list.append(Paragraph(
+            "<para leftIndent=40>%s</para>" % (
+            t), styles['Bullet_1']))
+        else:
+            _list.append(Paragraph(
+            "<para >%s</para>" % (
+            t), styles['Justify']))
+    return _list
+
 def add_simple_paragraph(story, rule, sp, ap):
     """
     print content of paragraph with Specific and additionnel values in state of
     standard values
     """
+
 
     def append_text(story, text, style, special=False, spacer=6):
         """
@@ -116,7 +135,7 @@ def add_simple_paragraph(story, rule, sp, ap):
         for t, v in r:
             if v == 'li':
                 story.append(Paragraph(
-                    "<para %s leftIndent=20>%s</para>" % (
+                    "<para %s leftIndent=40>%s</para>" % (
                         style, t), styles['Bullet_1']))
             else:
                 story.append(Paragraph(
@@ -172,7 +191,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
 
             t.append(
                 [
-                    Paragraph(p.text_standard, styles["Justify"]),
+                    list_of_parag_with_bullet(p.text_standard),
                     Paragraph("<para align=right textColor=grey fontSize=8>\
                         %s</para>" % txt, styles['Normal'])
                 ]
