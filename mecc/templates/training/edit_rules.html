@@ -101,10 +101,10 @@
             {% trans 'Etat de saisie des règles : '%}
         </label>
         <label class="margin-left1">
-         {% trans "En cours " %}<input disabled type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
      </label>
         <label class="margin-left1">
-        {% trans 'Achevée '%} <input disabled type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
     </label>
 
     </div>
@@ -159,6 +159,21 @@
     </style>
 
     <script type="text/javascript">
+
+        $(document).on('change', 'input[name="progress"]:radio', function(){
+            $.ajax({
+                url: "{% url 'rules:update_progress'%}",
+                type: "POST",
+                data: {
+                    val: $(this).val(),
+                    training_id : {{training.id}},
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data){}
+
+            })
+        });
+
         function detail_rule(id, type){
             $.ajax({
                 url: "{% url 'rules:details_rule'%}",

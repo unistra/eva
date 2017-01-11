@@ -408,6 +408,15 @@ def duplicate_remove(request):
 
 @login_required
 @is_ajax_request
+def update_progress(request):
+    training = Training.objects.get(id=request.POST.get('training_id'))
+    training.progress_rule = request.POST.get('val')
+    training.save()
+    return JsonResponse({'status': 'UPDATED'})
+
+
+@login_required
+@is_ajax_request
 def details_rule(request):
     derog = []
 
