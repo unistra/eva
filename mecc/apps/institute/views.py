@@ -403,6 +403,13 @@ Merci.
         if request.POST:
 
             data['date_mecc'] = request.POST.get('date_mecc')
+            datetime_mecc = datetime.strptime(data['date_mecc'], '%d/%m/%Y')
+            # datetime.strptime(
+            #    data['date_mecc'], '%d/%m/%Y')
+            if datetime_mecc > datetime.today():
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'La date ne peut être ulterieure à la date du jour !'))
 
             data['selected_trainings'] = Training.objects.filter(
                 pk__in=request.POST.getlist('chkbox[]'))
@@ -410,31 +417,24 @@ Merci.
             if not data['selected_trainings']:
                 errors = True
                 messages.add_message(request, messages.ERROR, _(
-                    'Veuillez selectionner au moins un diplôme!'))
+                    'Veuillez selectionner au moins un diplôme !'))
 
             for training in data['selected_trainings']:
                 if training.progress_rule == 'E' or training.progress_table == 'E':
                     errors = True
                     messages.add_message(request, messages.ERROR, _(
-                        'La saisie des rêgles ou du tableau pour les élements selectionnés n\'est pas terminée'))
-
-                if training.date_val_cmp:
-                    errors = True
-                    messages.add_message(request, messages.ERROR, _(
-                        'La date de validation en conseil est déja renseignée'))
+                        'La saisie des règles ou du tableau pour les élements sélectionnés n\'est pas terminée'))
 
             if not errors:
                 # TODO tz needed (???)
-                date_mecc = datetime.strftime(datetime.strptime(
-                    data['date_mecc'], '%d/%m/%Y'), '%Y-%m-%d')
+                date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cmp=date_mecc)
                 messages.success(request, _('Opération effectuée.'))
 
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
             'Veuillez renseigner une date de validation valide'))
-
     return render(request, template, data)
 
 
