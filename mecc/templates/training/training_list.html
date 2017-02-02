@@ -6,7 +6,12 @@
 
 {% block page-header %}
 {% trans 'Formations' %} {{disp_current_year}}
+{% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="active">{% trans "Offre de formation" %}</li>
+    </ol>
 {% endblock %}
 
 {% block app_content %}

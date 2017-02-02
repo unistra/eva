@@ -1,5 +1,27 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}
-{% block page-header %} {% trans 'Fiche Formation' %} {% endblock %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %} {% load groups %}
+{% block page-header %}
+    {% trans 'Fiche Formation' %}
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+        {%else%}
+            <li>
+                <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+                {%endif%}">{% trans "Offre de formation" %}</a>
+            </li>
+        {%endif%}
+            <li><a href="{% url 'training:edit_rules' id=training.id %}">
+                {{training.label}}</a>
+            </li>
+            <li class="active"> {% trans "Dérogations et alinéas de composante" %}</li>
+
+    </ol>
+{% endblock %}
 
 {% block app_content %}
 <ul class="nav nav-tabs" style="margin-bottom:1em">

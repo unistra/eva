@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
-
+{% load groups %}
 {% load staticfiles %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+        {%else%}
+            <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+                {%endif%}">{% trans "Offre de formation" %}</a></li>
+        {%endif%}
+            <li class="active"> {{training.label}}</li>
+    </ol>
+{% endblock %}
 
 {% block page-header %}
 {% trans 'Fiche Formation' %}
 
 {% endblock %}
-
 
 {% block app_content %}
 

@@ -1,8 +1,24 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %}{% load groups%}
+
+
 {% block page-header %}
 <script src="{% static 'js/notif.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/notif.css' %}">
 {% trans 'Fiche Formation' %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+        {%else%}
+            <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+                {%endif%}">{% trans "Offre de formation" %}</a></li>
+        {%endif%}
+            <li class="active"> {{training.label}}</li>
+    </ol>
 {% endblock %}
 
 {% block app_content %}

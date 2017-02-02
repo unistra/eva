@@ -7,10 +7,20 @@
 {% block page-header %}
 {% trans "Mes formations" %}
 {% endblock %}
-
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="active">
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            {% trans "Mes formations" %}
+        {%else%}
+            {% trans "ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" %}
+        {%endif%}
+        </li>
+    </ol>
+{% endblock %}
 
 {% block app_content %}
-<br>
+
 <div class=" list-training">
   <table class="table" id="rule-table">
       <thead>

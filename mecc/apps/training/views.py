@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required
 from mecc.apps.rules.models import Rule, Paragraph
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
-    is_ajax_request, is_correct_respform, can_edit_or_read
+    is_ajax_request, is_correct_respform
 from mecc.apps.utils.manage_pple import manage_respform
 from django.shortcuts import render, redirect
 from django.db import transaction
@@ -20,7 +20,6 @@ from .forms import SpecificParagraphDerogForm, \
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from django.contrib import messages
-from mecc.apps.adm.models import MeccUser
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
@@ -56,6 +55,7 @@ class TrainingListView(ListView):
         id_cmp = self.kwargs.get('cmp')
         self.request.session['visited_cmp'] = id_cmp
         context = super(TrainingListView, self).get_context_data(**kwargs)
+
         self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"
         self.request.session['visited_cmp_id'] = Institute.objects.get(

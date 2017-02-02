@@ -31,7 +31,7 @@
                    aria-expanded="false" aria-controls="collapse{{e.pk}}">
                    {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
                    <ul class="collapse {% if e.cmp in request.path and 'institute' in request.path%} in {% endif %} slump"id="collapse{{e.pk}}">
-                     <li><a href="/institute/gr and not dircompanted/{{e.cmp}}"
+                     <li><a href="/institute/granted/{{e.cmp}}"
                       {% if e.cmp in request.path and 'institute' in request.path%}
                         class="item-selected"
                      {% endif %}>{% trans 'Général' %}</a></li>
@@ -152,7 +152,7 @@
         {% if request.user.meccuser|is_profile:'RESPFORM' or request.user.is_superuser%}
         <li>
             <a href="{% url 'training:list_resp' %}"
-            {% if 'resp' in request.path %}
+            {%if request.session.visited_cmp == "RESPFORM"%}
                class="item-selected"
             {% endif %}>{% trans 'MES FORMATIONS' %}</a>
         </li>
