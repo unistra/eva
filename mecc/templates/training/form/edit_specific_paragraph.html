@@ -18,7 +18,7 @@
             </li>
             <li>
                 <a href="{% url 'training:specific_paragraph' training.id rule.id%}">
-                {% trans "Dérogations et alinéas de composante" %}
+                {{rule.label}}
                 </a>
             </li>
             <li class="active">
