@@ -8,6 +8,7 @@ from mecc.apps.adm.models import Profile
 import operator
 from functools import reduce
 
+
 class Training(models.Model):
     """
     Training model
@@ -85,7 +86,6 @@ class Training(models.Model):
                 Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
                 | Q(code='GESCOL') | Q(code='DIRETU'))
         return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
-
 
     @property
     def input_opening(self):
