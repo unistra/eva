@@ -34,7 +34,7 @@
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-    <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+    <li><a href="{% url 'mecctable:mecctable_home' training.id %}">{% trans "Tableau MECC" %}</a></li>
 </ul>
 <div class="disp-flex ">
     <div class="has-bottom-border parent disp-flex">

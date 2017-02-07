@@ -1,0 +1,146 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %} {% load groups %} {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+<ol class="breadcrumb">
+    {%if request.session.visited_cmp == "RESPFORM"%}
+    <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+    {%else%}
+    <li>
+        <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+                {%endif%}">{% trans "Offre de formation" %}</a>
+    </li>
+    {%endif%}
+    <li class="active"> {{training.label}}</li>
+
+</ol>
+{% endblock %} {% block app_content %}
+<ul class="nav nav-tabs" style="margin-bottom:1em">
+    <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+    <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
+</ul>
+<h2 class="title-modal" style="font-weight: bold;">
+    {% trans 'Gestion des dérogations et alinéas de composante'%}
+</h2>
+<div class="disp-flex dir-col has-bottom-border">
+    <div class=" parent disp-flex ">
+        <div class="item-80 dir-col">
+            <div class="">
+                {% trans "Intitulé de la formation: "%}
+            </div>
+            <div class="">
+                <strong>{{training.label}}</strong>
+            </div>
+        </div>
+        <div class="item-20 disabled dir-col">
+            <div>
+                {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
+            </div>
+            <div>
+                {% trans "Régime:"%} {{training.get_MECC_type_display}}
+            </div>
+            <div>
+                {{training.get_session_type_display}}
+            </div>
+        </div>
+    </div>
+
+    <div class="training-rules">
+
+        <div class="disp-flex">
+
+                <table class="centered">
+                    <thead class="small-title centered">
+                        <tr class="centered border-bottom ">
+                            <th width=40%></th>
+                            <th width=5% class="centered border-left">{% trans "ECTS" %}</th>
+                            <th width=10% class="centered border-left">{% trans "Responsable" %}</th>
+                            <th width=5% class="centered border-left-3">{% trans "Coef" %}</th>
+                            <th width=5% class="centered border-left-3">{% trans "Note<br>élim" %}</th>
+                            <th width=5% class="centered border-left-5">{% trans "" %}</th>
+                            <th width=15% class="centered border-left">{% trans "Session principale" %}</th>
+                            <th width=15% class="centered border-left-3">{% trans "Session de rattrapage" %}</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="overflow">
+
+                        {% for e in "anticonsqidnfqsklqsdjnlqsjndkqsd"  %}
+                        <tr class="border-bottom">
+                            <td width=40%> NULL</td>
+                            <td width=5%>{% trans "15" %}</td>
+                            <td width=10%>{% trans "Responsable" %}</td>
+                            <td width=5% class="border-left-3">{% trans "2" %}</td>
+                            <td width=5% class="border-left-3">{% trans "10" %}</td>
+                            <td width=5% class="border-left-5">{% trans "" %}</td>
+                            <td width=15%>{% trans "Session principale" %}</td>
+                            <td width=15%>{% trans "Session de rattrapage" %}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+        </div>
+
+    </div>
+    <div class="footer">
+
+        <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
+            <label>
+            {% trans 'Etat de saisie du tableau MECC : '%}
+        </label>
+            <label class="margin-left1">
+         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+     </label>
+            <label class="margin-left1">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+    </label>
+
+        </div>
+        <div class="buttons_list">
+            <br>
+            <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+            <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+            <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Effectuer les <br>CONTRÔLES DE COHÉRENCE" %}</a>
+            <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
+            <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
+
+        </div>
+
+    </div>
+
+    <style media="screen">
+    .small-title{
+        font-size: 0.8em;
+    }
+    table {
+
+      height: 100%;
+      width: 100%;
+    }
+    table thead {
+      /* head takes tde height it requires,
+      and it's not scaled when table is resized */
+      flex: 0 0 auto;
+      width: calc(100% - 1.3em);
+    }
+    table tbody {
+      /* body takes all tde remaining available space */
+      flex: 1 1 auto;
+      display: block;
+      overflow: auto;
+      height: 47vh;
+    }
+    table tbody tr {
+      width: 100%;
+    }
+    table thead,
+    table tbody tr {
+      display: table;
+      table-layout: fixed;
+    }
+
+    </style>
+
+    {%endblock%}

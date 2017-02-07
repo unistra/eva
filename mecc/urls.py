@@ -13,6 +13,8 @@ urlpatterns = patterns(
         namespace='commission')),
     url(r'^years/', include('mecc.apps.years.urls',
         namespace='years')),
+    url(r'^mecctable/', include('mecc.apps.mecctable.urls',
+        namespace='mecctable')),
     url(r'^degree/', include('mecc.apps.degree.urls',
         namespace='degree')),
     url(r'^institute/', include('mecc.apps.institute.urls',
