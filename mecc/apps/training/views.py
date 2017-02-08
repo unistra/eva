@@ -39,6 +39,7 @@ def list_training(request, template='training/list_cmp.html'):
     View for DES1 - can select CMP
     """
     data = {}
+    request.session['list_training'] = True
     data['institutes'] = Institute.objects.all().order_by('field', 'label')
     add_current_year(data)
     return render(request, template, data)
@@ -54,6 +55,8 @@ class TrainingListView(ListView):
 
         id_cmp = self.kwargs.get('cmp')
         self.request.session['visited_cmp'] = id_cmp
+        self.request.session['list_training'] = False
+
         context = super(TrainingListView, self).get_context_data(**kwargs)
 
         self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
@@ -163,6 +166,8 @@ def respform_list(request, template='training/respform_trainings.html'):
     View for respform list all binded training
     """
     request.session['visited_cmp'] = 'RESPFORM'
+    request.session['list_training'] = False
+
     data = {}
     data['trainings'] = Training.objects.filter(
         resp_formations=request.user.meccuser).filter(

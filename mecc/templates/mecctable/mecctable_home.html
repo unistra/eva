@@ -18,9 +18,6 @@
     <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
-<h2 class="title-modal" style="font-weight: bold;">
-    {% trans 'Gestion des dérogations et alinéas de composante'%}
-</h2>
 <div class="disp-flex dir-col has-bottom-border">
     <div class=" parent disp-flex ">
         <div class="item-80 dir-col">
@@ -141,7 +138,7 @@
       flex: 1 1 auto;
       display: block;
       overflow: auto;
-      height: 47vh;
+      height: 42vh;
     }
     table tbody tr {
       width: 100%;
@@ -165,5 +162,10 @@ resizeTable();
 $( window ).resize(function() {
     resizeTable();
 });
+$(document).ready(function () {
+    $("#menu-toggle").click(resizeTable());
+});
+
+
 </script>
     {%endblock%}

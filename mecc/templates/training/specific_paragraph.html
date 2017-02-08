@@ -14,6 +14,8 @@
                 {% else %}{%url 'training:list' request.user.meccuser.cmp%}
                 {%endif%}">{% trans "Offre de formation" %}</a>
             </li>
+            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+
         {%endif%}
             <li><a href="{% url 'training:edit_rules' id=training.id %}">
                 {{training.label}}</a>

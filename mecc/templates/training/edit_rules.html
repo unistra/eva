@@ -16,6 +16,8 @@
             <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
                 {% else %}{%url 'training:list' request.user.meccuser.cmp%}
                 {%endif%}">{% trans "Offre de formation" %}</a></li>
+            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+
         {%endif%}
             <li class="active"> {{training.label}}</li>
     </ol>

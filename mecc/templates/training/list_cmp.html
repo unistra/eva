@@ -8,7 +8,15 @@
 {% trans 'Formations' %} {{disp_current_year}}
 
 {% endblock %}
-
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            <li class="active">{% trans "Mes formations" %}/li>
+        {%else%}
+            <li class="active">{% trans "Offre de formation" %}</li>
+        {%endif%}
+    </ol>
+{% endblock %}
 {% block app_content %}
 
 <h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
