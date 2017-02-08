@@ -54,7 +54,10 @@ a.green:hover {
     color: #1A4A00;
 }
 .green{
-    color: green;
+    color: green!important;
+}
+.lightgreen{
+    color:lightgreen!important;
 }
 .grey {
     color: grey!important:

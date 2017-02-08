@@ -45,35 +45,52 @@
     </div>
 
     <div class="training-rules">
+        <div class="blue">
 
+            {% trans "Racine" %}<br>
+            <span class="glyphicon glyphicon-plus blue no-border" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-circle-arrow-left blue no-border green" aria-hidden="true"></span>
+
+        </div>
         <div class="disp-flex">
-
                 <table class="centered">
-                    <thead class="small-title centered">
-                        <tr class="centered border-bottom ">
-                            <th width=40%></th>
-                            <th width=5% class="centered border-left">{% trans "ECTS" %}</th>
-                            <th width=10% class="centered border-left">{% trans "Responsable" %}</th>
-                            <th width=5% class="centered border-left-3">{% trans "Coef" %}</th>
-                            <th width=5% class="centered border-left-3">{% trans "Note<br>élim" %}</th>
-                            <th width=5% class="centered border-left-5">{% trans "" %}</th>
-                            <th width=15% class="centered border-left">{% trans "Session principale" %}</th>
-                            <th width=15% class="centered border-left-3">{% trans "Session de rattrapage" %}</th>
+                    <thead class="small-title centered" id="thead">
+                        <tr class="centered ">
+                            <th width=3%></th>
+                            <th width=35% class="border-bottom "></th>
+                            <th width=3% class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
+                            <th width=10% class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
+                            <th width=3% class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
+                            <th width=3% class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
+                            <th width=3% class="centered border-left-5 border-bottom ">{% trans "" %}</th>
+                            <th width=20% colspan="4" class="centered border-left border-bottom ">{% trans "Session principale" %}</th>
+                            <th width=20% colspan="4" class="centered border-left-3 border-bottom ">{% trans "Session de rattrapage" %}</th>
                         </tr>
                     </thead>
 
                     <tbody class="overflow">
 
-                        {% for e in "anticonsqidnfqsklqsdjnlqsjndkqsd"  %}
-                        <tr class="border-bottom">
-                            <td width=40%> NULL</td>
-                            <td width=5%>{% trans "15" %}</td>
-                            <td width=10%>{% trans "Responsable" %}</td>
-                            <td width=5% class="border-left-3">{% trans "2" %}</td>
-                            <td width=5% class="border-left-3">{% trans "10" %}</td>
-                            <td width=5% class="border-left-5">{% trans "" %}</td>
-                            <td width=15%>{% trans "Session principale" %}</td>
-                            <td width=15%>{% trans "Session de rattrapage" %}</td>
+                        {% for e in "12345678911234567892123456789"  %}
+                        <tr class="hover-row">
+                            <td width=3%>
+                                <span class="glyphicon glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
+                            </td>
+                            <td width=35% class="border-bottom"> </td>
+                            <td width=3% class="border-bottom">15</td>
+                            <td width=10% class="border-bottom">Responsable</td>
+                            <td width=3% class="border-left-3 border-bottom">2</td>
+                            <td width=3% class="border-left-3 border-bottom">10</td>
+                            <td width=3% class="border-left-5 border-bottom"></td>
+                            <td width=5% class="centered border-left border-bottom">11</td>
+                            <td width=5% class="centered border-left border-bottom">11</td>
+                            <td width=5% class="centered border-left border-bottom">11</td>
+                            <td width=5% class="centered border-left border-bottom">11</td>
+                            <td width=5% class="centered border-left-3 border-bottom">12</td>
+                            <td width=5% class="centered border-left border-bottom">12</td>
+                            <td width=5% class="centered border-left border-bottom">12</td>
+                            <td width=5% class="centered border-left border-bottom">12</td>
+
                         </tr>
 
                     {% endfor %}
@@ -119,14 +136,8 @@
       height: 100%;
       width: 100%;
     }
-    table thead {
-      /* head takes tde height it requires,
-      and it's not scaled when table is resized */
-      flex: 0 0 auto;
-      width: calc(100% - 1.3em);
-    }
     table tbody {
-      /* body takes all tde remaining available space */
+      /* body takes all the remaining available space */
       flex: 1 1 auto;
       display: block;
       overflow: auto;
@@ -142,5 +153,17 @@
     }
 
     </style>
-
+<script type="text/javascript">
+function resizeTable() {
+    var bb = document.getElementsByTagName("tr")[1].offsetWidth;
+    document.getElementsByTagName("thead")[0].style.width = "300px";
+    setTimeout(function(){
+        document.getElementsByTagName("thead")[0].style.width = bb +"px";
+    }, 5)
+};
+resizeTable();
+$( window ).resize(function() {
+    resizeTable();
+});
+</script>
     {%endblock%}
