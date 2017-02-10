@@ -1,0 +1,24 @@
+{% load i18n %}
+<div class=" " role="dialog" >
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+                <h4 class="title-modal">
+                    {% trans "Objet de la structure d'enseignement" %}
+                </h4>
+            </div>
+            <div class="modal-body" style="padding-bottom:0">
+                <form method="post"  class="">
+                    <div class="modal-footer">
+                        <input type="submit" name="add" value="Valider" class="btn btn-primary" id="submit-id-add">
+                        <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

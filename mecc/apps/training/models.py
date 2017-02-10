@@ -97,13 +97,13 @@ class Training(models.Model):
         )
         empty = ['', ' ', None]
         if self.date_val_cfvu not in empty:
-            return INPUT_CHOICE[3][1]
+            return INPUT_CHOICE[3]
         if self.date_val_cmp in empty:
-            return INPUT_CHOICE[0][1]
+            return INPUT_CHOICE[0]
         if self.date_val_cmp not in empty and self.date_res_des in empty:
-            return INPUT_CHOICE[1][1]
+            return INPUT_CHOICE[1]
         if self.date_val_cmp not in empty and self.date_res_des not in empty:
-            return INPUT_CHOICE[2][1]
+            return INPUT_CHOICE[2]
         return None
 
 

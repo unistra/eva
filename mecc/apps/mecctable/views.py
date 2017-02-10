@@ -3,6 +3,20 @@ from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 from django.shortcuts import render, redirect
 from mecc.apps.training.models import Training
+from django.http import JsonResponse
+
+
+def mecctable_update(request, training_id, id):
+    """
+    Update mecctable
+    """
+    structure_obj = StructureObject.get_or_create(
+        owner_training_id=training_id,
+        id=id
+    )
+    print(structure_obj)
+
+    return JsonResponse
 
 
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
@@ -13,7 +27,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     # structure = StructureObject.objects.filter
     data = {}
     training = Training.objects.get(id=id)
+    structure_obj = StructureObject.objects.filter(owner_training_id=id)
     data['training'] = training
+    data['structure_objs'] = structure_obj
     return render(request, template, data)
 
 

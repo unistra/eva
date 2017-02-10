@@ -6,7 +6,6 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-
         {%if request.session.visited_cmp == "RESPFORM"%}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
         {%else%}
@@ -91,8 +90,8 @@
                 {% trans "Date de validation en CFVU" %}</label>
                 <div> <input class="form-control" disabled="true"> </div>
              </div>
-             <div class="buttons_list bold italic {% if object.input_opening == 'ouverte'%} green{%else%} red{%endif%} ">
-                 <span id="input_progress">{% if object %}Saisie {{object.input_opening}}{% endif %}</span>
+             <div class="buttons_list bold italic {% if object.input_opening.1 == 'ouverte'%} green{%else%} red{%endif%} ">
+                 <span id="input_progress">{% if object %}Saisie {{object.input_opening.1}}{% endif %}</span>
              </div>
       </div>
   </div>

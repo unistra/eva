@@ -1,4 +1,10 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load staticfiles %} {% load groups %} {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %}  {% load groups %}
+ {% block page-header %}
+
+
+ {% trans 'Fiche Formation' %}
+  {% endblock %}
+  {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
     <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
@@ -13,7 +19,9 @@
 
 </ol>
 {% endblock %} {% block app_content %}
-<ul class="nav nav-tabs" style="margin-bottom:1em">
+
+ <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
+ <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
@@ -41,61 +49,70 @@
         </div>
     </div>
 
-    <div class="training-rules">
+    <div >
         <div class="blue">
 
             {% trans "Racine" %}<br>
-            <span class="glyphicon glyphicon-plus blue no-border" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-circle-arrow-left blue no-border green" aria-hidden="true"></span>
+            <span class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true"></span>
+            <span class="hand glyphicon glyphicon-circle-arrow-left blue no-border green" aria-hidden="true"></span>
 
         </div>
-        <div class="disp-flex">
-                <table class="centered">
-                    <thead class="small-title centered" id="thead">
-                        <tr class="centered ">
-                            <th width=3%></th>
-                            <th width=35% class="border-bottom "></th>
-                            <th width=3% class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
-                            <th width=10% class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
-                            <th width=3% class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
-                            <th width=3% class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
-                            <th width=3% class="centered border-left-5 border-bottom ">{% trans "" %}</th>
-                            <th width=20% colspan="4" class="centered border-left border-bottom ">{% trans "Session principale" %}</th>
-                            <th width=20% colspan="4" class="centered border-left-3 border-bottom ">{% trans "Session de rattrapage" %}</th>
-                        </tr>
-                    </thead>
+            <table id="mecc_table" width="100%">
+                <thead>
+                    <tr>
+                        <th ></th>
+                        <th ></th>
+                        <th colspan="5" class="centered border-bottom "></th>
+                        <th colspan="4" class="centered border-bottom  ">{% trans "Session principale" %}</th>
+                        <th colspan="4" class="centered border-bottom border-left-3">{% trans "Session de rattrapage" %}</th>
+                    </tr>
+                    <tr>
+                        <th ></th>
+                        <th class="border-bottom "></th>
+                        <th class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
+                        <th  class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
+                        <th  class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
+                        <th  class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
+                        <th  class="centered border-left-5 border-bottom ">{% trans "" %}</th>
+                        <th  class="centered border-left border-bottom ">S1</th>
+                        <th  class="centered border-left border-bottom ">S2</th>
+                        <th  class="centered border-left border-bottom ">S3</th>
+                        <th  class="centered border-left border-bottom ">S4</th>
+                        <th  class="centered border-left-3 border-bottom ">S1</th>
+                        <th  class="centered border-left border-bottom ">S2</th>
+                        <th  class="centered border-left border-bottom ">S3</th>
+                        <th  class="centered border-left border-bottom ">S4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in "C'EST UN MOYEN DE FAIRE PLEIN DE LIGNES UTRA SIMPLE"  %}
+                    <tr class="hover-row">
+                        <td ><span>
+                                <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
+                                <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
+                            </span>
+                        </td>
+                        <td  class=" border-bottom"> __ {{e}}{{e}} __ </td>
+                        <td  class="centered border-bottom">3</td>
+                        <td  class="centered border-bottom">Responsable</td>
+                        <td  class="centered border-left-3 border-bottom">2</td>
+                        <td  class="centered border-left-3 border-bottom">10</td>
+                        <td  class="centered border-left-5 border-bottom"> ▶</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left-3 border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
 
-                    <tbody class="overflow">
+                    </tr>
 
-                        {% for e in "12345678911234567892123456789"  %}
-                        <tr class="hover-row">
-                            <td width=3%>
-                                <span class="glyphicon glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
-                            </td>
-                            <td width=35% class="border-bottom"> </td>
-                            <td width=3% class="border-bottom">15</td>
-                            <td width=10% class="border-bottom">Responsable</td>
-                            <td width=3% class="border-left-3 border-bottom">2</td>
-                            <td width=3% class="border-left-3 border-bottom">10</td>
-                            <td width=3% class="border-left-5 border-bottom"></td>
-                            <td width=5% class="centered border-left border-bottom">11</td>
-                            <td width=5% class="centered border-left border-bottom">11</td>
-                            <td width=5% class="centered border-left border-bottom">11</td>
-                            <td width=5% class="centered border-left border-bottom">11</td>
-                            <td width=5% class="centered border-left-3 border-bottom">12</td>
-                            <td width=5% class="centered border-left border-bottom">12</td>
-                            <td width=5% class="centered border-left border-bottom">12</td>
-                            <td width=5% class="centered border-left border-bottom">12</td>
+                {% endfor %}
+                </tbody>
+            </table>
 
-                        </tr>
-
-                    {% endfor %}
-
-                    </tbody>
-                </table>
-
-        </div>
 
     </div>
     <div class="footer">
@@ -122,50 +139,35 @@
 
         </div>
 
+
     </div>
-
-    <style media="screen">
-    .small-title{
-        font-size: 0.8em;
+</div>
+{% include "mecctable/modal/structure_object_form.html" %}
+<style media="screen">
+    #mecc_table{
+        width:100%;
     }
-    table {
-
-      height: 100%;
-      width: 100%;
-    }
-    table tbody {
-      /* body takes all the remaining available space */
-      flex: 1 1 auto;
-      display: block;
-      overflow: auto;
-      height: 42vh;
-    }
-    table tbody tr {
-      width: 100%;
-    }
-    table thead,
-    table tbody tr {
-      display: table;
-      table-layout: fixed;
-    }
-
-    </style>
+</style>
 <script type="text/javascript">
-function resizeTable() {
-    var bb = document.getElementsByTagName("tr")[1].offsetWidth;
-    document.getElementsByTagName("thead")[0].style.width = "300px";
-    setTimeout(function(){
-        document.getElementsByTagName("thead")[0].style.width = bb +"px";
-    }, 5)
-};
-resizeTable();
-$( window ).resize(function() {
-    resizeTable();
-});
-$(document).ready(function () {
-    $("#menu-toggle").click(resizeTable());
-});
 
-
+$(document).ready( function () {
+    var table = $('#mecc_table').DataTable({
+        "searching": false,
+        "scrollY": "42vh",
+        "scrollCollapse": true,
+        "paging":   false,
+        "ordering": false,
+        "info":     false,
+        "rowReorder": true
+        });
+        // In order to move row up and down
+        $('.arrow-move').click(function() {
+            var row = $(this).closest('tr');
+            if ($(this).hasClass('glyphicon-arrow-up'))
+                row.prev().before(row);
+            else
+                row.next().after(row);
+});
+} );
 </script>
     {%endblock%}

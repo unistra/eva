@@ -121,10 +121,10 @@ class TrainingEdit(UpdateView):
         context['institutes'] = Institute.objects.all().order_by('label')
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
-        context['object'] = self.object
         context['resp_form'] = self.object.resp_formations.all()
-        context['can_edit'] = (self.request.environ['allowed']
-                               or self.request.user.is_superuser)
+        context['can_edit'] = (
+            self.request.environ['allowed'] and
+            self.object.input_opening[0] != 1) or self.request.user.is_superuser
 
         return context
 
@@ -209,8 +209,9 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     data = {}
     recovered = request.session.pop('recovered', False)
     if recovered:
-        data['rec'] = "Le traitement de récupération globale des spécificités de l'année précédente est terminé.<br>\
-<u>NB</u> : sans écrasement des spécificités déjà saisies pour la nouvelle année."
+        data['rec'] = "Le traitement de récupération globale des spécificités \
+de l'année précédente est terminé.<br><u>NB</u> : sans écrasement des \
+spécificités déjà saisies pour la nouvelle année."
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
@@ -243,7 +244,8 @@ def recover_everything(request, training_id):
     except Training.DoesNotExist:
         return HttpResponseRedirect(reverse('training:edit_rules',
                                     args=(training_id,)))
-     # Recover old additional paragraph if there isn't during current year
+
+    # Recover old additional paragraph if there isn't during current year
     current_additional = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year,
         training=training)
