@@ -1,10 +1,4 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %}  {% load groups %}
- {% block page-header %}
-
-
- {% trans 'Fiche Formation' %}
-  {% endblock %}
-  {% block breadcrumb %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
     <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
@@ -20,8 +14,8 @@
 </ol>
 {% endblock %} {% block app_content %}
 
- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
- <ul class="nav nav-tabs" style="margin-bottom:1em">
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
+<ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
@@ -48,75 +42,76 @@
             </div>
         </div>
     </div>
-
-    <div >
+    <div>
         <div class="blue">
-
             {% trans "Racine" %}<br>
-            <span class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true"></span>
-            <span class="hand glyphicon glyphicon-circle-arrow-left blue no-border green" aria-hidden="true"></span>
-
+            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj"></a>
+            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
-            <table id="mecc_table" width="100%">
-                <thead>
-                    <tr>
-                        <th ></th>
-                        <th ></th>
-                        <th colspan="5" class="centered border-bottom "></th>
-                        <th colspan="4" class="centered border-bottom  ">{% trans "Session principale" %}</th>
-                        <th colspan="4" class="centered border-bottom border-left-3">{% trans "Session de rattrapage" %}</th>
-                    </tr>
-                    <tr>
-                        <th ></th>
-                        <th class="border-bottom "></th>
-                        <th class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
-                        <th  class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
-                        <th  class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
-                        <th  class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
-                        <th  class="centered border-left-5 border-bottom ">{% trans "" %}</th>
-                        <th  class="centered border-left border-bottom ">S1</th>
-                        <th  class="centered border-left border-bottom ">S2</th>
-                        <th  class="centered border-left border-bottom ">S3</th>
-                        <th  class="centered border-left border-bottom ">S4</th>
-                        <th  class="centered border-left-3 border-bottom ">S1</th>
-                        <th  class="centered border-left border-bottom ">S2</th>
-                        <th  class="centered border-left border-bottom ">S3</th>
-                        <th  class="centered border-left border-bottom ">S4</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for e in "C'EST UN MOYEN DE FAIRE PLEIN DE LIGNES UTRA SIMPLE"  %}
-                    <tr class="hover-row">
-                        <td ><span>
+        <table id="mecc_table" width="100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th colspan="5"></th>
+                    <th colspan="5" class="centered border-bottom "></th>
+                    <th colspan="4" class="centered border-bottom  ">{% trans "Session principale" %}</th>
+                    <th colspan="4" class="centered border-bottom border-left-3">{% trans "Session de rattrapage" %}</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th class="border-bottom "></th>
+                    <th class="border-bottom "></th>
+                    <th class="border-bottom "></th>
+                    <th class="border-bottom "></th>
+                    <th class="border-bottom "></th>
+                    <th class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
+                    <th class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
+                    <th class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
+                    <th class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
+                    <th class="centered border-left-5 border-bottom ">{% trans "" %}</th>
+                    <th class="centered border-left border-bottom ">S1</th>
+                    <th class="centered border-left border-bottom ">S2</th>
+                    <th class="centered border-left border-bottom ">S3</th>
+                    <th class="centered border-left border-bottom ">S4</th>
+                    <th class="centered border-left-3 border-bottom ">S1</th>
+                    <th class="centered border-left border-bottom ">S2</th>
+                    <th class="centered border-left border-bottom ">S3</th>
+                    <th class="centered border-left border-bottom ">S4</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in "PLEIN DE LIGNES POUR TESTER LE RENDU DU TABLEAU " %}
+                <tr class="hover-row">
+                    <td><span>
                                 <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
-                                <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
-                            </span>
-                        </td>
-                        <td  class=" border-bottom"> __ {{e}}{{e}} __ </td>
-                        <td  class="centered border-bottom">3</td>
-                        <td  class="centered border-bottom">Responsable</td>
-                        <td  class="centered border-left-3 border-bottom">2</td>
-                        <td  class="centered border-left-3 border-bottom">10</td>
-                        <td  class="centered border-left-5 border-bottom"> ▶</td>
-                        <td class="centered border-left border-bottom">11</td>
-                        <td class="centered border-left border-bottom">11</td>
-                        <td class="centered border-left border-bottom">11</td>
-                        <td class="centered border-left border-bottom">11</td>
-                        <td class="centered border-left-3 border-bottom">12</td>
-                        <td class="centered border-left border-bottom">12</td>
-                        <td class="centered border-left border-bottom">12</td>
-                        <td class="centered border-left border-bottom">12</td>
-
-                    </tr>
-
+                        <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
+                        </span>
+                    </td>
+                    <td class=" border-bottom"> __ {{e}} __ </td>
+                    <td class="centered border-bottom"><span class="glyphicon glyphicon-plus blue"></span></td>
+                    <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green"></span></td>
+                    <td class="centered border-bottom"><span class="glyphicon glyphicon glyphicon-remove-sign red"></span></td>
+                    <td class="centered border-bottom">Mut</td>
+                    <td class="centered border-bottom">3</td>
+                    <td class="centered border-bottom">Responsable</td>
+                    <td class="centered border-left-3 border-bottom">2</td>
+                    <td class="centered border-left-3 border-bottom">10</td>
+                    <td class="centered border-left-5 border-bottom"> ▶</td>
+                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left-3 border-bottom">12</td>
+                    <td class="centered border-left border-bottom">12</td>
+                    <td class="centered border-left border-bottom">12</td>
+                    <td class="centered border-left border-bottom">12</td>
+                </tr>
                 {% endfor %}
-                </tbody>
-            </table>
-
+            </tbody>
+        </table>
 
     </div>
     <div class="footer">
-
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
             <label>
             {% trans 'Etat de saisie du tableau MECC : '%}
@@ -127,7 +122,6 @@
             <label class="margin-left1">
         {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
     </label>
-
         </div>
         <div class="buttons_list">
             <br>
@@ -136,29 +130,25 @@
             <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Effectuer les <br>CONTRÔLES DE COHÉRENCE" %}</a>
             <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
             <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
-
         </div>
-
-
+        {% include "mecctable/modal/structure_object_form.html" %}
     </div>
 </div>
-{% include "mecctable/modal/structure_object_form.html" %}
 <style media="screen">
-    #mecc_table{
-        width:100%;
+    #mecc_table {
+        width: 100%;
     }
 </style>
 <script type="text/javascript">
-
-$(document).ready( function () {
-    var table = $('#mecc_table').DataTable({
-        "searching": false,
-        "scrollY": "42vh",
-        "scrollCollapse": true,
-        "paging":   false,
-        "ordering": false,
-        "info":     false,
-        "rowReorder": true
+    $(document).ready(function() {
+        var table = $('#mecc_table').DataTable({
+            "searching": false,
+            "scrollY": "42vh",
+            "scrollCollapse": true,
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "rowReorder": true
         });
         // In order to move row up and down
         $('.arrow-move').click(function() {
@@ -167,7 +157,7 @@ $(document).ready( function () {
                 row.prev().before(row);
             else
                 row.next().after(row);
-});
-} );
+        });
+    });
 </script>
-    {%endblock%}
+{%endblock%}

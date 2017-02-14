@@ -234,7 +234,6 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
         #      e.long_label.upper().startswith('CATALOGUE'))
     ]
 
-
     return render(request, template, data)
 
 
@@ -277,6 +276,7 @@ class RuleDelete(DeleteView):
         context['additional'] = AdditionalParagraph.objects.filter(
             rule_gen_id=rule.n_rule, code_year=rule.code_year)
         return context
+
 
 @login_required
 def gen_pdf(request, id_degreetype, year=None):

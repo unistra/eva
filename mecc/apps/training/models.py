@@ -77,6 +77,11 @@ class Training(models.Model):
         return self.label
 
     @property
+    def supply_cmp_label(self):
+        a = self.institutes.all().get(code=self.supply_cmp).label
+        return a
+
+    @property
     def list_respform_id(self):
         return [e.id for e in self.resp_formations.all()]
 

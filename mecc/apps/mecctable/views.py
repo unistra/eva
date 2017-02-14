@@ -28,6 +28,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data = {}
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(owner_training_id=id)
+    data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
     data['structure_objs'] = structure_obj
     return render(request, template, data)

@@ -1,6 +1,6 @@
 {% load i18n %}
-<div class=" " role="dialog" >
-    <div class="modal-dialog">
+<div class="modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -10,15 +10,34 @@
                 <h4 class="title-modal">
                     {% trans "Objet de la structure d'enseignement" %}
                 </h4>
+                <div class="grey">
+                    <div class="">
+                        {% trans "ID auto : " %}
+                        {{next_id}}
+                    </div>
+                    <div class="">
+                        {% trans "Année universitaire : " %}
+                        {{request.display.current_year}}
+                    </div>
+                    <div class="">
+                        {% trans "Formation propriétaire : " %}
+                        {{training.label}}
+                    </div>
+                    <div class="">
+                        {% trans "Composante porteuse : " %}
+                        {{training.supply_cmp_label}}
+                    </div>
+
+                </div>
             </div>
             <div class="modal-body" style="padding-bottom:0">
+            </div>
                 <form method="post"  class="">
                     <div class="modal-footer">
                         <input type="submit" name="add" value="Valider" class="btn btn-primary" id="submit-id-add">
                         <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
                 </form>
                 </div>
-            </div>
         </div>
     </div>
 </div>
