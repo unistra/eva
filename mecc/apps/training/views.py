@@ -124,7 +124,8 @@ class TrainingEdit(UpdateView):
         context['resp_form'] = self.object.resp_formations.all()
         context['can_edit'] = (
             self.request.environ['allowed'] and
-            self.object.input_opening[0] != 1) or self.request.user.is_superuser
+            self.object.input_opening[0] not in [1]
+        ) or self.request.user.is_superuser
 
         return context
 
