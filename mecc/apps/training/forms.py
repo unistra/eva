@@ -82,7 +82,6 @@ class SpecificParagraphDerogForm(forms.ModelForm):
         return self.cleaned_data
 
 
-
 class RespTrainingForm(forms.ModelForm):
     class Meta:
         model = Training
@@ -183,7 +182,7 @@ moins une composante porteuse."))
                         'session_type',
                         Div(
                             HTML("""
-                                <label> &nbsp; </label>
+                                <label> &nbsp;</label>
                                 """),
                             Div(
                                 'ref_cpa_rof',

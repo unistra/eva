@@ -1,5 +1,7 @@
 {% load i18n %}
-<div class="modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
+{% load crispy_forms_tags %}
+
+<div class="fade modal " id="form-obj" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
@@ -12,32 +14,39 @@
                 </h4>
                 <div class="grey">
                     <div class="">
-                        {% trans "ID auto : " %}
-                        {{next_id}}
+                        {% trans "ID auto : " %} {{next_id}}
                     </div>
                     <div class="">
-                        {% trans "Année universitaire : " %}
-                        {{request.display.current_year}}
+                        {% trans "Année universitaire : " %} {{request.display.current_year}}
                     </div>
                     <div class="">
-                        {% trans "Formation propriétaire : " %}
-                        {{training.label}}
+                        {% trans "Formation propriétaire : " %} {{training.label}}
                     </div>
                     <div class="">
-                        {% trans "Composante porteuse : " %}
-                        {{training.supply_cmp_label}}
+                        {% trans "Composante porteuse : " %} {{training.supply_cmp_label}}
                     </div>
 
                 </div>
             </div>
-            <div class="modal-body" style="padding-bottom:0">
-            </div>
-                <form method="post"  class="">
-                    <div class="modal-footer">
-                        <input type="submit" name="add" value="Valider" class="btn btn-primary" id="submit-id-add">
-                        <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+            <div class="modal-body">
+                <form class="">
+                    <div class="disp-flex ">
+                            {% crispy form %}
+                    </div>
                 </form>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" name="add" value="Valider" class="btn btn-primary" id="submit-id-add">
+                <input type="button" name="cancel" value="Annuler" class="btn" id="button-id-cancel" data-dismiss="modal">
+            </div>
         </div>
     </div>
 </div>
+
+<style media="screen">
+    .boxed{
+        margin: 0 1em 1em 1em;
+        border: 1px solid blue;
+
+    }
+</style>

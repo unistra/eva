@@ -31,6 +31,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
     data['structure_objs'] = structure_obj
+    data['form'] = StructureObjectForm
     return render(request, template, data)
 
 

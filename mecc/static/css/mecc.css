@@ -497,26 +497,7 @@ label {
     margin-bottom: 0.5em;
     padding-top: 0.5em;
 }
-@media(max-width:992px) {
-    label[for=id_is_in_use] {
-        position: absolute;
-        bottom: 2.65em;
-        padding-bottom: 1em;
-        display: block;
-        left: 12.5em;
-    }
-}
-@media(max-width:775px) {
-    .modal-90 {
-        width: 100%!important;
-    }
-}
-@media(min-width:992px) {
-    label[for=id_is_in_use] {
-        position: absolute;
-        top: -0.6em;
-    }
-}
+
 #id_is_year_init {
     background-color: #fff;
     border: 0px;
@@ -750,6 +731,7 @@ li:hover .sub-level, li:focus {
         padding-right: 0;
         padding-left: 4em;
     }
+
 }
 
 /* With screen > 768px */
