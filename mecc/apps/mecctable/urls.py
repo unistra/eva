@@ -3,11 +3,14 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     StructureObjectDetailView, StructureObjectUpdateView, \
     ObjectsLinkListView, ObjectsLinkCreateView, ObjectsLinkDetailView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
-    ExamUpdateView, mecctable_home
+    ExamUpdateView, mecctable_home, mecctable_update
 
 urlpatterns = [
     url(r'^training/(?P<id>\w+)/$', mecctable_home,
         name='mecctable_home'),
+    url(r'^mecctable_update/(?P<training_id>\S+)$', mecctable_update,
+        name='mecctable_update'),
+
     # urls for StructureObject
     url(r'^structureobject/$',
         StructureObjectListView.as_view(),

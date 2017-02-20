@@ -59,7 +59,7 @@ class StructureObject(models.Model):
         choices=PERIOD_CHOICE, max_length=1)
     ECTS_credit = models.IntegerField(_("Crédits ECTS"))
     RESPENS_id = models.CharField(
-        _("ID du responsable d'enseignement"), max_length=85)
+        _("Responsable d'enseignement"), max_length=85)
     mutual = models.BooleanField(_("Mutualisé"))
 
 # ROF prefixed are synchronized => no input for them
