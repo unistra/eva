@@ -8,7 +8,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
 urlpatterns = [
     url(r'^training/(?P<id>\w+)/$', mecctable_home,
         name='mecctable_home'),
-    url(r'^mecctable_update/(?P<training_id>\S+)$', mecctable_update,
+    url(r'^mecctable_update/$',
+        mecctable_update,
         name='mecctable_update'),
 
     # urls for StructureObject

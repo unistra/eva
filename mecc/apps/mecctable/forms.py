@@ -16,6 +16,7 @@ class StructureObjectForm(forms.ModelForm):
     )
     period = forms.ChoiceField(
         widget=forms.RadioSelect,
+        initial='I',
         choices=[
             ('I', _("Semestre impair")),
             ('P', _("Semestre pair")),
@@ -24,10 +25,10 @@ class StructureObjectForm(forms.ModelForm):
     )
     session = forms.ChoiceField(
         widget=forms.RadioSelect,
+        initial='1',
         choices=[
-            ('I', _("Semestre impair")),
-            ('P', _("Semestre pair")),
-            ('A', _("Année")),
+            ('1', _('Session unique')),
+            ('2', _('2 sessions')),
         ], label=_("Sessions")
     )
 

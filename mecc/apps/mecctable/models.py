@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class StructureObject(models.Model):
@@ -34,14 +35,15 @@ class StructureObject(models.Model):
     code_year = models.IntegerField(
         _("Code année"), unique=False)
     auto_id = models.IntegerField(
-        _('ID automatique de l\'objet'), unique=True)
+        _('ID automatique de l\'objet'), blank=True)
     nature = models.CharField(
         verbose_name=_('Type d\'objet'), blank=False,
         choices=TYPE_CHOICE, max_length=2)
     owner_training_id = models.IntegerField(
         _('ID de la formation propriétaire'))
-    cmp_supply_id = models.IntegerField(
-        _('ID de la composante porteuse de la formation propriétaire'))
+    cmp_supply_id = models.CharField(
+        _('ID de la composante porteuse de la formation propriétaire'),
+        max_length=3)
     regime = models.CharField(
         verbose_name=_(
             'Régime de l’objet (hérité de la formation propriétaire)'),
@@ -72,6 +74,15 @@ class StructureObject(models.Model):
         _("Programme porteur de l'objet ROF"), max_length=20)
 
     ref_si_scol = models.CharField(_("Référence SI Scolarité"), max_length=20)
+
+    def save(self, *args, **kwargs):
+        if self.auto_id in ['', ' ', 0, None]:
+                try:
+                    self.auto_id = StructureObject.objects.all(
+                        ).latest('id').id + 1
+                except ObjectDoesNotExist:
+                    self.auto_id = 1
+                super(StructureObject, self).save(*args, **kwargs)
 
 
 class ObjectsLink(models.Model):
