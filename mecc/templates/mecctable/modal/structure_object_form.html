@@ -1,7 +1,6 @@
-{% load i18n %}
-{% load crispy_forms_tags %}
+{% load i18n %} {% load crispy_forms_tags %}
 
-<div class="" id="form-obj" role="dialog" style="z-index: 1400;">
+<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
@@ -30,84 +29,101 @@
             </div>
             <form class="">
 
-            <div class="modal-body">
+                <div class="modal-body">
                     <div class="flex-container ">
-                            {% crispy form %}
+                        {% crispy form %}
                     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="updateStructure(0, 0, 1)">{% trans "Valider" %}</button>
-                <button type="button" class="btn " id="button-id-cancel" data-dismiss="modal" >{% trans "Annuler" %}</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateStructure(0, 0)" id="submit-obj">{% trans "Valider" %}</button>
+                    <button type="button" class="btn " id="button-id-cancel" data-dismiss="modal">{% trans "Annuler" %}</button>
 
-            </div>
-        </form>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-// function in order to
-$.fn.serializeObject = function () {
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function () {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
+function fillForm(_id) {
+    console.log(_id);
 };
+// remove stuff easyly
+Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+}
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+        if(this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+}
+    // function in order to serialize
+    $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 
-    function updateStructure(id_parent, id_child){
-        var data = JSON.stringify( $("form").serializeObject() ); //
-        console.log(data);
-
+    function updateStructure(id_parent, id_child) {
+        var data = JSON.stringify($("form").serializeObject()); //
 
         $.ajax({
-          url: "{% url 'mecctable:mecctable_update' %}",
-          type: "POST",
-          data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            training_id: '{{ training.id }}',
-            id_child : id_child,
-            id_parent: id_parent,
-            formdata: data,
+            url: "{% url 'mecctable:mecctable_update' %}",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                training_id: '{{ training.id }}',
+                id_child: id_child,
+                id_parent: id_parent,
+                formdata: data,
 
-          },
-          success: function(data) {
-            if (data.success){
-              $('#message').html("<div class='alert alert-danger fade in'>" +
-                  "</span> <a class='close' data-dismiss='alert' aria-label='close'>&times;</a>" +
-                  data.success + "</div>");
-              document.getElementById('message').style.display = '';
+            },
+            success: function(data) {
+                // Next three lines are used to dismiss modal
+                document.getElementById("form-obj").className = "modal fade"
+                document.body.className = ""
+                document.getElementsByClassName("modal-backdrop").remove();
+
+                window.location.reload();
+
             }
-          }
         });
     }
 </script>
 
 <style media="screen">
-    .boxed{
+    .boxed {
         border: 1px solid #004A87;
         margin: 1em 0 1em 0;
     }
-    .centerme{
+
+    .centerme {
         display: -webkit-flex;
         display: flex;
-        -webkit-flex-direction: column /* works with row or column */
-        flex-direction: column;;
+        -webkit-flex-direction: column/* works with row or column */
+        flex-direction: column;
+        ;
         -webkit-justify-content: space-around;
         justify-content: space-around;
         align-items: baseline!important;
         -webkit-align-items: baseline!important;
     }
+
     .centerme * {
         flex: 1 0 0;
     }
+
     .structure-form-left .x .form-group {
         display: flex;
     }
@@ -125,46 +141,56 @@ $.fn.serializeObject = function () {
         flex-grow: 2;
         margin-right: 2em;
     }
-    .structure-form-left .x>:first-child{
+
+    .structure-form-left .x>:first-child {
         flex-grow: 6
     }
-    .structure-form-left .x>:not(:first-child){
+
+    .structure-form-left .x>:not(:first-child) {
         flex-grow: 1
     }
-    .structure-form-left>*{
+
+    .structure-form-left>* {
         display: flex;
-        align-self:center;
+        align-self: center;
         -webkit-align-items: center;
     }
-    .y{
+
+    .y {
         align-items: baseline!important;
     }
-    .y>:first-child{
+
+    .y>:first-child {
         display: flex;
         flex-grow: 6;
     }
-    .y>:not(:first-child){
+
+    .y>:not(:first-child) {
         display: flex;
         flex-grow: 1;
     }
-    .y>.form-group>:first-child{
+
+    .y>.form-group>:first-child {
         flex-grow: 2;
         min-width: 10em;
         max-width: 10em;
         width: 10em;
     }
-    .y>.form-group>:not(:first-child){
+
+    .y>.form-group>:not(:first-child) {
         flex-grow: 2;
         margin-right: 2em;
     }
-    #div_id_ECTS_credit>:not(:first-child){
+
+    #div_id_ECTS_credit>:not(:first-child) {
         flex-grow: 2;
     }
 
-    #div_id_RESPENS_id{
+    #div_id_RESPENS_id {
         flex-grow: 3;
     }
-    .mutual>:first-child{
+
+    .mutual>:first-child {
         max-width: 10em;
     }
 </style>

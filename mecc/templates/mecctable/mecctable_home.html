@@ -43,6 +43,7 @@
         </div>
     </div>
     <div>
+
         <div class="blue">
             {% trans "Racine" %}<br>
             <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj"></a>
@@ -80,32 +81,43 @@
                 </tr>
             </thead>
             <tbody>
-                {% for e in "PLEIN DE LIGNES POUR TESTER LE RENDU DU TABLEAU " %}
-                <tr class="hover-row">
-                    <td>
-                        <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
-                        <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
+                {% for e in structure_objs %}
+                    {% for l in object_link  %}
+                        {% if l.id_child == e.id %}
+                    <tr class="hover-row">
+                        <td>
+                            <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
+                            <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
 
-                    </td>
-                    <td class=" border-bottom"> ______________________________________ {{e}} ______________________________________ </td>
-                    <td class="centered border-bottom"><span class="glyphicon glyphicon-plus blue"></span></td>
-                    <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green"></span></td>
-                    <td class="centered border-bottom"><span class="glyphicon glyphicon glyphicon-remove-sign red"></span></td>
-                    <td class="centered border-bottom">Mut</td>
-                    <td class="centered border-bottom">3</td>
-                    <td class="centered border-bottom">Responsable</td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'></td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'></td>
-                    <td class="centered border-left-5 border-bottom"> ▶</td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left-3 border-bottom">12</td>
-                    <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">12</td>
-                </tr>
+                        </td>
+                        <td class=" border-bottom">  {{e.nature}} :
+
+                            <a data-toggle="modal" aria-hidden="true" data-target="#form-obj" onclick="update_content({{e.id}}, {{e}})">{{e.label}}</a>
+                        </td>
+                        <td class="centered border-bottom">
+                            <span class="glyphicon glyphicon-plus blue hand"
+                                onclick="fillForm({{e.id}})">
+                            </span></td>
+                        <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green hand" ></span></td>
+                        <td class="centered border-bottom"><span class="glyphicon glyphicon glyphicon-remove-sign red hand"></span></td>
+                        <td class="centered border-bottom">{{e.mutual}}</td>
+                        <td class="centered border-bottom">{{e.ECTS_credit}}</td>
+                        <td class="centered border-bottom">{{e.RESPENS_id}}</td>
+                        <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
+                        <td class="centered border-left-3 border-bottom" contenteditable='true'></td>
+                        <td class="centered border-left-5 border-bottom"> ▶</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left border-bottom">11</td>
+                        <td class="centered border-left-3 border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
+                        <td class="centered border-left border-bottom">12</td>
+                    </tr>
+                    {% endif %}
+
+                {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
@@ -141,6 +153,9 @@
 </style>
 <script type="text/javascript">
     $(document).ready(function() {
+
+
+
         var table = $('#mecc_table').DataTable({
             "searching": false,
             "scrollY": "42vh",

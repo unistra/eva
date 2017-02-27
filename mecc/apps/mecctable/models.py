@@ -59,14 +59,15 @@ class StructureObject(models.Model):
     period = models.CharField(
         verbose_name=_("Période de l'objet"), blank=False,
         choices=PERIOD_CHOICE, max_length=1)
-    ECTS_credit = models.IntegerField(_("Crédits ECTS"))
+    ECTS_credit = models.IntegerField(_("Crédits ECTS"), blank=True, null=True)
     RESPENS_id = models.CharField(
         _("Responsable d'enseignement"), max_length=85)
     mutual = models.BooleanField(_("Mutualisé"))
 
 # ROF prefixed are synchronized => no input for them
     ROF_ref = models.CharField(_("Référence de l'objet ROF"), max_length=20)
-    ROF_code_year = models.IntegerField(_("Année de l'objet ROF"))
+    ROF_code_year = models.IntegerField(
+        _("Année de l'objet ROF"), blank=True, null=True)
     ROF_nature = models.CharField(
         verbose_name=_("Type de l'objet ROF"), choices=TYPE_CHOICE,
         max_length=2)
@@ -97,17 +98,17 @@ class ObjectsLink(models.Model):
     id_child = models.IntegerField(_("ID objet fils"))
     order_in_child = models.IntegerField(
         _("Numéro d'ordre fils (au sein du père)"))
-    id_original_training_child = models.IntegerField(
+    n_train_child = models.IntegerField(
         _("ID interne de la formation d’origine du fils"))
     nature_child = models.CharField(
         verbose_name=_("Nature du fils"), blank=False,
         choices=NATURE_CHOICE, max_length=3)
     coefficient = models.DecimalField(
         verbose_name=_("Coefficient de l’objet (au sein de ce père)"),
-        max_digits=2, decimal_places=1)
+        max_digits=2, decimal_places=1, null=True)
     eliminatory_grade = models.IntegerField(
         _("Note éliminatoire sur cet objet (au sein de ce père)"),
-        default=None)
+        default=None, null=True)
 
 
 class Exam(models.Model):
