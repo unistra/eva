@@ -3,7 +3,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     StructureObjectDetailView, StructureObjectUpdateView, \
     ObjectsLinkListView, ObjectsLinkCreateView, ObjectsLinkDetailView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
-    ExamUpdateView, mecctable_home, mecctable_update
+    ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
+    get_stuct_obj_details
 
 urlpatterns = [
     url(r'^training/(?P<id>\w+)/$', mecctable_home,
@@ -11,6 +12,9 @@ urlpatterns = [
     url(r'^mecctable_update/$',
         mecctable_update,
         name='mecctable_update'),
+    url(r'^get_stuct_obj_details/$',
+        get_stuct_obj_details,
+        name='get_stuct_obj_details'),
 
     # urls for StructureObject
     url(r'^structureobject/$',
@@ -19,12 +23,15 @@ urlpatterns = [
     url(r'^structureobject/create/$',
         StructureObjectCreateView.as_view(),
         name='mecctable_structureobject_create'),
-    url(r'^structureobject/detail/(?P<id>\S+)/$',
+    url(r'^structureobject/detail/(?P<id>\d+)/$',
         StructureObjectDetailView.as_view(),
         name='mecctable_structureobject_detail'),
-    url(r'^structureobject/update/(?P<id>\S+)/$',
+    url(r'^structureobject/update/(?P<id>\d+)/$',
         StructureObjectUpdateView.as_view(),
         name='mecctable_structureobject_update'),
+    url(r'^structureobject/remove/(?P<id>\d+)$',
+        remove_object,
+        name='remove_structureobject'),
 
     # urls for ObjectsLink
     url(r'^objectslink/$', ObjectsLinkListView.as_view(),

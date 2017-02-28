@@ -108,7 +108,7 @@ class ObjectsLink(models.Model):
         max_digits=2, decimal_places=1, null=True)
     eliminatory_grade = models.IntegerField(
         _("Note éliminatoire sur cet objet (au sein de ce père)"),
-        default=None, null=True)
+        default=None)
 
 
 class Exam(models.Model):

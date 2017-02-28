@@ -49,6 +49,7 @@
             <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj"></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
+        {% if structure_objs|length >  0 %}
         <table id="mecc_table" width="100%">
             <thead>
                 <tr>
@@ -84,28 +85,34 @@
                 {% for e in structure_objs %}
                     {% for l in object_link  %}
                         {% if l.id_child == e.id %}
-                    <tr class="hover-row">
+                    <tr class="hover-row parent-{{l.id_parent}}">
                         <td>
-                            <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
+
+                            <div style="width:2.75em;">
+                            <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true" ></span>
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
+                            </div>
 
                         </td>
                         <td class=" border-bottom">  {{e.nature}} :
 
-                            <a data-toggle="modal" aria-hidden="true" data-target="#form-obj" onclick="update_content({{e.id}}, {{e}})">{{e.label}}</a>
+                            <a data-toggle="modal" aria-hidden="true" data-target="#form-obj"
+                                onclick="update_content({{e.id}})" class="hand">{{e.label}}</a>
                         </td>
                         <td class="centered border-bottom">
                             <span class="glyphicon glyphicon-plus blue hand"
                                 onclick="fillForm({{e.id}})">
                             </span></td>
                         <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green hand" ></span></td>
-                        <td class="centered border-bottom"><span class="glyphicon glyphicon glyphicon-remove-sign red hand"></span></td>
+                        <td class="centered border-bottom">
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        </td>
                         <td class="centered border-bottom">{{e.mutual}}</td>
                         <td class="centered border-bottom">{{e.ECTS_credit}}</td>
                         <td class="centered border-bottom">{{e.RESPENS_id}}</td>
                         <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
                         <td class="centered border-left-3 border-bottom" contenteditable='true'></td>
-                        <td class="centered border-left-5 border-bottom"> ▶</td>
+                        <td class="centered border-left-5 border-bottom"> ▶ </td>
                         <td class="centered border-left border-bottom">11</td>
                         <td class="centered border-left border-bottom">11</td>
                         <td class="centered border-left border-bottom">11</td>
@@ -121,7 +128,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        {% endif %}
     </div>
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
@@ -144,6 +151,7 @@
             <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
         </div>
         {% include "mecctable/modal/structure_object_form.html" %}
+        {% include "generic/modal_confirm_delete.html" %}
     </div>
 </div>
 <style media="screen">
@@ -152,9 +160,33 @@
     }
 </style>
 <script type="text/javascript">
+function owner_training_id(_id){
+    $.ajax({
+        url: "{% url 'mecctable:get_stuct_obj_details' %}",
+        type: "GET",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            _id: _id,
+        },
+        success: function(data) {
+            console.log("hola");
+        }
+    });
+}
+
+function ask_delete(id_obj, label){
+        document.getElementById('type').innerHTML = "cet objet";
+        document.getElementById('to_del').innerHTML = label;
+        document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj
+}
     $(document).ready(function() {
+        function get_row(where, row){
+            if (where === "up")
+                row.prev().before(row);
+            if (where === "down")
+                row.next().after(row);
 
-
+        }
 
         var table = $('#mecc_table').DataTable({
             "searching": false,
@@ -167,9 +199,14 @@
         });
         // In order to move row up and down
         $('.arrow-move').click(function() {
-            var row = $(this).closest('tr');
-            if ($(this).hasClass('glyphicon-arrow-up'))
+            let row = $(this).closest('tr');
+            let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
+            console.log(parent_id);
+            if ($(this).hasClass('glyphicon-arrow-up')){
+                parent_id_row_prev = row.prev().attr('class').split("parent-")[1].split(" ")[0];
+                console.log(parent_id_row_prev);
                 row.prev().before(row);
+            }
             else
                 row.next().after(row);
         });
