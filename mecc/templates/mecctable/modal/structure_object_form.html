@@ -77,6 +77,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 
     function updateStructure(id_parent, id_child) {
         var data = JSON.stringify($("form").serializeObject()); //
+        console.log(data);
 
         $.ajax({
             url: "{% url 'mecctable:mecctable_update' %}",
@@ -90,6 +91,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 
             },
             success: function(data) {
+                console.log('requested');
                 // Next three lines are used to dismiss modal
                 document.getElementById("form-obj").className = "modal fade"
                 document.body.className = ""
@@ -99,6 +101,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 
             }
         });
+        console.log('END');
     }
 </script>
 

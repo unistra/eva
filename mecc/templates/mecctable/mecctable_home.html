@@ -97,7 +97,7 @@
                         <td class=" border-bottom">  {{e.nature}} :
 
                             <a data-toggle="modal" aria-hidden="true" data-target="#form-obj"
-                                onclick="update_content({{e.id}})" class="hand">{{e.label}}</a>
+                                onclick="get_struct_details({{e.id}})" class="hand">{{e.label}}</a>
                         </td>
                         <td class="centered border-bottom">
                             <span class="glyphicon glyphicon-plus blue hand"
@@ -160,12 +160,12 @@
     }
 </style>
 <script type="text/javascript">
-function owner_training_id(_id){
+function get_struct_details(_id){
+    console.log(_id);
     $.ajax({
         url: "{% url 'mecctable:get_stuct_obj_details' %}",
         type: "GET",
         data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
             _id: _id,
         },
         success: function(data) {

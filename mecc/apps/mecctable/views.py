@@ -12,6 +12,22 @@ import json
 
 @is_ajax_request
 def get_stuct_obj_details(request):
+    struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
+    # nature = struct_obj.nature
+    # regime = struct_obj.regime
+    # session = struct_obj.session
+    # label = struct_obj.label
+    # is_in_use = struct_obj.is_in_use
+    # period = struct_obj.period
+    # ECTS_credit = struct_obj.ECTS_credit
+    # RESPENS_id = struct_obj.RESPENS_id
+    # mutual = struct_obj.mutual
+    # ROF_ref = struct_obj.ROF_ref
+    # ROF_code_year = struct_obj.ROF_code_year
+    # ROF_nature = struct_obj.ROF_nature
+    # ROF_supply_program = struct_obj.ROF_supply_program
+    # ref_si_scol = struct_obj.ref_si_scol
+
     json = {}
     return JsonResponse(json)
 

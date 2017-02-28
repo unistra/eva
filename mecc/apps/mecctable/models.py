@@ -61,20 +61,25 @@ class StructureObject(models.Model):
         choices=PERIOD_CHOICE, max_length=1)
     ECTS_credit = models.IntegerField(_("Crédits ECTS"), blank=True, null=True)
     RESPENS_id = models.CharField(
-        _("Responsable d'enseignement"), max_length=85)
+        _("Responsable d'enseignement"), max_length=85, blank=True, null=True)
     mutual = models.BooleanField(_("Mutualisé"))
 
 # ROF prefixed are synchronized => no input for them
-    ROF_ref = models.CharField(_("Référence de l'objet ROF"), max_length=20)
+    ROF_ref = models.CharField(_(
+        "Référence de l'objet ROF"), max_length=20,
+        null=True, blank=True)
     ROF_code_year = models.IntegerField(
         _("Année de l'objet ROF"), blank=True, null=True)
     ROF_nature = models.CharField(
         verbose_name=_("Type de l'objet ROF"), choices=TYPE_CHOICE,
-        max_length=2)
+        max_length=2, null=True, blank=True)
     ROF_supply_program = models.CharField(
-        _("Programme porteur de l'objet ROF"), max_length=20)
+        _("Programme porteur de l'objet ROF"),
+        max_length=20, null=True, blank=True)
 
-    ref_si_scol = models.CharField(_("Référence SI Scolarité"), max_length=20)
+    ref_si_scol = models.CharField(
+        _("Référence SI Scolarité"), max_length=20,
+        null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.auto_id in ['', ' ', 0, None]:
