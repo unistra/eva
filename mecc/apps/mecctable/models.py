@@ -113,7 +113,7 @@ class ObjectsLink(models.Model):
         max_digits=2, decimal_places=1, null=True)
     eliminatory_grade = models.IntegerField(
         _("Note éliminatoire sur cet objet (au sein de ce père)"),
-        default=None)
+        default=None, null=True)
 
 
 class Exam(models.Model):
@@ -170,6 +170,6 @@ class Exam(models.Model):
         verbose_name=_("Coefficient de l'épreuve"),
         max_digits=2, decimal_places=1)
     eliminatory_grade = models.IntegerField(
-        _("Note éliminatoire de l'épreuve"))
+        _("Note éliminatoire de l'épreuve"), null=True)
     is_session_2 = models.BooleanField(_("Témoin Report session 2"))
     threshold_session_2 = models.IntegerField(_("Seuil de report session 2"))
