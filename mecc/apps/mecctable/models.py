@@ -9,12 +9,12 @@ class StructureObject(models.Model):
     """
     TYPE_CHOICE = [
         ('SE', _('Semestre')),
-        ('OP', _('Option')),
-        ('LI', _('Liste')),
         ('UE', _('UE')),
         ('EC', _('Élément constitutif')),
         ('ST', _('Stage')),
-        ('PT', _('Projet tutoré')),
+        ('PT', _('Projet tuteuré')),
+        ('OP', _('Option')),
+        ('LI', _('Liste')),
     ]
     REGIME_CHOICE = [
         ('E', _('ECI')),

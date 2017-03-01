@@ -1,6 +1,6 @@
 {% load i18n %} {% load crispy_forms_tags %}
 
-<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
+<div class="  " id="form-obj" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
@@ -37,16 +37,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="updateStructure(0, 0)" id="submit-obj">{% trans "Valider" %}</button>
                     <button type="button" class="btn " id="button-id-cancel" data-dismiss="modal">{% trans "Annuler" %}</button>
-
                 </div>
             </form>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+let typedegree = '{{training.degree_type}}';
+let is_catlague = typedegree.indexOf('CATALOGUE') != -1;
+console.log(is_catlague);
+if (is_catlague) {
+    console.log('uio')
+    document.getElementById('div_id_regime').className = "disabled disabled-event";
+    document.getElementById('div_id_session').className = "disabled disabled-event";
+}
+
+
 function fillForm(_id) {
     console.log(_id);
 };
+
+$('#id_nature').change(function() {
+    let option = $(this).find('option:selected').val();
+    if (option != "UE"){
+        document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
+    } else {
+        document.getElementById("div_id_ECTS_credit").className = "form-group"
+    }
+
+
+});
 // remove stuff easyly
 Element.prototype.remove = function() {
     this.parentElement.removeChild(this);
@@ -106,6 +126,9 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 </script>
 
 <style media="screen">
+    .asteriskField{
+        display: none;
+    }
     .boxed {
         border: 1px solid #004A87;
         margin: 1em 0 1em 0;

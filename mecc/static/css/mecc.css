@@ -407,7 +407,7 @@ td.id_member {
     padding-top: 1em;
 }
 .disabled {
-    color: gray;
+    color: gray!important;
 }
 .row {
     margin-top: 0.5em;

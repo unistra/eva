@@ -117,15 +117,18 @@ class TrainingEdit(UpdateView):
             return reverse('training:list')
 
     def get_context_data(self, **kwargs):
+        print(self.object.input_opening[0])
         context = super(TrainingEdit, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['resp_form'] = self.object.resp_formations.all()
+        input_is_open = self.object.input_opening[0] in [1, 3]
         context['can_edit'] = (
             self.request.environ['allowed'] and
-            self.object.input_opening[0] not in [1]
-        ) or self.request.user.is_superuser
+            input_is_open
+        ) or self.request.user.is_superuser or 'DES1' in [
+            e.name for e in self.request.user.groups.all()]
 
         return context
 
