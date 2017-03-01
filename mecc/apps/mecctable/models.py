@@ -83,12 +83,12 @@ class StructureObject(models.Model):
 
     def save(self, *args, **kwargs):
         if self.auto_id in ['', ' ', 0, None]:
-                try:
-                    self.auto_id = StructureObject.objects.all(
-                        ).latest('id').id + 1
-                except ObjectDoesNotExist:
-                    self.auto_id = 1
-                super(StructureObject, self).save(*args, **kwargs)
+            try:
+                self.auto_id = StructureObject.objects.all(
+                    ).latest('id').id + 1
+            except ObjectDoesNotExist:
+                self.auto_id = 1
+            super(StructureObject, self).save(*args, **kwargs)
 
 
 class ObjectsLink(models.Model):
@@ -110,10 +110,10 @@ class ObjectsLink(models.Model):
         choices=NATURE_CHOICE, max_length=3)
     coefficient = models.DecimalField(
         verbose_name=_("Coefficient de l’objet (au sein de ce père)"),
-        max_digits=2, decimal_places=1, null=True)
+        max_digits=2, decimal_places=1, null=True, blank=True)
     eliminatory_grade = models.IntegerField(
         _("Note éliminatoire sur cet objet (au sein de ce père)"),
-        default=None, null=True)
+        default=None, null=True, blank=True)
 
 
 class Exam(models.Model):
