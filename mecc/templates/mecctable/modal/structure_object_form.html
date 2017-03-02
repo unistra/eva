@@ -1,6 +1,6 @@
 {% load i18n %} {% load crispy_forms_tags %}
 
-<div class="  " id="form-obj" role="dialog" style="z-index: 1400;">
+<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
@@ -43,41 +43,81 @@
     </div>
 </div>
 <script type="text/javascript">
-let typedegree = '{{training.degree_type}}';
-let is_catlague = typedegree.indexOf('CATALOGUE') != -1;
-console.log(is_catlague);
-if (is_catlague) {
-    console.log('uio')
-    document.getElementById('div_id_regime').className = "disabled disabled-event";
-    document.getElementById('div_id_session').className = "disabled disabled-event";
-}
+    function get_struct_details(_id) {
+        $.ajax({
+            url: "{% url 'mecctable:get_stuct_obj_details' %}",
+            type: "GET",
+            data: {
+                _id: _id,
+            },
+            success: function(data) {
+                for (let prop in data) {
+                    if (data.hasOwnProperty(prop)) {
+                        if (prop == 'nature') {
+                            $("#id_" + prop).val(data[prop])
+                        } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
+                            $("input[name=" + prop + "][value=" + data[prop] + "]").attr('checked', 'checked')
+                        } else {
+                            if (prop == 'is_in_use' || prop == 'mutual') {
+                                document.getElementById('id_'+prop).checked = data[prop]
+                            }
+                            $("input[name=" + prop + "]").val(data[prop]);
+                        }
 
+                    }
+                }
+                display_UE(document.getElementById('id_nature'));
 
-function fillForm(_id) {
-    console.log(_id);
-};
+            }
+        });
+    };
 
-$('#id_nature').change(function() {
-    let option = $(this).find('option:selected').val();
-    if (option != "UE"){
-        document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
-    } else {
-        document.getElementById("div_id_ECTS_credit").className = "form-group"
-    }
+    let typedegree = '{{training.degree_type}}';
+    let is_catlague = typedegree.indexOf('CATALOGUE') != -1;
+    if (!is_catlague) {
+        let session = '{{training.session_type}}'
+        let regime = '{{training.MECC_type}}'
+        document.getElementById('div_id_regime').className = "disabled disabled-event";
+        document.getElementById('div_id_session').className = "disabled disabled-event";
+        document.getElementById('id_session_' + session).checked = true
+        $("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
+    };
 
+    function fillForm(_id) {
+        if (_id == '0'){
+            display_UE(document.getElementById('id_nature'));
+            get_struct_details(_id);
+            document.getElementById('div_id_nature').className = ' form-group '
+            document.getElementById('div_id_label').className = 'form-group '
+            document.getElementById('id_nature').style.borderColor = 'rgb(204, 204, 204)'
+            document.getElementById('id_label').style.borderColor = 'rgb(204, 204, 204)'
 
-});
-// remove stuff easyly
-Element.prototype.remove = function() {
-    this.parentElement.removeChild(this);
-}
-NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-    for(var i = this.length - 1; i >= 0; i--) {
-        if(this[i] && this[i].parentElement) {
-            this[i].parentElement.removeChild(this[i]);
         }
-    }
-}
+    };
+
+
+    function display_UE(here) {
+        let option = $(here).find('option:selected').val();
+        if (option != "UE") {
+            document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
+        } else {
+            document.getElementById("div_id_ECTS_credit").className = "form-group"
+        }
+    };
+    $('#id_nature').change(function() {
+        display_UE(this)
+    });
+    // remove stuff easyly
+    Element.prototype.remove = function() {
+        this.parentElement.removeChild(this);
+    };
+    NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+        for (var i = this.length - 1; i >= 0; i--) {
+            if (this[i] && this[i].parentElement) {
+                this[i].parentElement.removeChild(this[i]);
+            }
+        }
+    };
     // function in order to serialize
     $.fn.serializeObject = function() {
         var o = {};
@@ -96,9 +136,26 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
     };
 
     function updateStructure(id_parent, id_child) {
-        var data = JSON.stringify($("form").serializeObject()); //
-        console.log(data);
 
+        let data = JSON.stringify($("form").serializeObject()); //
+        let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
+        let label = document.getElementById('id_label').value;
+        if (type_val == '' || label == ''){
+            document.getElementById('div_id_nature').className = ' form-group '
+            document.getElementById('div_id_label').className = 'form-group '
+            document.getElementById('id_nature').style.borderColor = 'rgb(204, 204, 204)'
+            document.getElementById('id_label').style.borderColor = 'rgb(204, 204, 204)'
+
+        if (type_val == ''){
+            document.getElementById('div_id_nature').className = ' form-group red '
+            document.getElementById('id_nature').style.borderColor = 'red'
+        }
+        if (label == ''){
+            document.getElementById('div_id_label').className = 'form-group  red '
+            document.getElementById('id_label').style.borderColor = 'red'
+        }
+            return;
+        }
         $.ajax({
             url: "{% url 'mecctable:mecctable_update' %}",
             type: "POST",
@@ -111,24 +168,23 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 
             },
             success: function(data) {
-                console.log('requested');
                 // Next three lines are used to dismiss modal
                 document.getElementById("form-obj").className = "modal fade"
                 document.body.className = ""
                 document.getElementsByClassName("modal-backdrop").remove();
 
-                window.location.reload();
+                // window.location.reload();
 
             }
         });
-        console.log('END');
-    }
+    };
 </script>
 
 <style media="screen">
-    .asteriskField{
+    .asteriskField {
         display: none;
     }
+
     .boxed {
         border: 1px solid #004A87;
         margin: 1em 0 1em 0;

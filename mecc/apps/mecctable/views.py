@@ -12,24 +12,41 @@ import json
 
 @is_ajax_request
 def get_stuct_obj_details(request):
+    if request.GET.get('_id') in ['', 0, '0', None]:
+        return JsonResponse({
+            'nature': "",
+            'regime': "",
+            'session': "",
+            'label': "",
+            'is_in_use': True,
+            'period': "",
+            'ECTS_credit': "",
+            'RESPENS_id': "",
+            'mutual': "",
+            'ROF_ref': "",
+            'ROF_code_year': "",
+            'ROF_nature': "",
+            'ROF_supply_program': "",
+            'ref_si_scol': ""
+        })
     struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
-    # nature = struct_obj.nature
-    # regime = struct_obj.regime
-    # session = struct_obj.session
-    # label = struct_obj.label
-    # is_in_use = struct_obj.is_in_use
-    # period = struct_obj.period
-    # ECTS_credit = struct_obj.ECTS_credit
-    # RESPENS_id = struct_obj.RESPENS_id
-    # mutual = struct_obj.mutual
-    # ROF_ref = struct_obj.ROF_ref
-    # ROF_code_year = struct_obj.ROF_code_year
-    # ROF_nature = struct_obj.ROF_nature
-    # ROF_supply_program = struct_obj.ROF_supply_program
-    # ref_si_scol = struct_obj.ref_si_scol
-
-    json = {}
-    return JsonResponse(json)
+    j = {
+        'nature': struct_obj.nature,
+        'regime': struct_obj.regime,
+        'session': struct_obj.session,
+        'label': struct_obj.label,
+        'is_in_use': struct_obj.is_in_use,
+        'period': struct_obj.period,
+        'ECTS_credit': struct_obj.ECTS_credit,
+        'RESPENS_id': struct_obj.RESPENS_id,
+        'mutual': struct_obj.mutual,
+        'ROF_ref': struct_obj.ROF_ref,
+        'ROF_code_year': struct_obj.ROF_code_year,
+        'ROF_nature': struct_obj.ROF_nature,
+        'ROF_supply_program': struct_obj.ROF_supply_program,
+        'ref_si_scol': struct_obj.ref_si_scol
+    }
+    return JsonResponse(j)
 
 
 @login_required
@@ -54,10 +71,10 @@ def mecctable_update(request):
     """
 
     training = Training.objects.get(id=request.POST.get('training_id'))
+    is_catalgue = 'CATALOGUE' in training.degree_type.short_label
     # needed stuff in order to create objectslink
     id_parent = request.POST.get('id_parent')
     # id_child = request.POST.get('id_child')
-
     b = request.POST.get('formdata')
     j = json.loads(b)
     data = {}
@@ -66,15 +83,15 @@ def mecctable_update(request):
         nature=j.get('nature'),
         owner_training_id=training.id,
         cmp_supply_id=training.supply_cmp,
-        regime=j.get('regime'),
-        session=j.get('session'),
+        regime=j.get('regime') if is_catalgue else training.MECC_type,
+        session=j.get('session') if is_catalgue else training.session_type,
         label=j.get('label'),
-        is_in_use=True if j.get('is_in_use') == 'on' else False,
+        is_in_use=True if j.get('is_in_use') else False,
         period=j.get('period'),
         ECTS_credit=None if j.get('ECTS_credit') in [
             0, '', ' '] else j.get('ECTS_credit'),
         RESPENS_id=j.get('RESPENS_id'),
-        mutual=True if j.get('mutual') == 'on' else False,
+        mutual=True if j.get('mutual') else False,
         ROF_ref=j.get('ROF_ref'),
         ROF_code_year=None if j.get('ROF_code_year') in [
             0, '', ' '] else j.get(),
@@ -97,6 +114,7 @@ def mecctable_update(request):
         order_in_child=last_order_in_parent,
         n_train_child=training.n_train
     )
+
     return JsonResponse(data)
 
 

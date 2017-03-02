@@ -75,7 +75,7 @@ class StructureObjectForm(forms.ModelForm):
                     'ROF_code_year',
                     'ROF_nature',
                     'ROF_supply_program',
-                    css_class="boxed padding-1"
+                    css_class="boxed padding-1 disabled disabled-event"
                 ),
                 css_class="item-30  padding-1"
             )

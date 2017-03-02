@@ -46,7 +46,7 @@
 
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj"></a>
+            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" onclick="fillForm(0)"></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
         {% if structure_objs|length > 0 %}
@@ -104,7 +104,7 @@
                         <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
                     </td>
                     <td class="centered border-bottom">{{e.mutual}}</td>
-                    <td class="centered border-bottom">{{e.ECTS_credit}}</td>
+                    <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="centered border-bottom">{{e.RESPENS_id}}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'></td>
@@ -126,7 +126,7 @@
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
             <label>
-            {% trans 'Etat de saisie du tableau MECC : '%}
+            {% trans 'Etat de saisie du tableau MECC : '%} {{training.progress_rule}}
         </label>
             <label class="margin-left1">
          {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
@@ -187,19 +187,7 @@
     }
 </style>
 <script type="text/javascript">
-    function get_struct_details(_id) {
-        console.log(_id);
-        $.ajax({
-            url: "{% url 'mecctable:get_stuct_obj_details' %}",
-            type: "GET",
-            data: {
-                _id: _id,
-            },
-            success: function(data) {
-                console.log("hola");
-            }
-        });
-    }
+
 
     function ask_delete(id_obj, label) {
         document.getElementById('type').innerHTML = "cet objet";
@@ -212,7 +200,6 @@
                 row.prev().before(row);
             if (where === "down")
                 row.next().after(row);
-
         }
 
         var table = $('#mecc_table').DataTable({
@@ -228,10 +215,8 @@
         $('.arrow-move').click(function() {
             let row = $(this).closest('tr');
             let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
-            console.log(parent_id);
             if ($(this).hasClass('glyphicon-arrow-up')) {
                 parent_id_row_prev = row.prev().attr('class').split("parent-")[1].split(" ")[0];
-                console.log(parent_id_row_prev);
                 row.prev().before(row);
             } else
                 row.next().after(row);

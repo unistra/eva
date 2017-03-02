@@ -117,7 +117,6 @@ class TrainingEdit(UpdateView):
             return reverse('training:list')
 
     def get_context_data(self, **kwargs):
-        print(self.object.input_opening[0])
         context = super(TrainingEdit, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['disp_current_year'] = "%s/%s" % (
