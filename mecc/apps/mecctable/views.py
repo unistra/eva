@@ -102,7 +102,8 @@ def mecctable_update(request):
 
     try:
         last_order_in_parent = ObjectsLink.objects.filter(
-            id_parent=id_parent).latest('id_parent').order_in_child
+            id_parent=id_parent, code_year=currentyear().code_year).latest(
+                'order_in_child').order_in_child
     except ObjectsLink.DoesNotExist:
         last_order_in_parent = 0
     last_order_in_parent += 1
@@ -134,7 +135,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
     data['structure_objs'] = structure_obj
-    data['object_link'] = object_link
+    data['object_link'] = object_link.order_by('id_parent', 'order_in_child')
     data['form'] = StructureObjectForm
     return render(request, template, data)
 
