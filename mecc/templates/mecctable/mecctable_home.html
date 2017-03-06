@@ -104,7 +104,7 @@
                     <td class="centered border-bottom">
                         <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
                     </td>
-                    <td class="centered border-bottom">{{e.mutual}}</td>
+                    <td class="centered border-bottom">{% if e.mutual %}{% trans "mut." %}{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="centered border-bottom">{{e.RESPENS_id}}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
