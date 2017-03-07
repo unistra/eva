@@ -10536,7 +10536,7 @@
     "session_type": "2",
     "date_val_cfvu": null,
     "is_used": true,
-    "date_val_cmp": "2017-01-18",
+    "date_val_cmp": null,
     "date_res_des": null,
     "n_train": 1,
     "ref_cpa_rof": "",

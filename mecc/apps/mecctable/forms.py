@@ -1,10 +1,8 @@
 from django import forms
 from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div, Submit
+from crispy_forms.layout import Layout, HTML, Div
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ValidationError
-from crispy_forms.bootstrap import InlineField, FormActions
 
 
 class StructureObjectForm(forms.ModelForm):
@@ -59,7 +57,7 @@ class StructureObjectForm(forms.ModelForm):
                 Div(
                     'mutual',
                     HTML("""
-<a href="#" onclick='preview-consumer()'>Voir les consommateur </a>
+<a id="preview-consumer" href="#" onclick='preview-consumer()' >Voir les consommateur </a>
                     """),
                     css_class='y mutual'
                 ),
@@ -72,10 +70,13 @@ class StructureObjectForm(forms.ModelForm):
                 ),
                 Div(
                     'ROF_ref',
-                    'ROF_code_year',
-                    'ROF_nature',
-                    'ROF_supply_program',
-                    css_class="boxed padding-1 disabled disabled-event"
+                    Div(
+                        'ROF_code_year',
+                        'ROF_nature',
+                        'ROF_supply_program',
+                        css_class="disabled disabled-event"
+                    ),
+                    css_class="boxed padding-1"
                 ),
                 css_class="item-30  padding-1"
             )

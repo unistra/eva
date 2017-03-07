@@ -185,6 +185,7 @@
                 data: {
                     val: $(this).val(),
                     training_id : {{training.id}},
+                    type: "RULE",
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data){}

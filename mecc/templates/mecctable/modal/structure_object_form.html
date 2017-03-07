@@ -43,6 +43,20 @@
     </div>
 </div>
 <script type="text/javascript">
+    $(document).on('change', 'input[name="progress"]:radio', function(){
+        $.ajax({
+            url: "{% url 'rules:update_progress'%}",
+            type: "POST",
+            data: {
+                val: $(this).val(),
+                training_id : {{training.id}},
+                type : "TABLE",
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data){}
+
+        })
+    });
     function get_struct_details(_id) {
         $.ajax({
             url: "{% url 'mecctable:get_stuct_obj_details' %}",
@@ -59,15 +73,15 @@
                             $("input[name=" + prop + "][value=" + data[prop] + "]").attr('checked', 'checked')
                         } else {
                             if (prop == 'is_in_use' || prop == 'mutual') {
-                                document.getElementById('id_'+prop).checked = data[prop]
+                                document.getElementById('id_' + prop).checked = data[prop]
                             }
                             $("input[name=" + prop + "]").val(data[prop]);
                         }
 
                     }
                 }
+                // document.getElementById('submit-obj').onclick = updateStructure(_id, 12);
                 display_UE(document.getElementById('id_nature'));
-
             }
         });
     };
@@ -82,19 +96,6 @@
         document.getElementById('id_session_' + session).checked = true
         $("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
     };
-
-    function fillForm(_id) {
-        if (_id == '0'){
-            display_UE(document.getElementById('id_nature'));
-            get_struct_details(_id);
-            document.getElementById('div_id_nature').className = ' form-group '
-            document.getElementById('div_id_label').className = 'form-group '
-            document.getElementById('id_nature').style.borderColor = 'rgb(204, 204, 204)'
-            document.getElementById('id_label').style.borderColor = 'rgb(204, 204, 204)'
-
-        }
-    };
-
 
     function display_UE(here) {
         let option = $(here).find('option:selected').val();
@@ -136,24 +137,22 @@
     };
 
     function updateStructure(id_parent, id_child) {
-
         let data = JSON.stringify($("form").serializeObject()); //
         let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
         let label = document.getElementById('id_label').value;
-        if (type_val == '' || label == ''){
+        if (type_val == '' || label == '') {
             document.getElementById('div_id_nature').className = ' form-group '
             document.getElementById('div_id_label').className = 'form-group '
             document.getElementById('id_nature').style.borderColor = 'rgb(204, 204, 204)'
             document.getElementById('id_label').style.borderColor = 'rgb(204, 204, 204)'
-
-        if (type_val == ''){
-            document.getElementById('div_id_nature').className = ' form-group red '
-            document.getElementById('id_nature').style.borderColor = 'red'
-        }
-        if (label == ''){
-            document.getElementById('div_id_label').className = 'form-group  red '
-            document.getElementById('id_label').style.borderColor = 'red'
-        }
+            if (type_val == '') {
+                document.getElementById('div_id_nature').className = ' form-group red '
+                document.getElementById('id_nature').style.borderColor = 'red'
+            }
+            if (label == '') {
+                document.getElementById('div_id_label').className = 'form-group  red '
+                document.getElementById('id_label').style.borderColor = 'red'
+            }
             return;
         }
         $.ajax({
@@ -165,7 +164,6 @@
                 id_child: id_child,
                 id_parent: id_parent,
                 formdata: data,
-
             },
             success: function(data) {
                 // Next three lines are used to dismiss modal
@@ -173,7 +171,7 @@
                 document.body.className = ""
                 document.getElementsByClassName("modal-backdrop").remove();
 
-                window.location.reload();
+                // window.location.reload();
 
             }
         });

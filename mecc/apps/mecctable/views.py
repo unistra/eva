@@ -74,10 +74,14 @@ def mecctable_update(request):
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
     # needed stuff in order to create objectslink
     id_parent = request.POST.get('id_parent')
-    # id_child = request.POST.get('id_child')
+    id_child = request.POST.get('id_child')
     b = request.POST.get('formdata')
     j = json.loads(b)
     data = {}
+
+    # try:
+    #     struct = StructureObject.objects.get(id=_id)
+
     structure_object, created = StructureObject.objects.get_or_create(
         code_year=currentyear().code_year,
         nature=j.get('nature'),
@@ -102,6 +106,7 @@ def mecctable_update(request):
 
     try:
         last_order_in_parent = ObjectsLink.objects.filter(
+            id_training=training.id,
             id_parent=id_parent, code_year=currentyear().code_year).latest(
                 'order_in_child').order_in_child
     except ObjectsLink.DoesNotExist:

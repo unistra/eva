@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
+
+{% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
         <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
@@ -14,7 +16,7 @@
 </ol>
 {% endblock %} {% block app_content %}
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/datatables.min.js"></script>
+<script src="{% static 'js/datatable.min.js' %}"></script>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
@@ -46,7 +48,7 @@
 
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" onclick="fillForm(0)"></a>
+            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
         {% if structure_objs|length > 0 %}
@@ -86,19 +88,16 @@
 
                 <tr class="hover-row parent-{{l.id_parent}} order-{{l.order_in_child}}">
                     <td>
-
                         <div style="width:2.75em;">
                             <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
-
                     </td>
                     <td class=" border-bottom"> {{e.nature}} :
-
                         <a data-toggle="modal" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}})" class="hand">{{e.label}}</a>
                     </td>
                     <td class="centered border-bottom">
-                        <span class="glyphicon glyphicon-plus blue hand" onclick="fillForm({{e.id}})">
+                        <span class="glyphicon glyphicon-plus blue hand">
                             </span></td>
                     <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green hand"></span></td>
                     <td class="centered border-bottom">
@@ -110,15 +109,14 @@
                     <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'> {{l.order_in_child}}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left border-bottom"> struct id = {{e.id}}</td>
+                    <td class="centered border-left border-bottom">obj link id = {{l.id}}</td>
                     <td class="centered border-left border-bottom">11</td>
                     <td class="centered border-left border-bottom">11</td>
                     <td class="centered border-left-3 border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
-
                 </tr>
                 {% endif %} {% endfor %} {% endfor %}
             </tbody>
@@ -128,7 +126,7 @@
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
             <label>
-            {% trans 'Etat de saisie du tableau MECC : '%} {{training.progress_rule}}
+            {% trans 'Etat de saisie du tableau MECC : '%}
         </label>
             <label class="margin-left1">
          {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
@@ -155,10 +153,9 @@
             </div>
             <div class="flex-item dir-row">
                 <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
-                <span style="color:rgb(0, 110, 174);font-size:0.6em;line-height:2px;">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
+                <span style="color:rgb(0, 110, 174);font-size:0.7em;line-height:1;">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
             </div>
         </div>
-
         {% include "mecctable/modal/structure_object_form.html" %} {% include "generic/modal_confirm_delete.html" %}
     </div>
 </div>
@@ -174,7 +171,6 @@
         flex-wrap: wrap;
         width: 100%;
     }
-
     .flex-item {
         margin-top: 1em;
         width: 19%;
@@ -183,14 +179,11 @@
         width:100%;
         padding: 0.5em 1em 0.5em 1em;
     }
-
     #mecc_table {
         width: 100%;
     }
 </style>
 <script type="text/javascript">
-
-
     function ask_delete(id_obj, label) {
         document.getElementById('type').innerHTML = "cet objet";
         document.getElementById('to_del').innerHTML = label;
@@ -221,9 +214,6 @@
                 n = row.prev().attr('class')
                 a = n.split("parent-")[1].split(" ")[0];
                 b = n.split("order-")[1].split(" ")[0];
-                console.log(n)
-                console.log(b)
-
                 row.prev().before(row);
             } else
                 row.next().after(row);

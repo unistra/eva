@@ -410,7 +410,11 @@ def duplicate_remove(request):
 @is_ajax_request
 def update_progress(request):
     training = Training.objects.get(id=request.POST.get('training_id'))
-    training.progress_rule = request.POST.get('val')
+    _type = request.POST.get('type')
+    if _type == "TABLE":
+        training.progress_table = request.POST.get('val')
+    if _type == "RULE":
+        training.progress_rule = request.POST.get('val')
     training.save()
     return JsonResponse({'status': 'UPDATED'})
 
@@ -444,7 +448,6 @@ def details_rule(request):
         additional = AdditionalParagraph.objects.get(
             training=Training.objects.get(id=request.POST.get('training_id')),
             rule_gen_id=x, code_year=currentyear().code_year
-
         )
     except AdditionalParagraph.DoesNotExist:
         additional = None
