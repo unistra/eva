@@ -28,7 +28,7 @@ from django.apps import apps
 def add_current_year(dic):
     dic['disp_current_year'] = "%s/%s" % (
         currentyear().code_year, currentyear().code_year + 1
-        ) if currentyear() is not None else ""
+    ) if currentyear() is not None else ""
     return dic
 
 
@@ -223,16 +223,18 @@ spécificités déjà saisies pour la nouvelle année."
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
-        ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
-                training=training, code_year=currentyear().code_year)]
+    ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
+        training=training, code_year=currentyear().code_year)]
     data['notification_to'] = settings.MAIL_FROM
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
-    data['can_edit'] = (request.environ['allowed']
-                        or request.user.is_superuser)
+    input_is_open = training.input_opening[0] in [1, 3]
+
+    data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
+        e.name for e in request.user.groups.all()]
     return render(request, template, data)
 
 
@@ -246,7 +248,7 @@ def recover_everything(request, training_id):
             n_train=training.n_train, code_year=old_year)
     except Training.DoesNotExist:
         return HttpResponseRedirect(reverse('training:edit_rules',
-                                    args=(training_id,)))
+                                            args=(training_id,)))
 
     # Recover old additional paragraph if there isn't during current year
     current_additional = AdditionalParagraph.objects.filter(
@@ -290,7 +292,7 @@ def recover_everything(request, training_id):
     request.session['recovered'] = True
 
     return HttpResponseRedirect(reverse('training:edit_rules',
-                                args=(training_id,)))
+                                        args=(training_id,)))
 
 
 @login_required
@@ -337,10 +339,10 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     data['specific_paragraph'] = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year, training=t, rule_gen_id=r.n_rule)
     old_specific = SpecificParagraph.objects.filter(
-        code_year=currentyear().code_year-1).filter(rule_gen_id=r.n_rule)
+        code_year=currentyear().code_year - 1).filter(rule_gen_id=r.n_rule)
     try:
         old_additional = AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year-1,
+            code_year=currentyear().code_year - 1,
             rule_gen_id=r.n_rule)
     except AdditionalParagraph.DoesNotExist:
         old_additional = None
@@ -356,7 +358,8 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
             code_year=currentyear().code_year, training=t, rule_gen_id=r.n_rule)
     except AdditionalParagraph.DoesNotExist:
         pass
-    data['specific_ids'] = [a.paragraph_gen_id for a in data['specific_paragraph']]
+    data['specific_ids'] = [
+        a.paragraph_gen_id for a in data['specific_paragraph']]
 
     return render(request, template, data)
 
@@ -394,7 +397,7 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
 
     rule_gen_id = Rule.objects.get(id=rule_id).n_rule
     old_additional = AdditionalParagraph.objects.filter(
-        code_year=currentyear().code_year-1).get(
+        code_year=currentyear().code_year - 1).get(
             rule_gen_id=n_rule) if old == 'Y' else None
 # Create temporary additional; just in order to fill the form with ease
     additional, created = AdditionalParagraph.objects.get_or_create(
@@ -533,12 +536,12 @@ def duplicate_remove(request):
             if profile.code in 'RESPFORM' and \
                 currentyear().code_year == profile.year and profile.cmp in \
                     [e.code for e in t.institutes.all()]:
-                    y.profile.remove(profile)
-                    t.resp_formations.remove(y)
-                    if len(y.profile.all()) < 1:
-                        user = User.objects.get(meccuser=y)
-                        user.delete()
-                        y.delete()
+                y.profile.remove(profile)
+                t.resp_formations.remove(y)
+                if len(y.profile.all()) < 1:
+                    user = User.objects.get(meccuser=y)
+                    user.delete()
+                    y.delete()
     t.delete()
     return JsonResponse({"status": "removed", "label": label})
 

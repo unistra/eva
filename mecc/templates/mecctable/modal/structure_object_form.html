@@ -43,6 +43,19 @@
     </div>
 </div>
 <script type="text/javascript">
+    function hide_ifnot_checked(checkbox, to_hide){
+        if (checkbox.checked){
+            to_hide.className = ""
+        } else {
+            to_hide.className = "hidden "
+        }
+    }
+    hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+
+    $("#id_mutual").on('change', function(){
+        hide_ifnot_checked(this, document.getElementById('preview-consumer'))
+    });
+
     $(document).on('change', 'input[name="progress"]:radio', function(){
         $.ajax({
             url: "{% url 'rules:update_progress'%}",
@@ -57,7 +70,8 @@
 
         })
     });
-    function get_struct_details(_id) {
+    function get_struct_details(_id, id_parent) {
+
         $.ajax({
             url: "{% url 'mecctable:get_stuct_obj_details' %}",
             type: "GET",
@@ -80,8 +94,10 @@
 
                     }
                 }
-                // document.getElementById('submit-obj').onclick = updateStructure(_id, 12);
+                document.getElementById('submit-obj').onclick = function(){updateStructure(id_parent, _id)};
                 display_UE(document.getElementById('id_nature'));
+                hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+
             }
         });
     };
@@ -137,6 +153,8 @@
     };
 
     function updateStructure(id_parent, id_child) {
+        console.log(id_parent);
+        console.log(id_child);
         let data = JSON.stringify($("form").serializeObject()); //
         let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
         let label = document.getElementById('id_label').value;
@@ -171,7 +189,7 @@
                 document.body.className = ""
                 document.getElementsByClassName("modal-backdrop").remove();
 
-                // window.location.reload();
+                window.location.reload();
 
             }
         });
