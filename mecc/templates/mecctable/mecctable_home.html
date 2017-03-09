@@ -1,6 +1,9 @@
 {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
 
-{% block page-header %} {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+{% block page-header %} {% trans 'Fiche Formation' %}
+<link rel="stylesheet" href="{% static 'css/notif.css' %}">
+<script src="{% static 'js/notif.js' %}"></script>
+{% endblock %} {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
         <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
@@ -15,6 +18,7 @@
         <li class="active"> {{training.label}}</li>
 </ol>
 {% endblock %} {% block app_content %}
+<div class='notifications top-right'></div>
 
 <script src="{% static 'js/datatable.min.js' %}"></script>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
@@ -126,7 +130,7 @@
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
             <label>
-            {% trans 'Etat de saisie du tableau MECC : '%}
+            {% trans 'Etat de saisie du tableau MECC : '%} {{training.progress_rule}}
         </label>
             <label class="margin-left1">
          {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
@@ -140,7 +144,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 {% if structure_objs|length == 0  %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>

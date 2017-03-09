@@ -122,13 +122,12 @@ class TrainingEdit(UpdateView):
         context['disp_current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['resp_form'] = self.object.resp_formations.all()
-        input_is_open = self.object.input_opening[0] in [1, 3]
+        input_is_open = self.object.input_opening[0] in ['1', '3']
         context['can_edit'] = (
             self.request.environ['allowed'] and
             input_is_open
         ) or self.request.user.is_superuser or 'DES1' in [
             e.name for e in self.request.user.groups.all()]
-
         return context
 
 
@@ -231,10 +230,11 @@ spécificités déjà saisies pour la nouvelle année."
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
-    input_is_open = training.input_opening[0] in [1, 3]
+    input_is_open = training.input_opening[0] in ['1', '3']
 
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
+    print(training.input_opening[0])
     return render(request, template, data)
 
 

@@ -57,7 +57,7 @@ class StructureObjectForm(forms.ModelForm):
                 Div(
                     'mutual',
                     HTML("""
-<a id="preview-consumer" href="#" onclick='preview-consumer()' >Voir les consommateur </a>
+<a id="preview-consumer" href="#" onclick='preview-consumer()' >Voir les consommateurs </a>
                     """),
                     css_class='y mutual'
                 ),

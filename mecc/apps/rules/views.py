@@ -416,7 +416,8 @@ def update_progress(request):
     if _type == "RULE":
         training.progress_rule = request.POST.get('val')
     training.save()
-    return JsonResponse({'status': 'UPDATED'})
+    val = _('en cours') if request.POST.get('val') == 'E' else _('achevée')
+    return JsonResponse({'status': 200, 'val': val})
 
 
 @login_required

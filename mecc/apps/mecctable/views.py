@@ -74,15 +74,14 @@ def mecctable_update(request):
     training = Training.objects.get(id=request.POST.get('training_id'))
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
     # needed stuff in order to create objectslink
-    id_parent = request.POST.get('id_parent')
-    id_child = request.POST.get('id_child')
-    print(id_child)
+    id_parent = int(request.POST.get('id_parent'))
+    id_child = int(request.POST.get('id_child'))
     b = request.POST.get('formdata')
     j = json.loads(b)
     data = {}
-    print(id_child)
-    try:
-        struct = StructureObject.objects.filter(id=id_child).update(
+
+    def create_new_struct():
+        return StructureObject.objects.create(
             code_year=currentyear().code_year,
             nature=j.get('nature'),
             owner_training_id=training.id,
@@ -103,76 +102,102 @@ def mecctable_update(request):
             ROF_supply_program=j.get('ROF_supply_program'),
             ref_si_scol=j.get('ref_si_scol'),
         )
-    except Exception as e:
-        print(e)
-        struct = StructureObject.objects.create(
-            code_year=currentyear().code_year,
-            nature=j.get('nature'),
-            owner_training_id=training.id,
-            cmp_supply_id=training.supply_cmp,
-            regime=j.get('regime') if is_catalgue else training.MECC_type,
-            session=j.get('session') if is_catalgue else training.session_type,
-            label=j.get('label'),
-            is_in_use=True if j.get('is_in_use') else False,
-            period=j.get('period'),
-            ECTS_credit=None if j.get('ECTS_credit') in [
-                0, '', ' '] else j.get('ECTS_credit'),
-            RESPENS_id=j.get('RESPENS_id'),
-            mutual=True if j.get('mutual') else False,
-            ROF_ref=j.get('ROF_ref'),
-            ROF_code_year=None if j.get('ROF_code_year') in [
-                0, '', ' '] else j.get(),
-            ROF_nature=j.get('ROF_nature'),
-            ROF_supply_program=j.get('ROF_supply_program'),
-            ref_si_scol=j.get('ref_si_scol'),
-        )
-    # struct.code_year = currentyear().code_year
-    # struct.nature = j.get('nature')
-    # struct.owner_training_id = training.id
-    # struct.cmp_supply_id = training.supply_cmp
-    # struct.regime = j.get('regime') if is_catalgue else training.MECC_type
-    # struct.session = j.get('session') if is_catalgue else training.session_type
-    # print(struct.label)
-    # struct.label = j.get('label')
-    # struct.save()
-    # print(struct.label)
-    # print(j.get('label'))
-    # struct.is_in_use = True if j.get('is_in_use') else False
-    # struct.period = j.get('period')
-    # struct.ECTS_credit = None if j.get('ECTS_credit') in [
-    #     0, '', ' '] else j.get('ECTS_credit')
-    # struct.RESPENS_id = j.get('RESPENS_id')
-    # struct.mutual = True if j.get('mutual') else False
-    # struct.ROF_ref = j.get('ROF_ref')
-    # struct.ROF_code_year = None if j.get('ROF_code_year') in [
-    #     0, '', ' '] else j.get()
-    # struct.ROF_nature = j.get('ROF_nature')
-    # struct.ROF_supply_program = j.get('ROF_supply_program')
-    # struct.ref_si_scol = j.get('ref_si_scol')
-    # print(struct.id)
-    # print([e.label for e in StructureObject.objects.all()])
-    # struct.save()
+
 
     try:
-        last_order_in_parent = ObjectsLink.objects.filter(
-            id_training=training.id,
-            id_parent=id_parent, code_year=currentyear().code_year).latest(
-                'order_in_child').order_in_child
-    except ObjectsLink.DoesNotExist:
-        last_order_in_parent = 0
-    last_order_in_parent += 1
-    try:
-        ObjectsLink.objects.get(
-            id_child=struct.id, code_year=currentyear().code_year,
-            id_training=training.id, id_parent=id_parent
-        )
-    except ObjectsLink.DoesNotExist:
-        ObjectsLink.objects.create(
-            id_child=struct.id, code_year=currentyear().code_year,
-            id_training=training.id, id_parent=id_parent,
-            order_in_child=last_order_in_parent,
-            n_train_child=training.n_train
-        )
+        structure = StructureObject.objects.get(id=id_child)
+        structure.label = j.get('label')
+        structure.save()
+        print(structure.label)
+        print(structure.id)
+        print(id_child)
+    except StructureObject.DoesNotExist as e:
+        print('GOTu')
+        print(e)
+        structure = create_new_struct()
+
+    print(structure.label)
+    print('DONE')
+    #
+    #
+    # try:
+    #     print(id_child)
+    #     if id_child is not 0:
+    #         struct = StructureObject.objects.get(id=id_child).update(
+    #             code_year=currentyear().code_year,
+    #             nature=j.get('nature'),
+    #             owner_training_id=training.id,
+    #             cmp_supply_id=training.supply_cmp,
+    #             regime=j.get('regime') if is_catalgue else training.MECC_type,
+    #             session=j.get('session') if is_catalgue else training.session_type,
+    #             label=j.get('label'),
+    #             is_in_use=True if j.get('is_in_use') else False,
+    #             period=j.get('period'),
+    #             ECTS_credit=None if j.get('ECTS_credit') in [
+    #                 0, '', ' '] else j.get('ECTS_credit'),
+    #             RESPENS_id=j.get('RESPENS_id'),
+    #             mutual=True if j.get('mutual') else False,
+    #             ROF_ref=j.get('ROF_ref'),
+    #             ROF_code_year=None if j.get('ROF_code_year') in [
+    #                 0, '', ' '] else j.get(),
+    #             ROF_nature=j.get('ROF_nature'),
+    #             ROF_supply_program=j.get('ROF_supply_program'),
+    #             ref_si_scol=j.get('ref_si_scol'),
+    #         )
+    #         print('la')
+    #     else:
+    #         struct = create_new_struct()
+    # except Exception as e:
+    #     struct = create_new_struct()
+    # # struct.code_year = currentyear().code_year
+    # # struct.nature = j.get('nature')
+    # # struct.owner_training_id = training.id
+    # # struct.cmp_supply_id = training.supply_cmp
+    # # struct.regime = j.get('regime') if is_catalgue else training.MECC_type
+    # # struct.session = j.get('session') if is_catalgue else training.session_type
+    # # print(struct.label)
+    # # struct.label = j.get('label')
+    # # struct.save()
+    # # print(struct.label)
+    # # print(j.get('label'))
+    # # struct.is_in_use = True if j.get('is_in_use') else False
+    # # struct.period = j.get('period')
+    # # struct.ECTS_credit = None if j.get('ECTS_credit') in [
+    # #     0, '', ' '] else j.get('ECTS_credit')
+    # # struct.RESPENS_id = j.get('RESPENS_id')
+    # # struct.mutual = True if j.get('mutual') else False
+    # # struct.ROF_ref = j.get('ROF_ref')
+    # # struct.ROF_code_year = None if j.get('ROF_code_year') in [
+    # #     0, '', ' '] else j.get()
+    # # struct.ROF_nature = j.get('ROF_nature')
+    # # struct.ROF_supply_program = j.get('ROF_supply_program')
+    # # struct.ref_si_scol = j.get('ref_si_scol')
+    # # print(struct.id)
+    # # print([e.label for e in StructureObject.objects.all()])
+    # # struct.save()
+    # try:
+    #     print('$$$$$^^')
+    #     print(struct.nature)
+    # except Exception as e:
+    #     print(e)
+    # try:
+    #     last_order_in_parent = ObjectsLink.objects.filter(
+    #         id_training=training.id,
+    #         id_parent=id_parent, code_year=currentyear().code_year).latest(
+    #             'order_in_child').order_in_child
+    # except ObjectsLink.DoesNotExist:
+    #     last_order_in_parent = 0
+    # last_order_in_parent += 1
+    # try:
+    #     ObjectsLink.objects.get(id_child=struct.id)
+    # except Exception as e:
+    #
+    #     ObjectsLink.objects.create(
+    #         id_child=struct.id, code_year=currentyear().code_year,
+    #         id_training=training.id, id_parent=id_parent,
+    #         order_in_child=last_order_in_parent,
+    #         n_train_child=training.n_train
+    #     )
 
     return JsonResponse(data)
 
