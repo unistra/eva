@@ -88,7 +88,7 @@ class StructureObject(models.Model):
                     ).latest('id').id + 1
             except ObjectDoesNotExist:
                 self.auto_id = 1
-            super(StructureObject, self).save(*args, **kwargs)
+        super(StructureObject, self).save(*args, **kwargs)
 
 
 class ObjectsLink(models.Model):

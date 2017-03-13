@@ -1,9 +1,6 @@
 {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
-
-{% block page-header %} {% trans 'Fiche Formation' %}
-<link rel="stylesheet" href="{% static 'css/notif.css' %}">
-<script src="{% static 'js/notif.js' %}"></script>
-{% endblock %} {% block breadcrumb %}
+{% block page-header %}
+{% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
         <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
@@ -18,9 +15,10 @@
         <li class="active"> {{training.label}}</li>
 </ol>
 {% endblock %} {% block app_content %}
-<div class='notifications top-right'></div>
 
+<script src="{% static 'js/notif.js' %}"></script>
 <script src="{% static 'js/datatable.min.js' %}"></script>
+<span class="top-right"></span>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
@@ -98,7 +96,7 @@
                         </div>
                     </td>
                     <td class=" border-bottom"> {{e.nature}} :
-                        <a data-toggle="modal" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}})" class="hand">{{e.label}}</a>
+                        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}})">{{e.label}}</a>
                     </td>
                     <td class="centered border-bottom">
                         <span class="glyphicon glyphicon-plus blue hand">
@@ -130,13 +128,13 @@
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
             <label>
-            {% trans 'Etat de saisie du tableau MECC : '%} {{training.progress_rule}}
+            {% trans 'Etat de saisie du tableau MECC : '%}
         </label>
             <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_table == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
      </label>
             <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_table == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
     </label>
         </div>
         <div class="button_container dir-row">

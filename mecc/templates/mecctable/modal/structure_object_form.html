@@ -68,21 +68,22 @@
             },
             success: function(data){
                 if (data.status = 200) {
-                    console.log('it works :! ');
                     $('.top-right').notify({
                         message: { text: 'Etat de saisie mis à jour : ' + data.val},
                         type:'info'
                     }).show();
                 }else {
-                    console.log('it NOT works :! ');
-
+                    $('.top-right').notify({
+                        message: { text: 'Error lors de la mise à jour de la saisie'},
+                        type:'warning'
+                    }).show();
                 }
             }
 
         })
     });
     function get_struct_details(_id, id_parent) {
-
+        console.log(_id);
         $.ajax({
             url: "{% url 'mecctable:get_stuct_obj_details' %}",
             type: "GET",
@@ -105,7 +106,8 @@
 
                     }
                 }
-                document.getElementById('submit-obj').onclick = function(){updateStructure(id_parent, _id)};
+                let update = "updateStructure("+id_parent+","+_id+")"
+                $("#submit-obj").attr("onclick", update);
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 
@@ -164,6 +166,7 @@
     };
 
     function updateStructure(id_parent, id_child) {
+
         console.log(id_parent);
         console.log(id_child);
         let data = JSON.stringify($("form").serializeObject()); //
