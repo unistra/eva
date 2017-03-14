@@ -83,7 +83,10 @@
         })
     });
     function get_struct_details(_id, id_parent) {
-        console.log(_id);
+        document.getElementById('id_ROF_code_year').tabIndex="-1";
+        document.getElementById('id_ROF_nature').tabIndex="-1";
+        document.getElementById('id_ROF_supply_program').tabIndex="-1";
+
         $.ajax({
             url: "{% url 'mecctable:get_stuct_obj_details' %}",
             type: "GET",
@@ -122,6 +125,10 @@
         let regime = '{{training.MECC_type}}'
         document.getElementById('div_id_regime').className = "disabled disabled-event";
         document.getElementById('div_id_session').className = "disabled disabled-event";
+        document.getElementById('id_regime_1').tabIndex="-1";
+        document.getElementById('id_regime_2').tabIndex="-1";
+        document.getElementById('id_session_1').tabIndex="-1";
+        document.getElementById('id_session_').tabIndex="-1";
         document.getElementById('id_session_' + session).checked = true
         $("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
     };

@@ -234,7 +234,6 @@ Merci.
 
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
-    print(training.input_opening[0])
     return render(request, template, data)
 
 

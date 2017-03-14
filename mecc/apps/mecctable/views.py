@@ -80,7 +80,6 @@ def mecctable_update(request):
     j = json.loads(b)
     data = {}
 
-
     def create_new_struct():
         return StructureObject.objects.create(
             code_year=currentyear().code_year,
@@ -140,7 +139,6 @@ def mecctable_update(request):
     try:
         ObjectsLink.objects.get(id_child=struct.id)
     except Exception as e:
-        print(e)
         ObjectsLink.objects.create(
             id_child=struct.id, code_year=currentyear().code_year,
             id_training=training.id, id_parent=id_parent,

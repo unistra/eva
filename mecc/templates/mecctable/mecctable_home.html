@@ -50,7 +50,7 @@
 
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+            <a onclick="get_struct_details(0,0)" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
         {% if structure_objs|length > 0 %}
@@ -99,8 +99,8 @@
                         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}})">{{e.label}}</a>
                     </td>
                     <td class="centered border-bottom">
-                        <span class="glyphicon glyphicon-plus blue hand">
-                            </span></td>
+                        <a onclick="get_struct_details(0, {{e.id}})" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+                    </td>
                     <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green hand"></span></td>
                     <td class="centered border-bottom">
                         <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
@@ -113,7 +113,7 @@
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
                     <td class="centered border-left border-bottom"> struct id = {{e.id}}</td>
                     <td class="centered border-left border-bottom">obj link id = {{l.id}}</td>
-                    <td class="centered border-left border-bottom">11</td>
+                    <td class="centered border-left border-bottom">parent_id = {{l.id_parent}}</td>
                     <td class="centered border-left border-bottom">11</td>
                     <td class="centered border-left-3 border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
@@ -210,6 +210,7 @@
         });
         // In order to move row up and down
         $('.arrow-move').click(function() {
+            console.log('clicked:!');
             let row = $(this).closest('tr');
             let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
             if ($(this).hasClass('glyphicon-arrow-up')) {
@@ -221,5 +222,6 @@
                 row.next().after(row);
         });
     });
+
 </script>
 {%endblock%}
