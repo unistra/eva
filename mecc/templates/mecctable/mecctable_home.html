@@ -142,7 +142,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {% if structure_objs|length == 0  %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 {% if structure_objs|length != 0  %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
