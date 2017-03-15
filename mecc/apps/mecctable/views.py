@@ -112,7 +112,8 @@ def mecctable_update(request):
         struct.owner_training_id = training.id
         struct.cmp_supply_id = training.supply_cmp
         struct.regime = j.get('regime') if is_catalgue else training.MECC_type
-        struct.session = j.get('session') if is_catalgue else training.session_type
+        struct.session = j.get(
+            'session') if is_catalgue else training.session_type
         struct.label = j.get('label')
         struct.is_in_use = True if j.get('is_in_use') else False
         struct.period = j.get('period')
@@ -151,21 +152,31 @@ def mecctable_update(request):
 
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
-    View displaying mecctable including StructureObject, ObjectsLink and
-    Exam - sort of all-in-one -
+    View displaying mecctable including StructureObject, ObjectsLink and Exam
     """
+    def sort_list(object_list):
+        for p in object_list:
+            if p.id_parent in [0, '', None]:
+                tmp.append(p)
+            else:
+                parent = ObjectsLink.objects.get(id_child=p.id_parent).id_child
+                current_child = [e.id_parent for e in tmp].count(p.id_parent)
+                index = [e.id_child for e in tmp].index(parent) + 1
+                tmp.insert(index+current_child, p)
+        return tmp
+
     data = {}
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(
         code_year=currentyear().code_year)
     object_link = ObjectsLink.objects.filter(
         code_year=currentyear().code_year,
-        id_training=id)
+        id_training=id).order_by('id_parent', 'order_in_child')
     data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
     data['structure_objs'] = structure_obj
-
-    data['object_link'] = object_link.order_by('id_parent', 'order_in_child')
+    tmp = []
+    data['object_link'] = sort_list(object_link)
     data['form'] = StructureObjectForm
     return render(request, template, data)
 

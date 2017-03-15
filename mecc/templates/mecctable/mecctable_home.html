@@ -86,7 +86,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for e in structure_objs %} {% for l in object_link %} {% if l.id_child == e.id %}
+                {% for l in object_link %} {% for e in structure_objs %} {% if l.id_child == e.id %}
 
                 <tr class="hover-row parent-{{l.id_parent}} order-{{l.order_in_child}}">
                     <td>
@@ -95,7 +95,7 @@
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
                     </td>
-                    <td class=" border-bottom"> {{e.nature}} :
+                    <td class=" border-bottom"> {% if l.id_parent != 0 %}&nbsp;&nbsp;&nbsp;{% endif %}{{e.nature}} :
                         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}})">{{e.label}}</a>
                     </td>
                     <td class="centered border-bottom">
@@ -109,7 +109,7 @@
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="centered border-bottom">{{e.RESPENS_id}}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'> {{l.order_in_child}}</td>
+                    <td class="centered border-left-3 border-bottom" contenteditable='true'> order in child = {{l.order_in_child}}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
                     <td class="centered border-left border-bottom"> struct id = {{e.id}}</td>
                     <td class="centered border-left border-bottom">obj link id = {{l.id}}</td>
@@ -118,7 +118,7 @@
                     <td class="centered border-left-3 border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">12</td>
+                    <td class="centered border-left border-bottom">ID = {{l.id_child}}</td>
                 </tr>
                 {% endif %} {% endfor %} {% endfor %}
             </tbody>
