@@ -108,12 +108,32 @@ class ObjectsLink(models.Model):
     nature_child = models.CharField(
         verbose_name=_("Nature du fils"), blank=False,
         choices=NATURE_CHOICE, max_length=3)
-    coefficient = models.DecimalField(
+    coefficient = models.IntegerField(
         verbose_name=_("Coefficient de l’objet (au sein de ce père)"),
-        max_digits=2, decimal_places=1, null=True, blank=True)
+        null=True, blank=True)
     eliminatory_grade = models.IntegerField(
-        _("Note éliminatoire sur cet objet (au sein de ce père)"),
+        _("Note seuil sur cet objet (au sein de ce père)"),
         default=None, null=True, blank=True)
+
+    @property
+    def nature_parent(self):
+        parent = StructureObject.objects.get(
+            id=self.id_parent) if self.id_parent not in [0, '0'] else None
+
+        if parent:
+            return parent.nature
+        else:
+            return None
+
+    @property
+    def depth(self, count=0):
+        def get_depth(link, count=0):
+            if link.id_parent in [0, '0']:
+                return count
+            else:
+                gparent = ObjectsLink.objects.get(id_child=link.id_parent)
+                return get_depth(gparent, count+1)
+        return range(get_depth(self))
 
 
 class Exam(models.Model):
@@ -170,6 +190,6 @@ class Exam(models.Model):
         verbose_name=_("Coefficient de l'épreuve"),
         max_digits=2, decimal_places=1)
     eliminatory_grade = models.IntegerField(
-        _("Note éliminatoire de l'épreuve"), null=True)
+        _("Note seuil de l'épreuve"), null=True)
     is_session_2 = models.BooleanField(_("Témoin Report session 2"))
     threshold_session_2 = models.IntegerField(_("Seuil de report session 2"))

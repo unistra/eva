@@ -82,7 +82,17 @@
 
         })
     });
-    function get_struct_details(_id, id_parent) {
+    function get_struct_details(_id, id_parent, nature) {
+        if (nature === 'SE' || nature === 'UE' || nature === 'EC'){
+            $("#id_nature option[value='SE']").remove();
+        }
+        if (nature === 'UE' || nature === 'EC'){
+            $("#id_nature option[value='UE']").remove();
+        }
+        if(nature === 'PT' || nature === 'ST'){
+            $("#id_nature").find('option').remove();
+
+        }
         document.getElementById('id_ROF_code_year').tabIndex="-1";
         document.getElementById('id_ROF_nature').tabIndex="-1";
         document.getElementById('id_ROF_supply_program').tabIndex="-1";

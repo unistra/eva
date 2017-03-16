@@ -50,7 +50,7 @@
 
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a onclick="get_struct_details(0,0)" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+            <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
         </div>
         {% if structure_objs|length > 0 %}
@@ -73,7 +73,7 @@
                     <th class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
                     <th class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
                     <th class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
-                    <th class="centered border-left-3 border-bottom ">{% trans "Note<br>élim" %}</th>
+                    <th class="centered border-left-3 border-bottom ">{% trans "Note<br>seuil" %}</th>
                     <th class="centered border-left-5 border-bottom ">{% trans "" %}</th>
                     <th class="centered border-left border-bottom ">S1</th>
                     <th class="centered border-left border-bottom ">S2</th>
@@ -95,30 +95,45 @@
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
                     </td>
-                    <td class=" border-bottom"> {% if l.id_parent != 0 %}&nbsp;&nbsp;&nbsp;{% endif %}{{e.nature}} :
-                        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}})">{{e.label}}</a>
+                    <td class=" border-bottom" style="white-space:nowrap">
+                        {% for i in l.depth  %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% endfor %}
+                        {{e.nature}} :
+                        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}}, '{{l.nature_parent}}')">{{e.label}}</a>
                     </td>
                     <td class="centered border-bottom">
-                        <a onclick="get_struct_details(0, {{e.id}})" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+                        {% if e.nature not in "ST PT"%}
+                            <a onclick="get_struct_details(0, {{e.id}},'{{l.nature_parent}}')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+                        {%endif%}
                     </td>
-                    <td class="centered border-bottom"><span class="glyphicon glyphicon-circle-arrow-left green hand"></span></td>
+                    <td class="centered border-bottom">
+                    {% if e.nature not in "ST PT"%}
+                            <span class="glyphicon glyphicon-circle-arrow-left green hand"></span>
+                    {%endif%}
+                        </td>
                     <td class="centered border-bottom">
                         <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
                     </td>
-                    <td class="centered border-bottom">{% if e.mutual %}{% trans "mut." %}{% endif %}</td>
+                    <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="centered border-bottom">{{e.RESPENS_id}}</td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'>{{l.coefficient}}</td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'> order in child = {{l.order_in_child}}</td>
+                    <td class="centered border-left-3 border-bottom" {% if l.coefficient %}contenteditable='true'>{{l.coefficient}}{% endif %}</td>
+                    <td class="centered border-left-3 border-bottom" contenteditable='true'> order:{{l.order_in_child}}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
-                    <td class="centered border-left border-bottom"> struct id = {{e.id}}</td>
-                    <td class="centered border-left border-bottom">obj link id = {{l.id}}</td>
-                    <td class="centered border-left border-bottom">parent_id = {{l.id_parent}}</td>
-                    <td class="centered border-left border-bottom">11</td>
-                    <td class="centered border-left-3 border-bottom">12</td>
+                    <td class="centered border-left border-bottom"> struct:{{e.id}}</td>
+                    <td class="centered border-left border-bottom">link:{{l.id}}</td>
+                    <td class="centered border-left border-bottom">parent:{{l.id_parent}}</td>
+                    <td class="centered border-left border-bottom">
+                    parent:{{l.nature_parent}}
+                    </td>
+                    <td class="centered border-left-3 border-bottom">
+                        CHILD:{{l.nature_child}}
+
+                    </td>
                     <td class="centered border-left border-bottom">12</td>
                     <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">ID = {{l.id_child}}</td>
+                    <td class="centered border-left border-bottom">ID:{{l.id_child}}</td>
                 </tr>
                 {% endif %} {% endfor %} {% endfor %}
             </tbody>
@@ -142,7 +157,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {% if structure_objs|length != 0  %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 {% if object_link %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>

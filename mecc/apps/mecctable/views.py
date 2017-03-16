@@ -138,15 +138,22 @@ def mecctable_update(request):
         last_order_in_parent = 0
     last_order_in_parent += 1
     try:
-        ObjectsLink.objects.get(id_child=struct.id)
+        link = ObjectsLink.objects.get(id_child=struct.id)
     except Exception as e:
-        ObjectsLink.objects.create(
-            id_child=struct.id, code_year=currentyear().code_year,
-            id_training=training.id, id_parent=id_parent,
-            order_in_child=last_order_in_parent,
-            n_train_child=training.n_train
-        )
-
+        try:
+            link = ObjectsLink.objects.create(
+                id_child=struct.id, code_year=currentyear().code_year,
+                id_training=training.id, id_parent=id_parent,
+                order_in_child=last_order_in_parent,
+                coefficient=int(struct.ECTS_credit)/int(
+                    3) if struct.nature == 'UE' else None,
+                n_train_child=training.n_train, nature_child=j.get('nature')
+            )
+        except Exception as e2:
+            print(e2)
+        link.coefficient=int(struct.ECTS_credit)/int(
+            3) if struct.nature == 'UE' else None
+        link.save()
     return JsonResponse(data)
 
 
@@ -154,6 +161,13 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
     View displaying mecctable including StructureObject, ObjectsLink and Exam
     """
+    def delete_all():
+        for e in StructureObject.objects.all():
+            e.delete()
+        for e in ObjectsLink.objects.all():
+            e.delete()
+        print("DELETED")
+
     def sort_list(object_list):
         for p in object_list:
             if p.id_parent in [0, '', None]:
@@ -165,6 +179,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 tmp.insert(index+current_child, p)
         return tmp
 
+    # delete_all()
     data = {}
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(
