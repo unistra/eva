@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
 from os.path import abspath, basename, dirname, join, normpath
@@ -250,6 +251,7 @@ LOCAL_APPS = (
     'mecc.apps.rules',
     'mecc.apps.training',
     'mecc.apps.mecctable',
+    'mecc.apps.files',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -337,7 +339,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 CKEDITOR_CONFIGS = {
-     'default': {
+    'default': {
         # 'skin': 'minimalist',
         'skin': 'office2013',
         'toolbar_Basic': [
@@ -357,7 +359,7 @@ CKEDITOR_CONFIGS = {
         'height': '9em',
         'width': '100%',
         'entities_latin': 'false',
-        'entities':'false'
+        'entities': 'false'
     },
 }
 
@@ -392,3 +394,10 @@ APOGEEWS_TOKEN = None
 
 MAIL_FROM = 'des-admin-mecc@unistra.fr'
 MAIL_ARCHIVES = 'des-mecc-archives@unistra.fr'
+
+
+#########
+# FILES #
+#########
+
+FILES_UPLOAD_PATH = 'uploads/docs/%Y'

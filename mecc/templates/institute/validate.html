@@ -10,6 +10,7 @@ MECC {{ request.display.current_year }} <br>
 {% block app_content %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'js/ajax.django.js' %}"></script>
 {% if messages %}
 {% for message in messages %}
 {% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
@@ -20,7 +21,7 @@ MECC {{ request.display.current_year }} <br>
 {% endfor %}
 <div class="disp-flex has-top-border">
 {% endif %}
-<div class="modal fade" id="confirm-validation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirm-validation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -71,23 +72,27 @@ MECC {{ request.display.current_year }} <br>
 </div>
     <div class="row has-top-border has-bottom-border">
         <div class='col-sm-6 border-right-blue'>
-            <form method="post">
-                <legend class="no-border">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
-                <div class="form-group" style="margin-bottom: 2em;">
-                    {% trans 'Lettre de présentation' %} :
-                    <label class="btn btn-primary pull-right" for="my-file-selector">
-                        <input id="my-file-selector" type="file" style="display:none;">
-                        {% trans 'Déposer la lettre' %}
-                    </label>
+            <legend class="no-border">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
+            <div class="form-group" style="margin-bottom: 2em;">
+                <div>
+                {% trans 'Lettre de présentation' %} :
+                {% if letter_file %}
+                    <ul>
+                    {% for letter in letter_file %}
+                    <li><a href="{{ letter.file.url }}">{{ letter.filename }}</a> {% trans 'envoyée le' %} {{ letter.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %} <strong>{{ letter.creator.get_full_name }}</strong></li>
+                    {% endfor %}
+                    </ulQ
+                {% else %}
+                    <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
+                {% endif %}
                 </div>
-                <div class="form-group has-top-border">
-                    {% trans 'Autres documents (PV, émargement, ...)' %} :
-                    <label class="btn btn-primary pull-right" for="my-file-selector">
-                        <input id="my-file-selector" type="file" style="display:none;" multiple>
-                        {% trans 'Déposer des documents' %}
-                    </label>
+            </div>
+            <div class="form-group has-top-border">
+                <div>
+                {% trans 'Autres documents (PV, émargement, ...)' %} :
+                    <button data-toggle="modal" data-target="#upload_misc" class="btn btn-primary pull-right">{% trans 'Déposer des documents' %} <span class="glyphicon glyphicon-upload"></span></button>
                 </div>
-            </form>
+            </div>
         </div>
         <div class='col-sm-6' style="margin-bottom: 2em;">
             <legend class="no-border">{% trans 'ETAPE' %} 3 : {% trans 'Notification DES' %}</legend>
@@ -105,7 +110,9 @@ MECC {{ request.display.current_year }} <br>
         </div>
     </div>
     {% include "institute/send_mail.html" %}
+    {% include "files/upload_letter.html" %}
 <script>
+var doUpload=false;
 // toma ugly fix autoclose is not working for now !!!!
 $.fn.datepicker.defaults.autoclose = true;
 // select/unselect all
@@ -138,16 +145,57 @@ $('#confirm-btn').on('click', function (e) {
 });
 
 $('#confirm-validation').on('show.bs.modal', function(e) {
-            // populate confirmation dialog modal
-            var label = [];
-            var modal_text = "<ul>";
-            $("#validate-form input:checkbox.noSelect:checked").each(function() {
-                label.label = $(this).closest('td').next('td').next('td').text();
-                label.date = $(this).closest('td').next('td').next('td').next('td').next('td').next('td').text();
-                modal_text += "<li>" + label.label + " : " + label.date + "</li>";
-            });
-            modal_text = modal_text + "</ul>";
-            $('.modal-items-container').html(modal_text);
+    // populate confirmation dialog modal
+    var label = [];
+    var modal_text = "<ul>";
+    $("#validate-form input:checkbox.noSelect:checked").each(function() {
+        label.label = $(this).closest('td').next('td').next('td').text();
+        label.date = $(this).closest('td').next('td').next('td').next('td').next('td').next('td').text();
+        modal_text += "<li>" + label.label + " : " + label.date + "</li>";
+    });
+    modal_text = modal_text + "</ul>";
+    $('.modal-items-container').html(modal_text);
 });
+
+function upload(event) {
+    event.preventDefault();
+    var data = new FormData($('#upload-letter-form').get(0));
+    if(doUpload){
+        $.ajax({
+            url: "{% url 'files:upload_file' app_name='institute' model_name='Institute' object_pk=institute.id %}",
+            type: "POST",
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                $('#upload-letter-form').submit();
+                $("#upload_letter .close").click();
+            },
+            error: function(data) {
+            },
+            beforeSend: function() {
+                $("btn-upload-letter").text('loading...');
+            }
+        });
+    }
+    return false;
+}
+$('input[type=file]').on('change', function() {
+    var fileName = $(this).val().replace(/.*(\/|\\)/, '');
+    var fileGroup = $('.file-group');
+    if (!(/\.(pdf)$/i).test(fileName)) {
+        fileGroup.addClass('has-error has-feedback');
+        $(this).after('<span class="glyphicon glyphicon-remove form-control-feedback file-upload-glyph"></span>');
+        $('label[for="file"]').text("Fichier : (uniquement au format pdf)");
+    } else {
+        fileGroup.removeClass('has-error has-feedback');
+        $('label[for="file"]').text("Fichier :");
+        $('.file-upload-glyph').remove();
+        doUpload=true;
+    }
+})
+$("#btn-upload-letter").click(upload);
+
 </script>
 {% endblock %}
