@@ -21,27 +21,6 @@ MECC {{ request.display.current_year }} <br>
 {% endfor %}
 <div class="disp-flex has-top-border">
 {% endif %}
-    <div class="modal fade" id="confirm-validation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">{% trans 'Confirmation nécessaire' %}</h4>
-                </div>
-
-                <div class="modal-body">
-                    <span id="modal-help">{% trans 'Date(s) déja saisie(s) à modifier :' %}</span>
-                    <p></p>
-                    <p class="modal-items-container"></p>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Annuler' %}</button>
-                    <a class="btn btn-primary btn-ok" onclick="document.getElementById('validate-form').submit()">{% trans 'Ok' %}</a>
-                </div>
-            </div>
-        </div>
-    </div>
     <form method="post" class='' id="validate-form">
         <legend class="no-border">{% trans 'ETAPE 1 : Saisir des dates de validation' %}</legend>
             <div class="row">
@@ -79,9 +58,9 @@ MECC {{ request.display.current_year }} <br>
                 {% if letter_file %}
                     <ul>
                     {% for letter in letter_file %}
-                    <li><a href="{{ letter.file.url }}">{{ letter.filename }}</a> {% trans 'envoyée le' %} {{ letter.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %} <strong>{{ letter.creator.get_full_name }}</strong></li>
+                        <li><a href="{{ letter.file.url }}" title="{{ letter.filename }} ({{ letter.comment }})">{{ letter.filename }}</a> {% trans 'envoyée le' %} {{ letter.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %} <strong>{{ letter.creator.get_full_name }}</strong></li>
                     {% endfor %}
-                    </ulQ
+                    </ul>
                 {% else %}
                     <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
                 {% endif %}
@@ -109,6 +88,7 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
     </div>
+    {% include "institute/confirm_validate.html"%}
     {% include "institute/send_mail.html" %}
     {% include "files/upload_letter.html" %}
 <script>
@@ -196,6 +176,5 @@ $('input[type=file]').on('change', function() {
     }
 })
 $("#btn-upload-letter").click(upload);
-
 </script>
 {% endblock %}
