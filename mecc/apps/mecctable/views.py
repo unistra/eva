@@ -58,9 +58,23 @@ def remove_object(request, id):
     struct_obj = StructureObject.objects.get(id=id)
     obj_link = ObjectsLink.objects.get(id_child=id)
 
-    if True:
-        obj_link.delete()
-        struct_obj.delete()
+    def get_children(parent, children_list=[]):
+        """
+        Return a list of children from a parent
+        """
+        for e in ObjectsLink.objects.filter(id_parent=parent.id_child):
+            children_list.append(e)
+            get_children(e, children_list)
+        return children_list
+
+    for e in get_children(obj_link):
+        struct = StructureObject.objects.get(id=e.id_child)
+        struct.delete()
+        e.delete()
+
+    struct_obj.delete()
+    obj_link.delete()
+
     return redirect('/mecctable/training/' + str(struct_obj.owner_training_id))
 
 
@@ -151,9 +165,13 @@ def mecctable_update(request):
             )
         except Exception as e2:
             print(e2)
-        link.coefficient=int(struct.ECTS_credit)/int(
-            3) if struct.nature == 'UE' else None
-        link.save()
+    coeff = int(struct.ECTS_credit)/int(3)
+    if 'DU' in str(training.degree_type.short_label) and coeff == 0:
+        coeff = 0
+    else:
+        coeff = coeff if coeff != 0 else None
+    link.coefficient = coeff if struct.nature == 'UE' else None
+    link.save()
     return JsonResponse(data)
 
 

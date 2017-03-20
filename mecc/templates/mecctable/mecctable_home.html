@@ -105,7 +105,7 @@
                     </td>
                     <td class="centered border-bottom">
                         {% if e.nature not in "ST PT"%}
-                            <a onclick="get_struct_details(0, {{e.id}},'{{l.nature_parent}}')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+                            <a onclick="get_struct_details(0, {{e.id}},'{{e.nature}}')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
                         {%endif%}
                     </td>
                     <td class="centered border-bottom">

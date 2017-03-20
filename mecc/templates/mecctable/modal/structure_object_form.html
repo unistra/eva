@@ -43,6 +43,10 @@
     </div>
 </div>
 <script type="text/javascript">
+// Copy select-option
+var select = document.getElementById('id_nature');
+var options = select.innerHTML;
+
     function hide_ifnot_checked(checkbox, to_hide){
         if (checkbox.checked){
             to_hide.className = ""
@@ -83,6 +87,8 @@
         })
     });
     function get_struct_details(_id, id_parent, nature) {
+        select.innerHTML = "";
+        select.innerHTML = options;
         if (nature === 'SE' || nature === 'UE' || nature === 'EC'){
             $("#id_nature option[value='SE']").remove();
         }
