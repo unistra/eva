@@ -13,9 +13,9 @@ from django.core.mail import EmailMultiAlternatives
 
 from mecc.apps.institute.forms import InstituteForm,  \
     DircompInstituteForm
+from mecc.apps.institute.models import Institute
 from mecc.apps.years.forms import DircompInstituteYearForm, \
     DircompUniversityYearForm, DisabledInstituteYearForm
-from mecc.apps.institute.models import Institute
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
@@ -24,6 +24,7 @@ from datetime import datetime
 from mecc.apps.utils.querries import currentyear
 from mecc.apps.training.models import Training
 from mecc.decorators import is_post_request
+from mecc.apps.files.models import FileUpload
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -378,6 +379,10 @@ def validate_institute(request, code, template='institute/validate.html'):
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
@@ -392,7 +397,7 @@ def validate_institute(request, code, template='institute/validate.html'):
         institute.label, request.user.first_name, request.user.last_name)
 
     if hasattr(settings, 'EMAIL_TEST'):
-        data['test_mail'] =  _("""
+        data['test_mail'] = _("""
 Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
 Merci.
         """)
@@ -468,7 +473,9 @@ def send_mail(request):
         subject=subject,
         body=body,
         from_email="%s %s <%s> " % (
-            request.user.first_name, request.user.last_name, request.user.email),
+            request.user.first_name,
+            request.user.last_name,
+            request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
         bcc=to
@@ -476,4 +483,22 @@ def send_mail(request):
 
     mail.send()
     messages.success(request, _('Notification envoyée.'))
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_upload_letter(request):
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    messages.success(request, _('Fichier envoyé !'))
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_upload_misc(request):
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    messages.success(request, _('Fichier(s) envoyé(s) !'))
     return redirect('/institute/validate/%s' % code)

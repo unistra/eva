@@ -23,6 +23,8 @@ urlpatterns = patterns(
         namespace='spoof')),
     url(r'^rules/', include('mecc.apps.rules.urls',
         namespace='rules')),
+    url(r'^file/', include('mecc.apps.files.urls',
+        namespace='files')),
     url(r'^ressources/(?P<employee_type>|prof|adm)/(?P<pk>[a-zA-Z]{3}).json',
         get_list, name='get_list'),
     url(r'^training/', include('mecc.apps.training.urls',
