@@ -174,7 +174,10 @@
                 <span style="color:rgb(0, 110, 174);font-size:0.7em;line-height:1;">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
             </div>
         </div>
-        {% include "mecctable/modal/structure_object_form.html" %} {% include "generic/modal_confirm_delete.html" %}
+        {% include "mecctable/modal/structure_object_form.html" %}
+        {% include "generic/modal_confirm_delete.html" %}
+        {% include "generic/search_member.html" with type="RESPENS" %}
+
     </div>
 </div>
 <style media="screen">
@@ -229,7 +232,6 @@
         });
         // In order to move row up and down
         $('.arrow-move').click(function() {
-            console.log('clicked:!');
             let row = $(this).closest('tr');
             let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
             if ($(this).hasClass('glyphicon-arrow-up')) {

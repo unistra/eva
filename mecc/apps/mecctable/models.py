@@ -117,7 +117,8 @@ class ObjectsLink(models.Model):
     nature_child = models.CharField(
         verbose_name=_("Nature du fils"), blank=False,
         choices=NATURE_CHOICE, max_length=3)
-    coefficient = models.IntegerField(
+    coefficient = models.DecimalField(
+        max_digits=4, decimal_places=2,
         verbose_name=_("Coefficient de l’objet (au sein de ce père)"),
         null=True, blank=True)
     eliminatory_grade = models.IntegerField(

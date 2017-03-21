@@ -27,7 +27,7 @@
 
                 </div>
             </div>
-            <form class="">
+            <form class="formstruct">
 
                 <div class="modal-body">
                     <div class="flex-container ">
@@ -129,7 +129,6 @@ var options = select.innerHTML;
                         } else if (prop == 'nature') {
                             $("#id_" + prop).val(data[prop])
                         } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
-                            console.log(data[prop]);
                             $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
                         } else {
                             if (prop == 'is_in_use' || prop == 'mutual') {
@@ -205,9 +204,7 @@ var options = select.innerHTML;
 
     function updateStructure(id_parent, id_child) {
 
-        console.log(id_parent);
-        console.log(id_child);
-        let data = JSON.stringify($("form").serializeObject()); //
+        let data_form = JSON.stringify($(".formstruct").serializeObject()); //
         let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
         let label = document.getElementById('id_label').value;
         if (type_val == '' || label == '') {
@@ -233,7 +230,7 @@ var options = select.innerHTML;
                 training_id: '{{ training.id }}',
                 id_child: id_child,
                 id_parent: id_parent,
-                formdata: data,
+                formdata: data_form,
             },
             success: function(data) {
                 // Next three lines are used to dismiss modal

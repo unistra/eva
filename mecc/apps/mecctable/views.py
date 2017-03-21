@@ -40,7 +40,6 @@ def get_stuct_obj_details(request):
             'period_fix': True if parent else False,
         })
 
-
     j = {
         'nature': struct_obj.nature,
         'regime': struct_obj.regime,
@@ -104,8 +103,8 @@ def mecctable_update(request):
     id_child = int(request.POST.get('id_child'))
     b = request.POST.get('formdata')
     j = json.loads(b)
+    print(j)
     data = {}
-
     def create_new_struct():
         return StructureObject.objects.create(
             code_year=currentyear().code_year,
@@ -154,7 +153,6 @@ def mecctable_update(request):
         struct.ROF_supply_program = j.get('ROF_supply_program')
         struct.ref_si_scol = j.get('ref_si_scol')
         struct.save()
-
     try:
         last_order_in_parent = ObjectsLink.objects.filter(
             id_training=training.id,

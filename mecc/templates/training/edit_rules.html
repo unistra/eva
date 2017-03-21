@@ -135,7 +135,7 @@
     {% endif %} class="btn-primary btn btn-sm btn-1 ">{% trans "Fermer la fiche" %}</a>
     <a href="{% url 'training:gen_pdf_all_rules' training.id%}" target="_blank" class="btn-primary btn btn-sm btn-1 ">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
     {% if can_edit %}
-    <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
+    <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
     <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un message à la DES" %}</a>
     {% endif %}
     </div>
