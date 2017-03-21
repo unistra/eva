@@ -381,6 +381,8 @@ def validate_institute(request, code, template='institute/validate.html'):
         id_cmp=institute.id, code_year=current_year.code_year)
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
@@ -490,4 +492,13 @@ def process_upload_letter(request):
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
     messages.success(request, _('Fichier envoyé !'))
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_upload_misc(request):
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    messages.success(request, _('Fichier(s) envoyé(s) !'))
     return redirect('/institute/validate/%s' % code)
