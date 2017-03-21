@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
 from os.path import abspath, basename, dirname, join, normpath
