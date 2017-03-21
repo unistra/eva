@@ -206,7 +206,7 @@
 </style>
 <script type="text/javascript">
     function ask_delete(id_obj, label) {
-        document.getElementById('type').innerHTML = "cet objet";
+        document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
         document.getElementById('to_del').innerHTML = label;
         document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj
     }

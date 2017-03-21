@@ -90,6 +90,15 @@ class StructureObject(models.Model):
                 self.auto_id = 1
         super(StructureObject, self).save(*args, **kwargs)
 
+    @property
+    def get_children(self):
+        """
+        Return list of direct children
+        """
+        return [StructureObject.objects.get(
+            id=e.id_child) for e in ObjectsLink.objects.filter(
+                id_parent=self.id)]
+
 
 class ObjectsLink(models.Model):
     NATURE_CHOICE = [

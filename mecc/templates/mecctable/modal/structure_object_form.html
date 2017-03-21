@@ -103,19 +103,34 @@ var options = select.innerHTML;
         document.getElementById('id_ROF_nature').tabIndex="-1";
         document.getElementById('id_ROF_supply_program').tabIndex="-1";
 
+        document.getElementById('div_id_period').className = "";
+        document.getElementById('id_period_1').tabIndex="auto";
+        document.getElementById('id_period_2').tabIndex="auto";
+        document.getElementById('id_period_3').tabIndex="auto";
+
+
         $.ajax({
             url: "{% url 'mecctable:get_stuct_obj_details' %}",
             type: "GET",
             data: {
                 _id: _id,
+                id_parent: id_parent,
             },
             success: function(data) {
                 for (let prop in data) {
                     if (data.hasOwnProperty(prop)) {
-                        if (prop == 'nature') {
+                        if (prop == 'period_fix') {
+                            if (data[prop] && !is_catalogue) {
+                                document.getElementById('div_id_period').className = "disabled disabled-event";
+                                document.getElementById('id_period_1').tabIndex="-1";
+                                document.getElementById('id_period_2').tabIndex="-1";
+                                document.getElementById('id_period_3').tabIndex="-1";
+                            }
+                        } else if (prop == 'nature') {
                             $("#id_" + prop).val(data[prop])
                         } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
-                            $("input[name=" + prop + "][value=" + data[prop] + "]").attr('checked', 'checked')
+                            console.log(data[prop]);
+                            $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
                         } else {
                             if (prop == 'is_in_use' || prop == 'mutual') {
                                 document.getElementById('id_' + prop).checked = data[prop]
@@ -135,8 +150,8 @@ var options = select.innerHTML;
     };
 
     let typedegree = '{{training.degree_type}}';
-    let is_catlague = typedegree.indexOf('CATALOGUE') != -1;
-    if (!is_catlague) {
+    let is_catalogue = typedegree.indexOf('CATALOGUE') != -1;
+    if (!is_catalogue) {
         let session = '{{training.session_type}}'
         let regime = '{{training.MECC_type}}'
         document.getElementById('div_id_regime').className = "disabled disabled-event";

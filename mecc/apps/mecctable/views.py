@@ -7,19 +7,28 @@ from django.http import JsonResponse
 from mecc.apps.utils.querries import currentyear
 from mecc.decorators import is_post_request, is_ajax_request
 from django_cas.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 import json
 
 
 @is_ajax_request
 def get_stuct_obj_details(request):
-    if request.GET.get('_id') in ['', 0, '0', None]:
+    try:
+        struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
+    except ObjectDoesNotExist as e:
+        struct_obj = None
+    try:
+        parent = StructureObject.objects.get(id=request.GET.get('id_parent'))
+    except ObjectDoesNotExist:
+        parent = None
+    if not struct_obj:
         return JsonResponse({
             'nature': "",
             'regime': "",
             'session': "",
             'label': "",
             'is_in_use': True,
-            'period': "",
+            'period': parent.period if parent else "",
             'ECTS_credit': "",
             'RESPENS_id': "",
             'mutual': "",
@@ -27,16 +36,18 @@ def get_stuct_obj_details(request):
             'ROF_code_year': "",
             'ROF_nature': "",
             'ROF_supply_program': "",
-            'ref_si_scol': ""
+            'ref_si_scol': "",
+            'period_fix': True if parent else False,
         })
-    struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
+
+
     j = {
         'nature': struct_obj.nature,
         'regime': struct_obj.regime,
         'session': struct_obj.session,
         'label': struct_obj.label,
         'is_in_use': struct_obj.is_in_use,
-        'period': struct_obj.period,
+        'period': parent.period if parent else struct_obj.period,
         'ECTS_credit': struct_obj.ECTS_credit,
         'RESPENS_id': struct_obj.RESPENS_id,
         'mutual': struct_obj.mutual,
@@ -44,7 +55,8 @@ def get_stuct_obj_details(request):
         'ROF_code_year': struct_obj.ROF_code_year,
         'ROF_nature': struct_obj.ROF_nature,
         'ROF_supply_program': struct_obj.ROF_supply_program,
-        'ref_si_scol': struct_obj.ref_si_scol
+        'ref_si_scol': struct_obj.ref_si_scol,
+        'period_fix': True if parent else False
     }
     return JsonResponse(j)
 
@@ -153,7 +165,7 @@ def mecctable_update(request):
     last_order_in_parent += 1
     try:
         link = ObjectsLink.objects.get(id_child=struct.id)
-    except Exception as e:
+    except ObjectsLink.DoesNotExist:
         try:
             link = ObjectsLink.objects.create(
                 id_child=struct.id, code_year=currentyear().code_year,
@@ -164,8 +176,11 @@ def mecctable_update(request):
                 n_train_child=training.n_train, nature_child=j.get('nature')
             )
         except Exception as e2:
-            print(e2)
-    coeff = int(struct.ECTS_credit)/int(3)
+            print(e2.__class__)
+    try:
+        coeff = int(struct.ECTS_credit)/int(3)
+    except TypeError:
+        coeff = None
     if 'DU' in str(training.degree_type.short_label) and coeff == 0:
         coeff = 0
     else:
