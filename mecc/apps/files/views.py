@@ -43,10 +43,11 @@ def upload_file(request, app_name, model_name, object_pk):
 
 @login_required
 @require_http_methods(["POST"])
-def delete_file(request, obj_id):
+def delete_file(request, file_id):
     """Delete a file given its object id. TODO:permissions to delete files """
     try:
-        res = FileUpload.objects.get(pk=obj_id)
+        print('super!')
+        res = FileUpload.objects.get(pk=file_id)
     except FileUpload.DoesNotExist:
         message = _('The requested file could not be found.')
         return HttpResponseNotFound(
