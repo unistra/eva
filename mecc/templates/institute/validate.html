@@ -56,11 +56,9 @@ MECC {{ request.display.current_year }} <br>
                 <div>
                 {% trans 'Lettre de présentation' %} :
                 {% if letter_file %}
-                    <ul>
-                    {% for letter in letter_file %}
-                        <li><a href="{{ letter.file.url }}" title="{{ letter.filename }} {% if letter.comment %}({{ letter.comment }}){% endif %}">{{ letter.filename }}</a> {% trans 'envoyée le' %} {{ letter.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %} <strong>{{ letter.creator.get_full_name }}</strong></li>
-                    {% endfor %}
-                    </ul>
+                    {% if misc_file %}
+                        {% include "institute/files_list.html" with files=letter_file %}
+                    {% endif %}
                 {% else %}
                     <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
                 {% endif %}
@@ -70,11 +68,7 @@ MECC {{ request.display.current_year }} <br>
                 <div>
                 {% trans 'Autres documents (PV, émargement, ...)' %} :
                 {% if misc_file %}
-                    <ul>
-                    {% for misc in misc_file %}
-                        <li><a href="{{ misc.file.url }}" title="{{ misc.filename }} {% if misc.comment %}({{ misc.comment }}){% endif %}">{{ misc.filename }}</a> {% trans 'envoyée le' %} {{ misc.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %} <strong>{{ misc.creator.get_full_name }}</strong></li>
-                    {% endfor %}
-                    </ul>
+                    {% include "institute/files_list.html" with files=misc_file %}
                 {% endif %}
                     <button data-toggle="modal" data-target="#upload_misc" class="btn btn-primary pull-right">{% trans 'Déposer des documents' %} <span class="glyphicon glyphicon-upload"></span></button>
                 </div>
