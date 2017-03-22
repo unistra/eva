@@ -95,10 +95,10 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
     </div>
-    {% include "institute/confirm_validate.html"%}
-    {% include "institute/send_mail.html" %}
-    {% include "files/upload_letter.html" %}
-    {% include "files/upload_misc.html" %}
+    {% include "institute/modal/confirm_validate.html"%}
+    {% include "institute/modal/send_mail.html" %}
+    {% include "institute/modal/upload_letter.html" %}
+    {% include "institute/modal/upload_misc.html" %}
 <script>
 var doUpload=false;
 // toma ugly fix autoclose is not working for now !!!!
