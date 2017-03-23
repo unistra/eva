@@ -489,6 +489,9 @@ def send_mail(request):
 @is_post_request
 @login_required
 def process_upload_letter(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
     messages.success(request, _('Fichier envoyé !'))
@@ -498,7 +501,22 @@ def process_upload_letter(request):
 @is_post_request
 @login_required
 def process_upload_misc(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
     messages.success(request, _('Fichier(s) envoyé(s) !'))
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_delete_file(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    messages.success(request, _('Fichier supprimé !'))
     return redirect('/institute/validate/%s' % code)

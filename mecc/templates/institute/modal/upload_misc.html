@@ -1,0 +1,67 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+
+
+<div class="modal fade" id="upload_misc" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h1 class="title-modal">{% trans "Envoyer des documents (pdf)" %}</h1>
+            </div>
+            <div class="modal-body">
+                <form id="upload-misc-form" enctype="multipart/form-data" class="upload-misc" method="POST" action="{% url 'institute:process_upload_misc' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="additional_type" value="misc_{{ request.display.current_year }}">
+                    <div class="form-group file-group">
+                        <label for="file" class="control-label col-lg-2">{% trans "Fichier :" %}</label>
+                        <div class="controls col-lg-10" id="files-container">
+                            <input type="file" name="file" id="file" class="form-control file" accept="application/pdf" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default btn-md add-file" id="add_file" style="display: block;">
+                            <span class=" glyphicon glyphicon-plus"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-md add-file" id="del_file" style="display: block;">
+                            <span class=" glyphicon glyphicon-minus"></span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" class="control-label col-lg-2">{% trans "Commentaire :" %}</label>
+                        <div class="controls col-lg-10">
+                            <textarea name="comment" rows="8" class="form-control" placeholder="Commentaire (facultatif)" ></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btn-upload-misc" class="btn btn-primary has-1em-margin-top">{% trans "Envoyer" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+var i;
+$('#add_file').click(function() {
+    i=i+1;
+    $('#files-container').append(
+        $('<input>').attr('type', 'file').attr('name', 'file'+i).attr('id', 'file'+i).attr('class', 'form-control file').attr('accept', 'application/pdf').attr('required','required')
+    );
+});
+$('#del_file').click(function() {
+    if ($('#files-container input:last-child').attr('name') != 'file') {
+        $('#files-container input:last-child').remove();
+    }
+});
+</script>
+<style media="screen">
+    .modal-content, #misc-file {
+        width: 100%
+    }
+    .form-group label{
+        text-align: right;
+    }
+    .form-group label, .form-group div{
+        margin-top: 0.5em
+</style>

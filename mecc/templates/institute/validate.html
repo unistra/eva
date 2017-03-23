@@ -56,9 +56,7 @@ MECC {{ request.display.current_year }} <br>
                 <div>
                 {% trans 'Lettre de présentation' %} :
                 {% if letter_file %}
-                    {% if misc_file %}
-                        {% include "institute/files_list.html" with files=letter_file %}
-                    {% endif %}
+                    {% include "institute/files_list.html" with files=letter_file %}
                 {% else %}
                     <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
                 {% endif %}
@@ -93,6 +91,7 @@ MECC {{ request.display.current_year }} <br>
     {% include "institute/modal/send_mail.html" %}
     {% include "institute/modal/upload_letter.html" %}
     {% include "institute/modal/upload_misc.html" %}
+    {% include "generic/modal_confirm_delete.html" %}
 <script>
 var doUpload=false;
 // toma ugly fix autoclose is not working for now !!!!
@@ -179,15 +178,17 @@ function upload_letter(event) {
                 $('#upload-letter-form').submit();
                 $("#upload_letter .close").click();
             },
-            error: function(data) {
-            },
             beforeSend: function() {
-                $("btn-upload-letter").text('loading...');
+                /*
+                TODO: add a spinner or something
+                */
+                //$("btn-upload-letter").text('loading...');
             }
         });
     }
     return false;
 }
+
 $('input[type=file]').on('change', function() {
     var fileName = $(this).val().replace(/.*(\/|\\)/, '');
     var fileGroup = $('.file-group');
@@ -207,11 +208,25 @@ $("#btn-upload-letter").click(upload_letter);
 $("#btn-upload-misc").click(upload_misc);
 
 $('body').on('hidden.bs.modal', '.modal', function () {
-    console.log('modal hidden');
     $(".modal-body input[type=file]").val("");
     $(".modal-body textarea").val("");
 });
 
-
+function ask_delete(id_obj, label) {
+    document.getElementById('type').innerHTML = "{% trans 'ce fichier' %}";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = '{% url 'institute:process_delete_file' %}';
+    $('#delete_form').on('submit', function(e) {
+        var data = new FormData($('#delete_form').get(0));
+        $.ajax({
+            url: "/file/delete/" + id_obj,
+            type: "POST",
+            cache: false,
+            data: data,
+            processData: false,
+            contentType: false,
+        });
+    });
+}
 </script>
 {% endblock %}
