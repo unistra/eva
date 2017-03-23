@@ -59,6 +59,24 @@
 {% include "commission/delete_member.html" %}
 {% include "commission/send_mail.html" %}
 <script>
+    function fill_form(clicked){
+
+        let last_name = clicked.closest('tr').children('td:first');
+        let first_name = $(last_name).next('td');
+        let status = $(first_name).next('td');
+        let institute = $(first_name).next('td').next('td');
+        let mail = $(institute).next('td');
+        let id = $(mail).next('td');
+        document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+        document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+        document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
+        document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
+        $('#selectedMember').modal('show');
+        $('#searchMember').modal('hide');
+        // document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
+        // document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+    }
+
     $('#searchMember').on('shown.bs.modal', function () {
         $('#to-search').focus();
     });
@@ -78,9 +96,9 @@
     });
 
     function filterCol(selected) {
-      var a = selected.value
+      let a = selected.value
     $('#commission-member tr').each(function() {
-        var b = $(this).find("#val");
+        let b = $(this).find("#val");
         if (a === b.val()) {
           b.parent().parent().show();
         } else {
@@ -90,7 +108,7 @@
           b.parent().parent().show();
         }
      });
-     var mails = null;
+     let mails = null;
      if (a === 'all'){
          mails = '{%for e in staff_mails%}{{e}}, {%endfor%}'
          document.getElementById('send-to').value = mails

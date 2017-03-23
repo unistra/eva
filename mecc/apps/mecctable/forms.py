@@ -1,7 +1,7 @@
 from django import forms
 from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Div
+from crispy_forms.layout import Layout, HTML, Div, Field
 from django.utils.translation import ugettext as _
 
 
@@ -44,7 +44,17 @@ class StructureObjectForm(forms.ModelForm):
                 ),
                 'label',
                 Div(
-                    'RESPENS_id',
+                    Field(
+                        'RESPENS_id',
+                        HTML("""
+<span>
+<span class="select glyphicon glyphicon-remove" id="remove-respens"
+style="left:-1.5em;z-index:100"></span>
+<a data-toggle="modal" data-target="#searchMember" class="select glyphicon
+glyphicon-search"></a>
+</span>
+                        """),
+                    ),
                     'ECTS_credit',
                     css_class="y"
                 ),
@@ -82,6 +92,7 @@ class StructureObjectForm(forms.ModelForm):
             )
 
         )
+        self.fields['RESPENS_id'].widget.attrs['readonly'] = True
 
     class Meta:
         model = StructureObject

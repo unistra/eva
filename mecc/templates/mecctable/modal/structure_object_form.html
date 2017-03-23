@@ -1,6 +1,6 @@
 {% load i18n %} {% load crispy_forms_tags %}
 
-<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
+<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1200;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
@@ -24,11 +24,9 @@
                     <div class="">
                         {% trans "Composante porteuse : " %} {{training.supply_cmp_label}}
                     </div>
-
                 </div>
             </div>
             <form class="formstruct">
-
                 <div class="modal-body">
                     <div class="flex-container ">
                         {% crispy form %}
@@ -43,6 +41,20 @@
     </div>
 </div>
 <script type="text/javascript">
+
+$("#remove-respens").on('click', function(){
+    document.getElementById('id_RESPENS_id').value = "";
+})
+function fill_form(clicked) {
+    let last_name = clicked.closest('tr').children('td:first');
+    let first_name = $(last_name).next('td');
+    let status = $(first_name).next('td');
+    let institute = $(first_name).next('td').next('td');
+    let mail = $(institute).next('td');
+    let id = $(mail).next('td');
+    document.getElementById('id_RESPENS_id').value = id.text().replace(/\s+/g, '');
+    $('#searchMember').modal('hide');
+}
 // Copy select-option
 var select = document.getElementById('id_nature');
 var options = select.innerHTML;
@@ -246,6 +258,9 @@ var options = select.innerHTML;
 </script>
 
 <style media="screen">
+    #searchMember{
+      margin-top: 4em;
+    }
     .asteriskField {
         display: none;
     }
@@ -326,7 +341,7 @@ var options = select.innerHTML;
 
     .y>.form-group>:not(:first-child) {
         flex-grow: 2;
-        margin-right: 2em;
+        margin-right: 0.1em;
     }
 
     #div_id_ECTS_credit>:not(:first-child) {

@@ -1,3 +1,18 @@
+<!-- NEED a js function  like :
+function fill_form(clicked) {
+    let last_name = clicked.closest('tr').children('td:first');
+    let first_name = $(last_name).next('td');
+    let status = $(first_name).next('td');
+    let institute = $(first_name).next('td').next('td');
+    let mail = $(institute).next('td');
+    let id = $(mail).next('td');
+    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+    document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
+    document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
+    $('#selectedMember').modal('show');
+    $('#searchMember').modal('hide');
+}  -->
 {% load i18n %}
 {% load dipstrapfiles %}
 {% load crispy_forms_tags %}
@@ -5,13 +20,13 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="searchMember" role="dialog" style="z-index: 1400;">
+<div class="modal fade" id="searchMember" role="dialog" style="z-index: 1800;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content select-pple">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="title-modal">{% trans "Rechercher un membre" %}</h4> 123 --- {{type}}
+                <h4 class="title-modal">{% trans "Rechercher un membre" %}</h4>
             </div>
             <div class="modal-body">
                 <div id='error'></div>
@@ -25,8 +40,7 @@
                 </div>
                 <table>
                 </table>
-                <!-- /input-group -->
-
+                <!-- input-group -->
                 <div class="table-responsive" style="display:none" id="table-resp">
                 <br>
                     <table class="table results order-table sortable" id="sortabletable">
@@ -80,7 +94,7 @@
 <script type="text/javascript">
 
 function searchMember() {
-    var new_tbody = document.createElement('tbody');
+    let new_tbody = document.createElement('tbody');
     old_tbody = document.getElementById('table')
     new_tbody.setAttribute("id", "table");
     old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
@@ -105,8 +119,8 @@ function searchMember() {
             } else {
                 document.getElementById('table-resp').style.display = '';
                 parent_table = document.getElementById('table');
-                for (var i = 0; i < data.pple.length; i++) {
-                    var tr = document.createElement('tr');
+                for (let i = 0; i < data.pple.length; i++) {
+                    let tr = document.createElement('tr');
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
@@ -129,20 +143,8 @@ function searchMember() {
                 });
 
                 $(".hit").click(function() {
-                    $('#selectedMember').modal('show');
-                    $('#searchMember').modal('hide');
-                    var last_name = $(this).closest('tr').children('td:first');
-                    var first_name = $(last_name).next('td');
-                    var status = $(first_name).next('td');
-                    var institute = $(first_name).next('td').next('td');
-                    var mail = $(institute).next('td');
-                    var id = $(mail).next('td');
-                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-                    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
-                    document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
-                    document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
-                    document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
-                    document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+                    let clicked = $(this);
+                    fill_form(clicked);
                 });
             }
         }

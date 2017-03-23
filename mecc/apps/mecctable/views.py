@@ -103,8 +103,8 @@ def mecctable_update(request):
     id_child = int(request.POST.get('id_child'))
     b = request.POST.get('formdata')
     j = json.loads(b)
-    print(j)
     data = {}
+
     def create_new_struct():
         return StructureObject.objects.create(
             code_year=currentyear().code_year,
@@ -192,12 +192,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
     View displaying mecctable including StructureObject, ObjectsLink and Exam
     """
-    def delete_all():
-        for e in StructureObject.objects.all():
-            e.delete()
-        for e in ObjectsLink.objects.all():
-            e.delete()
-        print("DELETED")
 
     def sort_list(object_list):
         for p in object_list:
@@ -210,7 +204,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 tmp.insert(index+current_child, p)
         return tmp
 
-    # delete_all()
     data = {}
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(

@@ -66,6 +66,15 @@ def get_list_from_cmp_by_ldap(cmp):
     return result
 
 
+def get_user_from_ldap(username):
+    """
+    return data from user
+    """
+    client = create_client('ldap_client', settings.LDAP_TOKEN,
+                           settings.LDAP_SPORE, settings.LDAP_BASE_URL)
+    ask = client.get_user(format='json', username=username)
+
+
 def get_from_ldap(val):
     def process_stuff(ask):
         result = []

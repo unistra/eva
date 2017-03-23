@@ -91,7 +91,7 @@
                 <tr class="hover-row parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%}">
 
                     <td>
-                        <div style="width:2.75em;">
+                        <div style="width:3em;">
                             <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
@@ -167,11 +167,11 @@
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 " style="width=10em">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
             </div>
             <div class="flex-item dir-row">
                 <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
-                <span style="color:rgb(0, 110, 174);font-size:0.7em;line-height:1;">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
+                <span class="small-blue-txt">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
             </div>
         </div>
         {% include "mecctable/modal/structure_object_form.html" %}
@@ -181,9 +181,14 @@
     </div>
 </div>
 <style media="screen">
-.grey-all * {
-    color: grey!important;
-}
+    .small-blue-txt {
+        color:rgb(0, 110, 174);
+        font-size:0.7em;
+        line-height:1;
+    }
+    .grey-all * {
+        color: grey!important;
+    }
     .button_container {
         display: -webkit-box;
         display: -moz-box;

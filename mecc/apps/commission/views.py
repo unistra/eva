@@ -38,11 +38,15 @@ def home(request, template='commission/home.html'):
             instance = form_data.save(commit=False)
             instance.save()
 
-    data['commission_staff'] = ECICommissionMember.objects.all().order_by('last_name')
+    data['commission_staff'] = ECICommissionMember.objects.all().order_by(
+        'last_name')
     data['staff_mails'] = [e.email for e in data['commission_staff']]
-    data['supply_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'supply']
-    data['tenured_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'tenured']
-    data['commission_mails'] = [e.email for e in data['commission_staff'] if e.member_type == 'commission']
+    data['supply_mails'] = [e.email for e in data[
+        'commission_staff'] if e.member_type == 'supply']
+    data['tenured_mails'] = [e.email for e in data[
+        'commission_staff'] if e.member_type == 'tenured']
+    data['commission_mails'] = [e.email for e in data[
+        'commission_staff'] if e.member_type == 'commission']
     return render(request, template, data)
 
 
@@ -66,14 +70,6 @@ def get_list_of_pple(request):
     data = {}
     x = request.GET.get('member', '')
     y = request.GET.get('research_type', None)
-    if y == 'ECI':
-        r = [e.username for e in ECICommissionMember.objects.all()]
-    if y == 'RESPFORM':
-        z = request.GET.get('id_training')
-        r = [e.user.username for e in
-             Training.objects.get(id=z).resp_formations.all()]
-    elif y is None:
-        r = []
     if x.count('*') > 1:
         return JsonResponse(
             {'message': _('Afin de ne pas effectuer trop de requetes, veuillez\
@@ -83,8 +79,20 @@ def get_list_of_pple(request):
             return JsonResponse(
                 {'message': _('Veuillez entrer au moins trois caractères.')})
     if len(x) > 1:
+        if y == 'RESPENS':
+            return JsonResponse({'pple': [
+                e for e in get_from_ldap(x) if e['status'] == 'Enseignant']})
+        if y == 'ECI':
+            r = [e.username for e in ECICommissionMember.objects.all()]
+        if y == 'RESPFORM':
+            z = request.GET.get('id_training')
+            r = [e.user.username for e in
+                 Training.objects.get(id=z).resp_formations.all()]
+        if y is None:
+            r = []
         ppl = [e for e in get_from_ldap(x) if e['username'] not in r]
-        data['pple'] = sorted(ppl, key=lambda x: x['first_name'])
+        data['pple'] = sorted(
+            ppl, key=lambda x: (x['last_name'], x['first_name']))
         return JsonResponse(data)
     else:
         return JsonResponse(
@@ -102,15 +110,14 @@ def send_mail(request):
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-    nobody = ['', ' ', None]
     # TODO: A decommenter pour envoyer aux bonnes personnes
+    # nobody = ['', ' ', None]
     # to = [e.replace(' ', '') for e in request.POST.get('to').split(
     #     ',')] if request.POST.get('to') not in nobody else None
     # cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
     #     ',')] if request.POST.get('cc') not in nobody else None
     # TODO: remove the following lines in production
     to = [
-    #     'ibis.ismail@unistra.fr',
         'weible@unistra.fr'
         ]
     cc = ['ibis.ismail@unistra.fr']
