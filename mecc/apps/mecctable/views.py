@@ -5,10 +5,13 @@ from django.shortcuts import render, redirect
 from mecc.apps.training.models import Training
 from django.http import JsonResponse
 from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request
 from django_cas.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 import json
+from django.contrib.auth.models import User
+from mecc.apps.adm.models import MeccUser, Profile
 
 
 @is_ajax_request
@@ -60,14 +63,34 @@ def get_stuct_obj_details(request):
     return JsonResponse(j)
 
 
+def remove_respens(old_username, label, training):
+    """
+    Remove respens profile and delete user/meccuser if no
+    more profile on it
+    """
+    try:
+        meccuser = MeccUser.objects.get(user__username=old_username)
+    except MeccUser.DoesNotExist:
+        return
+    profile = Profile.objects.get(
+        code="RESPENS", cmp=training.supply_cmp, year=currentyear().code_year,
+        label="RESPENS - %s" % label)
+    meccuser.profile.remove(profile)
+
+    if len(meccuser.profile.all()) < 1:
+        User.objects.get(username=old_username).delete()
+        meccuser.delete()
+    print("DELETED")
+
+
 @login_required
 @is_post_request
 def remove_object(request, id):
     """
     Remove struct_obj and relating object_link
     """
-    struct_obj = StructureObject.objects.get(id=id)
-    obj_link = ObjectsLink.objects.get(id_child=id)
+    struc = StructureObject.objects.get(id=id)
+    link = ObjectsLink.objects.get(id_child=id)
 
     def get_children(parent, children_list=[]):
         """
@@ -78,15 +101,16 @@ def remove_object(request, id):
             get_children(e, children_list)
         return children_list
 
-    for e in get_children(obj_link):
+    for e in get_children(link):
         struct = StructureObject.objects.get(id=e.id_child)
-        struct.delete()
-        e.delete()
+        print(struct.RESPENS_id)
+    #     struct.delete()
+    #     e.delete()
+    #
+    # struc.delete()
+    # link.delete()
 
-    struct_obj.delete()
-    obj_link.delete()
-
-    return redirect('/mecctable/training/' + str(struct_obj.owner_training_id))
+    return redirect('/mecctable/training/' + str(struc.owner_training_id))
 
 
 @is_post_request
@@ -98,14 +122,53 @@ def mecctable_update(request):
 
     training = Training.objects.get(id=request.POST.get('training_id'))
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
+
     # needed stuff in order to create objectslink
     id_parent = int(request.POST.get('id_parent'))
     id_child = int(request.POST.get('id_child'))
     b = request.POST.get('formdata')
     j = json.loads(b)
     data = {}
+    username = j.get('RESPENS_id')
+    user_data = get_user_from_ldap(username=username) if username not in [
+        '', ' ', None] else None
+
+    def create_respens(username):
+        """
+        Create meccuser/user and RESPENS profile
+        """
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            last_name = "%s (%s)" % (user_data.get("last_name"), user_data.get(
+                'birth_name')) if user_data.get('last_name') != user_data.get(
+                'birth_name') else user_data('last_name')
+            user = User.objects.create_user(
+                last_name=last_name, email=user_data.get('mail'),
+                username=username, first_name=user_data.get(
+                    'first_name').title())
+
+        profile, created = Profile.objects.get_or_create(
+            code="RESPENS", cmp=training.supply_cmp, year=currentyear().code_year,
+            label="RESPENS - %s" % j.get('label'))
+        try:
+            meccuser = MeccUser.objects.get(user__username=username)
+        except MeccUser.DoesNotExist:
+            meccuser = MeccUser.objects.create(
+                user=user, cmp=user_data.get('main_affectation_code'),
+                status='PROF')
+
+        meccuser.profile.add(profile)
+
+
 
     def create_new_struct():
+        """
+        Create structure
+        """
+        if j.get('RESPENS_id') not in ['', ' ', None]:
+            create_respens(j.get('RESPENS_id'))
+
         return StructureObject.objects.create(
             code_year=currentyear().code_year,
             nature=j.get('nature'),
@@ -132,6 +195,12 @@ def mecctable_update(request):
         struct = create_new_struct()
     else:
         struct = StructureObject.objects.get(id=id_child)
+        # check the respens is the same as before
+        if struct.RESPENS_id != j.get('RESPENS_id'):
+            if struct.RESPENS_id not in ['', ' ', None]:
+                remove_respens(struct.RESPENS_id,  j.get('label'), training)
+            if j.get('RESPENS_id') not in ['', ' ', None]:
+                create_respens(j.get('RESPENS_id'))
         struct.code_year = currentyear().code_year
         struct.nature = j.get('nature')
         struct.owner_training_id = training.id
@@ -154,6 +223,11 @@ def mecctable_update(request):
         struct.ref_si_scol = j.get('ref_si_scol')
         struct.save()
     try:
+        coeff = int(struct.ECTS_credit)/int(3)
+    except TypeError:
+        coeff = None
+
+    try:
         last_order_in_parent = ObjectsLink.objects.filter(
             id_training=training.id,
             id_parent=id_parent, code_year=currentyear().code_year).latest(
@@ -164,21 +238,14 @@ def mecctable_update(request):
     try:
         link = ObjectsLink.objects.get(id_child=struct.id)
     except ObjectsLink.DoesNotExist:
-        try:
-            link = ObjectsLink.objects.create(
-                id_child=struct.id, code_year=currentyear().code_year,
-                id_training=training.id, id_parent=id_parent,
-                order_in_child=last_order_in_parent,
-                coefficient=int(struct.ECTS_credit)/int(
-                    3) if struct.nature == 'UE' else None,
-                n_train_child=training.n_train, nature_child=j.get('nature')
-            )
-        except Exception as e2:
-            print(e2.__class__)
-    try:
-        coeff = int(struct.ECTS_credit)/int(3)
-    except TypeError:
-        coeff = None
+        link = ObjectsLink.objects.create(
+            id_child=struct.id, code_year=currentyear().code_year,
+            id_training=training.id, id_parent=id_parent,
+            order_in_child=last_order_in_parent,
+            coefficient=coeff if struct.nature == 'UE' else None,
+            n_train_child=training.n_train, nature_child=j.get('nature')
+        )
+
     if 'DU' in str(training.degree_type.short_label) and coeff == 0:
         coeff = 0
     else:

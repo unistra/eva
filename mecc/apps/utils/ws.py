@@ -73,9 +73,13 @@ def get_user_from_ldap(username):
     client = create_client('ldap_client', settings.LDAP_TOKEN,
                            settings.LDAP_SPORE, settings.LDAP_BASE_URL)
     ask = client.get_user(format='json', username=username)
+    return json.loads(ask.text)
 
 
 def get_from_ldap(val):
+    """
+    return list of user with data from ldap
+    """
     def process_stuff(ask):
         result = []
         r = json.loads(ask.text)

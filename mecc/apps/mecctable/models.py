@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 
 class StructureObject(models.Model):
@@ -98,6 +99,15 @@ class StructureObject(models.Model):
         return [StructureObject.objects.get(
             id=e.id_child) for e in ObjectsLink.objects.filter(
                 id_parent=self.id)]
+
+    @property
+    def get_respens_name(self):
+        """
+        Return last_name and first_name of respens
+        """
+        
+        user = User.objects.get(username=self.RESPENS_id)
+        return user.last_name + " " + user.first_name
 
 
 class ObjectsLink(models.Model):

@@ -118,7 +118,7 @@
                     </td>
                     <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
-                    <td class="centered border-bottom">{{e.RESPENS_id}}</td>
+                    <td class="border-bottom">{{e.get_respens_name}}</td>
                     <td class="centered border-left-3 border-bottom" {% if l.coefficient %}contenteditable='true'>{{l.coefficient}}{% endif %}</td>
                     <td class="centered border-left-3 border-bottom" contenteditable='true'> order:{{l.order_in_child}}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
