@@ -218,7 +218,6 @@ function ask_delete(id_obj, label, e) {
     document.gen_form.action = '{% url 'institute:process_delete_file' %}';
     $('#delete_form').on('submit', function(e) {
         e.preventDefault;
-        console.log('la!!!!');
         var data = new FormData($('#delete_form').get(0));
         $.ajax({
             url: "/file/delete/" + id_obj,
