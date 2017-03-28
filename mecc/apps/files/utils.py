@@ -1,6 +1,8 @@
 from django.core.files import File
 from django.core.urlresolvers import reverse
 
+from unicodedata import normalize
+
 from .forms import FileUploadForm
 from .models import FileUpload
 
@@ -9,7 +11,8 @@ def create_file(up_file, obj, user, additional_type=None, comment=None):
     res = FileUpload(content_object=obj, creator=user,
                      additional_type=additional_type, comment=comment)
     file_ = File(up_file)
-    res.file.save(up_file.name, file_, save=False)
+    # Normalize filename without special chars
+    res.file.save(normalize('NFKD', up_file.name).encode('ascii','ignore').decode('ascii'), file_, save=False)
     res.save()
 
     return res
@@ -29,9 +32,3 @@ def upload_files(request, obj):
             files.append({'name': upload_file.name, 'url': res.file.url,
                           'delete_url': delete_url})
         return files
-    return None
-
-
-# def file_directory_path(instance, filename):
-#    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-#    return 'user_{0}/{1}'.format(instance.user.id, filename)

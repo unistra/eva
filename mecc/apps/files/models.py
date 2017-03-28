@@ -21,7 +21,7 @@ class FileUpload(models.Model):
     comment = models.TextField(null=True, blank=True, default='')
     uploaded_at = models.DateTimeField(auto_now_add=True, editable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.file.name
 
     def filename(self):
