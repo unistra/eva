@@ -102,13 +102,18 @@ def remove_object(request, id):
         return children_list
 
     for e in get_children(link):
+
         struct = StructureObject.objects.get(id=e.id_child)
-        print(struct.RESPENS_id)
-    #     struct.delete()
-    #     e.delete()
-    #
-    # struc.delete()
-    # link.delete()
+
+        remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
+            id=struct.owner_training_id))
+        struct.delete()
+        e.delete()
+
+    remove_respens(struc.RESPENS_id, struc.label, Training.objects.get(
+        id=struc.owner_training_id))
+    struc.delete()
+    link.delete()
 
     return redirect('/mecctable/training/' + str(struc.owner_training_id))
 
@@ -159,8 +164,6 @@ def mecctable_update(request):
                 status='PROF')
 
         meccuser.profile.add(profile)
-
-
 
     def create_new_struct():
         """
