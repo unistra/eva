@@ -46,13 +46,11 @@ def upload_file(request, app_name, model_name, object_pk):
 def delete_file(request, file_id):
     """Delete a file given its object id. TODO:permissions to delete files """
     try:
-        print('super!')
         res = FileUpload.objects.get(pk=file_id)
     except FileUpload.DoesNotExist:
         message = _('The requested file could not be found.')
         return HttpResponseNotFound(
             json.dumps({'status': 'error', 'message': message}))
-
     res.file.delete()
     res.delete()
 
