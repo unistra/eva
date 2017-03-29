@@ -7,7 +7,6 @@
         {{ file.filename }}
     </a>{% trans 'dépôt le' %} {{ file.uploaded_at|date:"SHORT_DATE_FORMAT" }} {% trans 'par' %}
         <strong>{{ file.creator.get_full_name }}</strong>
-        <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{file.id}}, '{{file.filename}}', event)" data-target="#preview"></span>
     </li>
 {% endfor %}
 </ul>

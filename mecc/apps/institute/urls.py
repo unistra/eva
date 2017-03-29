@@ -2,7 +2,8 @@ from django.conf.urls import url
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
     InstituteListView,  edit_institute, granted_edit_institute, \
     add_pple, remove_pple, validate_institute, send_mail, \
-    process_delete_file, process_upload_letter, process_upload_misc
+    process_delete_file, process_upload_letter, process_upload_misc, \
+    documents_institute
 from django_cas.decorators import login_required
 
 
@@ -33,4 +34,6 @@ urlpatterns = [
         name='process_upload_misc'),
     url(r'^process_delete_file/$', process_delete_file,
         name='process_delete_file'),
+    url(r'^documents/(?P<code>\w+)/$', documents_institute,
+        name='documents'),
 ]

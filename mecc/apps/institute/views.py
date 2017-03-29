@@ -308,7 +308,10 @@ class InstituteUpdate(UpdateView):
                 code_year=current_year, id_cmp=self.object.id)
             context['university_year'] = uy
             context['institute'] = self.object
-
+            context['letter_file'] = FileUpload.objects.filter(
+                    object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
+            context['misc_file'] = FileUpload.objects.filter(
+                    object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
@@ -372,7 +375,6 @@ def validate_institute(request, code, template='institute/validate.html'):
     """
     Validate MECC in institute
     """
-
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
@@ -440,6 +442,28 @@ Merci.
     except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
             'Veuillez renseigner une date de validation valide'))
+    return render(request, template, data)
+
+
+@user_passes_test(lambda u: True if 'DIRETU' or 'GESCOL' or 'RESPFORM' in [e.code for e in u.meccuser.profile.all()] else False)
+def documents_institute(request, code, template='institute/documents.html'):
+    """
+    Show documents relative to Institute
+    """
+
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    institute = Institute.objects.get(code=code)
+    #institute_year = InstituteYear.objects.get(
+    #    id_cmp=institute.id, code_year=current_year.code_year)
+    data['label_cmp'] = institute.label
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+
+
     return render(request, template, data)
 
 

@@ -105,7 +105,15 @@
       {% trans "Lettre de présentation" %}
     </label>
     <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+        <ul>
+        {% if letter_file %}
+          {% include "institute/files_list_only.html" with files=letter_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
     </div>
   </div>
 
@@ -114,7 +122,15 @@
       {% trans "Autres documents" %}
     </label>
     <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+        <ul>
+        {% if misc_file %}
+          {% include "institute/files_list_only.html" with files=misc_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
     </div>
   </div>
 
