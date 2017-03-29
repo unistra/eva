@@ -112,6 +112,7 @@ def test():
         'ldap_token': "LDAP_TOKEN",
         'camelot_token': "CAMELOT_TOKEN"
     }
+    env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
 
 
