@@ -61,6 +61,10 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['disabled_institute_year'] = DisabledInstituteYearForm(
         instance=institute_year)
     data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     if request.POST:
         try:
             expected_mecc = datetime.strptime(

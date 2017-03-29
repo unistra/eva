@@ -79,7 +79,7 @@
                           {% if e.cmp in request.path %}
                           class="item-selected"
                           {% endif %}>{% trans 'Général' %}</a></li>
-                          <li><a href="#"
+                          <li><a href="/institute/documents/{{e.cmp}}"
                               {% if 'doc' in request.path %}
                               class="item-selected"
                               {% endif %}>{% trans 'Documents' %}</a></li>

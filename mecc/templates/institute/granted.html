@@ -43,12 +43,47 @@
   {% crispy form_university_year%}
   {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
   <form method="post">
-{% crispy form_institute_year%}
+  {% crispy form_institute_year%}
 
-</form>
+  </form>
   {% else %}
   {% crispy disabled_institute_year%}
   {%endif%}
+
+  <div><br></div>
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Lettre de présentation" %}
+    </label>
+    <div class="controls col-lg-12">
+        <ul>
+        {% if letter_file %}
+          {% include "institute/files_list_only.html" with files=letter_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
+    </div>
+  </div>
+
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Autres documents (PV, émargement, ...)" %}
+    </label>
+    <div class="controls col-lg-12">
+        <ul>
+        {% if misc_file %}
+          {% include "institute/files_list_only.html" with files=misc_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
+    </div>
+  </div>
 </div>
 
 </div>
