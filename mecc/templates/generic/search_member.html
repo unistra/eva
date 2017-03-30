@@ -92,7 +92,9 @@ function fill_form(clicked) {
 </div>
 
 <script type="text/javascript">
-
+$('#searchMember').on('shown.bs.modal', function () {
+    $('#to-search').focus();
+});
 function searchMember() {
     let new_tbody = document.createElement('tbody');
     old_tbody = document.getElementById('table')

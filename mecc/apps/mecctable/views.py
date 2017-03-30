@@ -2,6 +2,7 @@ from django.views.generic import DetailView, ListView, UpdateView, CreateView
 from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 from django.shortcuts import render, redirect
+from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
 from django.http import JsonResponse
 from mecc.apps.utils.querries import currentyear
@@ -80,7 +81,6 @@ def remove_respens(old_username, label, training):
     if len(meccuser.profile.all()) < 1:
         User.objects.get(username=old_username).delete()
         meccuser.delete()
-    print("DELETED")
 
 
 @login_required
@@ -275,6 +275,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         return tmp
 
     data = {}
+    all_cmp = Institute.objects.all()
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(
         code_year=currentyear().code_year)
@@ -283,6 +284,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         id_training=id).order_by('id_parent', 'order_in_child')
     data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
+    data['all_cmp'] = all_cmp
     data['structure_objs'] = structure_obj
     tmp = []
     data['object_link'] = sort_list(object_link)

@@ -110,7 +110,7 @@
                     </td>
                     <td class="centered border-bottom">
                     {% if e.nature not in "ST PT"%}
-                            <span class="glyphicon glyphicon-circle-arrow-left green hand"></span>
+                            <span data-toggle="modal" data-target="#shared-object" class="glyphicon glyphicon-circle-arrow-left green hand" onclick="asking_inclusion={{e.id}};"></span>
                     {%endif%}
                         </td>
                     <td class="centered border-bottom">
@@ -175,6 +175,7 @@
             </div>
         </div>
         {% include "mecctable/modal/structure_object_form.html" %}
+        {% include "mecctable/modal/include_shared_object.html" %}
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" %}
 
@@ -213,6 +214,7 @@
     }
 </style>
 <script type="text/javascript">
+var asking_inclusion = 0;
     function ask_delete(id_obj, label) {
         document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
         document.getElementById('to_del').innerHTML = label;

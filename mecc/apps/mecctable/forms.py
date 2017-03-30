@@ -45,16 +45,13 @@ class StructureObjectForm(forms.ModelForm):
                 'label',
                 Div(
                     Field(
-                        'RESPENS_id',
-                        HTML("""
-<span>
-<span class="select glyphicon glyphicon-remove" id="remove-respens"
-style="left:-1.5em;z-index:100"></span>
-<a data-toggle="modal" data-target="#searchMember" class="select glyphicon
-glyphicon-search"></a>
+                        'RESPENS_id', placeholder="Rechercher un enseignant",
+                        ),
+                    HTML("""
+<span data-toggle="modal" data-target="#searchMember"
+class="select glyphicon glyphicon-search" id="go-respens">
 </span>
                         """),
-                    ),
                     'ECTS_credit',
                     css_class="y"
                 ),

@@ -41,10 +41,24 @@
     </div>
 </div>
 <script type="text/javascript">
+$('#form-obj').on('shown.bs.modal', function () {
+    $('#id_nature').focus();
+});
 
-$("#remove-respens").on('click', function(){
-    document.getElementById('id_RESPENS_id').value = "";
+$("#go-respens, #id_RESPENS_id").mouseup(function(){
+    let toggle = document.querySelector('#go-respens');
+    let respens = document.querySelector('#id_RESPENS_id');
+
+    if (this.className.indexOf('remove') != -1 ) {
+        document.getElementById('id_RESPENS_id').value = "";
+        toggle.className = "select glyphicon glyphicon-search";
+        toggle.dataset.target = "#searchMember";
+        respens.dataset.target = "#searchMember";
+        respens.dataset.toggle = "modal";
+    }
 })
+
+
 function fill_form(clicked) {
     let last_name = clicked.closest('tr').children('td:first');
     let first_name = $(last_name).next('td');
@@ -54,7 +68,16 @@ function fill_form(clicked) {
     let id = $(mail).next('td');
     document.getElementById('id_RESPENS_id').value = id.text().replace(/\s+/g, '');
     $('#searchMember').modal('hide');
+    let el = document.querySelector('#go-respens');
+    let respens = document.querySelector('#id_RESPENS_id');
+
+    el.dataset.target = "";
+    respens.dataset.target = "";
+    el.className = "select glyphicon glyphicon-remove";
+
 }
+
+
 // Copy select-option
 var select = document.getElementById('id_nature');
 var options = select.innerHTML;
@@ -156,6 +179,18 @@ var options = select.innerHTML;
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 
+                let respens = document.querySelector('#id_RESPENS_id');
+                let el = document.querySelector('#go-respens');
+                if (respens.value == ""){
+                    respens.dataset.toggle = "modal"
+                    respens.dataset.target = "#searchMember";
+                    el.dataset.target = "#searchMember";
+                    el.className = "select glyphicon glyphicon-search";
+                } else {
+                    el.dataset.target = "";
+                    el.className = "select glyphicon glyphicon-remove";
+                }
+
             }
         });
     };
@@ -255,9 +290,16 @@ var options = select.innerHTML;
             }
         });
     };
+
+
 </script>
 
 <style media="screen">
+    #id_RESPENS_id{
+        background-color: white;
+        width: calc(100% + 14px)!important;
+
+    }
     #searchMember{
       margin-top: 4em;
     }
@@ -331,7 +373,20 @@ var options = select.innerHTML;
         display: flex;
         flex-grow: 1;
     }
+    #go-respens{
+        flex-grow: 0;
+        left:-12px;
+    }
+    label[for="id_ECTS_credit"]{
+        padding-left: 2em;
+    }
 
+    #id_label{
+        width: 100%;
+    }
+    #div_id_label > .controls{
+        margin-right: 0;
+    }
     .y>.form-group>:first-child {
         flex-grow: 2;
         min-width: 10em;
@@ -341,7 +396,6 @@ var options = select.innerHTML;
 
     .y>.form-group>:not(:first-child) {
         flex-grow: 2;
-        margin-right: 0.1em;
     }
 
     #div_id_ECTS_credit>:not(:first-child) {
