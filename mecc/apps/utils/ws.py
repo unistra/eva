@@ -95,7 +95,7 @@ def get_from_ldap(val):
                     else:
                         affiliation = _('Enseignant')
                 person = {
-                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize() != e['last_name'] and '*' not in val else e['last_name'],
+                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize() != e['last_name'].capitalize() and '*' not in val else e['last_name'],
                     "first_name": e['first_name'].title(),
                     "status": affiliation,
                     "institute": cmp,

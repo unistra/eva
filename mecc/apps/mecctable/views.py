@@ -146,16 +146,17 @@ def mecctable_update(request):
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             last_name = "%s (%s)" % (user_data.get("last_name"), user_data.get(
-                'birth_name')) if user_data.get('last_name') != user_data.get(
-                'birth_name') else user_data('last_name')
+                'birth_name')) if user_data.get('last_name').capitalize(
+                    ) != user_data.get('birth_name').capitalize(
+                        ) else user_data.get('last_name')
             user = User.objects.create_user(
                 last_name=last_name, email=user_data.get('mail'),
                 username=username, first_name=user_data.get(
                     'first_name').title())
 
         profile, created = Profile.objects.get_or_create(
-            code="RESPENS", cmp=training.supply_cmp, year=currentyear().code_year,
-            label="RESPENS - %s" % j.get('label'))
+            code="RESPENS", label="RESPENS - %s" % j.get('label'),
+            cmp=training.supply_cmp, year=currentyear().code_year)
         try:
             meccuser = MeccUser.objects.get(user__username=username)
         except MeccUser.DoesNotExist:
