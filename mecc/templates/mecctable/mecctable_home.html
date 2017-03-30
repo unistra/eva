@@ -114,7 +114,9 @@
                     {%endif%}
                         </td>
                     <td class="centered border-bottom">
-                        <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        {% if e.id not in parents %}
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        {% endif %}
                     </td>
                     <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>

@@ -269,6 +269,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 tmp.append(p)
             else:
                 parent = ObjectsLink.objects.get(id_child=p.id_parent).id_child
+                parent_list.append(p.id_parent)
                 current_child = [e.id_parent for e in tmp].count(p.id_parent)
                 index = [e.id_child for e in tmp].index(parent) + 1
                 tmp.insert(index+current_child, p)
@@ -287,8 +288,10 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['all_cmp'] = all_cmp
     data['structure_objs'] = structure_obj
     tmp = []
+    parent_list = []
     data['object_link'] = sort_list(object_link)
     data['form'] = StructureObjectForm
+    data['parents'] = parent_list
     return render(request, template, data)
 
 
