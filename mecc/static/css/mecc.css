@@ -1,3 +1,13 @@
+.baseline{
+    align-items: baseline;
+
+}
+.width-3{
+    width: 3em;
+}
+.nowrap{
+    white-space:nowrap
+}
 .hand{
     cursor: pointer;
 }

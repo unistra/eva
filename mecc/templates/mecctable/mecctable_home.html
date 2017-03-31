@@ -16,6 +16,8 @@
 </ol>
 {% endblock %} {% block app_content %}
 
+<link rel="stylesheet" href="{% static 'css/mecctable-home.css' %}" type="text/css" title="no title" charset="utf-8" />
+
 <script src="{% static 'js/notif.js' %}"></script>
 <script src="{% static 'js/datatable.min.js' %}"></script>
 <span class="top-right"></span>
@@ -91,12 +93,12 @@
                 <tr class="hover-row parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%}">
 
                     <td>
-                        <div style="width:3em;">
+                        <div class="width-3">
                             <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
                     </td>
-                    <td class=" border-bottom" style="white-space:nowrap">
+                    <td class=" border-bottom" class="nowrap">
                         {% for i in l.depth  %}
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endfor %}
@@ -144,15 +146,15 @@
         {% endif %}
     </div>
     <div class="footer">
-        <div class="has-bottom-border has-top-border buttons_list dir-col blue ">
+        <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
             <label>
             {% trans 'Etat de saisie du tableau MECC : '%}
         </label>
             <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_table == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_table == "E" %}checked="checked" {% endif %}>
      </label>
             <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_table == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_table == "A" %}checked="checked" {% endif %}>
     </label>
         </div>
         <div class="button_container dir-row">
@@ -160,7 +162,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {% if object_link %}disabled " style="color:white!important{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 {% if object_link %}disabled white"{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>

@@ -3,6 +3,7 @@ from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Field
 from django.utils.translation import ugettext as _
+from crispy_forms.bootstrap import AppendedText
 
 
 class StructureObjectForm(forms.ModelForm):
@@ -30,6 +31,8 @@ class StructureObjectForm(forms.ModelForm):
         ], label=_("Sessions")
     )
 
+    external_name = forms.CharField(label=" ")
+
     def __init__(self, *args, **kwargs):
         super(StructureObjectForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -44,16 +47,18 @@ class StructureObjectForm(forms.ModelForm):
                 ),
                 'label',
                 Div(
-                    Field(
-                        'RESPENS_id', placeholder="Rechercher un enseignant",
+                    Div(
+                        Field(
+                            'RESPENS_id',
+                            placeholder="Rechercher un enseignant",
                         ),
-                    HTML("""
-<span data-toggle="modal" data-target="#searchMember"
-class="select glyphicon glyphicon-search" id="go-respens">
-</span>
-                        """),
+                        Field(
+                            'external_name',
+                            placeholder="Renseigner un enseignant"
+                        ),
+                        css_class="y"
+                    ),
                     'ECTS_credit',
-                    css_class="y"
                 ),
                 Div(
                     'period',
@@ -108,6 +113,7 @@ class="select glyphicon glyphicon-search" id="go-respens">
             'ROF_code_year',
             'ROF_nature',
             'ROF_supply_program',
+            'external_name'
         ]
 
 
