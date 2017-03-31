@@ -79,8 +79,11 @@ class StructureObject(models.Model):
         max_length=20, null=True, blank=True)
 
     ref_si_scol = models.CharField(
-        _("Référence SI Scolarité"), max_length=20,
-        null=True, blank=True)
+        _("Référence SI Scolarité"), max_length=20, null=True, blank=True)
+
+    external_name = models.CharField(
+        _("Intervenant exterieur"), max_length=240, null=True, blank=True
+    )
 
     def save(self, *args, **kwargs):
         if self.auto_id in ['', ' ', 0, None]:
@@ -105,7 +108,7 @@ class StructureObject(models.Model):
         """
         Return last_name and first_name of respens
         """
-        
+
         user = User.objects.get(username=self.RESPENS_id)
         return user.last_name + " " + user.first_name
 
