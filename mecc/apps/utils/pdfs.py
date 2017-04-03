@@ -7,7 +7,7 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY
 import re
-from .querries import rules_degree_for_year
+from .queries import rules_degree_for_year
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from mecc.apps.rules.models import Paragraph as ParagraphRules
 from django.utils.translation import ugettext as _

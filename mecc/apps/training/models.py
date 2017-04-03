@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from mecc.apps.degree.models import DegreeType
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.adm.models import Profile

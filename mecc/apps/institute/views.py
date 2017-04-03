@@ -21,7 +21,7 @@ from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
 from datetime import datetime
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.decorators import is_post_request
 from mecc.apps.files.models import FileUpload
@@ -83,7 +83,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def add_pple(request):
     """
-    Process add diretu / gescol ajax querries
+    Process add diretu / gescol ajax queries
     """
     label_profile = {
         'DIRETU': "Directeurs d'études",
@@ -164,7 +164,7 @@ def add_pple(request):
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def remove_pple(request):
     """
-    Process remove diretu/gescol ajax querriessc
+    Process remove diretu/gescol ajax queriessc
     """
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')

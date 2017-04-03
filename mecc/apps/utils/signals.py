@@ -6,7 +6,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError as ie
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training, AdditionalParagraph, \
     SpecificParagraph
 

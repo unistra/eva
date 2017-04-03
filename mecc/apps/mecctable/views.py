@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
 from django.http import JsonResponse
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request
 from django_cas.decorators import login_required

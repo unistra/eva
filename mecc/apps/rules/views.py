@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django_cas.decorators import login_required
 from mecc.decorators import is_post_request, is_ajax_request
 from django.db import transaction
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \

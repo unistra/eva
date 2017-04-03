@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.querries import rules_since_ever
+from mecc.apps.utils.queries import rules_since_ever
 from mecc.apps.training.models import Training
 import operator
 from functools import reduce

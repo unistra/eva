@@ -2,7 +2,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Training, SpecificParagraph, AdditionalParagraph
 from .forms import TrainingForm
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.institute.models import Institute
 from django.core.urlresolvers import reverse
 from django_cas.decorators import login_required

@@ -3,7 +3,6 @@ from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Field
 from django.utils.translation import ugettext as _
-from crispy_forms.bootstrap import AppendedText
 
 
 class StructureObjectForm(forms.ModelForm):
@@ -54,7 +53,7 @@ class StructureObjectForm(forms.ModelForm):
                         ),
                         Field(
                             'external_name',
-                            placeholder="Renseigner un enseignant"
+                            placeholder="Saisir un intervenant extérieur"
                         ),
                         css_class="y"
                     ),
@@ -69,7 +68,8 @@ class StructureObjectForm(forms.ModelForm):
                 Div(
                     'mutual',
                     HTML("""
-<a id="preview-consumer" href="#" onclick='preview-consumer()' >Voir les consommateurs </a>
+<a id="preview-consumer" href="#" onclick='preview-consumer()' >
+Voir les consommateurs </a>
                     """),
                     css_class='y mutual'
                 ),

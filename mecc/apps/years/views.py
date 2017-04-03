@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 from django_cas.decorators import login_required
-from mecc.apps.utils.querries import rules_for_year
+from mecc.apps.utils.queries import rules_for_year
 from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse

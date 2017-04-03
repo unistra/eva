@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.utils.querries import rules_degree_for_year, rules_since_ever
+from mecc.apps.utils.queries import rules_degree_for_year, rules_since_ever
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 
 
 class DegreeType(models.Model):
