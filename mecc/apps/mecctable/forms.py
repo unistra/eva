@@ -47,10 +47,26 @@ class StructureObjectForm(forms.ModelForm):
                 'label',
                 Div(
                     Div(
-                        Field(
-                            'RESPENS_id',
-                            placeholder="Rechercher un enseignant",
+
+                        HTML(
+                            """
+<div id="div_id_RESPENS_id" class="form-group">
+    <label for="id_RESPENS_id" class="control-label ">
+        Responsable d'enseignement
+    </label>
+    <div class="controls input-group ">
+         <input class="textinput textInput form-control" id="id_RESPENS_id"
+         name="RESPENS_id" placeholder="Rechercher un enseignant"
+         readonly="" data-target="" type="text">
+         <span class="input-group-addon" id="basic-addon2">
+            <span data-toggle="modal" data-target="#searchMember"
+            class="select glyphicon glyphicon-search" id="go-respens"></span>
+         </span>
+    </div>
+</div>
+                            """
                         ),
+
                         Field(
                             'external_name',
                             placeholder="Saisir un intervenant extérieur"
@@ -94,7 +110,6 @@ Voir les consommateurs </a>
             )
 
         )
-        self.fields['RESPENS_id'].widget.attrs['readonly'] = True
 
     class Meta:
         model = StructureObject
@@ -102,7 +117,6 @@ Voir les consommateurs </a>
             'nature',
             'is_in_use',
             'label',
-            'RESPENS_id',
             'ECTS_credit',
             'period',
             'regime',

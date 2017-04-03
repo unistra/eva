@@ -27,7 +27,7 @@
 }
 
 .structure-form-left .x .form-group>:first-child, #div_id_label>:first-child {
-    flex-grow: 2;
+    flex-grow: 1;
     min-width: 10em;
     max-width: 10em;
     width: 10em;

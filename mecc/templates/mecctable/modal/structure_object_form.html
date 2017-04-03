@@ -41,21 +41,56 @@
     </div>
 </div>
 <script type="text/javascript">
-
+$('#form-obj').modal({backdrop: 'static', keyboard: false})  
 $('#form-obj').on('shown.bs.modal', function () {
     $('#id_nature').focus();
 });
 
+$("#go-respens, #id_RESPENS_id, #id_external_name").focusout(function(){
+    let respens = document.getElementById('id_RESPENS_id');
+    let ext = document.getElementById('id_external_name');
+    let el = document.getElementById('go-respens');
+    let toggle = document.getElementById('go-respens');
+
+    let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+    let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
+    if (respens_is_empty){
+        respens.dataset.toggle = "modal";
+        respens.dataset.target = "#searchMember";
+        el.dataset.target = "#searchMember";
+        el.className = "select glyphicon glyphicon-search";
+        ext.disabled = false;
+    } else {
+        el.dataset.target = "";
+        respens.dataset.target = "";
+        el.className = "select glyphicon glyphicon-remove";
+        ext.style.readOnly = true;
+    }
+    if (ext_is_empty) {
+        toggle.disabled = false;
+        respens.disabled = false;
+    } else {
+        toggle.disabled = true;
+        respens.disabled = true;
+    }
+
+});
 $("#go-respens, #id_RESPENS_id").mouseup(function(){
-    let toggle = document.querySelector('#go-respens');
-    let respens = document.querySelector('#id_RESPENS_id');
+    let toggle = document.getElementById('go-respens');
+    let respens = document.getElementById('id_RESPENS_id');
+    let ext = document.getElementById('id_external_name');
+    let addon = document.getElementById('basic-addon2');
+
+    let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+    let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
 
     if (this.className.indexOf('remove') != -1 ) {
-        document.getElementById('id_RESPENS_id').value = "";
+        respens.value = "";
         toggle.className = "select glyphicon glyphicon-search";
         toggle.dataset.target = "#searchMember";
         respens.dataset.target = "#searchMember";
         respens.dataset.toggle = "modal";
+        ext.disabled = false;
     }
 })
 
@@ -67,11 +102,12 @@ function fill_form(clicked) {
     let institute = $(first_name).next('td').next('td');
     let mail = $(institute).next('td');
     let id = $(mail).next('td');
-    document.getElementById('id_RESPENS_id').value = id.text().replace(/\s+/g, '');
+    let respens = document.getElementById('id_RESPENS_id');
+    respens.value = id.text().replace(/\s+/g, '');
     $('#searchMember').modal('hide');
-    let el = document.querySelector('#go-respens');
-    let respens = document.querySelector('#id_RESPENS_id');
-
+    let el = document.getElementById('go-respens');
+    let ext = document.getElementById('id_external_name');
+    ext.disabled = true;
     el.dataset.target = "";
     respens.dataset.target = "";
     el.className = "select glyphicon glyphicon-remove";
@@ -168,11 +204,10 @@ var options = select.innerHTML;
                             $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
                         } else {
                             if (prop == 'is_in_use' || prop == 'mutual') {
-                                document.getElementById('id_' + prop).checked = data[prop]
+                                document.getElementById('id_' + prop).checked = data[prop];
                             }
                             $("input[name=" + prop + "]").val(data[prop]);
                         }
-
                     }
                 }
                 let update = "updateStructure("+id_parent+","+_id+")"
@@ -180,17 +215,31 @@ var options = select.innerHTML;
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 
-                let respens = document.querySelector('#id_RESPENS_id');
-                let el = document.querySelector('#go-respens');
-                if (respens.value == ""){
+                let respens = document.getElementById('id_RESPENS_id');
+                let ext = document.getElementById('id_external_name');
+                let el = document.getElementById('go-respens');
+                let toggle = document.getElementById('go-respens');
+
+                let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+                let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
+                if (respens_is_empty){
                     respens.dataset.toggle = "modal"
                     respens.dataset.target = "#searchMember";
                     el.dataset.target = "#searchMember";
                     el.className = "select glyphicon glyphicon-search";
+                    ext.disabled = false;
                 } else {
                     el.dataset.target = "";
                     respens.dataset.target = "";
                     el.className = "select glyphicon glyphicon-remove";
+                    ext.disabled = true;
+                }
+                if (ext_is_empty) {
+                    toggle.disabled = false;
+                    respens.disabled = false;
+                } else {
+                    toggle.disabled = true;
+                    respens.disabled = true;
                 }
 
             }

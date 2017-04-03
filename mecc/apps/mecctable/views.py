@@ -19,7 +19,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 def get_stuct_obj_details(request):
     try:
         struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
-    except ObjectDoesNotExist as e:
+    except ObjectDoesNotExist:
         struct_obj = None
     try:
         parent = StructureObject.objects.get(id=request.GET.get('id_parent'))
@@ -35,6 +35,7 @@ def get_stuct_obj_details(request):
             'period': parent.period if parent else "",
             'ECTS_credit': "",
             'RESPENS_id': "",
+            'external_name': "",
             'mutual': "",
             'ROF_ref': "",
             'ROF_code_year': "",
@@ -52,6 +53,7 @@ def get_stuct_obj_details(request):
         'is_in_use': struct_obj.is_in_use,
         'period': parent.period if parent else struct_obj.period,
         'ECTS_credit': struct_obj.ECTS_credit,
+        'external_name': struct_obj.external_name,
         'RESPENS_id': struct_obj.RESPENS_id,
         'mutual': struct_obj.mutual,
         'ROF_ref': struct_obj.ROF_ref,
@@ -193,6 +195,7 @@ def mecctable_update(request):
             ROF_nature=j.get('ROF_nature'),
             ROF_supply_program=j.get('ROF_supply_program'),
             ref_si_scol=j.get('ref_si_scol'),
+            external_name=j.get('external_name')
         )
 
     if id_child == 0:
@@ -218,6 +221,7 @@ def mecctable_update(request):
         struct.ECTS_credit = None if j.get('ECTS_credit') in [
             0, '', ' '] else j.get('ECTS_credit')
         struct.RESPENS_id = j.get('RESPENS_id')
+        struct.external_name = j.get('external_name')
         struct.mutual = True if j.get('mutual') else False
         struct.ROF_ref = j.get('ROF_ref')
         struct.ROF_code_year = None if j.get('ROF_code_year') in [
@@ -256,6 +260,8 @@ def mecctable_update(request):
         coeff = coeff if coeff != 0 else None
     link.coefficient = coeff if struct.nature == 'UE' else None
     link.save()
+    print('la')
+    print(data)
     return JsonResponse(data)
 
 
