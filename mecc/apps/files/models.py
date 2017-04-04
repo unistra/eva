@@ -26,8 +26,3 @@ class FileUpload(models.Model):
 
     def filename(self):
         return os.path.basename(self.file.name)
-
-    # def protected_file(self,):
-    #     url = reverse('file_serve', args=[os.path.basename(self.file.file.name)])
-    #     return format_html('<a href="'+url+'">File</a>')
-    #     protected_file.short_description = 'Upload'
