@@ -52,7 +52,7 @@ class StructureObject(models.Model):
         choices=REGIME_CHOICE, max_length=1)
     session = models.CharField(
         verbose_name=_(
-            'Sessions pour la formation (hérité de la formation propriétaire)'),
+            'Session pour la formation (hérité de la formation propriétaire)'),
         blank=False,
         choices=SESSION_CHOICE, max_length=1)
     label = models.CharField(_("Intitulé de l'objet"), max_length=120)

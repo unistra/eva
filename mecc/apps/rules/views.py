@@ -30,12 +30,14 @@ class RulesListView(ListView):
         return query rules only for current year
         """
         qs = super(RulesListView, self).get_queryset()
-        return qs.filter(code_year=currentyear().code_year if currentyear() is not None else None)
+        return qs.filter(code_year=currentyear().code_year if currentyear(
+            ) is not None else None)
 
     def get_context_data(self, **kwargs):
         context = super(RulesListView, self).get_context_data(**kwargs)
         context['degree_types'] = DegreeType.objects.all()
-        context['asked_year'] = currentyear().code_year if currentyear() is not None else None
+        context['asked_year'] = currentyear().code_year if currentyear(
+            ) is not None else None
         return context
 
 
@@ -400,7 +402,8 @@ def duplicate_remove(request):
     rule = Rule.objects.get(id=x)
     if rule.has_current_exceptions[0]:
         return JsonResponse({
-            "error": "%s comporte des dérogations et/ou alinéas addditionnels" % rule.label
+            "error": "%s comporte des dérogations et/ou \
+            alinéas addditionnels" % rule.label
         })
     rule.delete()
     return JsonResponse({"status": "removed", "label": rule.label})

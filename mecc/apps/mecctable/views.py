@@ -13,6 +13,57 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
+from django.utils.html import strip_tags
+from django.utils.translation import ugettext as _
+from decimal import InvalidOperation
+
+
+@is_ajax_request
+@is_post_request
+def update_grade_coeff(request):
+    """
+    ajax view to update grade and coeff
+    """
+    val = strip_tags(request.POST.get('value'))
+    to_update = request.POST.get('to_update')
+    type_to_update = to_update.split('-')[-1]
+    id_to_update = to_update.split('-')[0]
+    link = ObjectsLink.objects.get(id=id_to_update)
+    if type_to_update == "coeff":
+        old_coeff = link.coefficient
+        try:
+            link.coefficient = float(val.replace(",", "."))
+            link.save()
+            value = link.coefficient
+        except (ValueError, InvalidOperation) as e:
+            if "ValueError" in e.__class__.__name__:
+                text = _("Veuillez entrer un nombre")
+            if "InvalidOperation" in e.__class__.__name__:
+                text = _('Veuillez verifier votre saisie')
+            return JsonResponse({
+                "status": 'ERROR',
+                "val": old_coeff,
+                "error": text
+            })
+    if type_to_update == "grade":
+        old_grade = link.eliminatory_grade
+        try:
+            if int(val) < 0:
+                return JsonResponse({
+                    "status": 'ERROR',
+                    "val": old_grade,
+                    "error": _("Veuillez entrer un nombre positif")
+                })
+            link.eliminatory_grade = int(val)
+            link.save()
+            value = link.eliminatory_grade
+        except ValueError as e:
+            return JsonResponse({
+                "status": 'ERROR',
+                "val": old_grade,
+                "error": _("Veuillez entrer un nombre entier")
+            })
+    return JsonResponse({"status": 'OK', "val": value})
 
 
 @is_ajax_request

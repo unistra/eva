@@ -9,12 +9,13 @@ import json
 
 from django.utils.translation import ugettext as _
 
-TEACHER_GRADES = ["ENSEIGNANT",
-                  "MAITRE",
-                  "MCUPH",
-                  "PROF",
-                  "PUPH",
-                  ]
+TEACHER_GRADES = [
+    "ENSEIGNANT",
+    "MAITRE",
+    "MCUPH",
+    "PROF",
+    "PUPH",
+]
 
 
 def create_client(name, token, spore, base_url):
@@ -87,15 +88,21 @@ def get_from_ldap(val):
             if e['is_active']:
                 if e['primary_affiliation'] == 'student':
                     affiliation = _('Étudiant')
-                    cmp = e['main_registration_code'] if e['main_registration_code'] is not None else _('Non renseigné')
+                    cmp = e['main_registration_code'] if e[
+                        'main_registration_code'] is not None else _(
+                            'Non renseigné')
                 else:
-                    cmp = e['main_affectation_code'] if e['main_affectation_code'] is not None else _('Non renseigné')
+                    cmp = e['main_affectation_code'] if e[
+                        'main_affectation_code'] is not None else _(
+                            'Non renseigné')
                     if e['primary_affiliation'] == 'employee':
                         affiliation = _('Administratif')
                     else:
                         affiliation = _('Enseignant')
                 person = {
-                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize() != e['last_name'].capitalize() and '*' not in val else e['last_name'],
+                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize(
+                        )) if val.capitalize() != e['last_name'].capitalize(
+                            ) and '*' not in val else e['last_name'],
                     "first_name": e['first_name'].title(),
                     "status": affiliation,
                     "institute": cmp,

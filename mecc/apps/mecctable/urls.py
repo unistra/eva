@@ -4,7 +4,7 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ObjectsLinkListView, ObjectsLinkCreateView, ObjectsLinkDetailView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
-    get_stuct_obj_details
+    get_stuct_obj_details, update_grade_coeff
 
 urlpatterns = [
     url(r'^training/(?P<id>\w+)/$', mecctable_home,
@@ -15,7 +15,9 @@ urlpatterns = [
     url(r'^get_stuct_obj_details/$',
         get_stuct_obj_details,
         name='get_stuct_obj_details'),
-
+    url(r'^update_grade_coeff/$',
+        update_grade_coeff,
+        name='update_grade_coeff'),
     # urls for StructureObject
     url(r'^structureobject/$',
         StructureObjectListView.as_view(),

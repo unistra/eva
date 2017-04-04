@@ -122,23 +122,18 @@
                     </td>
                     <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
-                    <td class="border-bottom">{{e.get_respens_name}}</td>
-                    <td class="centered border-left-3 border-bottom" {% if l.coefficient %}contenteditable='true'>{{l.coefficient}}{% endif %}</td>
-                    <td class="centered border-left-3 border-bottom" contenteditable='true'> order:{{l.order_in_child}}</td>
+                    <td class="border-bottom">{{e.get_respens_name}} {% if e.external_name %} <i>{{e.external_name}}</i>{% endif %}</td>
+                    <td class="centered border-left-3 border-bottom editme" id="{{l.id}}-coeff" {% if l.coefficient %}contenteditable='true'>{{l.coefficient}}{% endif %}</td>
+                    <td class="centered border-left-3 border-bottom editme" contenteditable='true' id="{{l.id}}-grade">{% if l.eliminatory_grade %}{{l.eliminatory_grade}}{% endif %}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
-                    <td class="centered border-left border-bottom"> struct:{{e.id}}</td>
-                    <td class="centered border-left border-bottom">link:{{l.id}}</td>
-                    <td class="centered border-left border-bottom">parent:{{l.id_parent}}</td>
-                    <td class="centered border-left border-bottom">
-                    parent:{{l.nature_parent}}
-                    </td>
-                    <td class="centered border-left-3 border-bottom">
-                        CHILD:{{l.nature_child}}
-
-                    </td>
-                    <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">12</td>
-                    <td class="centered border-left border-bottom">ID:{{l.id_child}}</td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left-3 border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
+                    <td class="centered border-left border-bottom"></td>
                 </tr>
                 {% endif %} {% endfor %} {% endfor %}
             </tbody>
@@ -218,6 +213,30 @@
     }
 </style>
 <script type="text/javascript">
+$('.editme').on('keydown', function(e) {
+    let that = this;
+  if (e.which == 13 && e.shiftKey == false) {
+      let value = this.innerHTML;
+      $.ajax({
+          url: "{% url 'mecctable:update_grade_coeff'%}",
+          type: "POST",
+          data: {
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              to_update: this.id,
+              value : value
+          },
+          success: function(data) {
+              if (data.status === "ERROR") {
+                  alert(data.error);
+              }
+              that.innerHTML = data.val;
+          }
+      })
+    return false;
+  }
+});
+
+
 var asking_inclusion = 0;
     function ask_delete(id_obj, label) {
         document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
