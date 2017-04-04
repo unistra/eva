@@ -260,8 +260,6 @@ def mecctable_update(request):
         coeff = coeff if coeff != 0 else None
     link.coefficient = coeff if struct.nature == 'UE' else None
     link.save()
-    print('la')
-    print(data)
     return JsonResponse(data)
 
 
