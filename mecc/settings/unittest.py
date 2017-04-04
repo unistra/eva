@@ -31,3 +31,5 @@ for logger in LOGGING['loggers']:
     LOGGING['loggers'][logger]['level'] = 'DEBUG'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+MEDIA_ROOT = "/tmp/mecc_unittests/media"
