@@ -57,7 +57,11 @@ def update_grade_coeff(request):
             link.eliminatory_grade = int(val)
             link.save()
             value = link.eliminatory_grade
-        except ValueError as e:
+        except ValueError:
+            if val in ['', ' ']:
+                link.eliminatory_grade = None
+                link.save()
+                return JsonResponse({"status": 'OK', "val": val})
             return JsonResponse({
                 "status": 'ERROR',
                 "val": old_grade,
@@ -68,6 +72,9 @@ def update_grade_coeff(request):
 
 @is_ajax_request
 def get_stuct_obj_details(request):
+    """
+    Get details of structure, if it DoesNotExist return empty fields
+    """
     try:
         struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
     except ObjectDoesNotExist:
