@@ -48,7 +48,7 @@
         <p>{% trans "Il y a eut des modifications, voulez vous vraiment quitter sans modifier?" %}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="$('#form-obj, #confirm-quit').modal('hide');">{% trans "Oui" %}</button>
+        <button type="button" class="btn btn-primary" onclick="$('#form-obj, #confirm-quit').modal('hide');_isEdited=false">{% trans "Oui" %}</button>
         <button type="button" class="btn" data-dismiss="modal">{% trans "Non" %}</button>
       </div>
     </div>

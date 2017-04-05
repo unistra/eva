@@ -25,13 +25,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
 
 
-def add_current_year(dic):
-    dic['disp_current_year'] = "%s/%s" % (
-        currentyear().code_year, currentyear().code_year + 1
-    ) if currentyear() is not None else ""
-    return dic
-
-
 @is_DES1
 @login_required
 def list_training(request, template='training/list_cmp.html'):
@@ -41,7 +34,6 @@ def list_training(request, template='training/list_cmp.html'):
     data = {}
     request.session['list_training'] = True
     data['institutes'] = Institute.objects.all().order_by('field', 'label')
-    add_current_year(data)
     return render(request, template, data)
 
 
@@ -63,7 +55,7 @@ class TrainingListView(ListView):
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"
         self.request.session['visited_cmp_id'] = Institute.objects.get(
             code=id_cmp).pk if id_cmp is not None else None
-        return add_current_year(context)
+        return context
 
     @has_requested_cmp
     def get_queryset(self):
@@ -93,7 +85,7 @@ class TrainingCreate(CreateView):
         context = super(TrainingCreate, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['can_edit'] = True
-        return add_current_year(context)
+        return context
 
     def get_success_url(self):
         return reverse('training:edit', args=(self.object.id,))
@@ -119,7 +111,7 @@ class TrainingEdit(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(TrainingEdit, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
-        context['disp_current_year'] = "%s/%s" % (
+        context['request.display.current_year'] = "%s/%s" % (
             currentyear().code_year, currentyear().code_year + 1)
         context['resp_form'] = self.object.resp_formations.all()
         input_is_open = self.object.input_opening[0] in ['1', '3']
@@ -141,7 +133,7 @@ class TrainingDelete(DeleteView):
         specifics = SpecificParagraph.objects.filter(training=self.object)
         context['additionals'] = additionals
         context['specifics'] = specifics
-        return add_current_year(context)
+        return context
 
     def get_success_url(self):
         if self.request.session['visited_cmp']:
@@ -474,7 +466,8 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
         if form.is_valid():
             form.save()
             return redirect(
-                'training:specific_paragraph', training_id=t.id, rule_id=rule_id)
+                'training:specific_paragraph',
+                training_id=t.id, rule_id=rule_id)
 
     return render(request, template, data)
 
@@ -559,7 +552,8 @@ def send_mail(request):
         subject=subject,
         body=body,
         from_email="%s %s <%s> " % (
-            request.user.first_name, request.user.last_name, request.user.email),
+            request.user.first_name, request.user.last_name,
+            request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
     )
