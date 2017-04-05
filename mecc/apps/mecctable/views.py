@@ -205,12 +205,9 @@ def mecctable_update(request):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            last_name = "%s (%s)" % (user_data.get("last_name"), user_data.get(
-                'birth_name')) if user_data.get('last_name').capitalize(
-                    ) != user_data.get('birth_name').capitalize(
-                        ) else user_data.get('last_name')
             user = User.objects.create_user(
-                last_name=last_name, email=user_data.get('mail'),
+                last_name=user_data.get("last_name"),
+                email=user_data.get('mail'),
                 username=username, first_name=user_data.get(
                     'first_name').title())
 
