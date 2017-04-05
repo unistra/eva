@@ -36,6 +36,10 @@ def update_grade_coeff(request):
             link.save()
             value = link.coefficient
         except (ValueError, InvalidOperation) as e:
+            if val in ['', '&nbsp;', '&nbsp;&nbsp;']:
+                link.coefficient = None
+                link.save()
+                return JsonResponse({"status": 'OK', "val": val})
             if "ValueError" in e.__class__.__name__:
                 text = _("Veuillez entrer un nombre")
             if "InvalidOperation" in e.__class__.__name__:
@@ -48,17 +52,19 @@ def update_grade_coeff(request):
     if type_to_update == "grade":
         old_grade = link.eliminatory_grade
         try:
-            if int(val) < 0:
+            if int(val) < 0 or int(val) > 20:
                 return JsonResponse({
                     "status": 'ERROR',
                     "val": old_grade,
-                    "error": _("Veuillez entrer un nombre positif")
+                    "error": _("Veuillez entrer une note comprise\
+                     entre 0 et 20")
                 })
+            print(int(val))
             link.eliminatory_grade = int(val)
             link.save()
             value = link.eliminatory_grade
         except ValueError:
-            if val in ['', ' ']:
+            if val in ['', '&nbsp;', '&nbsp;&nbsp;']:
                 link.eliminatory_grade = None
                 link.save()
                 return JsonResponse({"status": 'OK', "val": val})

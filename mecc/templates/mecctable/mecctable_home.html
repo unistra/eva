@@ -123,8 +123,8 @@
                     <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="border-bottom">{{e.get_respens_name}} {% if e.external_name %} <i>{{e.external_name}}</i>{% endif %}</td>
-                    <td class="centered border-left-3 border-bottom editme" id="{{l.id}}-coeff" {% if l.coefficient %}contenteditable='true'>{{l.coefficient}}{% endif %}</td>
-                    <td class="centered border-left-3 border-bottom editme" contenteditable='true' id="{{l.id}}-grade">{% if l.eliminatory_grade %}{{l.eliminatory_grade}}{% endif %}</td>
+                    <td class="centered border-left-3 border-bottom editme" id="{{l.id}}-coeff" contenteditable='true'>  {% if l.coefficient or l.coefficient == 0%}{{l.coefficient}}{% endif %}</td>
+                    <td class="centered border-left-3 border-bottom editme" contenteditable='true' id="{{l.id}}-grade">{% if l.eliminatory_grade or l.eliminatory_grade == 0 %}{{l.eliminatory_grade}}{% endif %}</td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
                     <td class="centered border-left border-bottom"></td>
                     <td class="centered border-left border-bottom"></td>

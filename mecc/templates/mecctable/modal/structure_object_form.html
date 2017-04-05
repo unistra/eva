@@ -45,11 +45,11 @@
         <h4 class="modal-title">{% trans "Attention" %}</h4>
       </div>
       <div class="modal-body">
-        <p>{% trans "Il y a eut des modifications, voulez vous vraiment quitter sans modifier?" %}</p>
+        <p>{% trans "Les données ont été modifiées, voulez vous les enregistrer ?" %}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="$('#form-obj, #confirm-quit').modal('hide');_isEdited=false">{% trans "Oui" %}</button>
-        <button type="button" class="btn" data-dismiss="modal">{% trans "Non" %}</button>
+        <button type="button" class="btn btn-primary" id="save-with" >{% trans "Oui" %}</button>
+        <button type="button" class="btn" onclick="$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;">{% trans "Non" %}</button>
       </div>
     </div>
   </div>
@@ -118,6 +118,7 @@ $("#go-respens, #id_RESPENS_id").mouseup(function(){
         respens.dataset.target = "#searchMember";
         respens.dataset.toggle = "modal";
         ext.disabled = false;
+        _isEdited = true;
     }
 })
 
@@ -138,7 +139,7 @@ function fill_form(clicked) {
     el.dataset.target = "";
     respens.dataset.target = "";
     el.className = "select glyphicon glyphicon-remove";
-
+    _isEdited = true;
 }
 
 
@@ -238,7 +239,9 @@ var options = select.innerHTML;
                     }
                 }
                 let update = "updateStructure("+id_parent+","+_id+")"
+                let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update
                 $("#submit-obj").attr("onclick", update);
+                $("#save-with").attr("onclick", save);
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 
