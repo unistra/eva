@@ -59,7 +59,6 @@ def update_grade_coeff(request):
                     "error": _("Veuillez entrer une note comprise\
                      entre 0 et 20")
                 })
-            print(int(val))
             link.eliminatory_grade = int(val)
             link.save()
             value = link.eliminatory_grade
