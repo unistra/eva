@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
+logo_uds = Image('mecc/static/img/signature_uds_06.png', 160, 60)
 
 
 def setting_up_pdf(title, margin=72):
@@ -228,7 +229,7 @@ def complete_rule(year, title, training, rules, specific, add):
         ttle.append(Paragraph("<para align=right fontSize=14 spaceAfter=14 textColor=\
             darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
-    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
+    t = [[logo_uds, ttle]]
     table = Table(t, colWidths=(145, 405))
     story.append(table)
     story.append(Spacer(0, 24))
@@ -262,7 +263,7 @@ def one_rule(title, rule):
         ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
-    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
+    t = [[logo_uds, ttle]]
 
     table = Table(t, colWidths=(145, 405))
 
@@ -306,7 +307,7 @@ def degree_type_rules(title, degreetype, year):
         ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
-    t = [[Image('mecc/static/img/logo_uds.png', 140, 60), ttle]]
+    t = [[logo_uds, ttle]]
 
     table = Table(t, colWidths=(145, 405))
 

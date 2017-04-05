@@ -83,9 +83,9 @@ def ECI_post_delete(sender, **kwargs):
         return
     to_del = kwargs['instance'].username
     meccuser = MeccUser.objects.get(user__username=to_del)
-    eci = Profile.objects.get(code='ECI', year=currentyear().code_year)
-    meccuser.profile.remove(eci)
     profiles = meccuser.profile.all()
+    eci = profiles.get(code='ECI')
+    meccuser.profile.remove(eci)
     if len(profiles) < 1 and not meccuser.user.is_superuser:
         meccuser.user.delete()
         meccuser.delete()

@@ -243,7 +243,6 @@ var asking_inclusion = 0;
         document.getElementById('to_del').innerHTML = label;
         document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
     }
-    $(document).ready(function() {
         function get_row(where, row) {
             if (where === "up")
                 row.prev().before(row);
@@ -251,28 +250,23 @@ var asking_inclusion = 0;
                 row.next().after(row);
         }
 
-        var table = $('#mecc_table').DataTable({
-            "searching": false,
-            "scrollY": "42vh",
-            "scrollCollapse": true,
-            "paging": false,
-            "ordering": false,
-            "info": false,
-            "rowReorder": true
-        });
         // In order to move row up and down
         $('.arrow-move').click(function() {
             let row = $(this).closest('tr');
             let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
+            console.log(parent_id);
             if ($(this).hasClass('glyphicon-arrow-up')) {
                 n = row.prev().attr('class')
                 a = n.split("parent-")[1].split(" ")[0];
                 b = n.split("order-")[1].split(" ")[0];
+                console.log("parent");
+                console.log(a);
+                console.log("or");
+                console.log(b);
                 row.prev().before(row);
             } else
                 row.next().after(row);
         });
-    });
 
 </script>
 {%endblock%}
