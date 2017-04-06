@@ -16,6 +16,10 @@
 .hand{
     cursor: pointer;
 }
+.navbar-brand{
+    margin-left: 0!important;
+
+}
 
 .nav-bar-txt{
     float: left;
