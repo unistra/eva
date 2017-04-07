@@ -3,12 +3,12 @@
 {% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
 <ol class="breadcrumb">
     {%if request.session.visited_cmp == "RESPFORM"%}
-        <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+        <li><a href="{%url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
     {%else%}
-        <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+        <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{%url 'training:list_all'%}
             {% else %}{%url 'training:list' request.user.meccuser.cmp%}
             {%endif%}">{% trans "Offre de formation" %}</a></li>
-            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+            <li> <a href="{%url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
         {% if request.session.training_list %}
         {% endif %}
     {%endif%}
@@ -22,8 +22,8 @@
 <script src="{% static 'js/datatable.min.js' %}"></script>
 <span class="top-right"></span>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
-    <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-    <li><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+    <li><a href="{%if training%}{%url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
 <div class="disp-flex dir-col has-bottom-border">
@@ -218,7 +218,7 @@ $('.editme').on('keydown', function(e) {
   if (e.which == 13 && e.shiftKey == false) {
       let value = this.innerHTML;
       $.ajax({
-          url: "{% url 'mecctable:update_grade_coeff'%}",
+          url: "{%url 'mecctable:update_grade_coeff'%}",
           type: "POST",
           data: {
               csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -229,13 +229,13 @@ $('.editme').on('keydown', function(e) {
               if (data.status === "ERROR") {
                   alert(data.error);
               }
+
               that.innerHTML = data.val;
           }
       })
     return false;
   }
 });
-
 
 var asking_inclusion = 0;
     function ask_delete(id_obj, label) {

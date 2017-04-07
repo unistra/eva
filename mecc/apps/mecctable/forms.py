@@ -57,6 +57,9 @@ class StructureObjectForm(forms.ModelForm):
     <div class="controls input-group ">
          <input class="textinput textInput form-control" id="id_RESPENS_id"
          name="RESPENS_id" placeholder="Rechercher un enseignant"
+         readonly="" data-target="" type="text" style="display:none">
+         <input class="textinput textInput form-control" id="name_respens"
+         name="name_respens" placeholder="Rechercher un enseignant"
          readonly="" data-target="" type="text">
          <span class="input-group-addon" id="basic-addon2">
             <span data-toggle="modal" data-target="#searchMember"

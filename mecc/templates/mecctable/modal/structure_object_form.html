@@ -73,8 +73,8 @@ $('#form-obj').on('shown.bs.modal', function () {
     $('#id_nature').focus();
 });
 
-$("#go-respens, #id_RESPENS_id, #id_external_name").focusout(function(){
-    let respens = document.getElementById('id_RESPENS_id');
+$("#go-respens, #name_respens, #id_external_name").focusout(function(){
+    let respens = document.getElementById('name_respens');
     let ext = document.getElementById('id_external_name');
     let el = document.getElementById('go-respens');
     let toggle = document.getElementById('go-respens');
@@ -102,9 +102,9 @@ $("#go-respens, #id_RESPENS_id, #id_external_name").focusout(function(){
     }
 
 });
-$("#go-respens, #id_RESPENS_id").mouseup(function(){
+$("#go-respens, #name_respens").mouseup(function(){
     let toggle = document.getElementById('go-respens');
-    let respens = document.getElementById('id_RESPENS_id');
+    let respens = document.getElementById('name_respens');
     let ext = document.getElementById('id_external_name');
     let addon = document.getElementById('basic-addon2');
 
@@ -130,8 +130,10 @@ function fill_form(clicked) {
     let institute = $(first_name).next('td').next('td');
     let mail = $(institute).next('td');
     let id = $(mail).next('td');
-    let respens = document.getElementById('id_RESPENS_id');
-    respens.value = id.text().replace(/\s+/g, '');
+    let id_respens = document.getElementById('id_RESPENS_id');
+    id_respens.value = id.text().replace(/\s+/g, '');
+    let respens = document.getElementById('name_respens');
+    respens.value = last_name.text().toUpperCase() + " " + first_name.text();
     $('#searchMember').modal('hide');
     let el = document.getElementById('go-respens');
     let ext = document.getElementById('id_external_name');
@@ -245,7 +247,7 @@ var options = select.innerHTML;
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 
-                let respens = document.getElementById('id_RESPENS_id');
+                let respens = document.getElementById('name_respens');
                 let ext = document.getElementById('id_external_name');
                 let el = document.getElementById('go-respens');
                 let toggle = document.getElementById('go-respens');

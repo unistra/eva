@@ -16,7 +16,7 @@ from django.utils.translation import ugettext as _
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
-logo_uds = Image('mecc/static/img/signature_uds_06.png', 160, 60)
+logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
 def setting_up_pdf(title, margin=72):
@@ -222,7 +222,7 @@ def complete_rule(year, title, training, rules, specific, add):
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
         _("%s" % training.label),
-        _("Récapitulatif des règles de la formation (avec spécificités)"),
+        _("Récapitulatif des règles de la formation"),
     ]
     ttle = []
     for e in header:

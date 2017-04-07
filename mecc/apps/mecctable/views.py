@@ -31,15 +31,15 @@ def update_grade_coeff(request):
     link = ObjectsLink.objects.get(id=id_to_update)
     if type_to_update == "coeff":
         old_coeff = link.coefficient
+        if val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
+            link.coefficient = None
+            link.save()
+            return JsonResponse({"status": 'OK', "val": val})
         try:
             link.coefficient = float(val.replace(",", "."))
             link.save()
-            value = link.coefficient
+            value = '{0:.2f}'.format(link.coefficient).replace(".", ",")
         except (ValueError, InvalidOperation) as e:
-            if val in ['', '&nbsp;', '&nbsp;&nbsp;']:
-                link.coefficient = None
-                link.save()
-                return JsonResponse({"status": 'OK', "val": val})
             if "ValueError" in e.__class__.__name__:
                 text = _("Veuillez entrer un nombre")
             if "InvalidOperation" in e.__class__.__name__:
@@ -63,7 +63,7 @@ def update_grade_coeff(request):
             link.save()
             value = link.eliminatory_grade
         except ValueError:
-            if val in ['', '&nbsp;', '&nbsp;&nbsp;']:
+            if val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
                 link.eliminatory_grade = None
                 link.save()
                 return JsonResponse({"status": 'OK', "val": val})
@@ -107,7 +107,11 @@ def get_stuct_obj_details(request):
             'ref_si_scol': "",
             'period_fix': True if parent else False,
         })
-
+    try:
+        respens = User.objects.get(username=struct_obj.RESPENS_id)
+        name_respens = respens.last_name + " " + respens.first_name
+    except User.DoesNotExist:
+        name_respens = None
     j = {
         'nature': struct_obj.nature,
         'regime': struct_obj.regime,
@@ -118,6 +122,7 @@ def get_stuct_obj_details(request):
         'ECTS_credit': struct_obj.ECTS_credit,
         'external_name': struct_obj.external_name,
         'RESPENS_id': struct_obj.RESPENS_id,
+        'name_respens': name_respens,
         'mutual': struct_obj.mutual,
         'ROF_ref': struct_obj.ROF_ref,
         'ROF_code_year': struct_obj.ROF_code_year,
@@ -196,8 +201,8 @@ def mecctable_update(request):
     # needed stuff in order to create objectslink
     id_parent = int(request.POST.get('id_parent'))
     id_child = int(request.POST.get('id_child'))
-    b = request.POST.get('formdata')
-    j = json.loads(b)
+    data_form = request.POST.get('formdata')
+    j = json.loads(data_form)
     data = {}
     username = j.get('RESPENS_id')
     user_data = get_user_from_ldap(username=username) if username not in [
