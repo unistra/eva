@@ -31,10 +31,10 @@ def update_grade_coeff(request):
     link = ObjectsLink.objects.get(id=id_to_update)
     if type_to_update == "coeff":
         old_coeff = link.coefficient
-        if val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
-            link.coefficient = None
+        if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
+            link.eliminatory_grade = None
             link.save()
-            return JsonResponse({"status": 'OK', "val": val})
+            return JsonResponse({"status": 'OK', "val": ""})
         try:
             link.coefficient = float(val.replace(",", "."))
             link.save()
@@ -63,10 +63,10 @@ def update_grade_coeff(request):
             link.save()
             value = link.eliminatory_grade
         except ValueError:
-            if val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
+            if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
                 link.eliminatory_grade = None
                 link.save()
-                return JsonResponse({"status": 'OK', "val": val})
+                return JsonResponse({"status": 'OK', "val": ''})
             return JsonResponse({
                 "status": 'ERROR',
                 "val": old_grade,
@@ -205,6 +205,7 @@ def mecctable_update(request):
     j = json.loads(data_form)
     data = {}
     username = j.get('RESPENS_id')
+
     user_data = get_user_from_ldap(username=username) if username not in [
         '', ' ', None] else None
 
@@ -220,7 +221,6 @@ def mecctable_update(request):
                 email=user_data.get('mail'),
                 username=username, first_name=user_data.get(
                     'first_name').title())
-
         profile, created = Profile.objects.get_or_create(
             code="RESPENS", label="RESPENS - %s" % j.get('label'),
             cmp=training.supply_cmp, year=currentyear().code_year)

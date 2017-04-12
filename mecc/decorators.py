@@ -46,28 +46,6 @@ def is_correct_respform(view_func):
 
         if can_edit_or_read(request, training, request.user):
             return view_func(request, *args, **kwargs)
-        # supply_cmp = training.supply_cmp
-        # user_profiles = request.user.meccuser.profile.all()
-        # # Read and write rights
-        # can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
-        #         Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
-        #         | Q(code='GESCOL') | Q(code='DIRETU'))
-        # allowed = any(True for x in can_do_alot if x in user_profiles)  \
-        #     or 'DES1' in [e.name for e in request.user.groups.all()]
-        # b = [e.id for e in training.resp_formations.all()]
-        # request.environ['allowed'] = allowed
-        # # Read only part
-        # institutes_not_supply = [e.code for e in training.institutes.all() if e.code not in supply_cmp]
-        # can_consult = Profile.objects.filter(
-        #     cmp__in=institutes_not_supply,
-        #     code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU'])
-        # read_only = any(True for x in can_consult if x in user_profiles)
-        # request.environ['read_only'] = read_only
-        # # return view if allowed to at least read else rise 403
-        # if request.user.meccuser.id in b or request.user.is_superuser or \
-        #    allowed or read_only:
-        #     return view_func(request, *args, **kwargs)
-
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
     return wrapper

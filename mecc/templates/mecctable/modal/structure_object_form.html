@@ -107,12 +107,14 @@ $("#go-respens, #name_respens").mouseup(function(){
     let respens = document.getElementById('name_respens');
     let ext = document.getElementById('id_external_name');
     let addon = document.getElementById('basic-addon2');
+    let id_respens = document.getElementById('id_RESPENS_id');
 
     let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
     let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
 
     if (this.className.indexOf('remove') != -1 ) {
         respens.value = "";
+        id_respens.value = "";
         toggle.className = "select glyphicon glyphicon-search";
         toggle.dataset.target = "#searchMember";
         respens.dataset.target = "#searchMember";
