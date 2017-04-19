@@ -55,7 +55,7 @@
   </div>
 </div>
 <script type="text/javascript">
-var _isEdited = false;
+let _isEdited = false;
 $('#form-obj :input').change(function () {
     _isEdited = true;
     if(this.id === 'submit-obj'){_isEdited = false;}
@@ -102,7 +102,7 @@ $("#go-respens, #name_respens, #id_external_name").focusout(function(){
     }
 
 });
-$("#go-respens, #name_respens").mouseup(function(){
+$("#go-respens, #name_respens").mouseup(function(e){
     let toggle = document.getElementById('go-respens');
     let respens = document.getElementById('name_respens');
     let ext = document.getElementById('id_external_name');
@@ -116,11 +116,15 @@ $("#go-respens, #name_respens").mouseup(function(){
         respens.value = "";
         id_respens.value = "";
         toggle.className = "select glyphicon glyphicon-search";
-        toggle.dataset.target = "#searchMember";
         respens.dataset.target = "#searchMember";
         respens.dataset.toggle = "modal";
         ext.disabled = false;
         _isEdited = true;
+        setTimeout(function() {
+            toggle.dataset.target = "#searchMember";
+        }, 1); // mouseup doesn't work the same way in chrome as in
+               // firefox, waiting 1ms befor setting data target attribute in
+               // order to not open it with chrome
     }
 })
 
@@ -148,8 +152,8 @@ function fill_form(clicked) {
 
 
 // Copy select-option
-var select = document.getElementById('id_nature');
-var options = select.innerHTML;
+let select = document.getElementById('id_nature');
+let options = select.innerHTML;
 
     function hide_ifnot_checked(checkbox, to_hide){
         if (checkbox.checked){
@@ -311,7 +315,7 @@ var options = select.innerHTML;
         this.parentElement.removeChild(this);
     };
     NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-        for (var i = this.length - 1; i >= 0; i--) {
+        for (let i = this.length - 1; i >= 0; i--) {
             if (this[i] && this[i].parentElement) {
                 this[i].parentElement.removeChild(this[i]);
             }
@@ -319,8 +323,8 @@ var options = select.innerHTML;
     };
     // function in order to serialize
     $.fn.serializeObject = function() {
-        var o = {};
-        var a = this.serializeArray();
+        let o = {};
+        let a = this.serializeArray();
         $.each(a, function() {
             if (o[this.name] !== undefined) {
                 if (!o[this.name].push) {

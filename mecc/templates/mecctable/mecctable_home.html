@@ -90,18 +90,20 @@
             <tbody>
                 {% for l in object_link %} {% for e in structure_objs %} {% if l.id_child == e.id %}
 
-                <tr class="hover-row parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%}">
+                <tr class="hover-row len-{{l.depth|length}}  parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%} ">
 
                     <td>
-                        <div class="width-3">
+                        <div class="width-3 ">
                             <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
                             <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
                         </div>
                     </td>
                     <td class=" border-bottom" class="nowrap">
+                        :: {{l.depth|length}} :: p_id = {{l.id_parent}} :: id = {{l.id_child}}
                         {% for i in l.depth  %}
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endfor %}
+
                         {{e.nature}} :
                         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}}, '{{l.nature_parent}}')">{{e.label}}</a>
                     </td>
@@ -215,21 +217,20 @@
 <script type="text/javascript">
 $('.editme').on('keydown', function(e) {
     let that = this;
-  if (e.which == 13 && e.shiftKey == false) {
-      let value = this.innerHTML;
-      $.ajax({
-          url: "{%url 'mecctable:update_grade_coeff'%}",
-          type: "POST",
-          data: {
-              csrfmiddlewaretoken: '{{ csrf_token }}',
-              to_update: this.id,
-              value : value
-          },
-          success: function(data) {
-              if (data.status === "ERROR") {
-                  alert(data.error);
-              }
-
+    if (e.which == 13 && e.shiftKey == false) {
+        let value = this.innerHTML;
+        $.ajax({
+            url: "{%url 'mecctable:update_grade_coeff'%}",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                to_update: this.id,
+                value : value
+            },
+            success: function(data) {
+                if (data.status === "ERROR") {
+                    alert(data.error);
+                }
               that.innerHTML = data.val;
           }
       })
@@ -237,36 +238,72 @@ $('.editme').on('keydown', function(e) {
   }
 });
 
-var asking_inclusion = 0;
-    function ask_delete(id_obj, label) {
-        document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
-        document.getElementById('to_del').innerHTML = label;
-        document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
-    }
-        function get_row(where, row) {
-            if (where === "up")
-                row.prev().before(row);
-            if (where === "down")
-                row.next().after(row);
+let asking_inclusion = 0;
+function ask_delete(id_obj, label) {
+    document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
+}
+
+// In order to move row up and down
+$('.arrow-move').click(function() {
+    let row = $(this).closest('tr');
+    let p_id = row.attr('class').split('parent-')[1].split(' ')[0];
+    let row_prev = row.prev().attr('class');
+    let row_next = row.next().attr('class');
+    // UP
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+        if (typeof row_prev !== 'undefined'){
+            let same_up = get_same_up(row, p_id);
+            if (same_up !== null) {
+                same_up.before(row);
+            } else {
+                return;
+            }
+        } else {
+            console.log("Ne peut pas monter ^^");
         }
 
-        // In order to move row up and down
-        $('.arrow-move').click(function() {
-            let row = $(this).closest('tr');
-            let parent_id = row.attr('class').split("parent-")[1].split(" ")[0]
-            console.log(parent_id);
-            if ($(this).hasClass('glyphicon-arrow-up')) {
-                n = row.prev().attr('class')
-                a = n.split("parent-")[1].split(" ")[0];
-                b = n.split("order-")[1].split(" ")[0];
-                console.log("parent");
-                console.log(a);
-                console.log("or");
-                console.log(b);
-                row.prev().before(row);
-            } else
-                row.next().after(row);
-        });
+    }
+    // AND DOWN
+    if ($(this).hasClass('glyphicon-arrow-down')) {
+        if (typeof row_next !== 'undefined'){
+            let same_down = get_same_down(row, p_id);
+            if (same_down !== null) {
+                same_down.after(row);
+            } else {
+                return;
+            }
+        } else {
+            console.log("Ne peut pas decendre ^^");
+        }
+    }
+});
 
+function get_same_up(row, p_id){
+    let row_prev = row.prev();
+    if (typeof row_prev.attr('class') !== 'undefined'){
+        if (row_prev.attr('class').split('parent-')[1].split(' ')[0] === p_id) {
+            return row_prev;
+        } else {
+            return get_same_up(row_prev, p_id);
+        }
+    } else {
+        return null;
+    }
+}
+
+function get_same_down(row, p_id){
+    let row_next = row.next();
+    if (typeof row_next.attr('class') !== 'undefined'){
+        if (row_next.attr('class').split('parent-')[1].split(' ')[0] === p_id) {
+            return row_next;
+        } else {
+            return get_same_down(row_next, p_id);
+        }
+    } else {
+        return null;
+    }
+}
 </script>
 {%endblock%}
