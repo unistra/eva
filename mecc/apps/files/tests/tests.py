@@ -23,6 +23,8 @@ class FileUploadTestCase(TestCase):
         self.ct = ContentType.objects.get_for_model(self.obj)
         self.fileFullPath = 'mecc/apps/files/tests/media/testpdf.pdf'
         self.media_path = "/tmp/mecc_unittests"
+        self.upload_obj = FileUpload.objects.create(content_object=self.obj, creator=self.user,
+                         additional_type='test', comment='test comment')
 
     def tearDown(self):
         if os.path.exists(self.media_path):
@@ -38,10 +40,30 @@ class FileUploadTestCase(TestCase):
         self.assertEqual(str(upload), upload.file.name)
 
     def test_views(self):
-        # test get not allowed
+        # test get method not allowed
         response = self.client.get(reverse('files:upload_file', kwargs={'app_name': 'test', 'model_name' : 'Test', 'object_pk': 1, }))
         self.assertEqual(response.status_code, 405)
-        upload_file = SimpleUploadedFile('test.txt', 'test'.encode('utf-8'), content_type='text/plain')
-        #upload_file = SimpleUploadedFile(self.fileFullPath, "file_content", content_type="application/pdf")
-        #response = self.client.post(reverse("files:upload_file", { 'file': upload_file}, kwargs={'app_name': 'institute', 'model_name' : 'Institute', 'object_pk': self.obj.pk}))
-        #self.assertEqual(response.status_code, 405)
+        # model not found
+        upload_file = SimpleUploadedFile('test.txt', 'test_1'.encode('utf-8'), content_type='text/plain')
+        response = self.client.post(reverse('files:upload_file',  kwargs={'app_name': 'zeapp', 'model_name': 'zemodel', 'object_pk': self.obj.pk}), {'file': upload_file, 'additional_type': 'txt', 'comment': 'comment'})
+        self.assertEqual(response.status_code, 400)
+        # object not found
+        response = self.client.post(reverse('files:upload_file',  kwargs={'app_name': 'institute', 'model_name': 'Institute', 'object_pk': 2}), {'file': upload_file, 'additional_type': 'txt', 'comment': 'comment'})
+        self.assertEqual(response.status_code, 404)
+        # File not found
+        response = self.client.post(reverse('files:upload_file',  kwargs={'app_name': 'institute', 'model_name': 'Institute', 'object_pk': 1}), {'additional_type': 'txt', 'comment': 'comment'})
+        self.assertEqual(response.status_code, 400)
+        # finally happy end
+        upload_file = SimpleUploadedFile('test.txt', 'test_2'.encode('utf-8'), content_type='text/plain')
+        response = self.client.post(reverse('files:upload_file',  kwargs={'app_name': 'institute', 'model_name': 'Institute', 'object_pk': self.obj.pk}), {'file': upload_file, 'additional_type': 'txt', 'comment': 'comment'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_file(self):
+        response = self.client.get(reverse('files:delete_file',  kwargs={'file_id': 1}))
+        self.assertEqual(response.status_code, 405)
+        # file not found
+        response = self.client.post(reverse('files:delete_file',  kwargs={'file_id': 2}))
+        self.assertEqual(response.status_code, 404)
+        # happy end
+        response = self.client.post(reverse('files:delete_file',  kwargs={'file_id': 1}))
+        self.assertEqual(response.status_code, 200)

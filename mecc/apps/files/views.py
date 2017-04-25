@@ -17,8 +17,10 @@ from .utils import upload_files
 @require_http_methods(["POST"])
 def upload_file(request, app_name, model_name, object_pk):
     """Upload a file"""
-    m = get_model(app_name, model_name)
-    if m is None:
+    try:
+        m = get_model(app_name, model_name)
+        
+    except LookupError:
         message = _('Model does not exist.')
         return HttpResponseBadRequest(
             json.dumps({'status': 'error', 'message': message}))
