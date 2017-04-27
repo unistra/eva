@@ -24,8 +24,9 @@
 {% endblock %}
 
 {% block app_content %}
-<h2 class='title-block bold'>{{label_cmp}}</h2> 
+<h2 class='title-block bold'>{{label_cmp}}</h2>
 <br>
+{% include "institute/modal/documents_list.html"%}
 {%if object_list%}
 <div class="table_list list-training">
   {% if object_list %}
@@ -97,8 +98,17 @@
         <strong>{% trans "Préparation" %}</strong>
     </span>
     <div class="" style="width:80%">
-        <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">Dupliquer les formations des années précédentes</a>
-        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">Créer une nouvelle formation</a>
+        <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">{% trans "Dupliquer les formations des années précédentes" %}</a>
+        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
+    </div>
+</div>
+<div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
+    <span class="title-block" style="width=20%">
+        <strong>{% trans "Validation" %}</strong>
+    </span>
+    <div class="" style="width:80%;margin-top:1em;">
+        <button data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</button>
+        <button data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CEVU" %}<br>&nbsp;</button>
     </div>
 </div>
 <style media="screen">
@@ -132,6 +142,4 @@ table tbody tr {
   table-layout: fixed;
 }
 </style>
-
-
 {% endblock %}

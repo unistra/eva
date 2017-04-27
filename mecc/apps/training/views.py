@@ -23,6 +23,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
+from mecc.apps.files.models import FileUpload
 
 
 @is_DES1
@@ -53,8 +54,14 @@ class TrainingListView(ListView):
 
         self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
             code=id_cmp).label if id_cmp is not None else "Toutes composantes"
-        self.request.session['visited_cmp_id'] = Institute.objects.get(
+        self.request.session['visited_cmp_id'] = context['code_cmp'] = Institute.objects.get(
             code=id_cmp).pk if id_cmp is not None else None
+
+        context['letter_file'] = FileUpload.objects.filter(
+            object_id=context['code_cmp'], additional_type='letter_%s/%s' % (currentyear().code_year, currentyear().code_year + 1))
+        context['misc_file'] = FileUpload.objects.filter(
+            object_id=context['code_cmp'], additional_type='misc_%s/%s' % (currentyear().code_year, currentyear().code_year + 1))
+
         return context
 
     @has_requested_cmp
@@ -68,6 +75,7 @@ class TrainingListView(ListView):
             return trainings
 
         if self.kwargs['cmp'] in institutes:
+
             return trainings.filter(institutes__code=self.kwargs['cmp'])
 
     template_name = 'training/training_list.html'
