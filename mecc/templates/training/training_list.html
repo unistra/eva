@@ -107,8 +107,8 @@
         <strong>{% trans "Validation" %}</strong>
     </span>
     <div class="" style="width:80%;margin-top:1em;">
-        <button data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</button>
-        <button data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CEVU" %}<br>&nbsp;</button>
+        <a href="#" data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</a>
+        <a href="{% url 'institute:check_validate' code=request.session.visited_cmp %}" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CFVU" %}<br>&nbsp;</a>
     </div>
 </div>
 <style media="screen">

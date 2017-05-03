@@ -1,0 +1,58 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+
+<div>
+    <table class="table" id="rule-table">
+        <thead>
+
+
+
+                <tr class='table-head'>
+                   <th width="5%" class=" no-padding td-centered no-border"></th>
+                   <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Avancement" %}</th>
+                   <th colspan="4" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+                   <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Etat & Actions " %}</th>
+                   <th width="10%" class=" no-padding td-centered no-border"></th>
+                   <th width="5%" class=" no-padding td-centered no-border"></th>
+                </tr>
+                <tr class='table-head'>
+                    <th><input type="checkbox" name="select-all" id="select-all"></th>
+                    <th class="td-centered border-right-left no-padding" >{% trans 'Type Diplôme' %}</th>
+                    <th class="td-centered border-right-left no-padding">{% trans "Intitulé Formation" %}</th>
+                    <th class="td-centered border-right-left no-padding">{% trans 'Conseil Composante' %}</th>
+                    <th class="td-centered border-right-left no-padding">{% trans 'Réserve DES' %}</th>
+                    <th class="td-centered border-right-left no-padding">{% trans 'Visa DES' %}</th>
+                    <th class="td-centered border-right-left no-padding">{% trans 'Validation en CFVU' %}</th>
+                    <th></th>
+                    <th class="no-padding" rowpan="3"></th>
+                    <th class="no-padding"></th>
+                    <th class="no-padding"></th>
+                </tr>
+        </thead>
+        <tbody class="overflow">
+                {%regroup trainings by degree_type as trainings %}
+                {%for field in trainings%}
+                    {% if trainings %}
+                        {% for item in field.list %}
+                            <tr class="hover-row">
+                                <td><input type="checkbox" name="chkbox[]" value="{{item.id}}" {% if not item.date_visa_des and not item.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}></td>
+                                <td><strong>{{field.grouper}}</strong></td>
+                                <td id="training-label" class='no-padding v-align-m'>{{item.label}}</td>
+                                <td id="training-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{% if not item.date_res_des and not item.date_visa_des and not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_validation')" style="color:red"></a> {% endif %}{%endif%}</td>
+                                <td id="training-reserve-date" class="no-padding td-centered border-bottom">{%if item.date_res_des %}{{item.date_res_des}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_reserve')" style="color:red"></a> {% endif %}{%endif%}</td>
+                                <td id="training-visa-date" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_visa')" style="color:red"></a> {% endif %}{%endif%}</td>
+                                <td id="training-des-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}<a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_cfvu')" style="color:red"></a>{%endif%}</td>
+                                <td class="no-padding td-centered border-bottom">Saisie {{item.input_opening.1}}</td>
+                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_res_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-remove" onclick="process_me({{item.id}}, 'add_reserve')" style="color:red"></a>{% endif %}</td>
+                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_visa_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-ok" onclick="process_me({{item.id}}, 'add_visa')" style="color:green"></a>{% endif %}</td>
+                                <td class="no-padding td-centered border-bottom"><a class="glyphicon glyphicon-envelope" onclick=""></a></td>
+                            </tr>
+                        {%endfor%}
+                    {% endif %}
+                {%endfor%}
+        </tbody>
+    </table>
+</div>

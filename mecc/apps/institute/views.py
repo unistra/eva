@@ -1,5 +1,7 @@
+import json
+
 from django.utils.translation import ugettext as _
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -449,6 +451,81 @@ Merci.
     return render(request, template, data)
 
 
+@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def check_validate_institute(request, code, template='institute/check_validate.html'):
+    """
+    Check institutes' Mecc validation
+    """
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['university_year'] = current_year
+    data['institute'] = institute
+    data['latest_instit_id'] = institute.id
+    data['label_cmp'] = institute.label
+    data['form_institute'] = DircompInstituteForm(instance=institute)
+    data['date_last_notif'] = institute_year.date_last_notif
+    data['trainings'] = Training.objects.filter(
+        code_year=currentyear().code_year if currentyear() is not None else None,
+        institutes__code=code).order_by('degree_type')
+    data['notification_to'] = request.user.email
+    data['notification_object'] = "%s - %s" % (
+        institute.label, _('Notification DES'))
+
+    if hasattr(settings, 'EMAIL_TEST'):
+        data['test_mail'] = _("""
+Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+Merci.
+        """)
+
+    try:
+        errors = False
+
+        if request.POST:
+
+            data['date_mecc'] = request.POST.get('date_mecc')
+            datetime_mecc = datetime.strptime(data['date_mecc'], '%d/%m/%Y')
+            # datetime.strptime(
+            #    data['date_mecc'], '%d/%m/%Y')
+            if datetime_mecc > datetime.today():
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'La date ne peut être ulterieure à la date du jour !'))
+
+            data['selected_trainings'] = Training.objects.filter(
+                pk__in=request.POST.getlist('chkbox[]'))
+
+            if not data['selected_trainings']:
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'Veuillez selectionner au moins un diplôme !'))
+
+            # for training in data['selected_trainings']:
+            #     if training.progress_rule == 'E' or training.progress_table == 'E':
+            #         errors = True
+            #         messages.add_message(request, messages.ERROR, _(
+            #             'La saisie des règles ou du tableau pour les élements sélectionnés n\'est pas terminée'))
+
+            if not errors:
+                # TODO tz needed (???)
+                date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
+                data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
+                    date_val_cfvu=date_mecc)
+                messages.success(request, _('Opération effectuée.'))
+
+    except (ValueError, TypeError):
+        messages.add_message(request, messages.ERROR, _(
+            'Veuillez renseigner une date de validation valide'))
+    return render(request, template, data)
+
+
 @user_passes_test(lambda u: True if 'DIRETU' or 'GESCOL' or 'RESPFORM' in [e.code for e in u.meccuser.profile.all()] else False)
 def documents_institute(request, code, template='institute/documents.html'):
     """
@@ -475,7 +552,7 @@ def documents_institute(request, code, template='institute/documents.html'):
 @login_required
 def send_mail(request):
     """
-    Send mail
+    Send mail (TO DES)
     """
 
     meccuser = MeccUser.objects.get(user__username=request.user.username)
@@ -516,6 +593,50 @@ def send_mail(request):
 
 @is_post_request
 @login_required
+def send_mail_des(request):
+    """
+    Send mail (from DES)
+    """
+
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    code = meccuser.cmp
+    institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    # institute_year.date_last_notif = datetime.now()
+    # institute_year.save()
+    to = settings.EMAIL_TEST if hasattr(
+        settings, 'EMAIL_TEST') else ['']
+    cc = [request.POST.get('cc')]
+    subject = "%s %s - %s" % (settings.EMAIL_SUBJECT_PREFIX,
+                                 institute.label,
+                                 _('Notification DES'))
+
+    body = request.POST.get('body')
+
+    mail = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email="%s %s <%s> " % (
+            request.user.first_name,
+            request.user.last_name,
+            request.user.email),
+        to=[settings.MAIL_FROM],
+        cc=cc,
+        bcc=to,
+        reply_to=[settings.MAIL_FROM]
+    )
+
+    mail.send()
+    messages.success(request, _('Notification envoyée.'))
+    return redirect('/institute/checkvalidate/%s' % code)
+
+
+
+@is_post_request
+@login_required
 def process_upload_letter(request):
     """
         TODO: use a meccuser instance not to duplicate code !!!!
@@ -548,3 +669,40 @@ def process_delete_file(request):
     code = meccuser.cmp
     messages.success(request, _('Fichier supprimé !'))
     return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_check_validate(request):
+    tobject = Training.objects.get(id=request.POST.get('code'))
+    type = request.POST.get('type')
+
+    if type == 'remove_cfvu':
+        tobject.date_val_cfvu = None
+        msg = _('Date de validation cfvu supprimée')
+    if type == 'remove_visa':
+        tobject.date_visa_des = None
+        msg = _('Date de visa supprimée')
+    if type == 'remove_reserve':
+        tobject.date_visa_des = None
+        msg = _('Date de réserve DES supprimée')
+    if type == 'remove_validation':
+        tobject.date_val_cmp = None
+        msg = _('Date de validation en CC supprimée')
+    if type == 'add_visa':
+        tobject.date_visa_des = datetime.now()
+        tobject.date_res_des = None
+        msg = _('Visa DES ajouté')
+    if type == 'add_reserve':
+        tobject.date_res_des = datetime.now()
+        tobject.date_visa_des = None
+        msg = _('Réserve DES ajoutée')
+
+    if tobject:
+        tobject.save()
+        messages.success(request, msg)
+        response = {'status': 1, 'message': _("Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'] }
+    else:
+        response = {'status': 0, 'message': _("Error")}
+
+    return HttpResponse(json.dumps(response), content_type='application/json')

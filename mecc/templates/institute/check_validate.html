@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load mecc_tags %}
+{% block page-header %}
+MECC {{ request.display.current_year }} <br>
+{{label_cmp}} : {% trans 'Vérification DES - Validation CFVU' %}
+{% endblock %}
+{% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'js/ajax.django.js' %}"></script>
+{% if messages %}
+{% for message in messages %}
+{% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
+<div class="messages{% if alert_tag %} alert alert-{{ alert_tag }}{% endif %} alert-dismissible">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    {{ message }}
+</div>
+{% endfor %}
+<div class="disp-flex has-top-border">
+{% endif %}
+    <form method="post" class='' id="validate-form">
+        <legend class="no-border">{% trans 'Etapes de validations' %}</legend>
+            <div class="row">
+                <div class='col-sm-2 '>
+                    <div class="form-group">
+                        <label for="id_datepicker">{% trans 'Validation en CFVU' %} :</label>
+                        <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
+                            <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA' name="date_mecc" value="{{ date_mecc }}" required/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        <small id="datepickerHelp" class="text-muted italic">
+                            <span class="bold">{% trans 'Saisir une date' %} :</span>
+                            {% trans "(JJ/MM/AAAA)" %}
+                        </small>
+                    </div>
+                </div>
+                <div class='col-sm-10'>
+                    {% include 'institute/check_validate_training_list.html' %}
+                </div>
+            </div>
+            {% csrf_token %}
+        <div class="buttons_list">
+            <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date CFVU' %}" >
+        </div>
+    </form>
+</div>
+    <div class="row has-top-border has-bottom-border">
+        <div class='col-sm-6 border-right-blue'>
+            <legend class="no-border">{% trans 'Documents déposés par la composante' %}</legend>
+            <div class="form-group" style="margin-bottom: 2em;">
+                <div>
+                {% trans 'Lettre de présentation' %} :
+                {% if letter_file %}
+                    {% include "institute/files_list_only.html" with files=letter_file %}
+                {% endif %}
+                </div>
+            </div>
+            <div class="form-group has-top-border">
+                <div>
+                {% trans 'Autres documents (PV, émargement, ...)' %} :
+                {% if misc_file %}
+                    {% include "institute/files_list_only.html" with files=misc_file %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class='col-sm-6' style="margin-bottom: 2em;">
+            <legend class="no-border">{% trans 'Notification Composante' %}</legend>
+            <div class="form-group">
+                <small id="mailHelp" class="text-muted italic">
+                {% trans "Directeur de composante, RAC, Directeur d'études<br>(Copie à : Gestionnaire Référent application)" %}
+                </small>
+            </div>
+            <div class="form-group"></div>
+            <div class="form-group">
+                <div>
+                <button data-toggle="modal" data-target="#send_mail_des" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "institute/modal/confirm_validate.html"%}
+    {% include "institute/modal/send_mail_des.html" %}
+<script>
+// toma ugly fix autoclose is not working for now !!!!
+$.fn.datepicker.defaults.autoclose = true;
+// select/unselect all
+$('#select-all').click(function(event) {
+    if(this.checked) {
+        // unchecked .noSelect checkbox
+        $(':checkbox.noSelect').each(function() {
+            this.checked = false;
+        });
+        // Iterate each checkbox
+        $(':checkbox:not(:disabled,.noSelect)').each(function() {
+            this.checked = true;
+        });
+    } else {
+    $(':checkbox:not(:disabled,.noSelect)').each(function() {
+          this.checked = false;
+      });
+  }
+});
+
+$('#confirm-btn').on('click', function (e) {
+    // show confirmation if already sets date is selected
+    if ($(':checkbox.noSelect').is(':checked')) {
+        e.preventDefault();
+        $("#confirm-validation").modal("show");
+    // else submit form
+    } else {
+        $("validate-form").submit();
+    }
+});
+
+$('#confirm-validation').on('show.bs.modal', function(e) {
+    // populate confirmation dialog modal
+    var label = [];
+    var modal_text = "<ul>";
+    $("#validate-form input:checkbox.noSelect:checked").each(function() {
+        label.label = $(this).closest('td').next('td').next('td').text();
+        label.date = $(this).closest('td').next('td').next('td').next('td').next('td').next('td').text();
+        modal_text += "<li>" + label.label + " : " + label.date + "</li>";
+    });
+    modal_text = modal_text + "</ul>";
+    $('.modal-items-container').html(modal_text);
+});
+
+function process_me(id_obj, type, e) {
+    $.ajax({
+        url: "/institute/process_check_validate/",
+        type: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            code: id_obj,
+            type: type
+        },
+        success: function(data){
+            window.location.replace(data.url)
+
+        }
+    });
+}
+</script>
+{% endblock %}
