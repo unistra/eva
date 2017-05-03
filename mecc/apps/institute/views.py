@@ -498,6 +498,10 @@ Merci.
                 errors = True
                 messages.add_message(request, messages.ERROR, _(
                     'La date ne peut être ulterieure à la date du jour !'))
+            # if datetime_mecc < institute.date_visa_des:
+            #     errors = True
+            #     messages.add_message(request, messages.ERROR, _(
+            #         'La date ne peut être antérieure à la date du visa DES !'))
 
             data['selected_trainings'] = Training.objects.filter(
                 pk__in=request.POST.getlist('chkbox[]'))
@@ -518,7 +522,7 @@ Merci.
                 date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cfvu=date_mecc)
-                messages.success(request, _('Opération effectuée.'))
+                # messages.success(request, _('Opération effectuée.'))
 
     except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
@@ -679,28 +683,21 @@ def process_check_validate(request):
 
     if type == 'remove_cfvu':
         tobject.date_val_cfvu = None
-        msg = _('Date de validation cfvu supprimée')
     if type == 'remove_visa':
         tobject.date_visa_des = None
-        msg = _('Date de visa supprimée')
     if type == 'remove_reserve':
-        tobject.date_visa_des = None
-        msg = _('Date de réserve DES supprimée')
+        tobject.date_res_des = None
     if type == 'remove_validation':
         tobject.date_val_cmp = None
-        msg = _('Date de validation en CC supprimée')
     if type == 'add_visa':
         tobject.date_visa_des = datetime.now()
         tobject.date_res_des = None
-        msg = _('Visa DES ajouté')
     if type == 'add_reserve':
         tobject.date_res_des = datetime.now()
         tobject.date_visa_des = None
-        msg = _('Réserve DES ajoutée')
 
     if tobject:
         tobject.save()
-        messages.success(request, msg)
         response = {'status': 1, 'message': _("Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'] }
     else:
         response = {'status': 0, 'message': _("Error")}

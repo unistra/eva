@@ -11,12 +11,11 @@
 
 
                 <tr class='table-head'>
-                   <th width="5%" class=" no-padding td-centered no-border"></th>
-                   <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Avancement" %}</th>
-                   <th colspan="4" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
-                   <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Etat & Actions " %}</th>
-                   <th width="10%" class=" no-padding td-centered no-border"></th>
-                   <th width="5%" class=" no-padding td-centered no-border"></th>
+                   <th class=" no-padding td-centered no-border"></th>
+                   <th colspan="2" class="td-centered border-right-left no-padding"></th>
+                   <th colspan="5" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+                   <th colspan="3" class="td-centered border-right-left no-padding">{% trans "Actions " %}</th>
+
                 </tr>
                 <tr class='table-head'>
                     <th><input type="checkbox" name="select-all" id="select-all"></th>
@@ -27,7 +26,7 @@
                     <th class="td-centered border-right-left no-padding">{% trans 'Visa DES' %}</th>
                     <th class="td-centered border-right-left no-padding">{% trans 'Validation en CFVU' %}</th>
                     <th></th>
-                    <th class="no-padding" rowpan="3"></th>
+                    <th class="no-padding border-left" rowpan="3"></th>
                     <th class="no-padding"></th>
                     <th class="no-padding"></th>
                 </tr>
@@ -38,17 +37,17 @@
                     {% if trainings %}
                         {% for item in field.list %}
                             <tr class="hover-row">
-                                <td><input type="checkbox" name="chkbox[]" value="{{item.id}}" {% if not item.date_visa_des and not item.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}></td>
-                                <td><strong>{{field.grouper}}</strong></td>
-                                <td id="training-label" class='no-padding v-align-m'>{{item.label}}</td>
-                                <td id="training-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{% if not item.date_res_des and not item.date_visa_des and not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_validation')" style="color:red"></a> {% endif %}{%endif%}</td>
-                                <td id="training-reserve-date" class="no-padding td-centered border-bottom">{%if item.date_res_des %}{{item.date_res_des}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_reserve')" style="color:red"></a> {% endif %}{%endif%}</td>
-                                <td id="training-visa-date" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_visa')" style="color:red"></a> {% endif %}{%endif%}</td>
-                                <td id="training-des-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}<a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_cfvu')" style="color:red"></a>{%endif%}</td>
-                                <td class="no-padding td-centered border-bottom">Saisie {{item.input_opening.1}}</td>
-                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_res_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-remove" onclick="process_me({{item.id}}, 'add_reserve')" style="color:red"></a>{% endif %}</td>
-                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_visa_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-ok" onclick="process_me({{item.id}}, 'add_visa')" style="color:green"></a>{% endif %}</td>
-                                <td class="no-padding td-centered border-bottom"><a class="glyphicon glyphicon-envelope" onclick=""></a></td>
+                                <td class='border-bottom border-left'><input type="checkbox" name="chkbox[]" value="{{item.id}}" {% if not item.date_visa_des and not item.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}></td>
+                                <td class='no-padding td-centered border-bottom'><strong>{{field.grouper}}</strong></td>
+                                <td id="training-label" class='no-padding td-centered border-bottom'>{{item.label}}</td>
+                                <td id="training-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp|date:"d/m/Y"}} {% if not item.date_res_des and not item.date_visa_des and not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_validation')" style="color:black"></a> {% endif %}{%endif%}</td>
+                                <td id="training-reserve-date" class="no-padding td-centered border-bottom">{%if item.date_res_des %}{{item.date_res_des|date:"d/m/Y"}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_reserve')" style="color:black"></a> {% endif %}{%endif%}</td>
+                                <td id="training-visa-date" class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des|date:"d/m/Y"}}{% if not item.date_val_cfvu %} <a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_visa')" style="color:black"></a> {% endif %}{%endif%}</td>
+                                <td id="training-des-validation-date" class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu|date:"d/m/Y"}}<a class="glyphicon glyphicon-trash" onclick="process_me({{item.id}}, 'remove_cfvu')" style="color:red"></a>{%endif%}</td>
+                                <td class="no-padding td-centered border-bottom border-right">Saisie {{item.input_opening.1}}</td>
+                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_res_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-thumbs-down" onclick="process_me({{item.id}}, 'add_reserve')" style="color:red"></a>{% endif %}</td>
+                                <td class="no-padding td-centered border-bottom">{% if item.date_val_cmp and not item.date_visa_des and not item.date_val_cfvu %}<a class="glyphicon glyphicon-thumbs-up" onclick="process_me({{item.id}}, 'add_visa')" style="color:green"></a>{% endif %}</td>
+                                <td class="no-padding td-centered border-bottom border-right"><a class="glyphicon glyphicon-envelope" onclick=""></a></td>
                             </tr>
                         {%endfor%}
                     {% endif %}

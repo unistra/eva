@@ -49,6 +49,7 @@ MECC {{ request.display.current_year }} <br>
         </div>
     </form>
 </div>
+
     <div class="row has-top-border has-bottom-border">
         <div class='col-sm-6 border-right-blue'>
             <legend class="no-border">{% trans 'Documents déposés par la composante' %}</legend>
@@ -84,6 +85,7 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
     </div>
+
     {% include "institute/modal/confirm_validate.html"%}
     {% include "institute/modal/send_mail_des.html" %}
 <script>
@@ -142,7 +144,6 @@ function process_me(id_obj, type, e) {
         },
         success: function(data){
             window.location.replace(data.url)
-
         }
     });
 }
