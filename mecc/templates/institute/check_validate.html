@@ -1,12 +1,28 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load staticfiles %}
+{% load groups %}
 {% load crispy_forms_tags %}
 {% load mecc_tags %}
 {% block page-header %}
 MECC {{ request.display.current_year }} <br>
 {{label_cmp}} : {% trans 'Vérification DES - Validation CFVU' %}
 {% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+            {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+            {%endif%}">{% trans "Offre de formation" %}</a>
+        </li>
+        <li class="active">
+                <a href="{%url 'training:list' request.session.visited_cmp%}">{{label_cmp}}</a>
+        </li>
+    </ol>
+{% endblock %}
+
+
 {% block app_content %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
@@ -24,7 +40,7 @@ MECC {{ request.display.current_year }} <br>
     <form method="post" class='' id="validate-form">
         <legend class="no-border">{% trans 'Etapes de validations' %}</legend>
             <div class="row">
-                <div class='col-sm-2 '>
+                <div class='col-sm-2'>
                     <div class="form-group">
                         <label for="id_datepicker">{% trans 'Validation en CFVU' %} :</label>
                         <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
@@ -34,7 +50,7 @@ MECC {{ request.display.current_year }} <br>
                             </span>
                         </div>
                         <small id="datepickerHelp" class="text-muted italic">
-                            <span class="bold">{% trans 'Saisir une date' %} :</span>
+                            <span class="bold">{% trans 'Saisir une date' %} :</span><br>
                             {% trans "(JJ/MM/AAAA)" %}
                         </small>
                     </div>

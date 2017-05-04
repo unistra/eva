@@ -413,6 +413,13 @@ td.id_member {
     align-self: center;
     vertical-align: middle!important;
 }
+
+.td-centered-left {
+    text-align: left;
+    align-self: center;
+    vertical-align: middle!important;
+}
+
 .centered{
     text-align: center;
 }

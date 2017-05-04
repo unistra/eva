@@ -97,7 +97,7 @@ class Training(models.Model):
         INPUT_CHOICE = (
             ('1', _('ouverte')),
             ('2', _('fermée en composante')),
-            ('3', _('rouverte pour correction')),
+            ('3', _('réouverte pour correction')),
             ('4', _('définitivement fermée'))
         )
         empty = ['', ' ', None]

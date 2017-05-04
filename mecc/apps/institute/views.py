@@ -12,6 +12,7 @@ from django.contrib import messages
 from django_cas.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.utils import formats
 
 from mecc.apps.institute.forms import InstituteForm,  \
     DircompInstituteForm
@@ -315,9 +316,9 @@ class InstituteUpdate(UpdateView):
             context['university_year'] = uy
             context['institute'] = self.object
             context['letter_file'] = FileUpload.objects.filter(
-                    object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
+                object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
             context['misc_file'] = FileUpload.objects.filter(
-                    object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
+                object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
@@ -443,7 +444,6 @@ Merci.
                 date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cmp=date_mecc)
-                messages.success(request, _('Opération effectuée.'))
 
     except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
@@ -498,10 +498,6 @@ Merci.
                 errors = True
                 messages.add_message(request, messages.ERROR, _(
                     'La date ne peut être ulterieure à la date du jour !'))
-            # if datetime_mecc < institute.date_visa_des:
-            #     errors = True
-            #     messages.add_message(request, messages.ERROR, _(
-            #         'La date ne peut être antérieure à la date du visa DES !'))
 
             data['selected_trainings'] = Training.objects.filter(
                 pk__in=request.POST.getlist('chkbox[]'))
@@ -511,18 +507,18 @@ Merci.
                 messages.add_message(request, messages.ERROR, _(
                     'Veuillez selectionner au moins un diplôme !'))
 
-            # for training in data['selected_trainings']:
-            #     if training.progress_rule == 'E' or training.progress_table == 'E':
-            #         errors = True
-            #         messages.add_message(request, messages.ERROR, _(
-            #             'La saisie des règles ou du tableau pour les élements sélectionnés n\'est pas terminée'))
+            for training in data['selected_trainings']:
+                if datetime_mecc.date() < training.date_visa_des:
+                    errors = True
+                    messages.add_message(request, messages.ERROR, _(
+                        'La date de CFVU (%s) ne peut être antérieure à la date du visa DES (%s)'
+                    ) % (formats.date_format(datetime_mecc.date(), "SHORT_DATE_FORMAT"), formats.date_format(training.date_visa_des, "SHORT_DATE_FORMAT")))
 
             if not errors:
                 # TODO tz needed (???)
                 date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cfvu=date_mecc)
-                # messages.success(request, _('Opération effectuée.'))
 
     except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
@@ -540,14 +536,13 @@ def documents_institute(request, code, template='institute/documents.html'):
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     institute = Institute.objects.get(code=code)
-    #institute_year = InstituteYear.objects.get(
+    # institute_year = InstituteYear.objects.get(
     #    id_cmp=institute.id, code_year=current_year.code_year)
     data['label_cmp'] = institute.label
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
-
 
     return render(request, template, data)
 
@@ -615,8 +610,8 @@ def send_mail_des(request):
         settings, 'EMAIL_TEST') else ['']
     cc = [request.POST.get('cc')]
     subject = "%s %s - %s" % (settings.EMAIL_SUBJECT_PREFIX,
-                                 institute.label,
-                                 _('Notification DES'))
+                              institute.label,
+                              _('Notification DES'))
 
     body = request.POST.get('body')
 
@@ -636,7 +631,6 @@ def send_mail_des(request):
     mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect('/institute/checkvalidate/%s' % code)
-
 
 
 @is_post_request
@@ -698,7 +692,8 @@ def process_check_validate(request):
 
     if tobject:
         tobject.save()
-        response = {'status': 1, 'message': _("Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'] }
+        response = {'status': 1, 'message': _(
+            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp']}
     else:
         response = {'status': 0, 'message': _("Error")}
 
