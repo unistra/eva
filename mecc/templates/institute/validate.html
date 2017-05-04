@@ -19,8 +19,8 @@ MECC {{ request.display.current_year }} <br>
     {{ message }}
 </div>
 {% endfor %}
-<div class="disp-flex has-top-border">
 {% endif %}
+<div class="disp-flex has-top-border">
     <form method="post" class='' id="validate-form">
         <legend class="no-border">{% trans 'ETAPE 1 : Saisir des dates de validation' %}</legend>
             <div class="row">
@@ -45,35 +45,35 @@ MECC {{ request.display.current_year }} <br>
             </div>
             {% csrf_token %}
         <div class="buttons_list">
-            <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date' %}" >
+            <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date' %}" style="margin-bottom: 1em;">
         </div>
     </form>
 </div>
-    <div class="row has-top-border has-bottom-border">
-        <div class='col-sm-6 border-right-blue'>
-            <legend class="no-border">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
-            <div class="form-group" style="margin-bottom: 2em;">
+    <div class="row has-top-border has-bottom-border no-margin">
+        <div class='col-sm-6 border-right-blue no-margin'>
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
+            <div class="form-group" style="margin-bottom: 2em; margin-left: 1em;">
                 <div>
                 {% trans 'Lettre de présentation' %} :
                 {% if letter_file %}
                     {% include "institute/files_list.html" with files=letter_file %}
                 {% else %}
-                    <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
+                    <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right" style="margin-right: 1em;">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
                 {% endif %}
                 </div>
             </div>
-            <div class="form-group has-top-border">
+            <div class="form-group has-top-border" style="margin-bottom: 2em; margin-left: 1em;">
                 <div>
                 {% trans 'Autres documents (PV, émargement, ...)' %} :
                 {% if misc_file %}
                     {% include "institute/files_list.html" with files=misc_file %}
                 {% endif %}
-                    <button data-toggle="modal" data-target="#upload_misc" class="btn btn-primary pull-right">{% trans 'Déposer des documents' %} <span class="glyphicon glyphicon-upload"></span></button>
+                    <button data-toggle="modal" data-target="#upload_misc" class="btn btn-primary pull-right" style="margin-bottom: 0.5em;margin-right: 1em;">{% trans 'Déposer des documents' %} <span class="glyphicon glyphicon-upload"></span></button>
                 </div>
             </div>
         </div>
         <div class='col-sm-6' style="margin-bottom: 2em;">
-            <legend class="no-border">{% trans 'ETAPE' %} 3 : {% trans 'Notification DES' %}</legend>
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'ETAPE' %} 3 : {% trans 'Notification DES' %}</legend>
             <div class="form-group">
                 <small id="datepickerHelp" class="text-muted italic">
                 {% trans "Après avoir appliqué les dates de validation en Conseil de composante et déposé les documents requis (lettre de présentation des MECC de la composante, extraits de PV et listes d'émargement des Conseils de composante, ...) prévenez la DES de la disponibilité des MECC." %}
@@ -87,11 +87,11 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
     </div>
-    {% include "institute/modal/confirm_validate.html"%}
     {% include "institute/modal/send_mail.html" %}
     {% include "institute/modal/upload_letter.html" %}
     {% include "institute/modal/upload_misc.html" %}
     {% include "generic/modal_confirm_delete.html" %}
+    {% include "institute/modal/confirm_validate.html" %}
 <script>
 var doUpload=false;
 // toma ugly fix autoclose is not working for now !!!!

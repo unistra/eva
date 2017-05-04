@@ -17,7 +17,7 @@ MECC {{ request.display.current_year }} <br>
             {%endif%}">{% trans "Offre de formation" %}</a>
         </li>
         <li class="active">
-                <a href="{%url 'training:list' request.session.visited_cmp%}">{{label_cmp}}</a>
+                <a href="{% url 'training:list' request.session.visited_cmp %}">{{label_cmp}}</a>
         </li>
     </ol>
 {% endblock %}
@@ -40,6 +40,11 @@ MECC {{ request.display.current_year }} <br>
     <form method="post" class='' id="validate-form">
         <legend class="no-border">{% trans 'Etapes de validations' %}</legend>
             <div class="row">
+                <div class='col-sm-12'>
+                    {% include 'institute/check_validate_training_list.html' %}
+                </div>
+            </div>
+            <div class="row">
                 <div class='col-sm-2'>
                     <div class="form-group">
                         <label for="id_datepicker">{% trans 'Validation en CFVU' %} :</label>
@@ -50,26 +55,21 @@ MECC {{ request.display.current_year }} <br>
                             </span>
                         </div>
                         <small id="datepickerHelp" class="text-muted italic">
-                            <span class="bold">{% trans 'Saisir une date' %} :</span><br>
-                            {% trans "(JJ/MM/AAAA)" %}
                         </small>
                     </div>
                 </div>
-                <div class='col-sm-10'>
-                    {% include 'institute/check_validate_training_list.html' %}
-                </div>
             </div>
             {% csrf_token %}
-        <div class="buttons_list">
+        <div class="buttons_list" style="margin-bottom: 1em;">
             <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date CFVU' %}" >
         </div>
     </form>
 </div>
 
-    <div class="row has-top-border has-bottom-border">
-        <div class='col-sm-6 border-right-blue'>
-            <legend class="no-border">{% trans 'Documents déposés par la composante' %}</legend>
-            <div class="form-group" style="margin-bottom: 2em;">
+    <div class="row has-top-border has-bottom-border no-margin">
+        <div class='col-sm-6 border-right-blue no-margin'>
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Documents déposés par la composante' %}</legend>
+            <div class="form-group" style="margin-bottom: 2em; margin-left: 1em;">
                 <div>
                 {% trans 'Lettre de présentation' %} :
                 {% if letter_file %}
@@ -77,8 +77,8 @@ MECC {{ request.display.current_year }} <br>
                 {% endif %}
                 </div>
             </div>
-            <div class="form-group has-top-border">
-                <div>
+            <div class="form-group has-top-border" >
+                <div style="margin-bottom: 2em; margin-left: 1em;">
                 {% trans 'Autres documents (PV, émargement, ...)' %} :
                 {% if misc_file %}
                     {% include "institute/files_list_only.html" with files=misc_file %}
@@ -86,15 +86,15 @@ MECC {{ request.display.current_year }} <br>
                 </div>
             </div>
         </div>
-        <div class='col-sm-6' style="margin-bottom: 2em;">
-            <legend class="no-border">{% trans 'Notification Composante' %}</legend>
-            <div class="form-group">
+        <div class='col-sm-6 no-margin'>
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;" >{% trans 'Notification Composante' %}</legend>
+            <div class="form-group" style="margin-left: 1em;">
                 <small id="mailHelp" class="text-muted italic">
                 {% trans "Directeur de composante, RAC, Directeur d'études<br>(Copie à : Gestionnaire Référent application)" %}
                 </small>
             </div>
             <div class="form-group"></div>
-            <div class="form-group">
+            <div class="form-group" style="margin-right: 2em;">
                 <div>
                 <button data-toggle="modal" data-target="#send_mail_des" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
                 </div>

@@ -641,7 +641,6 @@ def process_upload_letter(request):
     """
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
-    messages.success(request, _('Fichier envoyé !'))
     return redirect('/institute/validate/%s' % code)
 
 
@@ -653,7 +652,6 @@ def process_upload_misc(request):
     """
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
-    messages.success(request, _('Fichier(s) envoyé(s) !'))
     return redirect('/institute/validate/%s' % code)
 
 
@@ -665,7 +663,6 @@ def process_delete_file(request):
     """
     meccuser = MeccUser.objects.get(user__username=request.user.username)
     code = meccuser.cmp
-    messages.success(request, _('Fichier supprimé !'))
     return redirect('/institute/validate/%s' % code)
 
 
