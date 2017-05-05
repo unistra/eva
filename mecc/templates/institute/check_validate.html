@@ -63,7 +63,7 @@ MECC {{ request.display.current_year }} <br>
 
     <div class="row has-top-border has-bottom-border no-margin">
         <div class='col-sm-6 border-right-blue no-margin'>
-            <legend class="no-border" style="margin-top: 0.5em;margin-left: 1em;">{% trans 'Documents déposés par la composante' %}</legend>
+            <legend class="no-border" style="margin-top: 0.5em;margin-left: 0.5em;">{% trans 'Documents déposés par la composante' %}</legend>
             <div class="form-group" style="margin-left: 1em;">
                 <div>
                 {% trans 'Lettre de présentation' %} :
@@ -82,14 +82,14 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
         <div class='col-sm-6 no-margin'>
-            <legend class="no-border" style="margin-top: 0.5em;margin-left: 1em;" >{% trans 'Notification Composante' %}</legend>
+            <legend class="no-border" style="margin-top: 0.5em;margin-left: 0.5em;" >{% trans 'Notification Composante' %}</legend>
             <div class="form-group" style="margin-left: 1em;">
                 <small id="mailHelp" class="text-muted italic">
                 {% trans "Directeur de composante, RAC, Directeur d'études<br>(Copie à : Gestionnaire Référent application)" %}
                 </small>
             </div>
             <div class="form-group"></div>
-            <div class="form-group" style="margin-right: 2em;">
+            <div class="form-group">
                 <div>
                 <button data-toggle="modal" data-target="#send_mail_des" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
                 </div>
