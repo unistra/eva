@@ -8,9 +8,10 @@
     <table class="table" id="rule-table">
         <thead>
                 <tr class='table-head'>
-                   <th class=" no-padding td-centered no-border"></th>
-                   <th colspan="2" class="td-centered border-right-left no-padding"></th>
-                   <th colspan="5" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+                   <th class="no-padding td-centered no-border"></th>
+                   <th colspan="3" class="td-centered border-right no-padding"></th>
+                   <th colspan="3" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+                   <th></th>
                    <th colspan="3" class="td-centered border-right-left no-padding">{% trans "Actions " %}</th>
 
                 </tr>
@@ -67,7 +68,7 @@
                                         {{item.date_val_cfvu|date:"d/m/Y"}}<a class="glyphicon glyphicon-trash" title="{% trans 'Supprimer'%}" onclick="process_me({{item.id}}, 'remove_cfvu')" style="color:black"></a>
                                     {%endif%}
                                 </td>
-                                <td class="no-padding td-centered-left border-bottom border-right">Saisie {{item.input_opening.1}}</td>
+                                <td class="no-padding td-centered-left border-bottom border-right italic">Saisie {{item.input_opening.1}}</td>
                                 <td class="no-padding td-centered border-bottom">
                                     {% if item.date_val_cmp and not item.date_res_des and not item.date_val_cfvu %}
                                         <a class="glyphicon glyphicon-thumbs-down" title="{% trans 'Ajouter une réserve DES'%}" onclick="process_me({{item.id}}, 'add_reserve')" style="color:red"></a>

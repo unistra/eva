@@ -943,3 +943,9 @@ form {
     margin: 0 !important;
     padding: 0 !important;
 }
+
+.form-control-inline {
+   width: auto;
+   float:left;
+   margin-right: 5px;
+}

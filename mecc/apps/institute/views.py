@@ -438,10 +438,10 @@ Merci.
                     errors = True
                     messages.add_message(request, messages.ERROR, _(
                         'La saisie des règles ou du tableau pour les élements sélectionnés n\'est pas terminée'))
-                if training.date_visa_des or training.date_res_des or training.date_val_cfvu:
+                if training.date_visa_des or training.date_val_cfvu:
                     errors = True
                     messages.add_message(request, messages.ERROR, _(
-                        'Vous ne pouvez pas mettre à jour la date de validation, une date de reserve/visa ou de validation CFVU existe'))
+                        'Vous ne pouvez pas modifier la date de validation : une date de visa DES ou de validation CFVU a été enregistrée'))
 
             if not errors:
                 # TODO tz needed (???)
