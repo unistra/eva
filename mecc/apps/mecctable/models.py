@@ -108,9 +108,12 @@ class StructureObject(models.Model):
         """
         Return last_name and first_name of respens
         """
+        if self.RESPENS_id:
+            user = User.objects.get(username=self.RESPENS_id)
+            return user.last_name + " " + user.first_name
+        else:
+            return ""
 
-        user = User.objects.get(username=self.RESPENS_id)
-        return user.last_name + " " + user.first_name
 
 
 class ObjectsLink(models.Model):

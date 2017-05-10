@@ -3,6 +3,15 @@ from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Field
 from django.utils.translation import ugettext as _
+from django.core import management
+
+
+def setup():
+    management.call_command('loaddata', 'fixtures/tests.json', verbosity=1)
+
+
+def teardown():
+        management.call_command('flush', verbosity=0, interactive=False)
 
 
 class StructureObjectForm(forms.ModelForm):
@@ -25,8 +34,8 @@ class StructureObjectForm(forms.ModelForm):
         widget=forms.RadioSelect,
         initial='1',
         choices=[
-            ('1', _('Session unique')),
             ('2', _('2 sessions')),
+            ('1', _('Session unique')),
         ], label=_("Sessions")
     )
 

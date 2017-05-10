@@ -29,6 +29,21 @@
                         </select>
                     </div>
                 </div>
+                <table class="display table table-bordered" id="suggest">
+                  <thead>
+                    <tr>
+                      <th >{% trans "ID" %}</th>
+                      <th >{% trans "Formation propriétaire de l'objet" %}</th>
+                      <th >{% trans "Intitulé de l'objet" %}</th>
+                      <th >{% trans "Régime" %}</th>
+                      <th >{% trans "Sessions" %}</th>
+                      <th >{% trans "Crédits" %}</th>
+                      <th >{% trans "Résponsable" %}</th>
+                      <th >{% trans "Si Scol" %}</th>
+                      <th >{% trans "ROF" %}</th>
+                    </tr>
+                  </thead>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="" id="include-selected-obj">{% trans "Valider" %}</button>
@@ -38,11 +53,31 @@
     </div>
 </div>
 
+
+
 <script type="text/javascript">
 $(document).ready(function () {
     $('#select-train').on('change', function() {
-        let val = this.value;
+        let cmp_code = this.value;
         console.log(asking_inclusion);
+        console.log(cmp_code);
+        $.ajax({
+            url: "{% url 'mecctable:get_mutual_by_cmp'%}",
+            type: "GET",
+            data: {
+                cmp_code: cmp_code,
+                asking_id: asking_inclusion
+            },
+            success: function(data) {
+                $('#suggest').DataTable( {
+                    destroy: true,
+                    data: data.suggest,
+                } );
+
+            }
+        })
     });
+
+
 });
 </script>

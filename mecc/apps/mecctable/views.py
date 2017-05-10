@@ -18,6 +18,32 @@ from django.utils.translation import ugettext as _
 from decimal import InvalidOperation
 
 
+@login_required
+@is_ajax_request
+def get_mutual_by_cmp(request):
+    asking = StructureObject.objects.get(
+        id=request.GET.get('asking_id'))
+    asking_period = asking.period
+    data = {}
+    mutual_list = [[
+        e.id,
+        Training.objects.get(id=e.owner_training_id).label,
+        e.label,
+        e.get_regime_display(),
+        e.get_session_display(),
+        e.ECTS_credit,
+        e.external_name if e.external_name else e.get_respens_name,
+        e.ref_si_scol,
+        e.ROF_ref
+    ] for e in StructureObject.objects.filter(
+        cmp_supply_id=request.GET.get('cmp_code')).filter(
+            mutual=True, is_in_use=True, period=asking_period)]
+    data['suggest'] = mutual_list
+    # m = [[e.id, e.]]
+    return JsonResponse(data)
+
+
+@login_required
 @is_ajax_request
 @is_post_request
 def update_grade_coeff(request):
@@ -75,6 +101,7 @@ def update_grade_coeff(request):
     return JsonResponse({"status": 'OK', "val": value})
 
 
+@login_required
 @is_ajax_request
 def get_stuct_obj_details(request):
     """
@@ -134,6 +161,7 @@ def get_stuct_obj_details(request):
     return JsonResponse(j)
 
 
+@login_required
 def remove_respens(old_username, label, training):
     """
     Remove respens profile and delete user/meccuser if no
@@ -188,6 +216,7 @@ def remove_object(request, id):
     return redirect('/mecctable/training/' + str(struc.owner_training_id))
 
 
+@login_required
 @is_post_request
 @is_ajax_request
 def mecctable_update(request):
@@ -328,6 +357,7 @@ def mecctable_update(request):
     return JsonResponse(data)
 
 
+@login_required
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
     View displaying mecctable including StructureObject, ObjectsLink and Exam

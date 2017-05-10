@@ -32,7 +32,7 @@
     <ul class="nav nav-tabs" style="margin-bottom:1em">
         <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
 
-        <li><a href={%if object%}"{% url 'training:edit_rules' object.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
+        <li><a href={%if object and not "CATALOGUE" in object.degree_type.long_label%}"{% url 'training:edit_rules' object.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
         <li><a href={%if object%}"{% url 'mecctable:mecctable_home' object.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
