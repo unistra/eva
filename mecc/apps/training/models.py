@@ -72,6 +72,8 @@ class Training(models.Model):
                 self.n_train = Training.objects.all().latest('id').id + 1
             except ObjectDoesNotExist:
                 self.n_train = 1
+        if 'CATALOGUE' in self.label.upper():
+            self.progress_rule = 'A'
 
     def __str__(self):
         return self.label
