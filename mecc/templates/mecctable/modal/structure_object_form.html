@@ -154,6 +154,34 @@ function fill_form(clicked) {
 // Copy select-option
 let select = document.getElementById('id_nature');
 let options = select.innerHTML;
+let typedegree = '{{training.degree_type}}';
+let is_catalogue = typedegree.indexOf('CATALOGUE') != -1;
+let session = '{{training.session_type}}'
+let regime = '{{training.MECC_type}}'
+document.getElementById('id_regime_1').tabIndex="-1";
+document.getElementById('id_regime_2').tabIndex="-1";
+document.getElementById('id_session_1').tabIndex="-1";
+document.getElementById('id_session_2').tabIndex="-1";
+$("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
+if (!is_catalogue) {
+    let a = document.getElementById('id_session_1');
+    console.log(session);
+    console.log(a);
+    let b = document.getElementById('id_session_2');
+    if (a.value === session){
+        a.checked = true;
+    } else {
+        b.checked = true;
+    }
+    document.getElementById('div_id_regime').className = "disabled disabled-event";
+    document.getElementById('div_id_session').className = "disabled disabled-event";
+} else {
+    let a = document.getElementById('id_mutual');
+    a.tabIndex="-1";
+    a.disabled = true;
+    a.checked = true;
+    document.getElementById('div_id_mutual').className = "disabled disabled-event";
+};
 
     function hide_ifnot_checked(checkbox, to_hide){
         if (checkbox.checked){
@@ -246,6 +274,10 @@ let options = select.innerHTML;
                         }
                     }
                 }
+                if (is_catalogue){
+                    document.getElementById('id_mutual').checked = true;
+                }
+
                 let update = "updateStructure("+id_parent+","+_id+")"
                 let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update
                 $("#submit-obj").attr("onclick", update);
@@ -284,20 +316,7 @@ let options = select.innerHTML;
         });
     };
 
-    let typedegree = '{{training.degree_type}}';
-    let is_catalogue = typedegree.indexOf('CATALOGUE') != -1;
-    if (!is_catalogue) {
-        let session = '{{training.session_type}}'
-        let regime = '{{training.MECC_type}}'
-        document.getElementById('div_id_regime').className = "disabled disabled-event";
-        document.getElementById('div_id_session').className = "disabled disabled-event";
-        document.getElementById('id_regime_1').tabIndex="-1";
-        document.getElementById('id_regime_2').tabIndex="-1";
-        document.getElementById('id_session_1').tabIndex="-1";
-        document.getElementById('id_session_2').tabIndex="-1";
-        document.getElementById('id_session_' + session).checked = true
-        $("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
-    };
+
 
     function display_UE(here) {
         let option = $(here).find('option:selected').val();
@@ -353,7 +372,7 @@ let options = select.innerHTML;
                 document.getElementById('id_nature').style.borderColor = 'red'
             }
             if (label == '') {
-                document.getElementById('div_id_label').className = 'form-group  red '
+                document.getElementById('div_id_label').className = 'form-group red '
                 document.getElementById('id_label').style.borderColor = 'red'
             }
             return;

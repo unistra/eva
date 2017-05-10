@@ -376,7 +376,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         return tmp
 
     data = {}
-    all_cmp = Institute.objects.all()
+    so = [e.cmp_supply_id for e in StructureObject.objects.filter(
+        code_year=currentyear().code_year, mutual=True)]
+    cmp = Institute.objects.filter(code__in=so)
     training = Training.objects.get(id=id)
     structure_obj = StructureObject.objects.filter(
         code_year=currentyear().code_year)
@@ -385,7 +387,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         id_training=id).order_by('id_parent', 'order_in_child')
     data['next_id'] = StructureObject.objects.count() + 1
     data['training'] = training
-    data['all_cmp'] = all_cmp
+    data['all_cmp'] = cmp
     data['structure_objs'] = structure_obj
     tmp = []
     parent_list = []
