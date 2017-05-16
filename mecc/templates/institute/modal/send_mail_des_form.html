@@ -1,7 +1,7 @@
 {% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
 
 
-<div class="modal fade" id="send_mail_des" role="dialog" style="z-index: 1400;">
+<div class="modal fade" id="send_mail_des_form" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
@@ -21,13 +21,13 @@
                     <div class="form-group">
                         <label for="text" class="control-label col-lg-2">{% trans "À :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id='send-to' type="email" name="to" class="form-control" value="{{notification_to|join:","}}" placeholder="Destinataire" multiple></input>
+                            <input id="send-to-form" type="email" name="to" class="form-control" value="{{notification_to|join:","}}" placeholder="Destinataire" multiple></input>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cc" class="control-label col-lg-2">{% trans "CC :" %}</label>
                         <div class="controls col-lg-10">
-                            <input type="text" name="cc" class="form-control" placeholder="Copie à" value="{{notification_cc|join:","}}"></input>
+                            <input id="send-cc-form" type="text" name="cc" class="form-control" placeholder="Copie à" value="{{notification_cc|join:","}}"></input>
                         </div>
 
                     </div>

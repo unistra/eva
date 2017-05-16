@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from mecc.apps.rules.models import Rule
 from mecc.apps.years.models import UniversityYear
 
@@ -43,3 +45,10 @@ def rules_degree_for_year(degree_type_code, year):
 
 def currentyear():
     return UniversityYear.objects.filter(is_target_year=True).first()
+
+
+def institute_staff(institute_code, year):
+    """
+    Return list of staff people from an Institute
+    """
+    return User.objects.select_related().filter(meccuser__profile__cmp=institute_code, meccuser__profile__year=year)

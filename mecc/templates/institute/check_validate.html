@@ -96,9 +96,8 @@ MECC {{ request.display.current_year }} <br>
             </div>
         </div>
     </div>
-
-    {% include "institute/modal/confirm_validate.html"%}
     {% include "institute/modal/send_mail_des.html" %}
+    {% include "institute/modal/send_mail_des_form.html" %}
 <script>
 // toma ugly fix autoclose is not working for now !!!!
 $.fn.datepicker.defaults.autoclose = true;
@@ -120,30 +119,6 @@ $('#select-all').click(function(event) {
   }
 });
 
-$('#confirm-btn').on('click', function (e) {
-    // show confirmation if already sets date is selected
-    if ($(':checkbox.noSelect').is(':checked')) {
-        e.preventDefault();
-        $("#confirm-validation").modal("show");
-    // else submit form
-    } else {
-        $("validate-form").submit();
-    }
-});
-
-$('#confirm-validation').on('show.bs.modal', function(e) {
-    // populate confirmation dialog modal
-    var label = [];
-    var modal_text = "<ul>";
-    $("#validate-form input:checkbox.noSelect:checked").each(function() {
-        label.label = $(this).closest('td').next('td').next('td').text();
-        label.date = $(this).closest('td').next('td').next('td').next('td').next('td').next('td').text();
-        modal_text += "<li>" + label.label + " : " + label.date + "</li>";
-    });
-    modal_text = modal_text + "</ul>";
-    $('.modal-items-container').html(modal_text);
-});
-
 function process_me(id_obj, type, e) {
     $.ajax({
         url: "/institute/process_check_validate/",
@@ -158,5 +133,26 @@ function process_me(id_obj, type, e) {
         }
     });
 }
+
+function notify_me(id_obj, e) {
+    $.ajax({
+        url: "/institute/process_training_notify/",
+        type: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            code: id_obj,
+        },
+        success: function(data){
+            to = data.resp.map(function (emails) {
+                return emails.email
+            });
+            $("#send-to-form").val(to.join(','))
+            $("#send-cc-form").val('{{notification_full|join:","}}')
+            $("#send_mail_des_form").modal("show");
+        }
+    });
+}
+
+
 </script>
 {% endblock %}

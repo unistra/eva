@@ -23,6 +23,7 @@ from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
+from mecc.apps.utils.queries import institute_staff
 from datetime import datetime
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
@@ -46,6 +47,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['form_institute'] = DircompInstituteForm(instance=institute)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
+    # TODO: filter profile on current year ????
     profiles = Profile.objects.filter(
         cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP"))
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
@@ -169,6 +171,7 @@ def remove_pple(request):
     """
     Process remove diretu/gescol ajax queriessc
     """
+
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
@@ -179,6 +182,7 @@ def remove_pple(request):
                 e.code == code and
                 e.cmp == request.POST.get('code_cmp') and
                 e.year == currentyear().code_year][0]
+
 
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.remove(meccuser)
@@ -233,7 +237,6 @@ class InstituteCreate(CreateView):
     """
     Create institute view
     """
-
     def get_context_data(self, **kwargs):
         context = super(InstituteCreate, self).get_context_data(**kwargs)
         try:
@@ -466,6 +469,8 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
+    staff = institute_staff("CHM", current_year.code_year)
+    filtered_staff = staff.filter()
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
@@ -479,15 +484,15 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
         institutes__code=code).order_by('degree_type')
-    data['notification_to'] = request.user.email
-    data['notification_object'] = "%s - %s" % (
-        institute.label, _('Notification DES'))
+    data['notification_to'] = [ user.email for user in staff.filter(meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]) ]
+    data['notification_cc'] = [ user.email for user in staff.filter(meccuser__profile__code="REFAPP") ]
+    data['notification_full'] = data['notification_to']+data['notification_cc']
+    data['notification_object'] = "%s" % institute.label
 
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
 Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
-Merci.
-        """)
+Merci. """)
 
     try:
         errors = False
@@ -601,24 +606,12 @@ def send_mail_des(request):
     Send mail (from DES)
     """
 
-    meccuser = MeccUser.objects.get(user__username=request.user.username)
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
-    code = meccuser.cmp
-    institute = Institute.objects.get(code=code)
-    institute_year = InstituteYear.objects.get(
-        id_cmp=institute.id, code_year=current_year.code_year)
-    # institute_year.date_last_notif = datetime.now()
-    # institute_year.save()
     to = settings.EMAIL_TEST if hasattr(
         settings, 'EMAIL_TEST') else ['']
-    cc = [request.POST.get('cc')]
-    subject = "%s %s - %s" % (settings.EMAIL_SUBJECT_PREFIX,
-                              institute.label,
-                              _('Notification DES'))
+    cc = [request.POST.get('cc')] if request.POST.get('cc') else ''
+    subject = request.POST.get('subject')
 
     body = request.POST.get('body')
-
     mail = EmailMultiAlternatives(
         subject=subject,
         body=body,
@@ -626,7 +619,7 @@ def send_mail_des(request):
             request.user.first_name,
             request.user.last_name,
             request.user.email),
-        to=[settings.MAIL_FROM],
+        to=[request.POST.get('to')],
         cc=cc,
         bcc=to,
         reply_to=[settings.MAIL_FROM]
@@ -634,7 +627,7 @@ def send_mail_des(request):
 
     mail.send()
     messages.success(request, _('Notification envoyée.'))
-    return redirect('/institute/checkvalidate/%s' % code)
+    return redirect('/institute/checkvalidate/%s' % request.session['visited_cmp'])
 
 
 @is_post_request
@@ -695,6 +688,21 @@ def process_check_validate(request):
         tobject.save()
         response = {'status': 1, 'message': _(
             "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp']}
+    else:
+        response = {'status': 0, 'message': _("Error")}
+
+    return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+@is_post_request
+@login_required
+def process_training_notify(request):
+    tobject = Training.objects.get(id=request.POST.get('code'))
+
+    if tobject:
+        respform = User.objects.filter(meccuser__id__in=tobject.resp_formations.values('id'))
+        response = {'status': 1, 'message': _(
+            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'], 'resp': list(respform.values('email'))}
     else:
         response = {'status': 0, 'message': _("Error")}
 

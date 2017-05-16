@@ -2,8 +2,9 @@ from django.conf.urls import url
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
     InstituteListView,  edit_institute, granted_edit_institute, \
     add_pple, remove_pple, validate_institute, send_mail, send_mail_des, \
-    process_delete_file, process_upload_letter, process_upload_misc, \
-    process_check_validate, documents_institute, check_validate_institute
+    process_delete_file, process_training_notify, process_upload_letter,  \
+    process_upload_misc, process_check_validate, documents_institute, \
+    check_validate_institute
 from django_cas.decorators import login_required
 
 
@@ -34,6 +35,8 @@ urlpatterns = [
         name='check_validate'),
     url(r'^process_check_validate/$', process_check_validate,
         name='process_check_validate'),
+    url(r'^process_training_notify/$', process_training_notify,
+        name='process_training_notify'),
     url(r'^process_upload_letter/$', process_upload_letter,
         name='process_upload_letter'),
     url(r'^process_upload_misc/$', process_upload_misc,

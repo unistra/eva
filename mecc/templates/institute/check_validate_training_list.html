@@ -80,7 +80,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="no-padding td-centered border-bottom border-right">
-                                    <a class="glyphicon glyphicon-envelope" title="{% trans 'Envoyer une notification'%}" onclick=""></a>
+                                    <a class="glyphicon glyphicon-envelope" title="{% trans 'Envoyer une notification'%}" onclick="notify_me({{item.id}})"></a>
                                 </td>
                             </tr>
                         {%endfor%}
