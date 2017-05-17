@@ -46,16 +46,17 @@
                   </thead>
                   <tfoot>
                     <tr>
-                      <td><input type="checkbox" onClick="selectall(this)" /></td>
-                      <td >{% trans "Type d'objet" %}</td>
-                      <td >{% trans "Formation propriétaire de l'objet" %}</td>
-                      <td >{% trans "Intitulé de l'objet" %}</td>
-                      <td >{% trans "Régime" %}</td>
-                      <td >{% trans "Sessions" %}</td>
-                      <td >{% trans "Crédits" %}</td>
-                      <td >{% trans "Résponsable" %}</td>
-                      <td >{% trans "Si Scol" %}</td>
-                      <td >{% trans "ROF" %}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      <td></td>
+
                     </tr>
                 </tfoot>
                 </table>
@@ -91,12 +92,13 @@ function selectall(source) {
 $(document).ready(function () {
     $('#shared-object').on('shown.bs.modal', function() {
         $("#select-train").focus();
-        let table = $('#suggest').DataTable({
+        let table = $('#suggest').DataTable( {
             "paging": false,
-            "ordering": false,
+            // "ordering": false,
             "info": false,
             "searching":false,
-            data: '',
+            destroy: true,
+            data: null,
             language: {
                processing:     "Traitement en cours...",
                search:         "Rechercher&nbsp;:",
@@ -107,7 +109,7 @@ $(document).ready(function () {
                infoPostFix:    "",
                loadingRecords: "Chargement en cours...",
                zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
-               emptyTable:     " ",
+               emptyTable:     "Aucune donnée disponible dans le tableau",
                paginate: {
                    first:      "Premier",
                    previous:   "Pr&eacute;c&eacute;dent",
@@ -120,7 +122,8 @@ $(document).ready(function () {
                }
             },
 
-        });
+        } );
+
 
     });
     $('#select-train').on('click', function() {
