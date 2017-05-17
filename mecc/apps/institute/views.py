@@ -50,7 +50,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     profiles = Profile.objects.filter(
         cmp=code).filter(
             Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP")
-        ).filter(year=current_year.code_year)
+        )
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
         data['can_edit_diretu'] = True
     else:
