@@ -181,9 +181,7 @@ def remove_pple(request):
             'type') == 'GESCOL' and meccuser.is_ref_app else request.POST.get('type')
         prof = [e for e in meccuser.profile.all() if
                 e.code == code and
-                e.cmp == request.POST.get('code_cmp') and
-                e.year == currentyear().code_year][0]
-
+                e.cmp == request.POST.get('code_cmp')][0]
 
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.remove(meccuser)
