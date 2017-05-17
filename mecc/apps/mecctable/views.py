@@ -26,7 +26,8 @@ def get_mutual_by_cmp(request):
     asking_period = asking.period
     data = {}
     mutual_list = [[
-        e.id,
+        "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
+        e.nature,
         Training.objects.get(id=e.owner_training_id).label,
         e.label,
         e.get_regime_display(),

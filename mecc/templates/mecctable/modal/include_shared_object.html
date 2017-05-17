@@ -32,7 +32,8 @@
                 <table class="display table table-bordered" id="suggest">
                   <thead>
                     <tr>
-                      <th >{% trans "ID" %}</th>
+                      <th><input type="checkbox" onClick="selectall(this)" /></th>
+                      <th >{% trans "Type d'objet" %}</th>
                       <th >{% trans "Formation propriétaire de l'objet" %}</th>
                       <th >{% trans "Intitulé de l'objet" %}</th>
                       <th >{% trans "Régime" %}</th>
@@ -56,7 +57,47 @@
 
 
 <script type="text/javascript">
+function selectall(source) {
+    let checkboxes = document.getElementsByName('suggest-id');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 $(document).ready(function () {
+    $('#shared-object').on('shown.bs.modal', function() {
+        $("#select-train").focus();
+        let table = $('#suggest').DataTable({
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            // "search":false,
+            data: '',
+            language: {
+               processing:     "Traitement en cours...",
+               search:         "Rechercher&nbsp;:",
+               lengthMenu:    "Afficher _MENU_ &eacute;l&eacute;ments",
+               info:           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+               infoEmpty:      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+               infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+               infoPostFix:    "",
+               loadingRecords: "Chargement en cours...",
+               zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+               emptyTable:     " ",
+               paginate: {
+                   first:      "Premier",
+                   previous:   "Pr&eacute;c&eacute;dent",
+                   next:       "Suivant",
+                   last:       "Dernier"
+               },
+               aria: {
+                   sortAscending:  ": activer pour trier la colonne par ordre croissant",
+                   sortDescending: ": activer pour trier la colonne par ordre décroissant"
+               }
+            },
+
+        });
+
+    });
     $('#select-train').on('click', function() {
         let cmp_code = this.value;
         console.log(asking_inclusion);
@@ -69,9 +110,63 @@ $(document).ready(function () {
                 asking_id: asking_inclusion
             },
             success: function(data) {
-                $('#suggest').DataTable( {
+                let table = $('#suggest').DataTable( {
+                    columnDefs: [ {
+                       orderable: false,
+                       className: 'select-checkbox',
+                       targets:   0
+                    } ],
+                    select: {
+                       style:    'os',
+                       selector: 'td:first-child'
+                    },
+
+                    order: [[ 1, 'asc' ]],
+
+                    // "paging": false,
+                    // "ordering": false,
+                    // "info": false,
+                    // "searching":false,
                     destroy: true,
                     data: data.suggest,
+                    language: {
+                       processing:     "Traitement en cours...",
+                       search:         "Rechercher&nbsp;:",
+                       lengthMenu:    "Afficher _MENU_ &eacute;l&eacute;ments",
+                       info:           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+                       infoEmpty:      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                       infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                       infoPostFix:    "",
+                       loadingRecords: "Chargement en cours...",
+                       zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                       emptyTable:     "Aucune donnée disponible dans le tableau",
+                       paginate: {
+                           first:      "Premier",
+                           previous:   "Pr&eacute;c&eacute;dent",
+                           next:       "Suivant",
+                           last:       "Dernier"
+                       },
+                       aria: {
+                           sortAscending:  ": activer pour trier la colonne par ordre croissant",
+                           sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                       }
+                    },
+                    columnDefs: [ {
+                       orderable: false,
+                       className: 'select-checkbox',
+                       targets:   0
+                    } ],
+                    select: {
+                       style:    'os',
+                       selector: 'td:first-child'
+                    },
+                    order: [[ 1, 'asc' ]],
+
+
+
+
+
+
                 } );
 
             }
