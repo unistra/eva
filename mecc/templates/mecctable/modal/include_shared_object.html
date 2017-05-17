@@ -44,6 +44,20 @@
                       <th >{% trans "ROF" %}</th>
                     </tr>
                   </thead>
+                  <tfoot>
+                    <tr>
+                      <td><input type="checkbox" onClick="selectall(this)" /></td>
+                      <td >{% trans "Type d'objet" %}</td>
+                      <td >{% trans "Formation propriétaire de l'objet" %}</td>
+                      <td >{% trans "Intitulé de l'objet" %}</td>
+                      <td >{% trans "Régime" %}</td>
+                      <td >{% trans "Sessions" %}</td>
+                      <td >{% trans "Crédits" %}</td>
+                      <td >{% trans "Résponsable" %}</td>
+                      <td >{% trans "Si Scol" %}</td>
+                      <td >{% trans "ROF" %}</td>
+                    </tr>
+                </tfoot>
                 </table>
             </div>
             <div class="modal-footer">
@@ -53,7 +67,18 @@
         </div>
     </div>
 </div>
-
+<style media="screen">
+tfoot {
+    display: table-header-group;
+}
+tfoot tr td:first-child select,
+tfoot tr td:nth-child(4) select,
+tfoot tr td:nth-child(9) select,
+tfoot tr td:nth-child(10) select
+{
+    display: none
+}
+</style>
 
 
 <script type="text/javascript">
@@ -70,7 +95,7 @@ $(document).ready(function () {
             "paging": false,
             "ordering": false,
             "info": false,
-            // "search":false,
+            "searching":false,
             data: '',
             language: {
                processing:     "Traitement en cours...",
@@ -123,10 +148,10 @@ $(document).ready(function () {
 
                     order: [[ 1, 'asc' ]],
 
-                    // "paging": false,
+                    "paging": false,
                     // "ordering": false,
-                    // "info": false,
-                    // "searching":false,
+                    "info": false,
+                    "searching":false,
                     destroy: true,
                     data: data.suggest,
                     language: {
@@ -162,7 +187,26 @@ $(document).ready(function () {
                     },
                     order: [[ 1, 'asc' ]],
 
+                    initComplete: function () {
+                               this.api().columns().every( function () {
+                                   let column = this;
+                                   let select = $('<select><option value=""></option></select>')
+                                       .appendTo( $(column.footer()).empty() )
+                                       .on( 'change', function () {
+                                           let val = $.fn.dataTable.util.escapeRegex(
+                                               $(this).val()
+                                           );
 
+                                           column
+                                               .search( val ? '^'+val+'$' : '', true, false )
+                                               .draw();
+                                       } );
+
+                                   column.data().unique().sort().each( function ( d, j ) {
+                                       select.append( '<option value="'+d+'">'+d+'</option>' )
+                                   } );
+                               } );
+                           }
 
 
 
