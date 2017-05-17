@@ -47,8 +47,8 @@ def currentyear():
     return UniversityYear.objects.filter(is_target_year=True).first()
 
 
-def institute_staff(institute_code, year):
+def institute_staff(institute_code):
     """
     Return list of staff people from an Institute
     """
-    return User.objects.select_related().filter(meccuser__profile__cmp=institute_code, meccuser__profile__year=year)
+    return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)

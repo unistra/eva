@@ -146,6 +146,7 @@ function notify_me(id_obj, e) {
             to = data.resp.map(function (emails) {
                 return emails.email
             });
+            $("#send-obj").val("{{mail_prefix}} "+data.form)
             $("#send-to-form").val(to.join(','))
             $("#send-cc-form").val('{{notification_full|join:","}}')
             $("#send_mail_des_form").modal("show");

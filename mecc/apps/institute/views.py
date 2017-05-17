@@ -470,8 +470,7 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-    staff = institute_staff("CHM", current_year.code_year)
-    filtered_staff = staff.filter()
+    staff = institute_staff("CHM")
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
@@ -485,10 +484,11 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
         institutes__code=code).order_by('degree_type')
-    data['notification_to'] = [ user.email for user in staff.filter(meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]) ]
-    data['notification_cc'] = [ user.email for user in staff.filter(meccuser__profile__code="REFAPP") ]
+    data['notification_to'] = [ user.email for user in staff.filter(meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
+    data['notification_cc'] = [ user.email for user in staff.filter(meccuser__profile__code="REFAPP").distinct()]
     data['notification_full'] = data['notification_to']+data['notification_cc']
     data['notification_object'] = "%s" % institute.label
+    data['mail_prefix'] = settings.EMAIL_SUBJECT_PREFIX
 
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
@@ -703,7 +703,7 @@ def process_training_notify(request):
     if tobject:
         respform = User.objects.filter(meccuser__id__in=tobject.resp_formations.values('id'))
         response = {'status': 1, 'message': _(
-            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'], 'resp': list(respform.values('email'))}
+            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'], 'form': tobject.label, 'resp': list(respform.values('email'))}
     else:
         response = {'status': 0, 'message': _("Error")}
 
