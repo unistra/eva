@@ -53,7 +53,7 @@
         <div class="blue">
             {% trans "Racine" %}<br>
             <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
-            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true"></span>
+            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true" data-toggle="modal" data-target="#shared-object" onclick="asking_inclusion=0;" ></span>
         </div>
         {% if structure_objs|length > 0 %}
         <table id="mecc_table" width="100%">
