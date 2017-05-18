@@ -165,8 +165,6 @@ document.getElementById('id_session_2').tabIndex="-1";
 $("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
 if (!is_catalogue) {
     let a = document.getElementById('id_session_1');
-    console.log(session);
-    console.log(a);
     let b = document.getElementById('id_session_2');
     if (a.value === session){
         a.checked = true;
@@ -251,6 +249,7 @@ if (!is_catalogue) {
             data: {
                 _id: _id,
                 id_parent: id_parent,
+                id_training: {{training.id}}
             },
             success: function(data) {
                 for (let prop in data) {
