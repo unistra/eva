@@ -25,11 +25,18 @@ def get_mutual_by_cmp(request):
         id=request.GET.get('asking_id')) if request.GET.get('asking_id') is not '0' else None
     asking_period = asking.period if asking else None
     data = {}
-    print('-')
-    print(asking)
+    try:
+        if asking.nature == "SE":
+            to_exclude = ["SE"]
+        elif asking.nature in ["UE", "EC"]:
+            to_exclude = ["UE", "SE"]
+        else:
+            to_exclude = [""]
+    except AttributeError as e:  # when asking from root
+        to_exclude = [""]
     s_obj_list = StructureObject.objects.filter(
         cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
-        is_in_use=True)
+        is_in_use=True).exclude(nature__in=to_exclude)
     if asking:
         s_obj_list = s_obj_list.filter(period=asking_period)
     mutual_list = [[
@@ -43,9 +50,7 @@ def get_mutual_by_cmp(request):
         e.external_name if e.external_name else e.get_respens_name,
         e.ref_si_scol,
         e.ROF_ref
-    ] for e in StructureObject.objects.filter(
-        cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
-        is_in_use=True, period=asking_period)]
+    ] for e in s_obj_list]
     data['suggest'] = mutual_list
     # m = [[e.id, e.]]
     return JsonResponse(data)
