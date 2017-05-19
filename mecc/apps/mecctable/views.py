@@ -22,9 +22,16 @@ from decimal import InvalidOperation
 @is_ajax_request
 def get_mutual_by_cmp(request):
     asking = StructureObject.objects.get(
-        id=request.GET.get('asking_id'))
-    asking_period = asking.period
+        id=request.GET.get('asking_id')) if request.GET.get('asking_id') is not '0' else None
+    asking_period = asking.period if asking else None
     data = {}
+    print('-')
+    print(asking)
+    s_obj_list = StructureObject.objects.filter(
+        cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+        is_in_use=True)
+    if asking:
+        s_obj_list = s_obj_list.filter(period=asking_period)
     mutual_list = [[
         "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
         e.nature,
@@ -37,8 +44,8 @@ def get_mutual_by_cmp(request):
         e.ref_si_scol,
         e.ROF_ref
     ] for e in StructureObject.objects.filter(
-        cmp_supply_id=request.GET.get('cmp_code')).filter(
-            mutual=True, is_in_use=True, period=asking_period)]
+        cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+        is_in_use=True, period=asking_period)]
     data['suggest'] = mutual_list
     # m = [[e.id, e.]]
     return JsonResponse(data)
@@ -108,6 +115,7 @@ def get_stuct_obj_details(request):
     """
     Get details of structure, if it DoesNotExist return empty fields
     """
+    training = Training.objects.get(id=request.GET.get('id_training'))
     try:
         struct_obj = StructureObject.objects.get(id=request.GET.get('_id'))
     except ObjectDoesNotExist:
@@ -119,8 +127,8 @@ def get_stuct_obj_details(request):
     if not struct_obj:
         return JsonResponse({
             'nature': "",
-            'regime': "",
-            'session': "",
+            'regime': parent.regime if parent else training.MECC_type,
+            'session': parent.session if parent else training.session_type,
             'label': "",
             'is_in_use': True,
             'period': parent.period if parent else "",
