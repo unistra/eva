@@ -4,7 +4,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ObjectsLinkListView, ObjectsLinkCreateView, ObjectsLinkDetailView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
-    get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp
+    get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
+    import_objectslink
 
 urlpatterns = [
     url(r'^get_mutual_by_cmp/$', get_mutual_by_cmp,
@@ -38,6 +39,8 @@ urlpatterns = [
         name='remove_structureobject'),
 
     # urls for ObjectsLink
+    url(r'^import_objectslink/$', import_objectslink,
+        name='import_objectslink'),
     url(r'^objectslink/$', ObjectsLinkListView.as_view(),
         name='mecctable_objectslink_list'),
     url(r'^objectslink/create/$',
