@@ -90,7 +90,7 @@
             <tbody>
                 {% for l in object_link %} {% for e in structure_objs %} {% if l.id_child == e.id %}
 
-                <tr class="hover-row len-{{l.depth|length}}  parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%} ">
+                <tr class="hover-row len-{{l.depth|length}}  parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%} {%if l.is_imported%} green{%endif%}">
 
                     <td>
                         <div class="width-3 ">
@@ -103,26 +103,35 @@
                         {% for i in l.depth  %}
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endfor %}
-
                         {{e.nature}} :
-                        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}}, '{{l.nature_parent}}')">{{e.label}}</a>
+                        {%if l.is_imported%}
+                            {{e.label}}
+                        {% else %}
+
+                            <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}}, '{{l.nature_parent}}')">{{e.label}}</a>
+                        {%endif%}
                     </td>
                     <td class="centered border-bottom">
-                        {% if e.nature not in "ST PT"%}
+                        {% if e.nature not in "ST PT" and not l.is_imported%}
                             <a onclick="get_struct_details(0, {{e.id}},'{{e.nature}}')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
                         {%endif%}
                     </td>
                     <td class="centered border-bottom">
-                    {% if e.nature not in "ST PT"%}
+                    {% if e.nature not in "ST PT" and not l.is_imported%}
                             <span data-toggle="modal" data-target="#shared-object" class="glyphicon glyphicon-circle-arrow-left green hand" onclick="asking_inclusion={{e.id}};"></span>
                     {%endif%}
                         </td>
                     <td class="centered border-bottom">
                         {% if e.id not in parents %}
+                        {% if l.is_imported %}
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        {% else %}
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_mutual({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
+
+                        {% endif %}
                         {% endif %}
                     </td>
-                    <td class="centered border-bottom">{% if e.mutual %}<a href="#">{% trans "mut." %}</a>{% endif %}</td>
+                    <td class="centered border-bottom">{% if e.mutual and l.is_imported != True %}<a href="#" >{% trans "mut." %}</a>{% endif %}</td>
                     <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
                     <td class="border-bottom">{{e.get_respens_name}} {% if e.external_name %} <i>{{e.external_name}}</i>{% endif %}</td>
                     <td class="centered border-left-3 border-bottom editme" id="{{l.id}}-coeff" contenteditable='true'>  {% if l.coefficient or l.coefficient == 0%}{{l.coefficient}}{% endif %}</td>

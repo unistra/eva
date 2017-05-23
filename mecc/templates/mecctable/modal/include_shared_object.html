@@ -61,7 +61,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="" id="include-selected-obj">{% trans "Intégrer les éléments sélectionnés" %}</button>
+                <button type="button" class="btn btn-primary" onclick="import_selected_suggestions()" id="include-selected-obj">{% trans "Intégrer les éléments sélectionnés" %}</button>
                 <button type="button" class="btn " id="button-id-cancel" data-dismiss="modal">{% trans "Annuler" %}</button>
             </div>
         </div>
@@ -86,6 +86,29 @@ function selectall(source) {
     for(let i=0, n=checkboxes.length;i<n;i++) {
         checkboxes[i].checked = source.checked;
     }
+}
+function import_selected_suggestions(){
+    console.log(asking_inclusion);
+    let checkboxValues = [];
+    $('input[name="suggest-id"]:checked').map(function(){
+        checkboxValues.push(this.value);
+
+    });
+    $.ajax({
+        url: "{% url 'mecctable:import_objectslink'%}",
+        type: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            selected_id: checkboxValues,
+            asking_id: asking_inclusion,
+            id_training : {{training.id}}
+        },
+        success: function(data) {
+            console.log("IT'S ALIVE !");
+            console.log(data.status)
+        }
+    });
+
 }
 $(document).ready(function () {
     // set datatable
