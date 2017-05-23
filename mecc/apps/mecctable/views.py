@@ -19,40 +19,89 @@ from decimal import InvalidOperation
 
 
 @login_required
+def import_objectslink(request):
+    """
+    Create objectslink with selected structureobject
+    """
+    try:
+        id_training = request.POST.get('id_training')
+        id_parent = request.POST.get('asking_id')
+        cy = currentyear().code_year
+        # newparent = ObjectsLink.objects.get(
+        #     id_child=request.POST.get('asking_id'), code_year=cy) if request.POST.get('asking_id') != '0' else None
+        selected_id = map(int, request.POST.getlist('selected_id[]'))
+        object_link_list = [
+            ObjectsLink.objects.get(
+                id=e, code_year=cy) for e in selected_id
+        ]
+        for e in object_link_list:
+            order_in_child = ObjectsLink.objects.filter(
+                code_year=cy, id_parent=id_parent).count() + 1
+            print(order_in_child)
+            a, b = ObjectsLink.objects.get_or_create(
+                code_year=cy,
+                id_training=id_training,
+                id_parent=id_parent,
+                id_child=e.id,
+                order_in_child=order_in_child,
+                n_train_child=e.n_train_child,
+                nature_child=e.nature_child,
+                coefficient=e.coefficient,
+                eliminatory_grade=e.eliminatory_grade,
+                is_imported=True
+            )
+            print(a)
+            print(b)
+    except Exception as e:
+        print(e)
+    return JsonResponse({
+        "status": 200,
+        "val": "Everything is allright"
+    })
+
+
+@login_required
 @is_ajax_request
 def get_mutual_by_cmp(request):
-    asking = StructureObject.objects.get(
-        id=request.GET.get('asking_id')) if request.GET.get('asking_id') is not '0' else None
-    asking_period = asking.period if asking else None
-    data = {}
+    """
+    Give list of suggested cmp according by
+    """
     try:
-        if asking.nature == "SE":
-            to_exclude = ["SE"]
-        elif asking.nature in ["UE", "EC"]:
-            to_exclude = ["UE", "SE"]
-        else:
+        asking = StructureObject.objects.get(
+            id=request.GET.get('asking_id')) if request.GET.get(
+                'asking_id') is not '0' else None
+        asking_period = asking.period if asking else None
+        data = {}
+        try:
+            if asking.nature == "SE":
+                to_exclude = ["SE"]
+            elif asking.nature in ["UE", "EC"]:
+                to_exclude = ["UE", "SE"]
+            else:
+                to_exclude = [""]
+        except AttributeError as e:  # when asking from root
             to_exclude = [""]
-    except AttributeError as e:  # when asking from root
-        to_exclude = [""]
-    s_obj_list = StructureObject.objects.filter(
-        cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
-        is_in_use=True).exclude(nature__in=to_exclude)
-    if asking:
-        s_obj_list = s_obj_list.filter(period=asking_period)
-    mutual_list = [[
-        "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
-        e.nature,
-        Training.objects.get(id=e.owner_training_id).label,
-        e.label,
-        e.get_regime_display(),
-        e.get_session_display(),
-        e.ECTS_credit,
-        e.external_name if e.external_name else e.get_respens_name,
-        e.ref_si_scol,
-        e.ROF_ref
-    ] for e in s_obj_list]
-    data['suggest'] = mutual_list
-    # m = [[e.id, e.]]
+        s_obj_list = StructureObject.objects.filter(
+            cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+            is_in_use=True).exclude(nature__in=to_exclude)
+        if asking_period:
+            s_obj_list = s_obj_list.filter(period=asking_period)
+        object_link_list = [ObjectsLink.objects.filter(id_child=e.id) for e in s_obj_list]
+        mutual_list = [[
+            "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
+            e.nature,
+            Training.objects.get(id=e.owner_training_id).label,
+            e.label,
+            e.get_regime_display(),
+            e.get_session_display(),
+            e.ECTS_credit,
+            e.external_name if e.external_name else e.get_respens_name,
+            e.ref_si_scol,
+            e.ROF_ref
+        ] for e in s_obj_list]
+        data['suggest'] = mutual_list
+    except Exception as e:
+        print(e)
     return JsonResponse(data)
 
 
@@ -61,7 +110,7 @@ def get_mutual_by_cmp(request):
 @is_post_request
 def update_grade_coeff(request):
     """
-    ajax view to update grade and coeff
+    Ajax view to update grade and coeff
     """
     val = strip_tags(request.POST.get('value'))
     to_update = request.POST.get('to_update')
@@ -239,6 +288,7 @@ def mecctable_update(request):
     """
 
     training = Training.objects.get(id=request.POST.get('training_id'))
+    print(training.id)
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
 
     # needed stuff in order to create objectslink
@@ -374,7 +424,7 @@ def mecctable_update(request):
 @login_required
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
-    View displaying mecctable including StructureObject, ObjectsLink and Exam
+    Display mecctable including StructureObject, ObjectsLink and Exam
     """
 
     def sort_list(object_list):
@@ -405,6 +455,10 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['structure_objs'] = structure_obj
     tmp = []
     parent_list = []
+    imported_stuff = [e for e in object_link if e.is_imported is True]
+    for e in imported_stuff:
+        pass
+        # TODO: ajouter les enfants des éléments importé à la liste des élémnets
     data['object_link'] = sort_list(object_link)
     data['form'] = StructureObjectForm
     data['parents'] = parent_list
