@@ -115,7 +115,6 @@ class StructureObject(models.Model):
             return ""
 
 
-
 class ObjectsLink(models.Model):
     NATURE_CHOICE = [
         ("INT", _("ID formation d’origine = ID formation contexte")),
@@ -140,6 +139,9 @@ class ObjectsLink(models.Model):
     eliminatory_grade = models.IntegerField(
         _("Note seuil sur cet objet (au sein de ce père)"),
         default=None, null=True, blank=True)
+    is_imported = models.NullBooleanField(
+        _('Est importé'), null=True, blank=True)
+
 
     @property
     def nature_parent(self):
