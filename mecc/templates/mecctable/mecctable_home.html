@@ -123,11 +123,10 @@
                         </td>
                     <td class="centered border-bottom">
                         {% if e.id not in parents %}
-                        {% if l.is_imported %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        {% if  l.is_imported %}
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_imported({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
                         {% else %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_mutual({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
-
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
                         {% endif %}
                         {% endif %}
                     </td>
@@ -252,6 +251,12 @@ function ask_delete(id_obj, label) {
     document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
     document.getElementById('to_del').innerHTML = label;
     document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
+}
+
+function ask_delete_imported(id_link, label){
+    document.getElementById('type').innerHTML = "cet objet importé (et ses enfants)";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = "/mecctable/imported/remove/" + id_link;
 }
 
 // In order to move row up and down

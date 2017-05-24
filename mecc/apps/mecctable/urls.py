@@ -5,9 +5,12 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
-    import_objectslink
+    import_objectslink, remove_imported
 
 urlpatterns = [
+    url(r'^imported/remove/(?P<id>\d+)$',
+        remove_imported,
+        name='remove_imported'),
     url(r'^get_mutual_by_cmp/$', get_mutual_by_cmp,
         name='get_mutual_by_cmp'),
     url(r'^training/(?P<id>\w+)/$', mecctable_home,

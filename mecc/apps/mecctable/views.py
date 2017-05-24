@@ -246,6 +246,19 @@ def remove_respens(old_username, label, training):
 
 @login_required
 @is_post_request
+def remove_imported(request,id):
+    """
+    remove object link from imported mecc
+    """
+    link = ObjectsLink.objects.get(id=id)
+    currentpage = '/mecctable/training/%s' % link.id_training
+
+    link.delete()
+    return redirect(currentpage)
+
+
+@login_required
+@is_post_request
 def remove_object(request, id):
     """
     Remove struct_obj and relating object_link
