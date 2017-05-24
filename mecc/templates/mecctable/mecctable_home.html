@@ -23,7 +23,7 @@
 <span class="top-right"></span>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-    <li><a href="{%if training%}{%url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li><a href={%if training and not "CATALOGUE" in training.degree_type.long_label%}"{% url 'training:edit_rules' training.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
 <div class="disp-flex dir-col has-bottom-border">
@@ -123,7 +123,8 @@
                         </td>
                     <td class="centered border-bottom">
                         {% if e.id not in parents %}
-                        {% if  l.is_imported %}
+                        {{l.is_imported}}
+                        {% if l.is_imported %}
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_imported({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
                         {% else %}
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
@@ -319,5 +320,6 @@ function get_same_down(row, p_id){
         return null;
     }
 }
+
 </script>
 {%endblock%}

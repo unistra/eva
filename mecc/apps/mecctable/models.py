@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 class StructureObject(models.Model):
@@ -93,6 +94,14 @@ class StructureObject(models.Model):
             except ObjectDoesNotExist:
                 self.auto_id = 1
         super(StructureObject, self).save(*args, **kwargs)
+
+    def clean_fields(self, exclude=None):
+        print(self.nature)
+        if self.nature == 'UE':
+            if self.ECTS_credit in ['', ' ', None]:
+                raise ValidationError({
+                    'ECTS_credit': [_("Champs obligatoire"), ]
+                })
 
     @property
     def get_children(self):
