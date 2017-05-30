@@ -37,7 +37,6 @@ def import_objectslink(request):
         for e in object_link_list:
             order_in_child = ObjectsLink.objects.filter(
                 code_year=cy, id_parent=id_parent).count() + 1
-            print(order_in_child)
             a, b = ObjectsLink.objects.get_or_create(
                 code_year=cy,
                 id_training=id_training,
@@ -46,12 +45,8 @@ def import_objectslink(request):
                 order_in_child=order_in_child,
                 n_train_child=e.n_train_child,
                 nature_child=e.nature_child,
-                coefficient=e.coefficient,
-                eliminatory_grade=e.eliminatory_grade,
                 is_imported=True
             )
-            print(a)
-            print(b)
     except Exception as e:
         print(e)
     return JsonResponse({
@@ -224,7 +219,6 @@ def get_stuct_obj_details(request):
     return JsonResponse(j)
 
 
-@login_required
 def remove_respens(old_username, label, training):
     """
     Remove respens profile and delete user/meccuser if no
@@ -232,7 +226,7 @@ def remove_respens(old_username, label, training):
     """
     try:
         meccuser = MeccUser.objects.get(user__username=old_username)
-    except MeccUser.DoesNotExist:
+    except MeccUser.DoesNotExist as e:
         return
     profile = Profile.objects.get(
         code="RESPENS", cmp=training.supply_cmp, year=currentyear().code_year,
@@ -246,7 +240,7 @@ def remove_respens(old_username, label, training):
 
 @login_required
 @is_post_request
-def remove_imported(request,id):
+def remove_imported(request, id):
     """
     remove object link from imported mecc
     """
@@ -274,9 +268,7 @@ def remove_object(request, id):
             children_list.append(e)
             get_children(e, children_list)
         return children_list
-
     for e in get_children(link):
-
         struct = StructureObject.objects.get(id=e.id_child)
 
         remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
@@ -301,7 +293,6 @@ def mecctable_update(request):
     """
 
     training = Training.objects.get(id=request.POST.get('training_id'))
-    print(training.id)
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
 
     # needed stuff in order to create objectslink
@@ -442,14 +433,17 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     def sort_list(object_list):
         for p in object_list:
-            if p.id_parent in [0, '', None]:
-                tmp.append(p)
-            else:
-                parent = ObjectsLink.objects.get(id_child=p.id_parent).id_child
-                parent_list.append(p.id_parent)
-                current_child = [e.id_parent for e in tmp].count(p.id_parent)
-                index = [e.id_child for e in tmp].index(parent) + 1
-                tmp.insert(index+current_child, p)
+            if not p.is_imported:
+                if p.id_parent in [0, '', None]:
+                    tmp.append(p)
+                else:
+                    parent = ObjectsLink.objects.exclude(is_imported=True).get(
+                        id_child=p.id_parent).id_child
+                    parent_list.append(p.id_parent)
+                    current_child = [e.id_parent for e in tmp].count(p.id_parent)
+                    index = [e.id_child for e in tmp].index(parent) + 1
+
+                    tmp.insert(index+current_child, p)
         return tmp
 
     data = {}

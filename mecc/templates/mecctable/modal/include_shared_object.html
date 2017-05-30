@@ -196,16 +196,18 @@ $(document).ready(function () {
                     // FIXME: Le filtre on change ne marche plus du tout ! why?
                     initComplete: function () {
                         this.api().columns().every( function () {
-                           let column = this;
-                           let select = $('<select><option value=""></option></select>')
+                           var column = this;
+                           var select = $('<select><option value=""></option></select>')
                                .appendTo( $(column.footer()).empty() )
                                .on( 'change', function () {
-                                   let val = $.fn.dataTable.util.escapeRegex(
+                                   var val = $.fn.dataTable.util.escapeRegex(
                                        $(this).val()
                                    );
                                    column
-                                       .search( val ? '^'+val+'$' : '', true, false )
+                                       .search(val)
                                        .draw();
+
+                                   alert(val)
                                } );
                            column.data().unique().sort().each( function ( d, j ) {
                                select.append( '<option value="'+d+'">'+d+'</option>' )

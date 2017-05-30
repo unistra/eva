@@ -121,9 +121,8 @@
                             <span data-toggle="modal" data-target="#shared-object" class="glyphicon glyphicon-circle-arrow-left green hand" onclick="asking_inclusion={{e.id}};"></span>
                     {%endif%}
                         </td>
-                    <td class="centered border-bottom">
+                    <td class="centered border-bottom"> {{e.id}}
                         {% if e.id not in parents %}
-                        {{l.is_imported}}
                         {% if l.is_imported %}
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_imported({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
                         {% else %}
