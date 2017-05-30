@@ -15,19 +15,19 @@
                     <div class="form-group">
                         <label for="subject" class="control-label col-lg-2">{% trans "Sujet :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id="send-obj" name="subject" class="form-control" value='[MECC] {{notification_object}}' placeholder="Sujet du mail"></input>
+                            <input id="send-obj" name="subject" class="form-control" value='[MECC] {{notification_object}}' placeholder="Sujet du mail">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="text" class="control-label col-lg-2">{% trans "À :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id="send-to-form" type="email" name="to" class="form-control" value="{{notification_to|join:","}}" placeholder="Destinataire" multiple></input>
+                            <input id="send-to-form" type="email" name="to" class="form-control" value="{{notification_to|join:","}}" placeholder="Destinataire" multiple>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cc" class="control-label col-lg-2">{% trans "CC :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id="send-cc-form" type="text" name="cc" class="form-control" placeholder="Copie à" value="{{notification_cc|join:","}}"></input>
+                            <input id="send-cc-form" type="text" name="cc" class="form-control" placeholder="Copie à" value="{{notification_cc|join:","}}">
                         </div>
 
                     </div>

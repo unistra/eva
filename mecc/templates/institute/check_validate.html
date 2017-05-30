@@ -35,26 +35,26 @@ MECC {{ request.display.current_year }} <br>
     {{ message }}
 </div>
 {% endfor %}
-<div class="disp-flex has-top-border">
 {% endif %}
-    <form method="post" class='' id="validate-form">
+<div class="row no-margin">
+    <form method="post" class="" id="validate-form">
         <legend class="no-border">{% trans 'Etapes de validations' %}</legend>
             <div class="row">
-                <div class='col-sm-12'>
+                <div class="col-sm-12">
                     {% include 'institute/check_validate_training_list.html' %}
                 </div>
             </div>
             <div class="form-inline pull-right" style="margin-bottom: 1em;">
-                    <div>
-                        <label for="id_datepicker">{% trans 'Validation en CFVU' %} :</label>
-                        <div class='input-group date' data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
-                            <input type='text' class="datepicker textinput textInput form-control" id='id_datetimepicker' placeholder='JJ/MM/AAAA' name="date_mecc" value="{{ date_mecc }}" required/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
-                            <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date CFVU' %}" >
+                <div>
+                    <label for="id_datepicker">{% trans 'Validation en CFVU' %} :</label>
+                    <div class="input-group date" data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
+                        <input type="text" class="datepicker textinput textInput form-control" id="id_datepicker" placeholder="JJ/MM/AAAA" name="date_mecc" value="{{ date_mecc }}" required/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
+                    <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date CFVU' %}" >
+                </div>
 
             {% csrf_token %}
             </div>
@@ -62,7 +62,7 @@ MECC {{ request.display.current_year }} <br>
 </div>
 
     <div class="row has-top-border has-bottom-border no-margin">
-        <div class='col-sm-6 border-right-blue no-margin'>
+        <div class="col-sm-6 border-right-blue no-margin">
             <legend class="no-border" style="margin-top: 0.5em;margin-left: 0.5em;">{% trans 'Documents déposés par la composante' %}</legend>
             <div class="form-group" style="margin-left: 1em;">
                 <div>
@@ -81,7 +81,7 @@ MECC {{ request.display.current_year }} <br>
                 </div>
             </div>
         </div>
-        <div class='col-sm-6 no-margin'>
+        <div class="col-sm-6 no-margin">
             <legend class="no-border" style="margin-top: 0.5em;margin-left: 0.5em;" >{% trans 'Notification Composante' %}</legend>
             <div class="form-group" style="margin-left: 1em;">
                 <small id="mailHelp" class="text-muted italic">
