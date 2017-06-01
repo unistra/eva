@@ -65,6 +65,7 @@ DATABASES = {
 ALLOWED_HOSTS = [
     '.u-strasbg.fr',
     '.unistra.fr',
+    '127.0.0.1',
 ]
 
 #########################

@@ -10,7 +10,6 @@ from .base import *
 
 DEBUG = True
 
-
 ##########################
 # Database configuration #
 ##########################
@@ -18,6 +17,14 @@ DEBUG = True
 DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 DATABASES['default']['NAME'] = normpath(join(dirname(dirname(SITE_ROOT)), 'shared/default.db'))
 
+############################
+# Allowed hosts & Security #
+############################
+
+ALLOWED_HOSTS = [
+    '.u-strasbg.fr',
+    '.unistra.fr',
+]
 
 #####################
 # Log configuration #
@@ -27,7 +34,6 @@ LOGGING['handlers']['file']['filename'] = '{{ remote_current_path }}/log/app.log
 
 for logger in LOGGING['loggers']:
     LOGGING['loggers'][logger]['level'] = 'DEBUG'
-
 
 ############
 # Dipstrap #
@@ -44,8 +50,6 @@ CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camel
 CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
 CAMELOT_TOKEN = '{{camelot_token}}'
 
-
-
 ####################
 # LDAP Settings    #
 ####################
@@ -53,7 +57,6 @@ CAMELOT_TOKEN = '{{camelot_token}}'
 LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
 LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
 LDAP_TOKEN = '{{ldap_token}}'
-
 
 ####################
 # EMAIL Settings   #

@@ -10,7 +10,6 @@ from .base import *
 
 DEBUG = True
 
-
 ##########################
 # Database configuration #
 ##########################
@@ -23,10 +22,16 @@ DEBUG = True
 # engine : sqlite3
 # name : PROJECT_ROOT_DIR/default.db
 
-
 DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 DATABASES['default']['NAME'] = 'mecc.db'
 
+############################
+# Allowed hosts & Security #
+############################
+
+ALLOWED_HOSTS = [
+    '127.0.0.1'
+]
 
 #####################
 # Log configuration #
@@ -38,7 +43,6 @@ LOGGING['handlers']['file']['level'] = 'DEBUG'
 
 for logger in LOGGING['loggers']:
     LOGGING['loggers'][logger]['level'] = 'DEBUG'
-
 
 ###########################
 # Unit test configuration #
@@ -67,7 +71,6 @@ MIDDLEWARE_CLASSES += (
 )
 INTERNAL_IPS = ('127.0.0.1', '0.0.0.0')
 
-
 ####################
 # Camelot settings #
 ####################
@@ -75,8 +78,6 @@ INTERNAL_IPS = ('127.0.0.1', '0.0.0.0')
 CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
 CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
 CAMELOT_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
-
-
 
 ####################
 # LDAP Settings    #
@@ -99,4 +100,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'localhost'
 SERVER_EMAIL = 'root@localhost'
 EMAIL_SUBJECT_PREFIX = '[MECC]'
-EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr'] # For test purpose comment if not needed
+EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr']  # For test purpose comment if not needed

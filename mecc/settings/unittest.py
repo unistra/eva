@@ -10,14 +10,12 @@ from .base import *
 
 DEBUG = True
 
-
 ##########################
 # Database configuration #
 ##########################
 
 DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 DATABASES['default']['NAME'] = environ.get('DEFAULT_DB_NAME', 'mecc.db')
-
 
 #####################
 # Log configuration #
