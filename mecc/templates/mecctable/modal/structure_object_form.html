@@ -359,7 +359,8 @@ if (!is_catalogue) {
 
     function updateStructure(id_parent, id_child) {
 
-        let data_form = JSON.stringify($(".formstruct").serializeObject()); //
+        let data_form = JSON.stringify($(".formstruct").serializeObject());
+        let is_mutual = document.getElementById('id_mutual').checked;
         let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
         let label = document.getElementById('id_label').value;
         let ects = document.getElementById('id_ECTS_credit').value;
@@ -393,6 +394,7 @@ if (!is_catalogue) {
                 id_child: id_child,
                 id_parent: id_parent,
                 formdata: data_form,
+                is_mutual: is_mutual,
             },
             success: function(data) {
                 // Next three lines are used to dismiss modal
