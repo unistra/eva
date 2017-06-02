@@ -5,16 +5,25 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
-    import_objectslink, remove_imported
+    import_objectslink, remove_imported, get_consom
 
 urlpatterns = [
     url(r'^imported/remove/(?P<id>\d+)$',
         remove_imported,
         name='remove_imported'),
-    url(r'^get_mutual_by_cmp/$', get_mutual_by_cmp,
+
+    url(r'^get_mutual_by_cmp/$',
+        get_mutual_by_cmp,
         name='get_mutual_by_cmp'),
-    url(r'^training/(?P<id>\w+)/$', mecctable_home,
+
+    url(r'^get_consom/$',
+        get_consom,
+        name='get_consom'),
+
+    url(r'^training/(?P<id>\w+)/$',
+        mecctable_home,
         name='mecctable_home'),
+
     url(r'^mecctable_update/$',
         mecctable_update,
         name='mecctable_update'),
