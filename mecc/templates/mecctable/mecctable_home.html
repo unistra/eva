@@ -56,7 +56,7 @@
             <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true" data-toggle="modal" data-target="#shared-object" onclick="asking_inclusion=0;" ></span>
         </div>
-        {% if structure_objs|length > 0 %}
+        {% if la_liste|length > 0 %}
         <table id="mecc_table" width="100%">
             <thead>
                 <tr>
@@ -89,10 +89,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for l in object_link %} {% for e in structure_objs %} {% if l.id_child == e.id %}
-
-                <tr class="hover-row len-{{l.depth|length}}  parent-{{l.id_parent}} order-{{l.order_in_child}} {%if not e.is_in_use%}grey-all{%endif%} {%if l.is_imported%} green{%endif%}">
-
+                {% for a in la_liste %}
+                <tr class="hover-row len-{{a.link.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}">
                     <td>
                         <div class="width-3 ">
                             <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
@@ -100,45 +98,61 @@
                         </div>
                     </td>
                     <td class=" border-bottom" class="nowrap">
-                        <!--:: {{l.depth|length}} :: p_id = {{l.id_parent}} :: id = {{l.id_child}}-->
-                        parend id : {{l.id}} || child_id : {{l.id_child}}
-                         <br>
-                         e:{{e.id}} || l:{{l.id}}
-                        {% for i in l.depth  %}
+                        {% for i in a.loop  %}
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endfor %}
-                        {{e.nature}} :
-                        {%if l.is_imported%}
-                            {{e.label}}
+                        {{a.structure.nature}} :
+                        {%if a.is_imported%}
+                            {{a.structure.label}}
                         {% else %}
-
-                            <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj" onclick="get_struct_details({{e.id}}, {{l.id_parent}}, '{{l.nature_parent}}')">{{e.label}}</a>
+                            <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
+                            onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}</a>
                         {%endif%}
                     </td>
                     <td class="centered border-bottom">
-                        {% if e.nature not in "ST PT" and not l.is_imported%}
-                            <a onclick="get_struct_details(0, {{e.id}},'{{e.nature}}')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
+                        {% if a.structure.nature not in "ST PT" and not a.is_imported%}
+                            <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
+                            data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true"
+                            data-target="#form-obj" ></a>
+                    </td>
+                    <td class="centered border-bottom">
+                            <span data-toggle="modal" data-target="#shared-object"
+                            class="glyphicon glyphicon-circle-arrow-left green hand"
+                            onclick="asking_inclusion={{a.structure.id}};"></span>
+                        {% else %}
+                    </td>
+                    <td class="centered border-bottom">
                         {%endif%}
                     </td>
                     <td class="centered border-bottom">
-                    {% if e.nature not in "ST PT" and not l.is_imported%}
-                            <span data-toggle="modal" data-target="#shared-object" class="glyphicon glyphicon-circle-arrow-left green hand" onclick="asking_inclusion={{e.id}};"></span>
-                    {%endif%}
-                        </td>
-                    <td class="centered border-bottom">
-                        {% if e.id not in parents %}
-                        {% if l.is_imported %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete_imported({{l.id}}, '{{e.label}}')" data-target="#preview"></span>
+                        {% if a.no_children  %}
+                        {% if a.link.is_imported %}
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                            onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
                         {% else %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand" onclick="ask_delete({{e.id}}, '{{e.label}}')" data-target="#preview"></span>
+                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                            onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
                         {% endif %}
                         {% endif %}
                     </td>
-                    <td class="centered border-bottom">{% if e.mutual and l.is_imported != True %}<a href="#" >{% trans "mut." %}</a>{% endif %}</td>
-                    <td class="centered border-bottom">{% if e.nature == 'UE' %}{{e.ECTS_credit}}{% endif %}</td>
-                    <td class="border-bottom">{{e.get_respens_name}} {% if e.external_name %} <i>{{e.external_name}}</i>{% endif %}</td>
-                    <td class="centered border-left-3 border-bottom editme" id="{{l.id}}-coeff" contenteditable='true'>  {% if l.coefficient or l.coefficient == 0%}{{l.coefficient}}{% endif %}</td>
-                    <td class="centered border-left-3 border-bottom editme" contenteditable='true' id="{{l.id}}-grade">{% if l.eliminatory_grade or l.eliminatory_grade == 0 %}{{l.eliminatory_grade}}{% endif %}</td>
+                    <td class="centered border-bottom">
+                        {% if a.structure.mutual and a.link.is_imported != True %}
+                            <a href="#" >{% trans "mut." %}</a>
+                        {% endif %}
+                    </td>
+                    <td class="centered border-bottom">
+                        {% if a.structure.nature == 'UE' %}{{a.structure.ECTS_credit}}{% endif %}
+                    </td>
+                    <td class="border-bottom">{{a.structure.get_respens_name}}
+                        {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
+                    </td>
+                    <td class="centered border-left-3 border-bottom editme" id="{{a.link.id}}-coeff" contenteditable='true'>
+                        {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
+                    </td>
+                    <td class="centered border-left-3 border-bottom editme"
+                    contenteditable='true' id="{{l.id}}-grade">
+                        {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
+                    </td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
                     <td class="centered border-left border-bottom"></td>
                     <td class="centered border-left border-bottom"></td>
@@ -148,11 +162,14 @@
                     <td class="centered border-left border-bottom"></td>
                     <td class="centered border-left border-bottom"></td>
                     <td class="centered border-left border-bottom"></td>
+
                 </tr>
-                {% endif %} {% endfor %} {% endfor %}
+                {% endfor %}
             </tbody>
         </table>
+
         {% endif %}
+
     </div>
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
