@@ -28,7 +28,9 @@ def import_objectslink(request):
         id_parent = request.POST.get('asking_id')
         cy = currentyear().code_year
         # newparent = ObjectsLink.objects.get(
-        #     id_child=request.POST.get('asking_id'), code_year=cy) if request.POST.get('asking_id') != '0' else None
+        #     id_child=request.POST.get(
+        #         'asking_id'), code_year=cy) if request.POST.get(
+        #             'asking_id') != '0' else None
         selected_id = map(int, request.POST.getlist('selected_id[]'))
         object_link_list = [
             ObjectsLink.objects.get(
@@ -81,7 +83,8 @@ def get_mutual_by_cmp(request):
             is_in_use=True).exclude(nature__in=to_exclude)
         if asking_period:
             s_obj_list = s_obj_list.filter(period=asking_period)
-        object_link_list = [ObjectsLink.objects.filter(id_child=e.id) for e in s_obj_list]
+        # object_link_list = [ObjectsLink.objects.filter(
+        #     id_child=e.id) for e in s_obj_list]
         mutual_list = [[
             "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
             e.nature,
@@ -299,10 +302,11 @@ def mecctable_update(request):
     id_parent = int(request.POST.get('id_parent'))
     id_child = int(request.POST.get('id_child'))
     data_form = request.POST.get('formdata')
+    is_mutual = True if request.POST.get('is_mutual') == 'true' else False
+
     j = json.loads(data_form)
     data = {}
     username = j.get('RESPENS_id')
-
     user_data = get_user_from_ldap(username=username) if username not in [
         '', ' ', None] else None
 
@@ -350,7 +354,7 @@ def mecctable_update(request):
             ECTS_credit=None if j.get('ECTS_credit') in [
                 0, '', ' '] else j.get('ECTS_credit'),
             RESPENS_id=j.get('RESPENS_id'),
-            mutual=True if j.get('mutual') else False,
+            mutual=is_mutual,
             ROF_ref=j.get('ROF_ref'),
             ROF_code_year=None if j.get('ROF_code_year') in [
                 0, '', ' '] else j.get(),
@@ -384,7 +388,7 @@ def mecctable_update(request):
             0, '', ' '] else j.get('ECTS_credit')
         struct.RESPENS_id = j.get('RESPENS_id')
         struct.external_name = j.get('external_name')
-        struct.mutual = True if j.get('mutual') else False
+        struct.mutual = is_mutual
         struct.ROF_ref = j.get('ROF_ref')
         struct.ROF_code_year = None if j.get('ROF_code_year') in [
             0, '', ' '] else j.get()
@@ -430,45 +434,56 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
     Display mecctable including StructureObject, ObjectsLink and Exam
     """
-
-    def sort_list(object_list):
-        for p in object_list:
-            if not p.is_imported:
-                if p.id_parent in [0, '', None]:
-                    tmp.append(p)
-                else:
-                    parent = ObjectsLink.objects.exclude(is_imported=True).get(
-                        id_child=p.id_parent).id_child
-                    parent_list.append(p.id_parent)
-                    current_child = [e.id_parent for e in tmp].count(p.id_parent)
-                    index = [e.id_child for e in tmp].index(parent) + 1
-
-                    tmp.insert(index+current_child, p)
-        return tmp
-
     data = {}
-    so = [e.cmp_supply_id for e in StructureObject.objects.filter(
-        code_year=currentyear().code_year, mutual=True)]
-    cmp = Institute.objects.filter(code__in=so)
-    training = Training.objects.get(id=id)
-    structure_obj = StructureObject.objects.filter(
-        code_year=currentyear().code_year)
-    object_link = ObjectsLink.objects.filter(
-        code_year=currentyear().code_year,
-        id_training=id).order_by('id_parent', 'order_in_child')
-    data['next_id'] = StructureObject.objects.count() + 1
-    data['training'] = training
-    data['all_cmp'] = cmp
-    data['structure_objs'] = structure_obj
-    tmp = []
-    parent_list = []
-    imported_stuff = [e for e in object_link if e.is_imported is True]
-    for e in imported_stuff:
-        pass
-        # TODO: ajouter les enfants des éléments importé à la liste des élémnets
-    data['object_link'] = sort_list(object_link)
+    code_year = currentyear().code_year
+
+    current_structures = StructureObject.objects.filter(code_year=code_year)
+    current_links = ObjectsLink.objects.filter(code_year=code_year)
+
+    root_link = current_links.filter(id_parent='0', id_training=id).order_by(
+        'order_in_child').distinct()
+
+    so = [e.cmp_supply_id for e in current_structures.filter(mutual=True)]
+    data['all_cmp'] = Institute.objects.filter(code__in=so)
+    data['training'] = Training.objects.get(id=id)
+    data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
-    data['parents'] = parent_list
+
+    def recurse(link):
+        links = not isinstance(link, (list, tuple)) and [link] or link
+        depth = [1]
+        list_to_return = []
+
+        def get_children_from_link(link, is_imported):
+            rank = len(''.join([str(i) for i in depth]))
+            structure = current_structures.get(id=link.id_child)
+            depth.append(1)
+            children = current_links.filter(
+                id_parent=link.id_child).order_by('order_in_child')
+            imported = True if link.is_imported or is_imported else False
+
+            items = {
+                "link": link,
+                'structure': structure,
+                'is_imported': imported,
+                'rank': rank-1,
+                'loop': range(0, rank-1),
+                'no_children': False if len(children) > 0 else True
+            }
+            list_to_return.append(items)
+            for child in children:
+                get_children_from_link(child, imported)
+                depth[-1] += 1
+            depth.pop()
+
+        for link in links:
+            imported = True if link.is_imported else False
+            get_children_from_link(link, imported)
+            depth[0] += 1
+
+        return list_to_return
+
+    data['la_liste'] = recurse([e for e in root_link])
     return render(request, template, data)
 
 
