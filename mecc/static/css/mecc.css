@@ -372,6 +372,12 @@ td.id_member {
     align-items: center;
     justify-content: center;
 }
+.space-between{
+    justify-content: space-between;
+}
+.space-around{
+    justify-content: space-around;
+}
 .dir-row {
     flex-direction: row!important;
 }
