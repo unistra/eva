@@ -27,10 +27,6 @@ def import_objectslink(request):
         id_training = request.POST.get('id_training')
         id_parent = request.POST.get('asking_id')
         cy = currentyear().code_year
-        # newparent = ObjectsLink.objects.get(
-        #     id_child=request.POST.get(
-        #         'asking_id'), code_year=cy) if request.POST.get(
-        #             'asking_id') != '0' else None
         selected_id = map(int, request.POST.getlist('selected_id[]'))
         object_link_list = [
             ObjectsLink.objects.get(
@@ -53,8 +49,37 @@ def import_objectslink(request):
         print(e)
     return JsonResponse({
         "status": 200,
-        "val": "Everything is allright"
     })
+
+
+@is_ajax_request
+def get_consom(request):
+    """
+    Give consomateur of a certain imported object
+    """
+    so = StructureObject.objects.get(id=request.GET.get('id_obj'))
+    lo = ObjectsLink.objects.filter(id_child=so.id, is_imported=True)
+    # structs = StructureObject.objects.filter(id__in=[e.id_parent for e in lo])
+    trainings = Training.objects.filter(id__in=[e.id_training for e in lo])
+    t = [{
+        'code': e.supply_cmp,
+        'label': e.label,
+        'respens': [{
+            'first_name': r.user.first_name,
+            'last_name': r.user.last_name,
+            'mail': r.user.email
+            } for r in e.resp_formations.all()
+        ]} for e in trainings]
+
+    return JsonResponse({
+        'year': "%s/%s" % (so.code_year, so.code_year+1),
+        'structure': {
+            'label': so.label,
+            'nature': so.nature,
+            'si_scol': so.ref_si_scol,
+            'rof': so.ROF_ref},
+        'trainings': t,
+        'status': 200})
 
 
 @login_required
@@ -83,8 +108,6 @@ def get_mutual_by_cmp(request):
             is_in_use=True).exclude(nature__in=to_exclude)
         if asking_period:
             s_obj_list = s_obj_list.filter(period=asking_period)
-        # object_link_list = [ObjectsLink.objects.filter(
-        #     id_child=e.id) for e in s_obj_list]
         mutual_list = [[
             "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
             e.nature,
