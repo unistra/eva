@@ -125,14 +125,14 @@
                         {%endif%}
                     </td>
                     <td class="centered border-bottom">
-                        {% if a.no_children  %}
                         {% if a.link.is_imported %}
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
                             onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
                         {% else %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-                            onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
-                        {% endif %}
+                            {% if a.is_imported == False and a.no_children %}
+                                <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                                onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td class="centered border-bottom">
@@ -146,11 +146,14 @@
                     <td class="border-bottom">{{a.structure.get_respens_name}}
                         {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
                     </td>
-                    <td class="centered border-left-3 border-bottom editme" id="{{a.link.id}}-coeff" contenteditable='true'>
+                    <td class="centered border-left-3 border-bottom editme"
+                    {% if not a.is_imported %}contenteditable='true'{% endif %}
+                    id="{{a.link.id}}-coeff">
                         {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
                     </td>
                     <td class="centered border-left-3 border-bottom editme"
-                    contenteditable='true' id="{{l.id}}-grade">
+                    {% if not a.is_imported %}contenteditable='true'{% endif %}
+                    id="{{a.link.id}}-grade">
                         {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
                     </td>
                     <td class="centered border-left-5 border-bottom"> ▶ </td>
