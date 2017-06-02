@@ -136,8 +136,8 @@
                         {% endif %}
                     </td>
                     <td class="centered border-bottom">
-                        {% if a.structure.mutual and a.link.is_imported != True %}
-                            <a href="#" >{% trans "mut." %}</a>
+                        {% if a.structure.mutual and not a.link.is_imported %}
+                            <a onclick="get_consom({{a.structure.id}})" class="hand">{% trans "mut." %}</a>
                         {% endif %}
                     </td>
                     <td class="centered border-bottom">
@@ -208,6 +208,7 @@
             </div>
         </div>
         {% include "mecctable/modal/structure_object_form.html" %}
+        {% include "mecctable/modal/show_consume.html" %}
         {% include "mecctable/modal/include_shared_object.html" %}
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}
@@ -271,7 +272,7 @@ $('.editme').on('keydown', function(e) {
 });
 
 let asking_inclusion = 0;
-function ask_delete(id_obj, label) {
+function ask_delete(id_obj, label){
     document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
     document.getElementById('to_del').innerHTML = label;
     document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
@@ -281,6 +282,24 @@ function ask_delete_imported(id_link, label){
     document.getElementById('type').innerHTML = "cet objet importé (et ses enfants)";
     document.getElementById('to_del').innerHTML = label;
     document.gen_form.action = "/mecctable/imported/remove/" + id_link;
+}
+
+function get_consom(id_obj){
+    $('#show_consume').modal('show');
+    $.ajax({
+        url: "{%url 'mecctable:get_consom'%}",
+        type: "GET",
+        data: {
+            id_obj: id_obj,
+        },
+        success: function(data) {
+            if (data.status === "ERROR") {
+                alert(data.error);
+            } else {
+                console.log(data);
+            }
+      }
+  })
 }
 
 // In order to move row up and down
