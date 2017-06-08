@@ -279,28 +279,11 @@ function ask_delete(id_obj, label){
 }
 
 function ask_delete_imported(id_link, label){
-    document.getElementById('type').innerHTML = "cet objet importé (et ses enfants)";
+    document.getElementById('type').innerHTML = "cet objet importé";
     document.getElementById('to_del').innerHTML = label;
     document.gen_form.action = "/mecctable/imported/remove/" + id_link;
 }
 
-function get_consom(id_obj){
-    $('#show_consume').modal('show');
-    $.ajax({
-        url: "{%url 'mecctable:get_consom'%}",
-        type: "GET",
-        data: {
-            id_obj: id_obj,
-        },
-        success: function(data) {
-            if (data.status === "ERROR") {
-                alert(data.error);
-            } else {
-                console.log(data);
-            }
-      }
-  })
-}
 
 // In order to move row up and down
 $('.arrow-move').click(function() {

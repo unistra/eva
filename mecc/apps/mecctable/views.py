@@ -59,17 +59,24 @@ def get_consom(request):
     """
     so = StructureObject.objects.get(id=request.GET.get('id_obj'))
     lo = ObjectsLink.objects.filter(id_child=so.id, is_imported=True)
-    # structs = StructureObject.objects.filter(id__in=[e.id_parent for e in lo])
+    structs = StructureObject.objects.filter(id__in=[e.id_parent for e in lo])
     trainings = Training.objects.filter(id__in=[e.id_training for e in lo])
-    t = [{
-        'code': e.supply_cmp,
-        'label': e.label,
-        'respens': [{
-            'first_name': r.user.first_name,
-            'last_name': r.user.last_name,
-            'mail': r.user.email
-            } for r in e.resp_formations.all()
-        ]} for e in trainings]
+    t = []
+
+    for e in lo:
+        training = trainings.get(id=e.id_training)
+        a = {
+            'code': training.supply_cmp,
+            'label': training.label,
+            'used': structs.get(
+                id=e.id_parent).label if e.id_parent != 0 else _('Racine'),
+            'respens': [{
+                'first_name': r.user.first_name,
+                'last_name': r.user.last_name,
+                'mail': r.user.email
+                } for r in training.resp_formations.all()]
+        }
+        t.append(a)
 
     return JsonResponse({
         'year': "%s/%s" % (so.code_year, so.code_year+1),
@@ -78,7 +85,7 @@ def get_consom(request):
             'nature': so.nature,
             'si_scol': so.ref_si_scol,
             'rof': so.ROF_ref},
-        'trainings': t,
+        'trainings': t if len(t) > 0 else 0,
         'status': 200})
 
 
