@@ -3,15 +3,15 @@ from .models import StructureObject, ObjectsLink, Exam
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Field
 from django.utils.translation import ugettext as _
-from django.core import management
+# from django.core import management
 
-
-def setup():
-    management.call_command('loaddata', 'fixtures/tests.json', verbosity=1)
-
-
-def teardown():
-        management.call_command('flush', verbosity=0, interactive=False)
+# def setup():
+#     management.call_command('loaddata', 'fixtures/tests.json', verbosity=1)
+#
+#
+# def teardown():
+#         management.call_command('flush', verbosity=0, interactive=False)
+#
 
 
 class StructureObjectForm(forms.ModelForm):
@@ -96,7 +96,7 @@ class StructureObjectForm(forms.ModelForm):
                 Div(
                     'mutual',
                     HTML("""
-<a id="preview-consumer" href="#" onclick='preview-consumer()' >
+<a id="preview-consumer" href="#"  >
 Voir les consommateurs </a>
                     """),
                     css_class='y mutual'
