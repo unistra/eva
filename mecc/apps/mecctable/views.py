@@ -52,6 +52,8 @@ def import_objectslink(request):
     })
 
 
+
+
 @is_ajax_request
 def get_consom(request):
     """
@@ -79,6 +81,7 @@ def get_consom(request):
         t.append(a)
 
     return JsonResponse({
+        'has_consom': True if lo else False,
         'year': "%s/%s" % (so.code_year, so.code_year+1),
         'structure': {
             'label': so.label,
