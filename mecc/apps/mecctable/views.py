@@ -324,7 +324,6 @@ def mecctable_update(request):
     """
     Update mecctable
     """
-
     training = Training.objects.get(id=request.POST.get('training_id'))
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
 
@@ -333,7 +332,6 @@ def mecctable_update(request):
     id_child = int(request.POST.get('id_child'))
     data_form = request.POST.get('formdata')
     is_mutual = True if request.POST.get('is_mutual') == 'true' else False
-
     j = json.loads(data_form)
     data = {}
     username = j.get('RESPENS_id')
@@ -393,7 +391,6 @@ def mecctable_update(request):
             ref_si_scol=j.get('ref_si_scol'),
             external_name=j.get('external_name')
         )
-
     if id_child == 0:
         struct = create_new_struct()
     else:
@@ -430,7 +427,6 @@ def mecctable_update(request):
         coeff = int(struct.ECTS_credit)/int(3)
     except TypeError:
         coeff = None
-
     try:
         last_order_in_parent = ObjectsLink.objects.filter(
             id_training=training.id,
@@ -440,7 +436,9 @@ def mecctable_update(request):
         last_order_in_parent = 0
     last_order_in_parent += 1
     try:
-        link = ObjectsLink.objects.get(id_child=struct.id)
+        link = ObjectsLink.objects.get(
+            id_child=id_child, id_training=training.id,
+            id_parent=id_parent, code_year=currentyear().code_year)
     except ObjectsLink.DoesNotExist:
         link = ObjectsLink.objects.create(
             id_child=struct.id, code_year=currentyear().code_year,
@@ -449,7 +447,6 @@ def mecctable_update(request):
             coefficient=coeff if struct.nature == 'UE' else None,
             n_train_child=training.n_train, nature_child=j.get('nature')
         )
-
     if 'DU' in str(training.degree_type.short_label) and coeff == 0:
         coeff = 0
     else:
