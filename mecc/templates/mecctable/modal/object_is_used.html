@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<div class="fade modal" id="is_consumed" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="title-modal"  >
+                    <h1 style="font-size:1em;color:red">{% trans "ATTENTION !" %}</h1>
+                </div>
+            </div>
+            <div class="modal-body">
+                <span id="para-used-1" style="margin-bottom:0.2em">
+                    {% trans "L'objet ne peut pas être supprimé car il est présent dans d'autres formations."%}
+                </span>
+                    <br>
+                <span id="para-used-2">
+                    {% trans "Pour voir les formations concernées et contacter leur(s) responsable(s), utilisez le lien "%}</span>
+                    <span class="bold blue underlined" id="showme-used"> {% trans "Mut." %}</span>
+            </div>
+            <div class="modal-footer"  style="padding-bottom:1em">
+                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>

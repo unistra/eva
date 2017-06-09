@@ -194,6 +194,34 @@ if (!is_catalogue) {
         hide_ifnot_checked(this, document.getElementById('preview-consumer'))
     });
 
+    function check_d(id_obj){
+        if (!document.getElementById('id_mutual').checked) {
+            $.ajax({
+                url: "{%url 'mecctable:get_consom'%}",
+                type: "GET",
+                data: {
+                    id_obj: id_obj,
+                },
+                success: function(data) {
+                    if (data.status === "ERROR") {
+                        alert(data.error);
+                    } else {
+                        if (data.trainings != 0) {
+                            document.getElementById('id_mutual').checked = true;
+                            hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+                            document.getElementById('para-used-1').innerHTML = "La mutualisaion ne peut être annulée. L'objet est présent dans d'autres formations."
+                            document.getElementById('showme-used').innerHTML = "Voir les consommateurs.";
+                            document.getElementById("showme-used").className += " hand "
+                            let onclick = "get_consom("+ id_obj + ");$('#is_consumed').modal('toggle');"
+                            $("#showme-used").attr("onclick", onclick);
+                            $("#is_consumed").modal('toggle');
+                        }
+                    }
+              }
+          })
+        }
+    }
+
     $(document).on('change', 'input[name="progress"]:radio', function(){
         $.ajax({
             url: "{% url 'rules:update_progress'%}",
@@ -280,9 +308,11 @@ if (!is_catalogue) {
                 let update = "updateStructure("+id_parent+","+_id+")";
                 let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update;
                 let consumers = "get_consom("+ _id + ")";
+                let mutual = "check_d("+ _id +")"
                 $("#submit-obj").attr("onclick", update);
                 $("#save-with").attr("onclick", save);
                 $("#preview-consumer").attr("onclick", consumers);
+                $("#id_mutual").attr("onclick", mutual);
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 

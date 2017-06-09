@@ -1,18 +1,3 @@
-<!-- NEED a js function  like :
-function fill_form(clicked) {
-    let last_name = clicked.closest('tr').children('td:first');
-    let first_name = $(last_name).next('td');
-    let status = $(first_name).next('td');
-    let institute = $(first_name).next('td').next('td');
-    let mail = $(institute).next('td');
-    let id = $(mail).next('td');
-    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
-    document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
-    document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
-    $('#selectedMember').modal('show');
-    $('#searchMember').modal('hide');
-}  -->
 {% load i18n %}
 {% load dipstrapfiles %}
 {% load crispy_forms_tags %}

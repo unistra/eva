@@ -129,9 +129,14 @@
                             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
                             onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
                         {% else %}
-                            {% if a.is_imported == False and a.no_children %}
-                                <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-                                onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
+                            {% if a.structure.mutual and not a.link.is_imported %}
+                                <span onclick="check_delete({{a.structure.id}}, '{{a.structure.label}}')"
+                                class="glyphicon glyphicon glyphicon-remove-sign red hand"></span>
+                            {% else %}
+                                {% if a.is_imported == False and a.no_children %}
+                                    <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                                    onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </td>
@@ -210,6 +215,7 @@
         {% include "mecctable/modal/structure_object_form.html" %}
         {% include "mecctable/modal/show_consume.html" %}
         {% include "mecctable/modal/include_shared_object.html" %}
+        {% include "mecctable/modal/object_is_used.html" %}
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}
 
@@ -272,6 +278,31 @@ $('.editme').on('keydown', function(e) {
 });
 
 let asking_inclusion = 0;
+
+function check_delete(id_obj, label){
+    $.ajax({
+        url: "{%url 'mecctable:get_consom'%}",
+        type: "GET",
+        data: {
+            id_obj: id_obj,
+        },
+        success: function(data) {
+            if (data.has_consom){
+                console.log("CANNOT");
+                $('#is_consumed').modal('toggle');
+                document.getElementById("para-used-1").innerHTML = "L'objet ne peut pas être supprimé car il est présent dans d'autres formations."
+                document.getElementById("showme-used").innerHTML = "Mut."
+                document.getElementById("showme-used").className += " hand "
+                let onclick = "get_consom("+ id_obj + ");$('#is_consumed').modal('toggle');"
+                $("#showme-used").attr("onclick", onclick);
+
+            } else {
+                ask_delete(id_obj, label);
+                $('#preview').modal('toggle');
+            }
+        }
+    })
+}
 function ask_delete(id_obj, label){
     document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
     document.getElementById('to_del').innerHTML = label;
