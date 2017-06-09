@@ -277,10 +277,12 @@ if (!is_catalogue) {
                     document.getElementById('id_mutual').checked = true;
                 }
 
-                let update = "updateStructure("+id_parent+","+_id+")"
-                let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update
+                let update = "updateStructure("+id_parent+","+_id+")";
+                let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update;
+                let consumers = "get_consom("+ _id + ")";
                 $("#submit-obj").attr("onclick", update);
                 $("#save-with").attr("onclick", save);
+                $("#preview-consumer").attr("onclick", consumers);
                 display_UE(document.getElementById('id_nature'));
                 hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
 

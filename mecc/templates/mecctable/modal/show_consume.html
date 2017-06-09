@@ -80,6 +80,7 @@ function get_consom(id_obj){
 
                     // populate info about trainings
                     let div_train = document.getElementById('-train');
+                    div_train.innerHTML = ""
                     $.each(data.trainings, function(k, v){
                         let div = document.createElement('div');
                         div.className += " flex-container space-around "
