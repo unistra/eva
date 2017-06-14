@@ -312,14 +312,14 @@ function ask_delete_imported(id_link, label){
 $(".sortme").sortable({
     update: function(e, ui) {
         let newPositions = $.map($(this).find('.updatable'), function(el) {
-            return "id-" + $(el).attr('id') + ' = ' + $(el).index();
+            return "id-" + $(el).attr('id') + ':' + $(el).index();
         });
         console.log(newPositions);
         $.ajax({
             url: "{%url 'mecctable:update_mecc_position'%}",
             type: "POST",
             data: {
-                new_positions: newPositions,
+                new_positions: newPositions.toString(),
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function(data) {
