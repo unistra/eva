@@ -139,7 +139,8 @@ $(document).ready(function () {
             type: "GET",
             data: {
                 cmp_code: cmp_code,
-                asking_id: asking_inclusion
+                asking_id: asking_inclusion,
+                training_id: {{training.id}}
             },
             success: function(data) {
                 table_suggest = $('#suggest').DataTable( {

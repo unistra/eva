@@ -17,7 +17,7 @@
 {% endblock %} {% block app_content %}
 
 
-<link rel="stylesheet" href="{% static 'css/mecctable-home.css' %}" type="text/css" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{% static 'css/mecctable/tree.css' %}" type="text/css" title="no title" charset="utf-8" />
 
 <script src="{% static 'js/notif.js' %}"></script>
 <script src="{% static 'js/jquery-ui.min.js' %}"></script>
@@ -133,119 +133,6 @@
 </div>
 
 
-
-
-
-
-
-<style media="screen">
-    .small-blue-txt {
-        color:rgb(0, 110, 174);
-        font-size:0.7em;
-        line-height:1;
-    }
-    .grey-all * {
-        color: grey!important;
-    }
-    .button_container {
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-flow: row wrap;
-        justify-content: space-between;;
-        flex-wrap: wrap;
-        width: 100%;
-    }
-    .flex-item {
-        margin-top: 1em;
-        width: 19%;
-    }
-    .flex-item >:first-child{
-        width:100%;
-        padding: 0.5em 1em 0.5em 1em;
-    }
-
-
-    .meccRow {
-        display: flex;           display: -webkit-flex;
-        flex-direction: row;     -webkit-flex-direction: row;
-        flex-grow: 0;            -webkit-flex-grow: 0;
-        flex-wrap: wrap;         -webkit-flex-wrap: wrap;
-        width: 100%;
-        border-collapse: collapse;
-        padding:0;
-        border-top: 1px solid #e0e0e0;
-        background: rgb(250, 250, 250); /* Fall-back for browsers that don't
-                                support rgba */
-        background: rgba(250, 250, 250, .4);
-    }
-
-    /*// Text based cells: grow, truncate and show ellipsis when there is not enough space*/
-    .text {
-      flex-grow: 1;            -webkit-flex-grow: 1;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      padding-right: 20px;
-    }
-
-    /*// Fix the minimum width of the leaf level cells*/
-    .text {
-      width: @text-width;
-    }
-
-    .num {
-      width: @num-width;
-    }
-
-    /*
-     * General good-look styles, not mandatory.
-     */
-
-    .meccRow.header {
-        font-weight: bold;
-        border-top: 1px solid #e0e0e0;
-
-    }
-    .mecc-label{
-        width:25em;
-    }
-    .mecc-actionsButtons{
-        width:7em;
-    }
-        .mecc-add, .mecc-remove, .mecc-import, .mecc-mutual{
-            width:22%;
-            display:inline-block;
-            text-align: center;
-        }
-    .mecc-ects, .mecc-coef, .mecc-note{
-        width:4em;
-    }
-    .mecc-respens{
-        width:10em;
-    }
-    .mecc-details{
-        width:2em;
-    }
-    .mecc-semesters{
-        display: flex;
-        flex:1;
-        align-items: stretch;
-    }
-    .mecc-s1, .mecc-s2{
-        flex-grow: 1;
-        text-align: center;
-        align-items: stretch;
-        width:50%;
-        display: flex;
-    }
-
-    .mecc-s1 span, .mecc-s2 span {
-        flex-grow: 1;
-    }
-</style>
 <script type="text/javascript">
 $('.editme').on('keydown', function(e) {
     let that = this;
@@ -297,7 +184,7 @@ function check_delete(id_obj, label){
     })
 }
 function ask_delete(id_obj, label){
-    document.getElementById('type').innerHTML = "cet objet (et ses enfants)";
+    document.getElementById('type').innerHTML = "cet objet";
     document.getElementById('to_del').innerHTML = label;
     document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
 }
@@ -310,11 +197,11 @@ function ask_delete_imported(id_link, label){
 
 
 $(".sortme").sortable({
+    cancel: ':input,button,.contenteditable, .editme',
     update: function(e, ui) {
         let newPositions = $.map($(this).find('.updatable'), function(el) {
-            return "id-" + $(el).attr('id') + ':' + $(el).index();
+            return $(el).attr('id') + ':' + $(el).index();
         });
-        console.log(newPositions);
         $.ajax({
             url: "{%url 'mecctable:update_mecc_position'%}",
             type: "POST",
@@ -322,8 +209,19 @@ $(".sortme").sortable({
                 new_positions: newPositions.toString(),
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
-            success: function(data) {
-                console.log("REQUEST DONE");
+            success: function(data){
+                console.log(data.status);
+                if (data.status === 200) {
+                    $('.top-right').notify({
+                        message: { text: 'Tableau mis à jour.' },
+                        type:'info'
+                    }).show();
+                }else {
+                    $('.top-right').notify({
+                        message: { text: 'Error lors de la mise à jour du tableau'},
+                        type:'warning'
+                    }).show();
+                }
             }
         })
     }

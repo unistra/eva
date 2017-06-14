@@ -52,8 +52,6 @@ def import_objectslink(request):
     })
 
 
-
-
 @is_ajax_request
 def get_consom(request):
     """
@@ -103,6 +101,7 @@ def get_mutual_by_cmp(request):
             id=request.GET.get('asking_id')) if request.GET.get(
                 'asking_id') is not '0' else None
         asking_period = asking.period if asking else None
+        training_id = request.GET.get('training_id')
         data = {}
         try:
             if asking.nature == "SE":
@@ -113,11 +112,12 @@ def get_mutual_by_cmp(request):
                 to_exclude = [""]
         except AttributeError as e:  # when asking from root
             to_exclude = [""]
-        s_obj_list = StructureObject.objects.filter(
+        s_list = StructureObject.objects.filter(
             cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
-            is_in_use=True).exclude(nature__in=to_exclude)
+            is_in_use=True).exclude(nature__in=to_exclude).exclude(
+                owner_training_id=int(training_id))
         if asking_period:
-            s_obj_list = s_obj_list.filter(period=asking_period)
+            s_list = s_list.filter(period=asking_period)
         mutual_list = [[
             "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
             e.nature,
@@ -129,7 +129,7 @@ def get_mutual_by_cmp(request):
             e.external_name if e.external_name else e.get_respens_name,
             e.ref_si_scol,
             e.ROF_ref
-        ] for e in s_obj_list]
+        ] for e in s_list]
         data['suggest'] = mutual_list
     except Exception as e:
         print(e)
@@ -479,46 +479,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
 
-    # def recurse(link):
-    #     links = not isinstance(link, (list, tuple)) and [link] or link
-    #     depth = [1]
-    #     list_to_return = []
-    #     ids = []
-    #
-    #     def get_children_from_link(link, is_imported):
-    #         rank = len(''.join([str(i) for i in depth]))
-    #         structure = current_structures.get(id=link.id_child)
-    #         depth.append(1)
-    #         children = current_links.filter(
-    #             id_parent=link.id_child).order_by('order_in_child')
-    #         imported = True if link.is_imported or is_imported else False
-    #         items = {
-    #             "ids": ids.append(str(link.id)),
-    #             "link": link,
-    #             'structure': structure,
-    #             'is_imported': imported,
-    #             'rank': rank-1,
-    #             'loop': range(0, rank-1),
-    #             'no_children': False if len(children) > 0 else True,
-    #             'has_childs': True if len(children) > 0 else False,
-    #             'children': children
-    #         }
-    #         list_to_return.append(items)
-    #         for child in children:
-    #             get_children_from_link(child, imported)
-    #             depth[-1] += 1
-    #         depth.pop()
-    #
-    #     for link in links:
-    #         imported = True if link.is_imported else False
-    #         get_children_from_link(link, imported)
-    #         depth[0] += 1
-    #         ids = [str(link.id)]
-    #
-    #     return list_to_return
-
-    # data['la_liste'] = recurse([e for e in root_link])
-
     def recurse(link):
         links = not isinstance(link, (list, tuple)) and [link] or link
         stuff = []
@@ -550,13 +510,29 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     return render(request, template, data)
 
 
+@login_required
 @is_post_request
 @is_ajax_request
 def update_mecc_position(request):
-    print('hi')
-    j = request.POST.get('new_positions')
-    print(j)
-    return JsonResponse(j)
+    """
+    Update positions'link object with retrieved data from jquery sortable index
+    """
+    list_obj = [{
+        "id": int(e.split(':')[0]),
+        "order": int(e.split(':')[1])} for e in request.POST.get(
+            'new_positions').split(',')]
+
+    concerned_obj = ObjectsLink.objects.filter(
+        id__in=[a.get('id') for a in list_obj])
+
+    for e in list_obj:
+        obj = concerned_obj.get(id=e.get('id'))
+        new_order = e.get('order')
+        if obj.order_in_child != new_order:
+            obj.order_in_child = new_order
+            obj.save()
+
+    return JsonResponse({'status': 200})
 
 
 class StructureObjectListView(ListView):

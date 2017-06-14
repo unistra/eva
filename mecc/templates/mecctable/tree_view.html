@@ -6,16 +6,15 @@
         {% for i in a.loop  %}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {% endfor %}
-        id-{{a.link.id}} hover-row r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}}
-
+    <!---    id-{{a.link.id}} hover-row r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}}
+-->
         {{a.structure.nature}} :
-        <!--
         {%if a.is_imported%}
             {{a.structure.label}}
         {% else %}
             <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
             onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}</a>
-        {%endif%}-->
+        {%endif%}
     </span>
 <!--- endof mecc-label--->
 <!--- mecc-actionButtons--->
@@ -95,12 +94,11 @@
          </div>
      </div>
 
-
     {%if a.has_childs %}
         <div class="{% if not a.is_imported%}sortme{%endif%} wrapper meccRow" >
          {%for ch in a.children %}
-              {%with a=ch itself="mecctable/tree_view.html" %}
-                   {%include itself%}
+              {%with a=ch %}
+                   {%include "mecctable/tree_view.html"%}
               {%endwith%}
          {%endfor%}
      </div>
