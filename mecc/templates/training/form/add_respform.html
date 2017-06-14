@@ -44,7 +44,7 @@
     </table>
 </div>
 <div class="flex-center item-30" style="margin:1em;">
-    {% if can_edit and object%}
+    {% if can_edit and object and object.input_opening.0 != "4"%}
     <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
     {% else %}
     <span class="btn btn-sm btn-primary" disabled style="width:100%"> {% trans 'Associer un responsable' %}</span>

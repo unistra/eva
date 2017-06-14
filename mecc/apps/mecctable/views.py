@@ -479,42 +479,84 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
 
+    # def recurse(link):
+    #     links = not isinstance(link, (list, tuple)) and [link] or link
+    #     depth = [1]
+    #     list_to_return = []
+    #     ids = []
+    #
+    #     def get_children_from_link(link, is_imported):
+    #         rank = len(''.join([str(i) for i in depth]))
+    #         structure = current_structures.get(id=link.id_child)
+    #         depth.append(1)
+    #         children = current_links.filter(
+    #             id_parent=link.id_child).order_by('order_in_child')
+    #         imported = True if link.is_imported or is_imported else False
+    #         items = {
+    #             "ids": ids.append(str(link.id)),
+    #             "link": link,
+    #             'structure': structure,
+    #             'is_imported': imported,
+    #             'rank': rank-1,
+    #             'loop': range(0, rank-1),
+    #             'no_children': False if len(children) > 0 else True,
+    #             'has_childs': True if len(children) > 0 else False,
+    #             'children': children
+    #         }
+    #         list_to_return.append(items)
+    #         for child in children:
+    #             get_children_from_link(child, imported)
+    #             depth[-1] += 1
+    #         depth.pop()
+    #
+    #     for link in links:
+    #         imported = True if link.is_imported else False
+    #         get_children_from_link(link, imported)
+    #         depth[0] += 1
+    #         ids = [str(link.id)]
+    #
+    #     return list_to_return
+
+    # data['la_liste'] = recurse([e for e in root_link])
+
     def recurse(link):
         links = not isinstance(link, (list, tuple)) and [link] or link
-        depth = [1]
-        list_to_return = []
+        stuff = []
 
-        def get_children_from_link(link, is_imported):
-            rank = len(''.join([str(i) for i in depth]))
+        def get_childs(link, is_imported, rank=0):
+            rank += 1
             structure = current_structures.get(id=link.id_child)
-            depth.append(1)
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
-
             items = {
                 "link": link,
                 'structure': structure,
                 'is_imported': imported,
-                'rank': rank-1,
+                'has_childs': True if len(children) > 0 else False,
+                'children': [get_childs(
+                    e, imported, rank=rank) for e in children],
+                'rank': rank - 1,
                 'loop': range(0, rank-1),
-                'no_children': False if len(children) > 0 else True
             }
-            list_to_return.append(items)
-            for child in children:
-                get_children_from_link(child, imported)
-                depth[-1] += 1
-            depth.pop()
-
+            return items
         for link in links:
             imported = True if link.is_imported else False
-            get_children_from_link(link, imported)
-            depth[0] += 1
+            stuff.append(get_childs(link, imported))
 
-        return list_to_return
+        return stuff
 
     data['la_liste'] = recurse([e for e in root_link])
     return render(request, template, data)
+
+
+@is_post_request
+@is_ajax_request
+def update_mecc_position(request):
+    print('hi')
+    j = request.POST.get('new_positions')
+    print(j)
+    return JsonResponse(j)
 
 
 class StructureObjectListView(ListView):

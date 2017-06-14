@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="{% static 'css/mecctable-home.css' %}" type="text/css" title="no title" charset="utf-8" />
 
 <script src="{% static 'js/notif.js' %}"></script>
-<script src="{% static 'js/datatable.min.js' %}"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
 <span class="top-right"></span>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
@@ -57,125 +57,35 @@
             <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true" data-toggle="modal" data-target="#shared-object" onclick="asking_inclusion=0;" ></span>
         </div>
         {% if la_liste|length > 0 %}
-        <table id="mecc_table" width="100%">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th colspan="5"></th>
-                    <th colspan="5" class="centered border-bottom "></th>
-                    <th colspan="4" class="centered border-bottom  ">{% trans "Session principale" %}</th>
-                    <th colspan="4" class="centered border-bottom border-left-3">{% trans "Session de rattrapage" %}</th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th class="border-bottom "></th>
-                    <th class="border-bottom "></th>
-                    <th class="border-bottom "></th>
-                    <th class="border-bottom "></th>
-                    <th class="border-bottom "></th>
-                    <th class="centered border-left border-bottom ">{% trans "ECTS" %}</th>
-                    <th class="centered border-left border-bottom ">{% trans "Responsable" %}</th>
-                    <th class="centered border-left-3 border-bottom ">{% trans "Coef" %}</th>
-                    <th class="centered border-left-3 border-bottom ">{% trans "Note<br>seuil" %}</th>
-                    <th class="centered border-left-5 border-bottom ">{% trans "" %}</th>
-                    <th class="centered border-left border-bottom ">S1</th>
-                    <th class="centered border-left border-bottom ">S2</th>
-                    <th class="centered border-left border-bottom ">S3</th>
-                    <th class="centered border-left border-bottom ">S4</th>
-                    <th class="centered border-left-3 border-bottom ">S1</th>
-                    <th class="centered border-left border-bottom ">S2</th>
-                    <th class="centered border-left border-bottom ">S3</th>
-                    <th class="centered border-left border-bottom ">S4</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for a in la_liste %}
-                <tr class="hover-row len-{{a.link.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}">
-                    <td>
-                        <div class="width-3 ">
-                            <span class="glyphicon hand arrow-move glyphicon-arrow-down blue no-border" aria-hidden="true"></span>
-                            <span class="glyphicon hand arrow-move glyphicon-arrow-up blue no-border" aria-hidden="true"></span>
-                        </div>
-                    </td>
-                    <td class=" border-bottom" class="nowrap">
-                        {% for i in a.loop  %}
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        {% endfor %}
-                        {{a.structure.nature}} :
-                        {%if a.is_imported%}
-                            {{a.structure.label}}
-                        {% else %}
-                            <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
-                            onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}</a>
-                        {%endif%}
-                    </td>
-                    <td class="centered border-bottom">
-                        {% if a.structure.nature not in "ST PT" and not a.is_imported%}
-                            <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
-                            data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true"
-                            data-target="#form-obj" ></a>
-                    </td>
-                    <td class="centered border-bottom">
-                            <span data-toggle="modal" data-target="#shared-object"
-                            class="glyphicon glyphicon-circle-arrow-left green hand"
-                            onclick="asking_inclusion={{a.structure.id}};"></span>
-                        {% else %}
-                    </td>
-                    <td class="centered border-bottom">
-                        {%endif%}
-                    </td>
-                    <td class="centered border-bottom">
-                        {% if a.link.is_imported %}
-                            <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-                            onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
-                        {% else %}
-                            {% if a.structure.mutual and not a.link.is_imported %}
-                                <span onclick="check_delete({{a.structure.id}}, '{{a.structure.label}}')"
-                                class="glyphicon glyphicon glyphicon-remove-sign red hand"></span>
-                            {% else %}
-                                {% if a.is_imported == False and a.no_children %}
-                                    <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-                                    onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                    <td class="centered border-bottom">
-                        {% if a.structure.mutual and not a.link.is_imported %}
-                            <a onclick="get_consom({{a.structure.id}})" class="hand">{% trans "Mut." %}</a>
-                        {% endif %}
-                    </td>
-                    <td class="centered border-bottom">
-                        {% if a.structure.nature == 'UE' %}{{a.structure.ECTS_credit}}{% endif %}
-                    </td>
-                    <td class="border-bottom">{{a.structure.get_respens_name}}
-                        {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
-                    </td>
-                    <td class="centered border-left-3 border-bottom editme"
-                    {% if not a.is_imported %}contenteditable='true'{% endif %}
-                    id="{{a.link.id}}-coeff">
-                        {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
-                    </td>
-                    <td class="centered border-left-3 border-bottom editme"
-                    {% if not a.is_imported %}contenteditable='true'{% endif %}
-                    id="{{a.link.id}}-grade">
-                        {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
-                    </td>
-                    <td class="centered border-left-5 border-bottom"> ▶ </td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left-3 border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
-                    <td class="centered border-left border-bottom"></td>
+        <div class="mecctable-container">
+                <div class="meccRow header">
+                    <span class="mecc-label no-border-top"></span>
+                    <span class="mecc-actionsButtons no-border-top centered"></span>
+                    <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
+                    <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
+                    <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
+                    <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
+                    <span class="mecc-details border-left-5"></span>
+                    <span class="mecc-semesters border-left">
+                        <span class="mecc-s1 ">
+                            <span>
+                                {% trans "Session principale" %}
+                            </span>
+                        </span>
+                        <span class="mecc-s2 border-left-3">
+                            <span>
+                                {% trans "Session de rattrapage" %}
+                            </span>
+                        </span>
+                    </span>
+                </div>
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+            <div class="sortme">
+                {%for a in la_liste %}
+                    {%include "mecctable/tree_view.html" %}
+                {%endfor%}
+            </div>
+        </div>
         {% endif %}
 
     </div>
@@ -221,6 +131,13 @@
 
     </div>
 </div>
+
+
+
+
+
+
+
 <style media="screen">
     .small-blue-txt {
         color:rgb(0, 110, 174);
@@ -249,8 +166,84 @@
         width:100%;
         padding: 0.5em 1em 0.5em 1em;
     }
-    #mecc_table {
+
+
+    .meccRow {
+        display: flex;           display: -webkit-flex;
+        flex-direction: row;     -webkit-flex-direction: row;
+        flex-grow: 0;            -webkit-flex-grow: 0;
+        flex-wrap: wrap;         -webkit-flex-wrap: wrap;
         width: 100%;
+        border-collapse: collapse;
+        padding:0;
+        border-top: 1px solid #e0e0e0;
+        background: rgb(250, 250, 250); /* Fall-back for browsers that don't
+                                support rgba */
+        background: rgba(250, 250, 250, .4);
+    }
+
+    /*// Text based cells: grow, truncate and show ellipsis when there is not enough space*/
+    .text {
+      flex-grow: 1;            -webkit-flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-right: 20px;
+    }
+
+    /*// Fix the minimum width of the leaf level cells*/
+    .text {
+      width: @text-width;
+    }
+
+    .num {
+      width: @num-width;
+    }
+
+    /*
+     * General good-look styles, not mandatory.
+     */
+
+    .meccRow.header {
+        font-weight: bold;
+        border-top: 1px solid #e0e0e0;
+
+    }
+    .mecc-label{
+        width:25em;
+    }
+    .mecc-actionsButtons{
+        width:7em;
+    }
+        .mecc-add, .mecc-remove, .mecc-import, .mecc-mutual{
+            width:22%;
+            display:inline-block;
+            text-align: center;
+        }
+    .mecc-ects, .mecc-coef, .mecc-note{
+        width:4em;
+    }
+    .mecc-respens{
+        width:10em;
+    }
+    .mecc-details{
+        width:2em;
+    }
+    .mecc-semesters{
+        display: flex;
+        flex:1;
+        align-items: stretch;
+    }
+    .mecc-s1, .mecc-s2{
+        flex-grow: 1;
+        text-align: center;
+        align-items: stretch;
+        width:50%;
+        display: flex;
+    }
+
+    .mecc-s1 span, .mecc-s2 span {
+        flex-grow: 1;
     }
 </style>
 <script type="text/javascript">
@@ -316,66 +309,24 @@ function ask_delete_imported(id_link, label){
 }
 
 
-// In order to move row up and down
-$('.arrow-move').click(function() {
-    let row = $(this).closest('tr');
-    let p_id = row.attr('class').split('parent-')[1].split(' ')[0];
-    let row_prev = row.prev().attr('class');
-    let row_next = row.next().attr('class');
-    // UP
-    if ($(this).hasClass('glyphicon-arrow-up')) {
-        if (typeof row_prev !== 'undefined'){
-            let same_up = get_same_up(row, p_id);
-            if (same_up !== null) {
-                same_up.before(row);
-            } else {
-                return;
+$(".sortme").sortable({
+    update: function(e, ui) {
+        let newPositions = $.map($(this).find('.updatable'), function(el) {
+            return "id-" + $(el).attr('id') + ' = ' + $(el).index();
+        });
+        console.log(newPositions);
+        $.ajax({
+            url: "{%url 'mecctable:update_mecc_position'%}",
+            type: "POST",
+            data: {
+                new_positions: newPositions,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                console.log("REQUEST DONE");
             }
-        } else {
-            console.log("Ne peut pas monter ^^");
-        }
-
-    }
-    // AND DOWN
-    if ($(this).hasClass('glyphicon-arrow-down')) {
-        if (typeof row_next !== 'undefined'){
-            let same_down = get_same_down(row, p_id);
-            if (same_down !== null) {
-                same_down.after(row);
-            } else {
-                return;
-            }
-        } else {
-            console.log("Ne peut pas decendre ^^");
-        }
+        })
     }
 });
-
-function get_same_up(row, p_id){
-    let row_prev = row.prev();
-    if (typeof row_prev.attr('class') !== 'undefined'){
-        if (row_prev.attr('class').split('parent-')[1].split(' ')[0] === p_id) {
-            return row_prev;
-        } else {
-            return get_same_up(row_prev, p_id);
-        }
-    } else {
-        return null;
-    }
-}
-
-function get_same_down(row, p_id){
-    let row_next = row.next();
-    if (typeof row_next.attr('class') !== 'undefined'){
-        if (row_next.attr('class').split('parent-')[1].split(' ')[0] === p_id) {
-            return row_next;
-        } else {
-            return get_same_down(row_next, p_id);
-        }
-    } else {
-        return null;
-    }
-}
-
 </script>
 {%endblock%}
