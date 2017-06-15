@@ -17,6 +17,9 @@ from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 from decimal import InvalidOperation
 
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
 
 @login_required
 def import_objectslink(request):
@@ -62,7 +65,6 @@ def get_consom(request):
     structs = StructureObject.objects.filter(id__in=[e.id_parent for e in lo])
     trainings = Training.objects.filter(id__in=[e.id_training for e in lo])
     t = []
-
     for e in lo:
         training = trainings.get(id=e.id_training)
         a = {
@@ -508,6 +510,48 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     data['la_liste'] = recurse([e for e in root_link])
     return render(request, template, data)
+
+
+@is_post_request
+@login_required
+def send_mail_respform(request):
+    """
+    Send mail
+    """
+    s = "[MECC] Notification"
+    b = _("""
+    Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+    Merci.
+    """)
+    # TODO: A decommenter pour envoyer aux bonnes personnes
+    # nobody = ['', ' ', None]
+    # to = [e.replace(' ', '') for e in request.POST.get('to').split(
+    #     ',')] if request.POST.get('to') not in nobody else None
+    # cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
+    #     ',')] if request.POST.get('cc') not in nobody else None
+    # TODO: remove the following lines in production
+    to = [
+        'weible@unistra.fr'
+        ]
+    cc = ['ibis.ismail@unistra.fr']
+
+    subject = request.POST.get('subject', s) if request.POST.get(
+        'subject') not in ['', ' '] else s
+    body = request.POST.get('body', b) if request.POST.get(
+        'body') not in ['', ' '] else b
+
+    mail = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email="MECC Admin<%s>" % settings.MAIL_FROM,
+        to=to,
+        cc=cc,
+        bcc=[settings.MAIL_ARCHIVES],
+        headers={"Reply-To": settings.MAIL_FROM}
+    )
+    id_training = request.POST.get('id_training')
+    mail.send()
+    return redirect('/mecctable/training/%s' % id_training)
 
 
 @login_required

@@ -133,6 +133,7 @@
 </div>
 
 
+
 <script type="text/javascript">
 $('.editme').on('keydown', function(e) {
     let that = this;
@@ -218,7 +219,7 @@ $(".sortme").sortable({
                     }).show();
                 }else {
                     $('.top-right').notify({
-                        message: { text: 'Error lors de la mise à jour du tableau'},
+                        message: { text: 'Error lors de la mise à jour du tableau.'},
                         type:'warning'
                     }).show();
                 }
@@ -227,4 +228,11 @@ $(".sortme").sortable({
     }
 });
 </script>
+<style media="screen">
+    .top-right{
+        position: absolute;
+        z-index: 1200;
+        right: 2em;;
+    }
+</style>
 {%endblock%}

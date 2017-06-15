@@ -33,7 +33,7 @@
                     style="width:75%"id="-train">
                     </div>
                     <span style="margin-top:auto;margin-bottom:auto;margin-left:auto">
-                        <button type="button" class="btn btn-primary" onclick="contact()" data-email='' id="contact_respform">{% trans "Contacter les </br> responsables de formation" %}</button>
+                        <button type="button" class="btn btn-primary" onclick="contact()" data-toggle="modal" data-target="#send_mail_respform" id="contact_respform">{% trans "Contacter les </br> responsables de formation" %}</button>
                     </span>
                 </div>
                 <div  class="flex-container space-between"  id="nobodyhere">
@@ -47,7 +47,7 @@
         </div>
     </div>
 </div>
-
+{% include "mecctable/modal/send_mail.html" %}
 <script type="text/javascript">
 
 function get_consom(id_obj){
@@ -70,8 +70,8 @@ function get_consom(id_obj){
                     // manual toggle
                     $("#-train").show()
                     $("#nobodyhere").hide()
-                    // initialize array of respens_mail
-                    let respens_mail = [];
+                    // initialize array of respform_mail
+                    let respform_mail = [];
                     // Populate information about structure
                     document.getElementById("object-struct").innerHTML = data.structure.label;
                     document.getElementById("type-struct").innerHTML = data.structure.nature;
@@ -100,20 +100,33 @@ function get_consom(id_obj){
                         let div_resp = document.createElement('div');
                         div_resp.className += " flex-container space-around dir-col"
                         $.each(v.respens, function(x, y){
-                            respens_mail.push(y.mail);
+                            respform_mail.push(y.mail);
                             let span_resp = document.createElement('span');
                             span_resp.innerHTML = y.first_name + " " + y.last_name;
                             div_resp.appendChild(span_resp);
                         });
                         div_resp.style.width = "40%";
                         div.appendChild(div_resp);
-
+                        mails = remove_duplicate_and_keep_order(respform_mail);
                         div_train.appendChild(div);
-
+                        $('#contact_respform').attr('onclick',"contact_respform_mail('"+mails+"')");
                     })
                 }
             }
       }
   })
 }
+function remove_duplicate_and_keep_order(arr) {
+    var seen = {};
+    var new_arr = [];
+    for (var i = 0; i < arr.length; i++) {
+        if (!(arr[i] in seen)) {
+            new_arr.push(arr[i]);
+            seen[arr[i]] = true;
+        }
+    }
+    return new_arr;
+
+}
+
 </script>

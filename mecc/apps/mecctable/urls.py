@@ -5,10 +5,13 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ObjectsLinkUpdateView, ExamListView, ExamCreateView, ExamDetailView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
-    import_objectslink, remove_imported, get_consom, update_mecc_position
+    import_objectslink, remove_imported, get_consom, update_mecc_position, \
+    send_mail_respform
 
 
 urlpatterns = [
+    url(r'^send_mail_respform/$', send_mail_respform,
+        name='send_mail_respform'),
     url(r'^imported/remove/(?P<id>\d+)$',
         remove_imported,
         name='remove_imported'),
