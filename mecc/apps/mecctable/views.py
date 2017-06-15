@@ -19,6 +19,9 @@ from decimal import InvalidOperation
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -49,7 +52,9 @@ def import_objectslink(request):
                 is_imported=True
             )
     except Exception as e:
-        print(e)
+        logger.error('erreur={error}'.format(error=e))
+
+        return JsonResponse({"error": e})
     return JsonResponse({
         "status": 200,
     })
