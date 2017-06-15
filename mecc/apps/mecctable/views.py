@@ -543,11 +543,13 @@ def send_mail_respform(request):
     mail = EmailMultiAlternatives(
         subject=subject,
         body=body,
-        from_email="MECC Admin<%s>" % settings.MAIL_FROM,
+        from_email="%s %s <%s> " % (
+            request.user.first_name,
+            request.user.last_name,
+            request.user.email),
         to=to,
         cc=cc,
         bcc=[settings.MAIL_ARCHIVES],
-        headers={"Reply-To": settings.MAIL_FROM}
     )
     id_training = request.POST.get('id_training')
     mail.send()
