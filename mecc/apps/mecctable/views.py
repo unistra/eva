@@ -52,7 +52,7 @@ def import_objectslink(request):
                 is_imported=True
             )
     except Exception as e:
-        logger.error('erreur={error}'.format(error=e))
+        logger.error('CANNOT IMPORT ObjectsLink : \n{error}'.format(error=e))
 
         return JsonResponse({"error": e})
     return JsonResponse({

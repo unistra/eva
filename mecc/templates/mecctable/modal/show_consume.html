@@ -109,7 +109,8 @@ function get_consom(id_obj){
                         div.appendChild(div_resp);
                         mails = remove_duplicate_and_keep_order(respform_mail);
                         div_train.appendChild(div);
-                        $('#contact_respform').attr('onclick',"contact_respform_mail('"+mails+"')");
+                        let contact = "contact_respform_mail('"+ mails +"','"+data.structure.label+"')"
+                        $('#contact_respform').attr('onclick',contact);
                     })
                 }
             }
