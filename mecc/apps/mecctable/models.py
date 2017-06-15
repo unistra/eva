@@ -151,7 +151,6 @@ class ObjectsLink(models.Model):
     is_imported = models.NullBooleanField(
         _('Est importé'), null=True, blank=True)
 
-
     @property
     def nature_parent(self):
         parent = StructureObject.objects.get(
@@ -162,15 +161,16 @@ class ObjectsLink(models.Model):
         else:
             return None
 
-    @property
-    def depth(self, count=0):
-        def get_depth(link, count=0):
-            if link.id_parent in [0, '0']:
-                return count
-            else:
-                gparent = ObjectsLink.objects.get(id_child=link.id_parent)
-                return get_depth(gparent, count+1)
-        return range(get_depth(self))
+# Involve too much queries, very bad !
+    # @property
+    # def depth(self, count=0):
+    #     def get_depth(link, count=0):
+    #         if link.id_parent in [0, '0']:
+    #             return count
+    #         else:
+    #             gparent = ObjectsLink.objects.get(id_child=link.id_parent)
+    #             return get_depth(gparent, count+1)
+    #     return range(get_depth(self))
 
 
 class Exam(models.Model):

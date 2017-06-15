@@ -169,7 +169,6 @@ function check_delete(id_obj, label){
         },
         success: function(data) {
             if (data.has_consom){
-                console.log("CANNOT");
                 $('#is_consumed').modal('toggle');
                 document.getElementById("para-used-1").innerHTML = "L'objet ne peut pas être supprimé car il est présent dans d'autres formations."
                 document.getElementById("showme-used").innerHTML = "Mut."
@@ -211,7 +210,6 @@ $(".sortme").sortable({
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function(data){
-                console.log(data.status);
                 if (data.status === 200) {
                     $('.top-right').notify({
                         message: { text: 'Tableau mis à jour.' },
