@@ -1,0 +1,106 @@
+
+/*-----------------
+Font face your face */
+
+@font-face {
+    font-family: "Brill";
+    src: url("unistra_fonts/Brill/Brill-Regular.ttf");
+}
+@font-face {
+    font-family: "UnistraA";
+    src: url("unistra_fonts/Unistra_2.0/UnistraA-Regular.ttf") format('truetype');
+}
+@font-face {
+    font-family: "UnistraB";
+    src: url("unistra_fonts/Unistra_2.0/UnistraB-Regular.ttf") format('truetype');
+}
+@font-face {
+    font-family: "UnistraC";
+    src: url("unistra_fonts/Unistra_2.0/UnistraC-Regular.ttf") format('truetype');
+}
+@font-face {
+    font-family: "UnistraD";
+    src: url("unistra_fonts/Unistra_2.0/UnistraD-Regular.ttf") format('truetype');
+}
+body{
+    font-family:  "UnistraA";
+    font-size: 1.6em;
+}
+
+.white{
+    color: #fafafa
+
+}
+.break{
+    width: 100%;
+    border:none,
+}
+.uds {
+    margin-left: 0.25em;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    font-size: 1.25em!important;
+    height: 1.5em;
+
+}
+.uds > *{
+    border : 0.05em solid black;
+    padding: 0 0.5em 0 0.5em;
+    white-space: nowrap;
+    border-right-width: 0;
+    font-family:  "UnistraA";
+    flex-wrap: wrap;
+
+}
+.uds.white > *{
+    border : 0.05em solid #fafafa;
+    border-right-width: 0;
+}
+
+.w1{
+    width: 0.15em;
+    padding: 0;
+}
+.w2{
+    width: 0.3em;
+    padding: 0;
+}
+.w3{
+    width: 0.45em;
+    padding: 0;
+}
+.w4{
+    width: 0.5em;
+    padding: 0;
+}
+.uds .last{
+    border-top-style: none;
+    border-bottom-style: none;
+    width: 0;
+    padding: 0;
+    margin: 0;
+}
+.break{
+    display: inline-block;
+}
+.bold{
+    font-weight: bold;
+}
+
+/* Typical signature :
+
+<div class="uds white">
+    <span class="w1"></span>
+    <span class="w3"></span>
+    <div>
+        <span class="bold">Université </span>
+
+        <span>de Strasbourg</span>
+        <span class="w1"></span>
+    </div>
+    <span class="w1"></span>
+    <span class="w2"></span>
+    <span class="last"></span>
+</div>
+*/
