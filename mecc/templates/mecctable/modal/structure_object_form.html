@@ -132,7 +132,8 @@ $("#go-respens, #name_respens").mouseup(function(e){
 function fill_form(clicked) {
     let last_name = clicked.closest('tr').children('td:first');
     let first_name = $(last_name).next('td');
-    let status = $(first_name).next('td');
+    let patronymic = $(first_name).next('td');
+    let status = $(patronymic).next('td');
     let institute = $(first_name).next('td').next('td');
     let mail = $(institute).next('td');
     let id = $(mail).next('td');
@@ -351,11 +352,13 @@ if (!is_catalogue) {
 
     function display_UE(here) {
         let option = $(here).find('option:selected').val();
-        if (option != "UE") {
-            document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
-        } else {
+        if (option === "UE" || option === "ST") {
             document.getElementById("div_id_ECTS_credit").className = "form-group"
-            document.getElementById("id_ECTS_credit").required = true;
+            if (option === "UE") {
+                document.getElementById("id_ECTS_credit").required = true;
+            }
+        } else {
+            document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
         }
     };
     $('#id_nature').change(function() {

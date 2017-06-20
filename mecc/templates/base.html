@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-unistra.min.css' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-theme-unistra.min.css' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signature.css' %}">
     <link rel="stylesheet" href="{% static 'css/mecc.css' %}" type="text/css" title="no title" charset="utf-8" />
 
     <script src="{% dipstrap 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
@@ -28,11 +29,18 @@
 <body>
 
   <div id="wrapper">
-    <div class="navbar navbar-default navbar-fixed-top" style="z-index:1000">
-        <a href="#menu-toggle" id="menu-toggle">
-            <img class="pull-left" id="uds_logo"
-            src="{% static 'img/white/signature_uds_07.png' %}" alt="unistra" />
-        </a>
+    <div class="navbar navbar-default navbar-fixed-top flex-container" style="z-index:1000;align-items:center">
+        <div class="uds white hand" href="#menu-toggle" id="menu-toggle">
+            <span class="w2"></span>
+            <span class="w1"></span>
+            <div class="">
+                <span class="bold">Université </span>
+                <span>de Strasbourg</span>
+            </div>
+            <span class="w3"></span>
+            <span class="w2"></span>
+            <span class="last"></span>
+        </div>
         <div class="container">
                 <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
                 <span class="nav-bar-txt" style="font-size:1em;">{{request.display.user.last_name}} {{request.display.user.first_name}}</span>

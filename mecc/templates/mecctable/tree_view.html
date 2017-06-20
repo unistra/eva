@@ -23,8 +23,9 @@
      <span class="centered  mecc-add">
          {% if a.structure.nature not in "ST PT" and not a.is_imported%}
              <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
-             data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true"
-             data-target="#form-obj" ></a>
+             data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border"
+             title="{%trans 'Créer un objet fils dans cet objet'%}"
+             aria-hidden="true" data-target="#form-obj" ></a>
 
      </span>
 
@@ -33,6 +34,7 @@
      <span class=" mecc-import">
              <span data-toggle="modal" data-target="#shared-object"
              class="glyphicon glyphicon-circle-arrow-left green hand"
+             title="{% trans 'Importer un objet mutualisé dans cet objet'%}"
              onclick="asking_inclusion={{a.structure.id}};"></span>
          {% else %}
      </span>
@@ -42,22 +44,28 @@
      <span class="  mecc-remove">
          {% if a.link.is_imported %}
              <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+             title="{%trans 'Décrocher cet objet mutualisé'%}"
              onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
          {% else %}
-             {% if a.structure.mutual and not a.link.is_imported %}
+            {% if not a.has_childs %}
+             {% if a.structure.mutual and not a.link.is_imported%}
                  <span onclick="check_delete({{a.structure.id}}, '{{a.structure.label}}')"
+                 title="{%trans 'Supprimer cet objet'%}"
                  class="glyphicon glyphicon glyphicon-remove-sign red hand"></span>
              {% else %}
                  {% if a.is_imported == False and not a.has_childs %}
                      <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                     title="{%trans 'Supprimer cet objet'%}"
                      onclick="ask_delete({{a.structure.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
                  {% endif %}
              {% endif %}
          {% endif %}
+         {% endif %}
      </span>
      <span class=" mecc-mutual">
          {% if a.structure.mutual and not a.link.is_imported %}
-         <a onclick="get_consom({{a.structure.id}})" class="hand">{% trans "Mut." %}</a>
+         <a onclick="get_consom({{a.structure.id}})" class="hand"
+         title="{%trans 'Voir les consommateurs'%}">{% trans "Mut." %}</a>
          {% endif %}
      </span>
  </div>
@@ -104,7 +112,3 @@
      </div>
     {%endif%}
 </div>
-
-<style media="screen">
-
-</style>

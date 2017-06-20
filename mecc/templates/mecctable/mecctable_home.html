@@ -53,8 +53,14 @@
 
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border" aria-hidden="true" data-target="#form-obj" ></a>
-            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green" aria-hidden="true" data-toggle="modal" data-target="#shared-object" onclick="asking_inclusion=0;" ></span>
+            <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal"
+            title="{% trans 'Créer un objet à la racine'%}"
+            class="hand glyphicon glyphicon-plus blue no-border"
+            aria-hidden="true" data-target="#form-obj" ></a>
+            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
+            title="{%trans 'Importer un objet mutualisé à la racine'%}"
+            aria-hidden="true" data-toggle="modal" data-target="#shared-object"
+            onclick="asking_inclusion=0;" ></span>
         </div>
         {% if la_liste|length > 0 %}
         <div class="mecctable-container">
@@ -112,7 +118,7 @@
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
@@ -131,6 +137,7 @@
 
     </div>
 </div>
+
 
 
 
@@ -231,6 +238,9 @@ $(".sortme").sortable({
         position: absolute;
         z-index: 1200;
         right: 2em;;
+    }
+    #form-obj{
+        overflow-y: scroll;
     }
 </style>
 {%endblock%}

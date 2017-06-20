@@ -22,7 +22,9 @@
                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                     </span>
+
                 </div>
+                <span class="help-block">{% trans "Veuillez entrer au moins trois caractères." %}</span>
                 <table>
                 </table>
                 <!-- input-group -->
@@ -33,6 +35,7 @@
                             <tr class='table-head'>
                                 <th> {% trans 'Nom' %}</th>
                                 <th> {% trans 'Prénom' %}</th>
+                                <th> {% trans 'Nom patronymique' %}</th>
                                 <th> {% trans 'Statut' %}</th>
                                 <th> {% trans 'Composante' %}</th>
                                 <th> {% trans 'Mail' %}</th>
@@ -114,8 +117,10 @@ function searchMember() {
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
+                    tr.appendChild(document.createElement('td'))
                     tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
                     tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
+                    tr.cells[6].appendChild(document.createTextNode(data.pple[i].birth_name));
                     tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
                     tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
                     tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));

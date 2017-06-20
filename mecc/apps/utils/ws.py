@@ -103,12 +103,13 @@ def get_from_ldap(val):
                     "last_name": "%s (%s)" % (e['last_name'], val.capitalize(
                         )) if val.capitalize() != e['last_name'].capitalize(
                             ) and '*' not in val else e['last_name'],
-                    "first_name": e['first_name'].title(),
+                    "first_name": e.get('first_name').title(),
                     "status": affiliation,
                     "institute": cmp,
-                    "birth_date": e['birth_date'],
-                    "username": e['username'],
-                    "mail": e['mail'],
+                    "birth_date": e.get('birth_date'),
+                    "username": e.get('username'),
+                    "mail": e.get('mail'),
+                    "birth_name": e.get('birth_name').title()
                     }
                 result.append(person)
         return result
