@@ -5,8 +5,10 @@ from mecc.apps.utils.queries import currentyear
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
+from mecc.apps.mecctable.models import ObjectsLink
 import operator
 from functools import reduce
+from django.core.exceptions import ValidationError
 
 
 class Training(models.Model):
@@ -74,6 +76,14 @@ class Training(models.Model):
                 self.n_train = 1
         if 'CATALOGUE' in self.label.upper():
             self.progress_rule = 'A'
+
+        ol = ObjectsLink.objects.filter(
+            code_year=self.code_year, id_training=self.id)
+        if ol and not self.MECC_tab:
+            self.MECC_tab = True
+            raise ValidationError({
+                'MECC_tab': [_("Il y a des objets dans le tableau"), ]
+            })
 
     def __str__(self):
         return self.label
