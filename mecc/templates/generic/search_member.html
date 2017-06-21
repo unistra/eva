@@ -120,11 +120,11 @@ function searchMember() {
                     tr.appendChild(document.createElement('td'))
                     tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
                     tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
-                    tr.cells[6].appendChild(document.createTextNode(data.pple[i].birth_name));
-                    tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
-                    tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
-                    tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
-                    tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
+                    tr.cells[2].appendChild(document.createTextNode(data.pple[i].birth_name));
+                    tr.cells[3].appendChild(document.createTextNode(data.pple[i].status));
+                    tr.cells[4].appendChild(document.createTextNode(data.pple[i].institute));
+                    tr.cells[5].appendChild(document.createTextNode(data.pple[i].mail));
+                    tr.cells[6].appendChild(document.createTextNode(data.pple[i].username));
                     tr.className += 'hover-row hit select gen-table'
                     parent_table.appendChild(tr)
                 };
