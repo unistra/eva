@@ -117,6 +117,7 @@ class TrainingEdit(UpdateView):
             return reverse('training:list')
 
     def get_context_data(self, **kwargs):
+
         context = super(TrainingEdit, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['request.display.current_year'] = "%s/%s" % (
@@ -128,6 +129,9 @@ class TrainingEdit(UpdateView):
             input_is_open
         ) or self.request.user.is_superuser or 'DES1' in [
             e.name for e in self.request.user.groups.all()]
+        if self.object.input_opening[0] == '4':
+            context['can_edit'] = False
+
         return context
 
 
@@ -234,6 +238,8 @@ Merci.
 
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
+    if training.input_opening[0] == '4':
+        data['can_edit'] = False
     return render(request, template, data)
 
 

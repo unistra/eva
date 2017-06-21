@@ -7,7 +7,8 @@ from mecc.apps.training.models import Training
 from django.http import JsonResponse
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.utils.ws import get_user_from_ldap
-from mecc.decorators import is_post_request, is_ajax_request
+from mecc.decorators import is_post_request, is_ajax_request,\
+    is_correct_respform
 from django_cas.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 import json
@@ -29,7 +30,6 @@ def import_objectslink(request):
     """
     Create objectslink with selected structureobject
     """
-    not_imported = False
     try:
         id_training = request.POST.get('id_training')
         id_parent = request.POST.get('asking_id')
@@ -45,7 +45,8 @@ def import_objectslink(request):
                 code_year=cy, id_parent=id_parent, id_training=id_training)
             order_in_child = childs.count() + 1
             if e.id not in [c.id_child for c in childs]:
-                ObjectsLink.objects.get_or_create(
+
+                a, b = ObjectsLink.objects.get_or_create(
                     code_year=cy,
                     id_training=id_training,
                     id_parent=id_parent,
@@ -475,6 +476,7 @@ def mecctable_update(request):
     return JsonResponse(data)
 
 
+@is_correct_respform
 @login_required
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
@@ -492,7 +494,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     so = set(e.cmp_supply_id for e in current_structures.filter(mutual=True))
 
     data['all_cmp'] = Institute.objects.filter(code__in=so)
-    data['training'] = Training.objects.get(id=id)
+    data['training'] = training = Training.objects.get(id=id)
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
 
@@ -524,6 +526,14 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         return stuff
 
     data['la_liste'] = recurse([e for e in root_link])
+    input_is_open = training.input_opening[0] in ['1', '3']
+    data['can_edit'] = (request.environ[
+            'allowed'] and input_is_open
+        ) or request.user.is_superuser or 'DES1' in [
+        e.name for e in request.user.groups.all()]
+    if training.input_opening[0] == '4':
+        data['can_edit'] = False
+    data['can_edit'] = False
     return render(request, template, data)
 
 

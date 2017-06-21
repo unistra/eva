@@ -76,9 +76,12 @@ class Training(models.Model):
                 self.n_train = 1
         if 'CATALOGUE' in self.label.upper():
             self.progress_rule = 'A'
-
+        if not self.MECC_tab:
+            self.progress_table = 'A'
+    
         ol = ObjectsLink.objects.filter(
             code_year=self.code_year, id_training=self.id)
+        self.save()
         if ol and not self.MECC_tab:
             self.MECC_tab = True
             raise ValidationError({
