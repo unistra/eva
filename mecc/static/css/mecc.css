@@ -63,7 +63,7 @@
     margin-left: 6em;
 }
 .blue, .asteriskField {
-    color: #004A87!important;
+    color: #004E8F!important;
 }
 .red {
     color: red;
@@ -635,7 +635,7 @@ label[for=id_is_on_duty] {
 }
 .table-head {
     background-color: #E1F1FE;
-    color: #004A87;
+    color: #004E8F;
 }
 
 /*******************************************************************************
@@ -680,7 +680,7 @@ label[for=id_is_on_duty] {
     height: 100%;
     margin-left: -10em;
     overflow-y: auto;
-    background: #004A87;
+    background: #004E8F;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -814,7 +814,7 @@ li:hover .sub-level, li:focus {
     display: inline-block;
     height: 0.5em;
     width: 0.5em;
-    background-color: #004A87;
+    background-color: #004E8F;
     -webkit-animation: loading 1.6s infinite;
     -moz-animation: loading 1.6s infinite;
     -o-animation: loading 1.6s infinite;

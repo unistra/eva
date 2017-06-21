@@ -22,10 +22,7 @@ Font face your face */
     font-family: "UnistraD";
     src: url("unistra_fonts/Unistra_2.0/UnistraD-Regular.ttf") format('truetype');
 }
-body{
-    font-family:  "UnistraA";
-    font-size: 1.6em;
-}
+
 
 .white{
     color: #fafafa

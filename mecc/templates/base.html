@@ -13,7 +13,6 @@
     <meta name="author" content= 'Direction Informatique - Université de Strasbourg' />
     <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-unistra.min.css' %}">
-    <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-theme-unistra.min.css' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/signature.css' %}">
     <link rel="stylesheet" href="{% static 'css/mecc.css' %}" type="text/css" title="no title" charset="utf-8" />
@@ -30,7 +29,7 @@
 
   <div id="wrapper">
     <div class="navbar navbar-default navbar-fixed-top flex-container" style="z-index:1000;align-items:center">
-        <div class="uds white hand" href="#menu-toggle" id="menu-toggle">
+        <div class="uds white hand" href="#menu-toggle" id="menu-toggle" title="{% trans 'Cliquer pour dérouler le menu'%}">
             <span class="w2"></span>
             <span class="w1"></span>
             <div class="">
