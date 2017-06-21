@@ -17,7 +17,7 @@ class ParagraphForm(forms.ModelForm):
         initial=0, label=_("N° Affichage"), required=False)
 
     text_standard = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
-        l'alinéa standard <span class=required-fields style=color:#004A87\
+        l'alinéa standard <span class=required-fields style=color:#004E8F\
         >Champ obligatoire</span>"), required=False)
 
     text_derog = forms.CharField(widget=CKEditorWidget(), label=_("Texte de \
