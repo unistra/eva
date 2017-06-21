@@ -96,7 +96,6 @@ class StructureObject(models.Model):
         super(StructureObject, self).save(*args, **kwargs)
 
     def clean_fields(self, exclude=None):
-        print(self.nature)
         if self.nature == 'UE':
             if self.ECTS_credit in ['', ' ', None]:
                 raise ValidationError({
