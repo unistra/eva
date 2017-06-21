@@ -71,18 +71,18 @@
  </div>
 <!--- endof mecc-actionButtons--->
      <span class="centered mecc-ects">
-         {% if a.structure.nature == 'UE' %}{{a.structure.ECTS_credit}}{% endif %}
+         {% if a.structure.ECTS_credit %}{{a.structure.ECTS_credit}}{% endif %}
      </span>
      <span class="mecc-respens">{{a.structure.get_respens_name}}
          {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-coef"
-     {% if not a.is_imported %}contenteditable='true'{% endif %}
+     {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
      id="{{a.link.id}}-coeff">
          {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-note"
-     {% if not a.is_imported %}contenteditable='true'{% endif %}
+     {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
      id="{{a.link.id}}-grade">
          {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
      </span>

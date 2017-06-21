@@ -101,10 +101,14 @@
             {% trans 'Etat de saisie du tableau MECC : '%}
         </label>
             <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_table == "E" %}checked="checked" {% endif %}>
+         {% trans "En cours " %}<input type="radio" name="progress" value="E"
+         {%if not can_edit %} disabled{%endif%}
+         {% if training.progress_table == "E" %}checked="checked" {% endif %}>
      </label>
             <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_table == "A" %}checked="checked" {% endif %}>
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
+        {%if not can_edit %} disabled{%endif%}
+        {% if training.progress_table == "A" %}checked="checked" {% endif %}>
     </label>
         </div>
         <div class="button_container dir-row">
@@ -112,10 +116,10 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {% if object_link %}disabled white"{% endif %}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="{%if la_liste%}#{%else%}#####{%endif%}"class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+                <a href="{%if not la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste %}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>

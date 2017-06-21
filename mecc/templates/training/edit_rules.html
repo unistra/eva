@@ -9,7 +9,6 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-
         {%if request.session.visited_cmp == "RESPFORM"%}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
         {%else%}
@@ -118,11 +117,18 @@
         <label>
             {% trans 'Etat de saisie des règles : '%}
         </label>
+
         <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+         {% trans "En cours " %}<input type="radio" name="progress"  value="E"
+         {%if not can_edit %} disabled{%endif%}
+         {% if training.progress_rule == "E" %}checked="checked" {% endif %}
+         style="margin-top:-1px;vertical-align:middle;">
      </label>
         <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
+        {%if not can_edit %} disabled{%endif%}
+        {% if training.progress_rule == "A" %}checked="checked" {% endif %}
+        style="margin-top:-1px;vertical-align:middle;">
     </label>
 
     </div>
@@ -177,7 +183,7 @@
     </style>
 
     <script type="text/javascript">
-    {% if can_edit and training.input_opening.0 != "4" %}
+    {% if can_edit  %}
         $(document).on('change', 'input[name="progress"]:radio', function(){
             $.ajax({
                 url: "{% url 'rules:update_progress'%}",
@@ -191,7 +197,7 @@
                 success: function(data){
                     if (data.status === 200) {
                         $('.top-right').notify({
-                            message: { text: 'Tableau mis à jour.' },
+                            message: { text: 'Etat de saisie mis à jour : ' + data.val},
                             type:'info'
                         }).show();
                     }else {
