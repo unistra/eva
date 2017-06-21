@@ -53,7 +53,9 @@ def import_objectslink(request):
                     n_train_child=e.n_train_child,
                     nature_child=e.nature_child,
                     order_in_child=order_in_child,
-                    is_imported=True
+                    is_imported=True,
+                    coefficient=e.coefficient,
+                    eliminatory_grade=e.eliminatory_grade
                 )
             else:
                 not_imported = True
