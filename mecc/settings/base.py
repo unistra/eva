@@ -299,7 +299,10 @@ LOGGING = {
             'maxBytes': 209715200,
             'backupCount': 3,
             'formatter': 'default'
-        }
+        },
+        # 'console': {
+        #     'class': 'logging.StreamHandler',
+        # },
     },
     'loggers': {
         'django': {
@@ -316,7 +319,11 @@ LOGGING = {
             'handlers': ['mail_admins', 'file'],
             'level': 'ERROR',
             'propagate': True
-        }
+        },
+        # 'django.db.backends': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # }
     }
 }
 
