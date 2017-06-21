@@ -105,6 +105,17 @@ function import_selected_suggestions(){
             id_training : {{training.id}}
         },
         success: function(data) {
+            $('.top-right').notify({
+                message: { text: 'Tableau mis à jour.' },
+                type:'info'
+            }).show();
+            console.log(data.not_imported);
+            if (data.not_imported) {
+                $('.top-right').notify({
+                    message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
+                    type:'warning'
+                }).show();
+            }
             window.location.reload()
         }
     });
