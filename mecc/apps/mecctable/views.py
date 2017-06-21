@@ -29,41 +29,48 @@ def import_objectslink(request):
     """
     Create objectslink with selected structureobject
     """
+    not_imported = False
     try:
         id_training = request.POST.get('id_training')
         id_parent = request.POST.get('asking_id')
         cy = currentyear().code_year
-        selected_id = map(int, request.POST.getlist('selected_id[]'))
+        selected_id = [e for e in map(int, request.POST.getlist(
+            'selected_id[]'))]
         object_link_list = [
             ObjectsLink.objects.get(
                 id=e, code_year=cy) for e in selected_id
         ]
         for e in object_link_list:
-            order_in_child = ObjectsLink.objects.filter(
-                code_year=cy, id_parent=id_parent).count() + 1
-            a, b = ObjectsLink.objects.get_or_create(
-                code_year=cy,
-                id_training=id_training,
-                id_parent=id_parent,
-                id_child=e.id,
-                order_in_child=order_in_child,
-                n_train_child=e.n_train_child,
-                nature_child=e.nature_child,
-                is_imported=True
-            )
+            childs = ObjectsLink.objects.filter(
+                code_year=cy, id_parent=id_parent, id_training=id_training)
+            order_in_child = childs.count() + 1
+            if e.id not in [c.id_child for c in childs]:
+                ObjectsLink.objects.get_or_create(
+                    code_year=cy,
+                    id_training=id_training,
+                    id_parent=id_parent,
+                    id_child=e.id,
+                    n_train_child=e.n_train_child,
+                    nature_child=e.nature_child,
+                    order_in_child=order_in_child,
+                    is_imported=True
+                )
+            else:
+                not_imported = True
+
     except Exception as e:
         logger.error('CANNOT IMPORT ObjectsLink : \n{error}'.format(error=e))
 
         return JsonResponse({"error": e})
     return JsonResponse({
-        "status": 200,
+        "status": 200, "not_imported": not_imported
     })
 
 
 @is_ajax_request
 def get_consom(request):
     """
-    Give consomateur of a certain imported object
+    Give consumer of a certain imported object
     """
     so = StructureObject.objects.get(id=request.GET.get('id_obj'))
     lo = ObjectsLink.objects.filter(id_child=so.id, is_imported=True)
@@ -139,7 +146,7 @@ def get_mutual_by_cmp(request):
         ] for e in s_list]
         data['suggest'] = mutual_list
     except Exception as e:
-        print(e)
+        logger.error('CANNOT GET mutual : \n{error}'.format(error=e))
     return JsonResponse(data)
 
 
@@ -480,7 +487,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
         'order_in_child').distinct()
 
-    so = [e.cmp_supply_id for e in current_structures.filter(mutual=True)]
+    so = set(e.cmp_supply_id for e in current_structures.filter(mutual=True))
+
     data['all_cmp'] = Institute.objects.filter(code__in=so)
     data['training'] = Training.objects.get(id=id)
     data['next_id'] = current_structures.count() + 1
