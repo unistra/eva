@@ -36,7 +36,7 @@
                         {% for item in field.list %}
                             <tr class="hover-row">
                                 <td class='border-bottom border-left'>
-                                    <input type="checkbox" name="chkbox[]" value="{{item.id}}" {% if not item.date_visa_des and not item.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}>
+                                    <input type="checkbox" name="chkbox[]" value="{{item.id}}" {% if not item.date_visa_des and not item.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}{% if item.date_val_cfvu %}class="noSelect"{% endif %}>
                                 </td>
                                 <td class='no-padding td-centered-left border-bottom'>
                                     <strong>{{field.grouper}}</strong>
