@@ -36,8 +36,8 @@
                     <tr>
                       <th><input type="checkbox" onClick="selectall(this)" id="checkbox_all" /></th>
                       <th >{% trans "Type d'objet" %}</th>
-                      <th >{% trans "Formation propriétaire de l'objet" %}</th>
                       <th >{% trans "Intitulé de l'objet" %}</th>
+                      <th >{% trans "Formation propriétaire de l'objet" %}</th>
                       <th >{% trans "Régime" %}</th>
                       <th >{% trans "Sessions" %}</th>
                       <th >{% trans "Crédits" %}</th>
@@ -105,13 +105,14 @@ function import_selected_suggestions(){
             id_training : {{training.id}}
         },
         success: function(data) {
-            if (data.not_imported) {
-                $('#shared-object').modal('hide');
+            $('#shared-object').modal('hide');
+            if (data.not_imported === true) {
+                console.log("SALUT");
                 $('.top-right').notify({
                     message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
                     type:'warning'
                 }).show();
-                setTimeout(null, 100)
+                setTimeout(null, 500)
             }else{
                 $('.top-right').notify({
                     message: { text: 'Tableau mis à jour.' },
