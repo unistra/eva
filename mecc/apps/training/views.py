@@ -129,7 +129,7 @@ class TrainingEdit(UpdateView):
             input_is_open
         ) or self.request.user.is_superuser or 'DES1' in [
             e.name for e in self.request.user.groups.all()]
-        if self.object.input_opening[0] == '4':
+        if not input_is_open:
             context['can_edit'] = False
 
         return context
@@ -238,7 +238,7 @@ Merci.
 
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
-    if training.input_opening[0] == '4':
+    if training.input_opening[0] in ['4', '2']:
         data['can_edit'] = False
     return render(request, template, data)
 
