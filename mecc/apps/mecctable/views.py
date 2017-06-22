@@ -40,6 +40,7 @@ def import_objectslink(request):
             ObjectsLink.objects.get(
                 id=e, code_year=cy) for e in selected_id
         ]
+        not_imported = False
         for e in object_link_list:
             childs = ObjectsLink.objects.filter(
                 code_year=cy, id_parent=id_parent, id_training=id_training)
@@ -60,10 +61,7 @@ def import_objectslink(request):
                 )
             else:
                 not_imported = True
-
     except Exception as e:
-        logger.error('CANNOT IMPORT ObjectsLink : \n{error}'.format(error=e))
-
         return JsonResponse({"error": e})
     return JsonResponse({
         "status": 200, "not_imported": not_imported
@@ -138,8 +136,8 @@ def get_mutual_by_cmp(request):
         mutual_list = [[
             "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
             e.nature,
-            Training.objects.get(id=e.owner_training_id).label,
             e.label,
+            Training.objects.get(id=e.owner_training_id).label,
             e.get_regime_display(),
             e.get_session_display(),
             e.ECTS_credit,
@@ -531,9 +529,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
             'allowed'] and input_is_open
         ) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
-    if training.input_opening[0] == '4':
+    if not input_is_open:
         data['can_edit'] = False
-    data['can_edit'] = False
     return render(request, template, data)
 
 
