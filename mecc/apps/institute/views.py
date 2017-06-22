@@ -27,7 +27,7 @@ from mecc.apps.utils.queries import institute_staff
 from datetime import datetime
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.decorators import is_post_request
+from mecc.decorators import is_post_request, group_required
 from mecc.apps.files.models import FileUpload
 
 
@@ -457,7 +457,7 @@ Merci.
     return render(request, template, data)
 
 
-@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+@group_required('DES1', 'DES2', 'DES3')
 def check_validate_institute(request, code, template='institute/check_validate.html'):
     """
     Check institutes' Mecc validation
@@ -662,6 +662,7 @@ def process_delete_file(request):
     return redirect('/institute/validate/%s' % code)
 
 
+@group_required('DES1', 'DES2', 'DES3')
 @is_post_request
 @login_required
 def process_check_validate(request):

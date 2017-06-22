@@ -12,6 +12,8 @@ from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from mecc.apps.training.models import Training
+from mecc.apps.files.models import FileUpload
+from mecc.apps.files.utils import create_file
 from mecc.decorators import is_post_request, is_ajax_request
 
 from django.http import JsonResponse
@@ -83,12 +85,14 @@ class UniversityYearUpdate(UpdateView):
     def get_success_url(self):
         if self.request.method == 'POST' and 'add_pdf' in self.request.POST:
             code_year = self.request.POST.get('code_year')
+            create_file(self.request.FILES, self.object, self.request.user, 'doc_cadre')
             return reverse('years:edit', kwargs={'code_year': code_year})
         if self.request.method == 'POST' and 'delete_pdf' in self.request.POST:
             code_year = int(self.request.POST.get('code_year'))
             uy = UniversityYear.objects.get(code_year=code_year)
             uy.pdf_doc.delete(save=False)
             uy.save()
+
             return reverse('years:edit', kwargs={'code_year': code_year})
         return reverse('years:home')
 
@@ -100,8 +104,11 @@ class UniversityYearListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(
             UniversityYearListView, self).get_context_data(**kwargs)
+
         try:
             a = UniversityYear.objects.get(is_target_year=True)
+            context['doc_pdf'] = FileUpload.objects.filter(
+                object_id=a.id, additional_type='doc_cadre_%s/%s' % (a.code_year, a.code_year + 1))
         except ObjectDoesNotExist:
             a = str(_('Aucune année cible sélectionnée'))
         try:

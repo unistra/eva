@@ -102,6 +102,7 @@
         <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
     </div>
 </div>
+{% if request.user|has_group:'DES1' or request.user.is_superuser %}
 <div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
     <span class="title-block" style="width=20%">
         <strong>{% trans "Validation" %}</strong>
@@ -111,6 +112,7 @@
         <a href="{% url 'institute:check_validate' code=request.session.visited_cmp %}" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CFVU" %}<br>&nbsp;</a>
     </div>
 </div>
+{% endif %}
 <style media="screen">
 
 table {

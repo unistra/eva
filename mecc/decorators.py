@@ -2,6 +2,7 @@ from functools import wraps
 # from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group
+from django_cas.decorators import user_passes_test
 from mecc.apps.training.models import Training
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
@@ -123,3 +124,12 @@ def is_post_request(view_func):
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
     return wrapper
+
+
+def group_required(*group_names):
+    """Requires user membership in at least one of the groups passed in."""
+    def in_groups(u):
+        if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
+                return True
+        return False
+    return user_passes_test(in_groups)
