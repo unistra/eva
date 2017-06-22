@@ -78,7 +78,7 @@ class Training(models.Model):
             self.progress_rule = 'A'
         if not self.MECC_tab:
             self.progress_table = 'A'
-    
+
         ol = ObjectsLink.objects.filter(
             code_year=self.code_year, id_training=self.id)
         self.save()
@@ -87,6 +87,8 @@ class Training(models.Model):
             raise ValidationError({
                 'MECC_tab': [_("Il y a des objets dans le tableau"), ]
             })
+        if self.MECC_tab:
+            self.progress_table = 'E'
 
     def __str__(self):
         return self.label
