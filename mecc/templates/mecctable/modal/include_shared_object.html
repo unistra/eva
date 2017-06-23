@@ -75,7 +75,7 @@ tfoot {
     display: table-header-group;
 }
 /*hide unwanted column select-option*/
-tfoot tr td:first-child select, tfoot tr td:nth-child(4) select,
+tfoot tr td:first-child select, tfoot tr td:nth-child(3) select,
 tfoot tr td:nth-child(9) select, tfoot tr td:nth-child(10) select {
     display: none
 }
@@ -112,7 +112,7 @@ function import_selected_suggestions(){
                     message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
                     type:'warning'
                 }).show();
-                setTimeout(null, 500)
+                setTimeout(null, 1000)
             }else{
                 $('.top-right').notify({
                     message: { text: 'Tableau mis à jour.' },

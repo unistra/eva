@@ -416,7 +416,7 @@ def mecctable_update(request):
         # check the respens is the same as before
         if struct.RESPENS_id != j.get('RESPENS_id'):
             if struct.RESPENS_id not in ['', ' ', None]:
-                remove_respens(struct.RESPENS_id,  j.get('label'), training)
+                remove_respens(struct.RESPENS_id, j.get('label'), training)
             if j.get('RESPENS_id') not in ['', ' ', None]:
                 create_respens(j.get('RESPENS_id'))
         struct.code_year = currentyear().code_year
