@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load mecc_tags %}
+{% block page-header %}
+MECC {{ request.display.current_year }} <br>
+{{label_cmp}} : {% trans 'Validation en conseil de composante' %}
+{% endblock %}
+{% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'js/ajax.django.js' %}"></script>
+{% if messages %}
+{% for message in messages %}
+{% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
+<div class="messages{% if alert_tag %} alert alert-{{ alert_tag }}{% endif %} alert-dismissible">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<div class="row no-margin">
+    <form method="post" class="" id="validate-form">
+        <legend class="no-border">{% trans 'ETAPE 1 : Saisir des dates de validation' %}</legend>
+            <div class="row">
+                <div class="col-sm-12">
+                    {% include 'institute/validate_training_list.html' %}
+                </div>
+            </div>
+            <small id="datepickerHelp" class="text-muted italic">
+                <span class="bold">{% trans 'Attention' %} :</span>
+                {% trans "L'enregistrement d'une date de validation en conseil de composante clôt l'accès à la saisie des MECC de la formation." %}
+            </small>
+            <div class="form-inline pull-right" style="margin-bottom: 1em;">
+                <div>
+                    <label for="id_datepicker">{% trans 'Saisir une date' %} :</label>
+                    <div class="input-group date" data-provide="datepicker" data-date-language="fr" date-date-autoclose="true">
+                        <input type="text" class="datepicker textinput textInput form-control" id="id_datepicker" placeholder="JJ/MM/AAAA" name="date_mecc" value="{{ date_mecc }}" required/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    <input type="submit" id="confirm-btn" class="btn btn-primary" value="{% trans 'Appliquer la date' %}">
+                </div>
+            {% csrf_token %}
+            </div>
+    </form>
+</div>
+    <div class="row has-top-border has-bottom-border no-margin">
+        <div class="col-sm-6 border-right-blue no-margin">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'ETAPE' %} 2 : {% trans 'Dépôt de documents' %} ({% trans 'format pdf' %})</legend>
+            <div class="form-group" style="margin-bottom: 2em; margin-left: 1em;">
+                <div>
+                {% trans 'Lettre de présentation' %} :
+                {% if letter_file %}
+                    {% include "institute/files_list.html" with files=letter_file %}
+                {% else %}
+                    <button data-toggle="modal" data-target="#upload_letter" class="btn btn-primary pull-right" style="margin-right: 1em;">{% trans 'Déposer la lettre' %} <span class="glyphicon glyphicon-upload"></span></button>
+                {% endif %}
+                </div>
+            </div>
+            <div class="form-group has-top-border" style="margin-bottom: 2em; margin-left: 1em;">
+                <div>
+                {% trans 'Autres documents (PV, émargement, ...)' %} :
+                {% if misc_file %}
+                    {% include "institute/files_list.html" with files=misc_file %}
+                {% endif %}
+                    <button data-toggle="modal" data-target="#upload_misc" class="btn btn-primary pull-right" style="margin-bottom: 0.5em;margin-right: 1em;">{% trans 'Déposer des documents' %} <span class="glyphicon glyphicon-upload"></span></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="margin-bottom: 2em;">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'ETAPE' %} 3 : {% trans 'Notification DES' %}</legend>
+            <div class="form-group">
+                <small id="datepickerHelp" class="text-muted italic">
+                {% trans "Après avoir appliqué les dates de validation en Conseil de composante et déposé les documents requis (lettre de présentation des MECC de la composante, extraits de PV et listes d'émargement des Conseils de composante, ...) prévenez la DES de la disponibilité des MECC." %}
+                </small>
+            </div>
+            <div class="form-group"></div>
+            <div class="form-group">
+                <div>
+                {% trans 'Date de dernière notification MECC'%} : {% if date_last_notif %} {{date_last_notif|date:"DATE_FORMAT"}} {% else %} {% trans 'Aucune' %} {% endif %} <button data-toggle="modal" data-target="#send_mail" class="btn btn-primary pull-right">{% trans 'Envoyer un message' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "institute/modal/send_mail.html" %}
+    {% include "institute/modal/upload_letter.html" %}
+    {% include "institute/modal/upload_misc.html" %}
+    {% include "generic/modal_confirm_delete.html" %}
+    {% include "institute/modal/confirm_validate.html" %}
+<script>
+var doUpload=false;
+// toma ugly fix autoclose is not working for now !!!!
+$.fn.datepicker.defaults.autoclose = true;
+// select/unselect all
+$('#select-all').click(function(event) {
+    if(this.checked) {
+        // unchecked .noSelect checkbox
+        $(':checkbox.noSelect').each(function() {
+            this.checked = false;
+        });
+        // Iterate each checkbox
+        $(':checkbox:not(:disabled,.noSelect)').each(function() {
+            this.checked = true;
+        });
+    } else {
+    $(':checkbox:not(:disabled,.noSelect)').each(function() {
+          this.checked = false;
+      });
+  }
+});
+
+$('#confirm-btn').on('click', function (e) {
+    // show confirmation if already sets date is selected
+    if ($(':checkbox.noSelect').is(':checked')) {
+        e.preventDefault();
+        $("#confirm-validation").modal("show");
+    // else submit form
+    } else {
+        $("validate-form").submit();
+    }
+});
+
+$('#confirm-validation').on('show.bs.modal', function(e) {
+    // populate confirmation dialog modal
+    var label = [];
+    var modal_text = "<ul>";
+    $("#validate-form input:checkbox.noSelect:checked").each(function() {
+        label.label = $(this).closest('td').next('td').next('td').text();
+        label.date = $(this).closest('td').next('td').next('td').next('td').next('td').next('td').text();
+        modal_text += "<li>" + label.label + " : " + label.date + "</li>";
+    });
+    modal_text = modal_text + "</ul>";
+    $('.modal-items-container').html(modal_text);
+});
+
+function upload_misc(event) {
+    event.preventDefault();
+    var data = new FormData($('#upload-misc-form').get(0));
+    if(doUpload){
+        $.ajax({
+            url: "{% url 'files:upload_file' app_name='institute' model_name='Institute' object_pk=institute.id %}",
+            type: "POST",
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                $('#upload-misc-form').submit();
+                $("#upload_misc .close").click();
+            },
+            error: function(data) {
+            },
+            beforeSend: function() {
+                $("btn-upload-misc").text('loading...');
+            }
+        });
+    }
+
+}
+
+function upload_letter(event) {
+    event.preventDefault();
+    var data = new FormData($('#upload-letter-form').get(0));
+    if(doUpload){
+        $.ajax({
+            url: "{% url 'files:upload_file' app_name='institute' model_name='Institute' object_pk=institute.id %}",
+            type: "POST",
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                $('#upload-letter-form').submit();
+                $("#upload_letter .close").click();
+            },
+            beforeSend: function() {
+                /*
+                TODO: add a spinner or something
+                */
+                //$("btn-upload-letter").text('loading...');
+            }
+        });
+    }
+    return false;
+}
+
+$('input[type=file]').on('change', function() {
+    var fileName = $(this).val().replace(/.*(\/|\\)/, '');
+    var fileGroup = $('.file-group');
+    if (!(/\.(pdf)$/i).test(fileName)) {
+        fileGroup.addClass('has-error has-feedback');
+        $(this).after('<span class="glyphicon glyphicon-remove form-control-feedback file-upload-glyph"></span>');
+        $('label[for="file"]').text("Fichier : (uniquement au format pdf)");
+        doUpload=false;
+    } else {
+        fileGroup.removeClass('has-error has-feedback');
+        $('label[for="file"]').text("Fichier :");
+        $('.file-upload-glyph').remove();
+        doUpload=true;
+    }
+})
+$("#btn-upload-letter").click(upload_letter);
+$("#btn-upload-misc").click(upload_misc);
+
+$('body').on('hidden.bs.modal', '.modal', function () {
+    $(".modal-body input[type=file]").val("");
+    $(".modal-body textarea").val("");
+});
+
+function ask_delete(id_obj, label, e) {
+    document.getElementById('type').innerHTML = "{% trans 'ce fichier' %}";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = '{% url 'institute:process_delete_file' %}';
+    $('#delete_form').on('submit', function(e) {
+        e.preventDefault;
+        var data = new FormData($('#delete_form').get(0));
+        $.ajax({
+            url: "/file/delete/" + id_obj,
+            type: "POST",
+            cache: false,
+            data: data,
+            processData: false,
+            contentType: false,
+            async: false,
+            /*
+            success: function(message){
+
+
+                //window.location.reload()
+            },
+            error:function(message){
+                // TODO
+            }*/
+        });
+    });
+}
+</script>
+{% endblock %}
