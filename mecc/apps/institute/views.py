@@ -68,9 +68,11 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         instance=institute_year)
     data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
     data['letter_file'] = FileUpload.objects.filter(
-        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+        object_id=institute.id, additional_type='letter_%s/%s' % (
+            current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
-        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+        object_id=institute.id, additional_type='misc_%s/%s' % (
+            current_year.code_year, current_year.code_year + 1))
     if request.POST:
         try:
             expected_mecc = datetime.strptime(
@@ -81,7 +83,8 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         except ValueError:
             granted_edit_institute(
                 request, code, template='institute/dircomp.html')
-        return redirect('/')  # Redirect after POST
+        return granted_edit_institute(
+            request, code, template='institute/granted.html')  # Redirect after POST
 
     return render(request, template, data)
 

@@ -89,13 +89,13 @@ def get_consom(request):
                 'first_name': r.user.first_name,
                 'last_name': r.user.last_name,
                 'mail': r.user.email
-                } for r in training.resp_formations.all()]
+            } for r in training.resp_formations.all()]
         }
         t.append(a)
 
     return JsonResponse({
         'has_consom': True if lo else False,
-        'year': "%s/%s" % (so.code_year, so.code_year+1),
+        'year': "%s/%s" % (so.code_year, so.code_year + 1),
         'structure': {
             'label': so.label,
             'nature': so.nature,
@@ -442,7 +442,7 @@ def mecctable_update(request):
         struct.ref_si_scol = j.get('ref_si_scol')
         struct.save()
     try:
-        coeff = int(struct.ECTS_credit)/int(3)
+        coeff = int(struct.ECTS_credit) / int(3)
     except TypeError:
         coeff = None
     try:
@@ -514,7 +514,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 'children': [get_childs(
                     e, imported, rank=rank) for e in children],
                 'rank': rank - 1,
-                'loop': range(0, rank-1),
+                'loop': range(0, rank - 1),
             }
             return items
         for link in links:
@@ -526,8 +526,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['la_liste'] = recurse([e for e in root_link])
     input_is_open = training.input_opening[0] in ['1', '3']
     data['can_edit'] = (request.environ[
-            'allowed'] and input_is_open
-        ) or request.user.is_superuser or 'DES1' in [
+        'allowed'] and input_is_open
+    ) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
     if not input_is_open:
         data['can_edit'] = False
@@ -551,10 +551,9 @@ def send_mail_respform(request):
     #     ',')] if request.POST.get('to') not in nobody else None
     # cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
     #     ',')] if request.POST.get('cc') not in nobody else None
-    # TODO: remove the following lines in production
     to = [
         'weible@unistra.fr'
-        ]
+    ]
     cc = ['ibis.ismail@unistra.fr']
 
     subject = request.POST.get('subject', s) if request.POST.get(
