@@ -1,26 +1,29 @@
+import json
+import logging
+from decimal import InvalidOperation
+
 from django.views.generic import DetailView, ListView, UpdateView, CreateView
-from .models import StructureObject, ObjectsLink, Exam
-from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext as _
+from django.utils.html import strip_tags
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
+
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
-from django.http import JsonResponse
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request,\
-    is_correct_respform
-from django_cas.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-import json
-from django.contrib.auth.models import User
+    is_correct_respform, can_edit_or_read
 from mecc.apps.adm.models import MeccUser, Profile
-from django.utils.html import strip_tags
-from django.utils.translation import ugettext as _
-from decimal import InvalidOperation
+from django_cas.decorators import login_required
 
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-import logging
+
+from .models import StructureObject, ObjectsLink, Exam
+from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 
 logger = logging.getLogger(__name__)
 
@@ -33,25 +36,25 @@ def import_objectslink(request):
     try:
         id_training = request.POST.get('id_training')
         id_parent = request.POST.get('asking_id')
-        cy = currentyear().code_year
+        current_year = currentyear().code_year
         selected_id = [e for e in map(int, request.POST.getlist(
             'selected_id[]'))]
         object_link_list = [
             ObjectsLink.objects.get(
-                id=e, code_year=cy) for e in selected_id
+                id_child=e, code_year=current_year, is_imported=None) for e in selected_id
         ]
         not_imported = False
         for e in object_link_list:
             childs = ObjectsLink.objects.filter(
-                code_year=cy, id_parent=id_parent, id_training=id_training)
+                code_year=current_year, id_parent=id_parent, id_training=id_training)
             order_in_child = childs.count() + 1
-            if e.id not in [c.id_child for c in childs]:
+            if e.id_child not in [c.id_child for c in childs]:
 
-                a, b = ObjectsLink.objects.get_or_create(
-                    code_year=cy,
+                ObjectsLink.objects.get_or_create(
+                    code_year=current_year,
                     id_training=id_training,
                     id_parent=id_parent,
-                    id_child=e.id,
+                    id_child=e.id_child,
                     n_train_child=e.n_train_child,
                     nature_child=e.nature_child,
                     order_in_child=order_in_child,
@@ -61,7 +64,7 @@ def import_objectslink(request):
                 )
             else:
                 not_imported = True
-    except Exception as e:
+    except Exception as e: # This is bad...
         return JsonResponse({"error": e})
     return JsonResponse({
         "status": 200, "not_imported": not_imported
@@ -474,7 +477,6 @@ def mecctable_update(request):
     return JsonResponse(data)
 
 
-@is_correct_respform
 @login_required
 def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
@@ -525,8 +527,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     data['la_liste'] = recurse([e for e in root_link])
     input_is_open = training.input_opening[0] in ['1', '3']
-    data['can_edit'] = (request.environ[
-        'allowed'] and input_is_open
+    data['can_edit'] = (request.environ.get(
+        'allowed') and input_is_open
     ) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
     if not input_is_open:
