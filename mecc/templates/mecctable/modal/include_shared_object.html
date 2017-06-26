@@ -75,7 +75,7 @@ tfoot {
     display: table-header-group;
 }
 /*hide unwanted column select-option*/
-tfoot tr td:first-child select, tfoot tr td:nth-child(4) select,
+tfoot tr td:first-child select, tfoot tr td:nth-child(3) select,
 tfoot tr td:nth-child(8) select, tfoot tr td:nth-child(10) select {
     display: none
 }
@@ -107,12 +107,11 @@ function import_selected_suggestions(){
         success: function(data) {
             $('#shared-object').modal('hide');
             if (data.not_imported === true) {
-                console.log("SALUT");
                 $('.top-right').notify({
                     message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
                     type:'warning'
                 }).show();
-                setTimeout(null, 1000)
+                setTimeout(null, 2000)
             }else{
                 $('.top-right').notify({
                     message: { text: 'Tableau mis à jour.' },
@@ -120,6 +119,9 @@ function import_selected_suggestions(){
                 }).show();
             }
             window.location.reload()
+        },
+        error: function(data){
+            console.log(data);
         }
     });
 
