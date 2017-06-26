@@ -16,8 +16,10 @@
             onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}</a>
         {%endif%}
     </span>
-<!--- endof mecc-label--->
-<!--- mecc-actionButtons--->
+<!--- endof mecc-label
+-->
+<!--- mecc-actionButtons-
+-->
     <div class="mecc-actionsButtons">
 
      <span class="centered  mecc-add">
@@ -48,7 +50,7 @@
              onclick="ask_delete_imported({{a.link.id}}, '{{a.structure.label}}')" data-target="#preview"></span>
          {% else %}
             {% if not a.has_childs %}
-             {% if a.structure.mutual and not a.link.is_imported%}
+             {% if a.structure.mutual and not a.is_imported%}
                  <span onclick="check_delete({{a.structure.id}}, '{{a.structure.label}}')"
                  title="{%trans 'Supprimer cet objet'%}"
                  class="glyphicon glyphicon glyphicon-remove-sign red hand"></span>
@@ -69,7 +71,8 @@
          {% endif %}
      </span>
  </div>
-<!--- endof mecc-actionButtons--->
+<!--- endof mecc-actionButtons-
+-->
      <span class="centered mecc-ects">
          {% if a.structure.ECTS_credit %}{{a.structure.ECTS_credit}}{% endif %}
      </span>
