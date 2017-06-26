@@ -1,21 +1,18 @@
-from django import forms
-from .models import StructureObject, ObjectsLink, Exam
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Div, Field
-from django.utils.translation import ugettext as _
-# from django.core import management
+"""
+Forms for mecctable objects : structureobjects, linksobjects and exams
+"""
 
-# def setup():
-#     management.call_command('loaddata', 'fixtures/tests.json', verbosity=1)
-#
-#
-# def teardown():
-#         management.call_command('flush', verbosity=0, interactive=False)
-#
+from django import forms
+from django.utils.translation import ugettext as _
+from crispy_forms.layout import Layout, HTML, Div, Field
+from crispy_forms.helper import FormHelper
+from .models import StructureObject, ObjectsLink, Exam
 
 
 class StructureObjectForm(forms.ModelForm):
-
+    """
+    Form for structure objects
+    """
     regime = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=(('E', _('ECI')), ('C', _('CC/CT'))),
@@ -144,6 +141,9 @@ Voir les consommateurs </a>
 
 
 class ObjectsLinkForm(forms.ModelForm):
+    """
+    Form for objectsLink
+    """
 
     class Meta:
         model = ObjectsLink
@@ -151,6 +151,9 @@ class ObjectsLinkForm(forms.ModelForm):
 
 
 class ExamForm(forms.ModelForm):
+    """
+    Form for exam
+    """
 
     class Meta:
         model = Exam
