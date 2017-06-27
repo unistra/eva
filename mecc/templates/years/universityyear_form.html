@@ -71,7 +71,6 @@ if (is_year_init.value === "False") {
 document.getElementById('id_code_year').readOnly = true;
 function upload_file(event) {
     var data = new FormData($('#year-form').get(0));
-
     $.ajax({
         url: "{% url 'files:upload_file' app_name='years' model_name='UniversityYear' object_pk=universityyear.pk %}",
         type: "POST",
@@ -79,11 +78,10 @@ function upload_file(event) {
         cache: false,
         processData: false,
         contentType: false,
-        async: true,
+        async: false,
         success: function(message){
-            $('#year-form').submit()
+            window.location.reload()
         }
-
     });
 }
 function delete_file(event) {
@@ -95,9 +93,9 @@ function delete_file(event) {
         data: data,
         processData: false,
         contentType: false,
-        async: true,
+        async: false,
         success: function(message){
-            $('#year-form').submit()
+            window.location.reload()
         }
     });
 }
