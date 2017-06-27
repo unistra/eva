@@ -95,17 +95,25 @@ class Training(models.Model):
 
     @property
     def supply_cmp_label(self):
-        a = self.institutes.all().get(code=self.supply_cmp).label
-        return a
+        """
+        return label
+        """
+        label = self.institutes.all().get(code=self.supply_cmp).label
+        return label
 
     @property
     def list_respform_id(self):
+        """
+        Return list of respform id
+        """
         return [e.id for e in self.resp_formations.all()]
 
     @property
     def list_editable_pple(self):
-        can_do_alot = Profile.objects.filter(cmp=self.supply_cmp).filter(
-                Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
+        """
+        Return list of pple who can edit this training
+        """
+        can_do_alot = Profile.objects.filter(cmp=self.supply_cmp).filter(Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
                 | Q(code='GESCOL') | Q(code='DIRETU'))
         return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
 
@@ -128,6 +136,15 @@ class Training(models.Model):
             return INPUT_CHOICE[2]
         return None
 
+    @property
+    def has_custom_paragraph(self):
+        """
+        Tell us if this training has specific or additional paragraph
+        """
+        specific_paragraph = SpecificParagraph.objects.filter(training=self)
+        additional_paragraph = AdditionalParagraph.objects.filter(training=self)
+        return True if specific_paragraph or additional_paragraph else False
+
 
 class SpecificParagraph(models.Model):
     """
@@ -148,6 +165,9 @@ class SpecificParagraph(models.Model):
 
 
 class AdditionalParagraph(models.Model):
+    """
+    Additional paragraph model
+    """
     code_year = models.IntegerField(_('Code année'), unique=False)
     training = models.ForeignKey(Training)
     rule_gen_id = models.IntegerField(_('ID règle générale'))
