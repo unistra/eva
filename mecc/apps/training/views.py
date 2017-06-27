@@ -15,7 +15,7 @@ from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
     AdditionalParagraphForm
-
+from mecc.apps.training.utils import remove_training
 from django_cas.decorators import login_required
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -23,12 +23,12 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
+
 
 @is_DES1
 @login_required
@@ -148,6 +148,9 @@ class TrainingDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
+        can_remove = remove_training(self.request, self.object.id)
+        context['message'] = can_remove.get('message')
+        context['removable'] = can_remove.get('removable')
         AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
         SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
         additionals = AdditionalParagraph.objects.filter(training=self.object)
@@ -553,23 +556,28 @@ def duplicate_remove(request):
     training = Training.objects.get(pk=_id)
     label = training.label
     current_year = currentyear().code_year
+    remove_training(request, training.id)
 
-
-    structs = StructureObject.objects.filter(code_year=current_year, owner_training_id=_id)
-    if not structs:
-        for resp in training.resp_formations.all():
-            for profile in resp.profile.all():
-                if profile.code in 'RESPFORM' and \
-                    current_year == profile.year and profile.cmp in \
-                        [e.code for e in training.institutes.all()]:
-                    resp.profile.remove(profile)
-                    training.resp_formations.remove(resp)
-                    if len(resp.profile.all()) < 1:
-                        user = User.objects.get(meccuser=resp)
-                        user.delete()
-                        resp.delete()
-        training.delete()
-    return JsonResponse({"status": "removed", "label": label})
+    structs = StructureObject.objects.filter(
+        code_year=current_year, owner_training_id=_id)
+    deleted = True
+    # if not structs and not training.has_custom_paragraph:
+    #     for resp in training.resp_formations.all():
+    #         for profile in resp.profile.all():
+    #             if profile.code in 'RESPFORM' and \
+    #                 current_year == profile.year and profile.cmp in \
+    #                     [e.code for e in training.institutes.all()]:
+    #                 resp.profile.remove(profile)
+    #                 training.resp_formations.remove(resp)
+    #                 if len(resp.profile.all()) < 1:
+    #                     user = User.objects.get(meccuser=resp)
+    #                     user.delete()
+    #                     resp.delete()
+    #     training.delete()
+    # else:
+    #     deleted = False
+    print(deleted)
+    return JsonResponse({"status": "removed", "label": label, "deleted": deleted})
 
 
 @is_post_request
