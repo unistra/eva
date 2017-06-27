@@ -1,30 +1,34 @@
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from .models import Training, SpecificParagraph, AdditionalParagraph
-from .forms import TrainingForm
+"""
+Django view for training part
+"""
+
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.institute.models import Institute
-from django.core.urlresolvers import reverse
-from django_cas.decorators import login_required
 from mecc.apps.rules.models import Rule, Paragraph
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
 from mecc.apps.utils.manage_pple import manage_respform
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
+    complete_rule, watermark_do_not_distribute
+from mecc.apps.files.models import FileUpload
+from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
+from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
+    AdditionalParagraphForm
+
+from django_cas.decorators import login_required
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from .forms import SpecificParagraphDerogForm, \
-    AdditionalParagraphForm
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    complete_rule, watermark_do_not_distribute
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
-from mecc.apps.files.models import FileUpload
-
 
 @is_DES1
 @login_required
@@ -58,9 +62,11 @@ class TrainingListView(ListView):
             code=id_cmp).pk if id_cmp is not None else None
 
         context['letter_file'] = FileUpload.objects.filter(
-            object_id=context['code_cmp'], additional_type='letter_%s/%s' % (currentyear().code_year, currentyear().code_year + 1))
+            object_id=context['code_cmp'], additional_type='letter_%s/%s' % (
+                currentyear().code_year, currentyear().code_year + 1))
         context['misc_file'] = FileUpload.objects.filter(
-            object_id=context['code_cmp'], additional_type='misc_%s/%s' % (currentyear().code_year, currentyear().code_year + 1))
+            object_id=context['code_cmp'], additional_type='misc_%s/%s' % (
+                currentyear().code_year, currentyear().code_year + 1))
 
         return context
 
@@ -136,6 +142,9 @@ class TrainingEdit(UpdateView):
 
 
 class TrainingDelete(DeleteView):
+    """
+    Training delete view
+    """
 
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
@@ -161,6 +170,9 @@ class TrainingDelete(DeleteView):
 @login_required
 @is_post_request
 def process_respform(request):
+    """
+    Usefull to handle respfrom
+    """
     t_id = request.POST.dict().get('formation')
     manage_respform(request.POST.dict(), t_id)
     return redirect('training:edit', id=t_id)
@@ -177,7 +189,7 @@ def respform_list(request, template='training/respform_trainings.html'):
     data = {}
     data['trainings'] = Training.objects.filter(
         resp_formations=request.user.meccuser).filter(
-        code_year=currentyear().code_year if currentyear() is not None else None)
+            code_year=currentyear().code_year if currentyear() is not None else None)
     return render(request, template, data)
 
 
@@ -534,21 +546,29 @@ def duplicate_add(request):
 
 
 def duplicate_remove(request):
-    x = request.POST.get('id')
-    t = Training.objects.get(pk=x)
-    label = t.label
-    for y in t.resp_formations.all():
-        for profile in y.profile.all():
-            if profile.code in 'RESPFORM' and \
-                currentyear().code_year == profile.year and profile.cmp in \
-                    [e.code for e in t.institutes.all()]:
-                y.profile.remove(profile)
-                t.resp_formations.remove(y)
-                if len(y.profile.all()) < 1:
-                    user = User.objects.get(meccuser=y)
-                    user.delete()
-                    y.delete()
-    t.delete()
+    """
+    Remove training in duplicate view, check that it's empty and handle resp_formations pple.
+    """
+    _id = request.POST.get('id')
+    training = Training.objects.get(pk=_id)
+    label = training.label
+    current_year = currentyear().code_year
+
+
+    structs = StructureObject.objects.filter(code_year=current_year, owner_training_id=_id)
+    if not structs:
+        for resp in training.resp_formations.all():
+            for profile in resp.profile.all():
+                if profile.code in 'RESPFORM' and \
+                    current_year == profile.year and profile.cmp in \
+                        [e.code for e in training.institutes.all()]:
+                    resp.profile.remove(profile)
+                    training.resp_formations.remove(resp)
+                    if len(resp.profile.all()) < 1:
+                        user = User.objects.get(meccuser=resp)
+                        user.delete()
+                        resp.delete()
+        training.delete()
     return JsonResponse({"status": "removed", "label": label})
 
 
