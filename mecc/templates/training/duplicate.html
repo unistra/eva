@@ -107,7 +107,7 @@
                         },
                         type: 'danger'
                     }).show();
-                } else if (data.status === 'removed') {
+                } else if (data.deleted === true) {
                     $('.top-right').notify({
                         message: {
                             text: data.label + ' a bien été supprimé.'
