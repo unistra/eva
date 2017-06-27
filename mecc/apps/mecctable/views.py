@@ -16,8 +16,7 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.utils.ws import get_user_from_ldap
-from mecc.decorators import is_post_request, is_ajax_request,\
-    is_correct_respform, can_edit_or_read
+from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from django_cas.decorators import login_required
 
@@ -42,7 +41,8 @@ def import_objectslink(request):
         object_link_list = [
             ObjectsLink.objects.get(
                 id_child=e, code_year=current_year, is_imported=None) for e in selected_id
-        ]
+        ]   # based on id_child and **not** imported objectlink in
+            # order to retrieve the original one :)
         not_imported = False
         for e in object_link_list:
             childs = ObjectsLink.objects.filter(
@@ -64,7 +64,7 @@ def import_objectslink(request):
                 )
             else:
                 not_imported = True
-    except Exception as e: # This is bad...
+    except Exception as e:  # This is bad...
         return JsonResponse({"error": e})
     return JsonResponse({
         "status": 200, "not_imported": not_imported
