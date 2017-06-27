@@ -2,10 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
+from mecc.apps.years.models import UniversityYear
 
 
 class Rule(models.Model):
@@ -42,9 +42,8 @@ class Rule(models.Model):
         Return true if there is at least one derogation in paragraphs concerned
         by the rule
         """
-        return True if True in [e.is_interaction for e in
-                                Paragraph.objects.filter(
-                                    rule=self)] else False
+        return True if True in [e.is_interaction for e in Paragraph.objects.filter(
+            rule=self)] else False
 
     @property
     def has_current_exceptions(self):
@@ -53,23 +52,27 @@ class Rule(models.Model):
             - bool if there is additionals and/or derogations
             - list of additionals and derogations
         """
-        AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
-        additionals = [e for e in AdditionalParagraph.objects.filter(
+        # get_model in order to avoid cyclic import
+        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')
+        additionals = [e for e in additional_paragraph.objects.filter(
             code_year=self.code_year,
             rule_gen_id=self.n_rule)]
-        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
-        sp = [e for e in SpecificParagraph.objects.filter(
+        specific_paragraph = apps.get_model('training', 'SpecificParagraph')
+        s_p = [e for e in specific_paragraph.objects.filter(
             code_year=self.code_year,
             rule_gen_id=self.n_rule)]
         give = {
             'additionals': additionals,
-            'specifics': sp}
-        return True if len(sp + additionals) > 0 else False, give
+            'specifics': s_p}
+        return True if len(s_p + additionals) > 0 else False, give
 
     def __str__(self):
         return self.label
 
     def get_absolute_url(self):
+        """
+        Return absolute url
+        """
         return reverse('rules:list')
 
     def clean_fields(self, exclude=None):
