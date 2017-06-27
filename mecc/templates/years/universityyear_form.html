@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
-<form enctype="multipart/form-data" action="" method="post"  class='div-flex'>
+<form id="year-form" enctype="multipart/form-data" action="" method="post"  class='div-flex'>
 <a {% if object %}href="{% url 'years:initialize' universityyear.code_year %}"{% endif %} class="btn btn-primary" id="init_years" style='margin-left:25%;'  {% if not object %} disabled {% endif %}>
    {% trans 'Initialiser les composantes' %} </a>
     {% crispy form %}
@@ -69,6 +69,30 @@ if (is_year_init.value === "False") {
 
 {% if object %}
 document.getElementById('id_code_year').readOnly = true;
+function upload_file(event) {
+    var data = new FormData($('#year-form').get(0));
+
+    $.ajax({
+        url: "{% url 'files:upload_file' app_name='years' model_name='UniversityYear' object_pk=universityyear.pk %}",
+        type: "POST",
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+    });
+}
+function delete_file(event) {
+    var data = new FormData($('#year-form').get(0));
+    $.ajax({
+        url: "/file/delete/" + $('#id_file_id').val(),
+        type: "POST",
+        cache: false,
+        data: data,
+        processData: false,
+        contentType: false,
+        async: false,
+    });
+}
 {% if object.is_target_year %}
 document.getElementById('id_is_target_year').value = 1;
 {% endif %}

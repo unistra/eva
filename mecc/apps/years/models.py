@@ -6,6 +6,8 @@ import re
 import datetime
 from django.apps import apps
 
+from mecc.apps.files.models import FileUpload
+
 
 class InstituteYear(models.Model):
     """
@@ -49,9 +51,6 @@ class UniversityYear(models.Model):
     date_expected = models.DateField(
         _('Date prévisionnelle CFVU MECC'), blank=True, null=True
     )
-    pdf_doc = models.FileField(
-        upload_to='doc_cadre/', blank=True, null=True
-    )
     is_year_init = models.BooleanField(
         _('Initialisation des composantes effectuée'), default=False
     )
@@ -62,14 +61,11 @@ class UniversityYear(models.Model):
     def save(self, *args, **kwargs):
         try:
             this = UniversityYear.objects.get(id=self.id)
-            if this.pdf_doc != self.pdf_doc:
-                this.pdf_doc.delete(save=False)
         except:
             pass
         super(UniversityYear, self).save(*args, **kwargs)
 
     def clean_fields(self, exclude=None):
-        max_size = 1240000
         if self.code_year in set(
                 [e.code_year for e in InstituteYear.objects.all()]):
             self.is_year_init = True
@@ -89,27 +85,21 @@ class UniversityYear(models.Model):
                         Veuillez la désactiver au préalable.'), ]})
             except UniversityYear.DoesNotExist:
                     pass
-        # check pdf exist on host, if it doesn't pass 0 to pdf_size
-        # for other tests
-        try:
-            pdf_size = self.pdf_doc.size
-        except (FileNotFoundError, ValueError):
-            pdf_size = 0
-        if self.pdf_doc:
-            ext = self.pdf_doc.name.split('.')[-1]
-            if ext not in ['pdf']:
-                raise ValidationError(
-                    {'pdf_doc': [_("Vous ne pouvez déposer que des documents \
-                        pdf."), ]})
-            elif pdf_size > max_size:
-                raise ValidationError(
-                    {'pdf_doc': [_("La taille du document ne peut être \
-                        supérieure à 1MB."), ]})
+
+
+    def getPdf(self):
+        return FileUpload.objects.filter(
+            object_id=self.id).first()
+
 
     def delete(self):
         Rule = apps.get_model('rules.Rule')
         rules = Rule.objects.filter(code_year=self.code_year)
+        pdf = self.getPdf()
         if not len(rules) > 0:
+            if pdf:
+                pdf.file.delete()
+                pdf.delete()
             super(UniversityYear, self).delete()
 
     def get_absolute_url(self):

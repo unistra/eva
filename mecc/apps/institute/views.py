@@ -19,6 +19,7 @@ from mecc.apps.institute.forms import InstituteForm,  \
 from mecc.apps.institute.models import Institute
 from mecc.apps.years.forms import DircompInstituteYearForm, \
     DircompUniversityYearForm, DisabledInstituteYearForm
+
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
@@ -66,7 +67,8 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
         instance=institute_year)
     data['disabled_institute_year'] = DisabledInstituteYearForm(
         instance=institute_year)
-    data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
+    data['cadre_gen'] = FileUpload.objects.filter(
+        object_id=current_year.id).first()
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (
             current_year.code_year, current_year.code_year + 1))
@@ -248,7 +250,8 @@ class InstituteCreate(CreateView):
         try:
             uy = UniversityYear.objects.get(is_target_year=True)
             current_year = uy.code_year
-            context['cadre_gen'] = uy.pdf_doc
+            context['cadre_gen'] = FileUpload.objects.filter(
+                object_id=uy.id).first()
             context['institute_year'] = InstituteYear.objects.filter(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
@@ -315,7 +318,8 @@ class InstituteUpdate(UpdateView):
         try:
             uy = UniversityYear.objects.get(is_target_year=True)
             current_year = uy.code_year
-            context['cadre_gen'] = uy.pdf_doc
+            context['cadre_gen'] = FileUpload.objects.filter(
+                object_id=uy.id).first()
             context['institute_year'] = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
             context['university_year'] = uy

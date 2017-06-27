@@ -82,16 +82,21 @@ class UniversityYearUpdate(UpdateView):
     slug_field = 'code_year'
     slug_url_kwarg = 'code_year'
 
+    def get_context_data(self, **kwargs):
+        context = super(
+            UniversityYearUpdate, self).get_context_data(**kwargs)
+
+
+        return context
+
+
     def get_success_url(self):
         if self.request.method == 'POST' and 'add_pdf' in self.request.POST:
             code_year = self.request.POST.get('code_year')
-            create_file(self.request.FILES, self.object, self.request.user, 'doc_cadre')
+
             return reverse('years:edit', kwargs={'code_year': code_year})
         if self.request.method == 'POST' and 'delete_pdf' in self.request.POST:
             code_year = int(self.request.POST.get('code_year'))
-            uy = UniversityYear.objects.get(code_year=code_year)
-            uy.pdf_doc.delete(save=False)
-            uy.save()
 
             return reverse('years:edit', kwargs={'code_year': code_year})
         return reverse('years:home')
@@ -107,8 +112,7 @@ class UniversityYearListView(ListView):
 
         try:
             a = UniversityYear.objects.get(is_target_year=True)
-            context['doc_pdf'] = FileUpload.objects.filter(
-                object_id=a.id, additional_type='doc_cadre_%s/%s' % (a.code_year, a.code_year + 1))
+
         except ObjectDoesNotExist:
             a = str(_('Aucune année cible sélectionnée'))
         try:
@@ -134,7 +138,7 @@ class UniversityYearListView(ListView):
 def initialize_year(request, code_year, template='years/initialize.html'):
     """
     Initialize requested year : create institute year according to
-    university year and instiute
+    university year and institute
     """
     data = {}
     try:
