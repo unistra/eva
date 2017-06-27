@@ -57,7 +57,7 @@
 
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href ="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename %} <a href ="{{ cadre_gen.file.url }}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
   </div>
 
   <div>

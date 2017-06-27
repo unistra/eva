@@ -4,6 +4,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, HTML, Field
 from django.utils.translation import ugettext as _
+from django.forms.widgets import ClearableFileInput
 from mecc.apps.utils.widgets import CustomFileInput
 
 
@@ -56,7 +57,6 @@ class DircompUniversityYearForm(forms.ModelForm):
         self.helper.label_class = 'col-lg-8'
         self.helper.field_class = 'col-lg-4'
         self.helper.layout = Layout(
-            # Field('pdf_code'),
             Field('date_validation'),
             Field('date_expected')
         )
@@ -67,7 +67,6 @@ class DircompUniversityYearForm(forms.ModelForm):
     class Meta:
         model = UniversityYear
         fields = [
-            # 'pdf_doc',
             'date_validation',
             'date_expected',
         ]
@@ -104,7 +103,7 @@ class UniversityYearFormCreate(forms.ModelForm):
             HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
                         *Champ obligatoire</span>  </div>'),
             HTML('''<hr/>
-            <div><label class="control-label col-lg-8" for="id_pdf_doc">
+            <div><label class="control-label col-lg-8" for="id_file">
             %s</label><div class="controls col-lg-4 grey">
             %s</div></div><hr/>''' % (_("Déposer document cadre"), _(
                 "Vous devez créer l'année au préalable"))),
@@ -143,14 +142,27 @@ class UniversityYearFormUpdate(forms.ModelForm):
         label=_('Initialisation des composantes effectuée'),
         initial='False', required=False
     )
-    pdf_doc = forms.FileField(
+    file = forms.FileField(
         label=_("Déposer document cadre"), required=False,
         widget=CustomFileInput()
     )
+
+    file_id = forms.CharField(
+        widget=forms.HiddenInput,
+        required=False,
+    )
+
+    additional_type = forms.CharField(
+        widget=forms.HiddenInput,
+        required=False,
+    )
+
     instance = None
+
 
     def __init__(self, *args, **kwargs):
         super(UniversityYearFormUpdate, self).__init__(*args, **kwargs)
+
         self.instance = kwargs.get('instance')
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -163,12 +175,14 @@ class UniversityYearFormUpdate(forms.ModelForm):
                 Field('is_target_year', css_class='input-xlarge'),
                 Field('date_validation', css_class='input-xlarge'),
                 Field('date_expected', css_class='input-xlarge'),
+                Field('file_id', hidden=True),
+                Field('additional_type', hidden=True),
                 HTML('<div class="form-group"> <span class=" col-md-5 required-fields blue">\
                             *Champ obligatoire</span>  </div>'),
                 HTML('<hr/>'),
-                Field('pdf_doc') if kwargs.get('instance') is not
+                Field('file') if kwargs.get('instance') is not
                 None else HTML('''
-                <div><label class="control-label col-lg-8" for="id_pdf_doc">
+                <div><label class="control-label col-lg-8" for="id_file">
                 %s</label><div class="controls col-lg-4 grey">
                 %s</div></div>''' % (_("Déposer document cadre"), _(
                     "Vous devez créer l'année au préalable"))),
@@ -178,10 +192,17 @@ class UniversityYearFormUpdate(forms.ModelForm):
                 HTML('<hr/>'),
         )
 
-        if kwargs.get('instance') is not None and self:
-            self.Meta.fields.append('pdf_doc')
-            self.Meta.widgets = {'pdf_doc': CustomFileInput()}
+        file_initial = self.instance.getPdf()
+        if file_initial:
+            self.fields['file'].initial = file_initial.file
+            self.fields['file_id'].initial = file_initial.id
 
+        for f in self.fields:
+            if isinstance(self.fields[f].widget, ClearableFileInput):
+                self.fields[f].widget.attrs['accept'] = 'application/pdf'
+
+        self.fields['additional_type'].initial = "doc_cadre"
+        
     class Meta:
         model = UniversityYear
         fields = [

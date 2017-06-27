@@ -19,7 +19,7 @@ def upload_file(request, app_name, model_name, object_pk):
     """Upload a file"""
     try:
         m = get_model(app_name, model_name)
-        
+
     except LookupError:
         message = _('Model does not exist.')
         return HttpResponseBadRequest(
