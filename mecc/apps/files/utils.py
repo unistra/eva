@@ -22,11 +22,24 @@ def upload_files(request, obj):
     form = FileUploadForm(request.POST, request.FILES)
     if request.method == 'POST' and form.is_valid():
         files = []
+        additional_type = None
+        comment = None
+
+        if "additional_type" in request.POST:
+            additional_type = request.POST['additional_type']
+        else:
+            additional_type = None
+        if "comment" in request.POST:
+            comment = request.POST['comment']
+        else:
+            comment = None
+
         for name in request.FILES:
             upload_file = request.FILES[name]
+
             res = create_file(upload_file, obj, request.user,
-                              request.POST['additional_type'],
-                              request.POST['comment'])
+                              additional_type,
+                              comment)
             delete_url = reverse('files:delete_file',
                                  kwargs={'file_id': res.id})
             files.append({'name': upload_file.name, 'url': res.file.url,
