@@ -79,6 +79,11 @@ function upload_file(event) {
         cache: false,
         processData: false,
         contentType: false,
+        async: true,
+        success: function(message){
+            $('#year-form').submit()
+        }
+
     });
 }
 function delete_file(event) {
@@ -90,7 +95,10 @@ function delete_file(event) {
         data: data,
         processData: false,
         contentType: false,
-        async: false,
+        async: true,
+        success: function(message){
+            $('#year-form').submit()
+        }
     });
 }
 {% if object.is_target_year %}
