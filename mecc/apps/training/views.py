@@ -11,11 +11,12 @@ from mecc.apps.utils.manage_pple import manage_respform
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from mecc.apps.files.models import FileUpload
-from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink
 from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
+
 from django_cas.decorators import login_required
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -157,6 +158,8 @@ class TrainingDelete(DeleteView):
         specifics = SpecificParagraph.objects.filter(training=self.object)
         context['additionals'] = additionals
         context['specifics'] = specifics
+        links = ObjectsLink.objects.filter(id_training=self.object.id)
+        context['meccs'] = StructureObject.objects.filter(id__in=[link.id_child for link in links])
         return context
 
     def get_success_url(self):
