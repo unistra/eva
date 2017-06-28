@@ -223,32 +223,7 @@ if (!is_catalogue) {
         }
     }
 
-    $(document).on('change', 'input[name="progress"]:radio', function(){
-        $.ajax({
-            url: "{% url 'rules:update_progress'%}",
-            type: "POST",
-            data: {
-                val: $(this).val(),
-                training_id : {{training.id}},
-                type : "TABLE",
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function(data){
-                if (data.status = 200) {
-                    $('.top-right').notify({
-                        message: { text: 'Etat de saisie mis à jour : ' + data.val},
-                        type:'info'
-                    }).show();
-                }else {
-                    $('.top-right').notify({
-                        message: { text: 'Error lors de la mise à jour de la saisie'},
-                        type:'warning'
-                    }).show();
-                }
-            }
 
-        })
-    });
     function get_struct_details(_id, id_parent, nature) {
         select.innerHTML = "";
         select.innerHTML = options;

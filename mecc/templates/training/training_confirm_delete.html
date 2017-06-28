@@ -1,37 +1,47 @@
 {% extends 'base.html' %} {% load i18n %} {% load field_name %} {% block page-header %} {% trans 'Formations' %} {{request.display.current_year}}
-{% endblock %} 
-{% block app_content %}
-{{ object.label }}<br>
-{{message}}
+{% endblock %} {% block app_content %} <p>
+
+<strong>
+{% trans 'Formation : ' %}{{ object.label }}
+</strong>
+<br> {{message}} 
+</p>
+{% if specifics %}
+<p>{% trans "Cela entraînera la suppression de dérogations : " %}</p>
+<ul>
+    {% for e in specifics %}
+    <li>
+        {{e.text_specific_paragraph | safe}}
+    </li>
+    {% endfor %}
+</ul>
+</p>
+{% endif %} {% if additionals %}
+
+<p>{% trans "Cela entraînera la suppression d'alinéas additionnels :" %}</p>
+<ul>
+    {% for e in additionals %}
+    <li>
+        {{e.text_additional_paragraph | safe}}
+    </li>
+    {% endfor %}
+</ul>
+</p>
+{% endif %} {% if meccs %}
+<p>{% trans "Cela entraînera la suppression d'élements du tableau des MECC :" %}</p>
+<ul>
+    {% for e in meccs %}
+    <li>
+        {{e.label}}
+    </li>
+    {% endfor %}
+</ul>
+</p>
+{% endif %}
+{% if removable%} {% csrf_token %}
 <form action="" method="post">
-    <!--{% csrf_token %}
-    <p> {% trans "Confirmer la suppression de la formation " %}{{ object.label }} ?</p>
-    {% if specifics %}
-    <p>{% trans "Cela entraînera la suppression de dérogations : " %}</p>
-    <ul>
-        {% for e in specifics %}
-        <li>
-            {{e.text_specific_paragraph | safe}}
-        </li>
-        {% endfor %}
-    </ul>
-    </p>
-    {% endif %} {% if additionals %}
-    <p>{% trans "Cela entraînera la suppression d'alinéas additionnels :" %}</p>
-    <ul>
-        {% for e in additionals %}
-        <li>
-            {{e.text_additional_paragraph | safe}}
-        </li>
-        {% endfor %}
-    </ul>
-    </p>
-    {% endif %}
-    <a href="{% url 'training:list' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
-    -->
-    {% if  removable%}
-    
-    <input type="submit" value="Confirmer" class="btn btn-primary" />
-    {% endif %}
+    <input type="submit" value="Oui" class="btn btn-primary" />
+    <a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
 </form>
-{% endblock %}
+{% else %}
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} {% endblock %}
