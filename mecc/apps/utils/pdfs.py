@@ -185,7 +185,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
     for p in paragraphs:
         if p.is_in_use:
             txt = ''
-            derog = _("Dérogation <br></br> possible") if \
+            derog = _("Dérogation <br> possible") if \
                 p.is_interaction else ''
             if p.is_interaction:
                 txt = derog
@@ -271,16 +271,16 @@ def one_rule(title, rule):
 
     story.append(Spacer(0, 12))
     degrees = str([e.short_label for e in rule.degree_type.all()])[1:-1]
-    applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> \
+    applies = _("RÈGLE APPLICABLE aux diplômes de type : <br> \
         %s" % degrees)
     if rule.is_eci and rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE à tous les diplômes de type : <br></br> \
+        applies = _("RÈGLE APPLICABLE à tous les diplômes de type : <br> \
         %s" % degrees)
     if rule.is_eci and not rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> %s <br></br> en  \
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br> %s <br> en  \
         évaluation continue intégrale" % degrees)
     if not rule.is_eci and rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br>%s<br></br> en contrôle \
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br>%s<br> en contrôle \
         terminal, combiné ou non avec un contrôle continu" % degrees)
 
     block_rules(applies, [rule], story)

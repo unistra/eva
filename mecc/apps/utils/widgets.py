@@ -8,7 +8,7 @@ class CustomFileInput(ClearableFileInput):
 
 
     template_with_initial = (
-        '<a href="%(initial_url)s" target="_blank">%(initial)s</a> </br>'
+        '<a href="%(initial_url)s" target="_blank">%(initial)s</a> <br>'
         '%(clear_template)s<br/>'
     )
 
@@ -29,7 +29,7 @@ class CustomFileInput(ClearableFileInput):
                     substitutions
         else:
             template = (
-                '%(input)s</br>'
+                '%(input)s<br>'
                 '%(add_pdf)s'
             )
             substitutions['add_pdf'] = '<input type=button id="add_pdf" class="pull-right btn btn-primary btn-xs" \
@@ -37,7 +37,7 @@ class CustomFileInput(ClearableFileInput):
         return (template % substitutions)
 
     template_with_clear = (
-        '</br><button id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
+        '<br><button id="delete_pdf" class="pull-right btn btn-danger btn-xs" \
         name="delete_pdf" onClick="delete_file(this)">%s</button>' % _('Supprimer le document')
 
     )
