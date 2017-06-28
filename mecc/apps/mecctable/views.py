@@ -24,7 +24,7 @@ from django_cas.decorators import login_required
 from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 @login_required
@@ -150,7 +150,7 @@ def get_mutual_by_cmp(request):
         ] for e in s_list]
         data['suggest'] = mutual_list
     except Exception as e:
-        logger.error('CANNOT GET mutual : \n{error}'.format(error=e))
+        LOGGER.error('CANNOT GET mutual : \n{error}'.format(error=e))
     return JsonResponse(data)
 
 
@@ -527,12 +527,12 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     data['la_liste'] = recurse([e for e in root_link])
     input_is_open = training.input_opening[0] in ['1', '3']
-    data['can_edit'] = (request.environ.get(
-        'allowed') and input_is_open
-    ) or request.user.is_superuser or 'DES1' in [
-        e.name for e in request.user.groups.all()]
-    if not input_is_open:
-        data['can_edit'] = False
+    user_profiles = request.user.meccuser.profile.all()
+    is_powerfull = True if user_profiles.filter(cmp=training.supply_cmp).filter(
+        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']) else False
+    data['can_edit'] = (
+        is_powerfull and input_is_open) or request.user.is_superuser or 'DES1' in [
+            e.name for e in request.user.groups.all()]
     return render(request, template, data)
 
 
