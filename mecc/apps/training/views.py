@@ -51,7 +51,6 @@ class TrainingListView(ListView):
 
     def get_context_data(self, **kwargs):
         self.request.session['from_duplicated'] = False
-
         id_cmp = self.kwargs.get('cmp')
         self.request.session['visited_cmp'] = id_cmp
         self.request.session['list_training'] = False
@@ -150,13 +149,16 @@ class TrainingDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
+        current_year = currentyear().code_year
         can_remove = remove_training(self.request, self.object.id)
         context['message'] = can_remove.get('message')
         context['removable'] = can_remove.get('removable')
-        AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
-        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
-        additionals = AdditionalParagraph.objects.filter(training=self.object)
-        specifics = SpecificParagraph.objects.filter(training=self.object)
+        add_parag = apps.get_model('training', 'AdditionalParagraph')
+        spe_parag = apps.get_model('training', 'SpecificParagraph')
+        additionals = add_parag.objects.filter(
+            training=self.object, code_year=current_year)
+        specifics = spe_parag.objects.filter(
+            training=self.object, code_year=current_year)
         context['additionals'] = additionals
         context['specifics'] = specifics
         links = ObjectsLink.objects.filter(id_training=self.object.id)
@@ -164,7 +166,7 @@ class TrainingDelete(DeleteView):
         return context
 
     def get_success_url(self):
-        if self.request.session['visited_cmp']:
+        if self.request.session.get('visited_cmp'):
             return reverse('training:list', kwargs={
                 'cmp': self.request.session['visited_cmp']})
         return reverse('training:list')
@@ -241,12 +243,14 @@ spécificités déjà saisies pour la nouvelle année."
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
-    data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
+    data['rules_list'] = rules_list = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
+    for aa in rules_list:
+        print(aa.__dict__)
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
-    ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
+     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
         training=training, code_year=currentyear().code_year)]
     data['notification_to'] = settings.MAIL_FROM
     if hasattr(settings, 'EMAIL_TEST'):
@@ -552,17 +556,6 @@ def duplicate_add(request):
     return JsonResponse(
         {'status': 'added', 'n_trains': n_trains, 'labels': labels})
 
-
-def duplicate_remove(request):
-    """
-    Remove training in duplicate view, check that it's empty and handle resp_formations pple.
-    """
-    _id = request.POST.get('id')
-    training = Training.objects.get(pk=_id)
-    
-    pass
-    # return render("training:delete", id_training=training.id)
-    # return JsonResponse({"status": "removed", "label": label, "remove": remove})
 
 
 @is_post_request
