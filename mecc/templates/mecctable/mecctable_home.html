@@ -106,7 +106,6 @@
          {% if training.progress_table == "E" %}checked="checked" {% endif %}>
      </label>
             <label class="margin-left1">
-                {{can_edit}}
         {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
         {%if not can_edit %} disabled{%endif%} 
         {% if training.progress_table == "A" %}checked="checked" {% endif %}>
