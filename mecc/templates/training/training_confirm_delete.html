@@ -6,6 +6,7 @@
 </strong>
 <br> {{message}} 
 </p>
+{% if removable%} 
 {% if specifics %}
 <p>{% trans "Cela entraînera la suppression de dérogations : " %}</p>
 <ul>
@@ -38,23 +39,22 @@
 </ul>
 </p>
 {% endif %}
-{% if removable%} {% csrf_token %}
 <form action="" method="post">
+{% csrf_token %}
     <input type="submit" value="Oui" class="btn btn-primary" />
-{% if session.from_duplicate  %}
-<a href="{% url 'training:dupplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
-    {% else %}
+{% if request.session.from_duplicated %}
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+    {% else %} 
 <a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
 {% endif %}
     </form>
 {% else %}
 
-{% if session.from_duplicate  %}
-<a href="{% url 'training:dupplicate' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
+{% if request.session.from_duplicated %}
+
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
     {% else %}
 <a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} 
 {% endif %}
-    
-
 
 {% endblock %}
