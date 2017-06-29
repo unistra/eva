@@ -134,11 +134,12 @@ function fill_form(clicked) {
     let first_name = $(last_name).next('td');
     let patronymic = $(first_name).next('td');
     let status = $(patronymic).next('td');
-    let institute = $(first_name).next('td').next('td');
+    let institute = $(status).next('td');
     let mail = $(institute).next('td');
     let id = $(mail).next('td');
     let id_respens = document.getElementById('id_RESPENS_id');
     id_respens.value = id.text().replace(/\s+/g, '');
+
     let respens = document.getElementById('name_respens');
     respens.value = last_name.text().toUpperCase() + " " + first_name.text();
     $('#searchMember').modal('hide');
@@ -395,6 +396,7 @@ if (!is_catalogue) {
             }
             return;
         }
+        console.log(data_form)
         $.ajax({
             url: "{% url 'mecctable:mecctable_update' %}",
             type: "POST",
