@@ -1,12 +1,14 @@
 from django.conf.urls import url
-from .views import TrainingListView, TrainingCreate, TrainingDelete, \
+from mecc.apps.training.views import TrainingListView, TrainingCreate, TrainingDelete, \
     TrainingEdit, process_respform, list_training, respform_list, \
     duplicate_home, duplicate_add, edit_rules, \
     specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
     edit_additional_paragraph, ask_delete_specific, delete_specific, \
     recover_everything, gen_pdf_all_rules, send_mail
-from django_cas.decorators import login_required
 from mecc.decorators import is_correct_respform
+
+from django_cas.decorators import login_required
+
 
 urlpatterns = [
     url(r'^list(?:/(?P<cmp>\w+))?/$',
