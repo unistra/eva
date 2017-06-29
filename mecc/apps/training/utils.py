@@ -8,15 +8,32 @@ from django.contrib.auth.models import Group
 
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink
+from mecc.apps.utils.queries import currentyear
 
+
+def training_has_consumed(training, current_year):
+    """
+    Return true if training has on of its object consumed by another training
+    """
+    all_links = ObjectsLink.objects.filter(code_year=current_year)
+    all_id_imported = {link.id_child for link in all_links.filter(
+        is_imported=True).exclude(id_training=training.id)}
+    id_in_training = {link.id_child for link in all_links.filter(
+        id_training=training.id).exclude(is_imported=True)}
+
+    one_is_present = any(id_training in all_id_imported for id_training in id_in_training)
+
+    message = _("Cela entraine la suppression du tableau MECC (les éléments \
+    importés continuent d'exister dans leur formation d'orgine")
+
+    return True if one_is_present else False
 
 
 def remove_training(request, training_id):
     """
     Return dict telling if can be removed and ifnot why
     """
-
     current_year = currentyear().code_year
 
     def user_has_profile(user, profile, code_cmp):
@@ -45,6 +62,13 @@ def remove_training(request, training_id):
     mecc_validated = _("MECC validées en")
     removable = False
     message = _("Vous ne pouvez pas supprimer cette formation")
+    # check training strucutre object are not used anywhere else
+    if training_has_consumed(training, current_year):
+        message = _("Le tableau MECC de cette formation contient des objets consomés par \
+        d'autres formations. Veuillez contacter les responsables concernés via les outils \
+        de gestion intégrés.")
+        return {"removable": removable, "message": message}
+
     # check user can edit/remove it
     if user_has_profile(request.user, [
             'DIRETU', 'GESCOL', 'DIRCOMP', 'RAC', 'REFSCOL'
