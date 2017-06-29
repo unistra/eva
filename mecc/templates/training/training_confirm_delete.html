@@ -41,7 +41,20 @@
 {% if removable%} {% csrf_token %}
 <form action="" method="post">
     <input type="submit" value="Oui" class="btn btn-primary" />
-    <a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
-</form>
+{% if session.from_duplicate  %}
+<a href="{% url 'training:dupplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+    {% else %}
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+{% endif %}
+    </form>
 {% else %}
-<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} {% endblock %}
+
+{% if session.from_duplicate  %}
+<a href="{% url 'training:dupplicate' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
+    {% else %}
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} 
+{% endif %}
+    
+
+
+{% endblock %}

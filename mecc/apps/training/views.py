@@ -50,6 +50,7 @@ class TrainingListView(ListView):
     model = Training
 
     def get_context_data(self, **kwargs):
+        self.request.session['from_duplicated'] = False
 
         id_cmp = self.kwargs.get('cmp')
         self.request.session['visited_cmp'] = id_cmp
@@ -207,6 +208,7 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     cmp = request.session['visited_cmp']
     data = {}
     current_year = currentyear()
+    request.session['from_duplicated'] = True
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
 
@@ -557,30 +559,10 @@ def duplicate_remove(request):
     """
     _id = request.POST.get('id')
     training = Training.objects.get(pk=_id)
-    label = training.label
-    current_year = currentyear().code_year
-    remove_training(request, training.id)
-
-    structs = StructureObject.objects.filter(
-        code_year=current_year, owner_training_id=_id)
-    deleted = True
-    # if not structs and not training.has_custom_paragraph:
-    #     for resp in training.resp_formations.all():
-    #         for profile in resp.profile.all():
-    #             if profile.code in 'RESPFORM' and \
-    #                 current_year == profile.year and profile.cmp in \
-    #                     [e.code for e in training.institutes.all()]:
-    #                 resp.profile.remove(profile)
-    #                 training.resp_formations.remove(resp)
-    #                 if len(resp.profile.all()) < 1:
-    #                     user = User.objects.get(meccuser=resp)
-    #                     user.delete()
-    #                     resp.delete()
-    #     training.delete()
-    # else:
-    #     deleted = False
-    print(deleted)
-    return JsonResponse({"status": "removed", "label": label, "deleted": deleted})
+    
+    pass
+    # return render("training:delete", id_training=training.id)
+    # return JsonResponse({"status": "removed", "label": label, "remove": remove})
 
 
 @is_post_request

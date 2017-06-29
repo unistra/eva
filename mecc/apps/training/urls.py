@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import TrainingListView, TrainingCreate, TrainingDelete, \
     TrainingEdit, process_respform, list_training, respform_list, \
-    duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
+    duplicate_home, duplicate_add, edit_rules, \
     specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
     edit_additional_paragraph, ask_delete_specific, delete_specific, \
     recover_everything, gen_pdf_all_rules, send_mail
@@ -34,8 +34,6 @@ urlpatterns = [
         name='duplicate_add'),
     url(r'^update_progress_rule_statut/$', update_progress_rule_statut,
         name='update_progress_rule_statut'),
-    url(r'^duplicate_remove/$', duplicate_remove,
-        name='duplicate_remove'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/$',
         specific_paragraph, name='specific_paragraph'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/additional/(?P<n_rule>\d+)/(?P<old>\w+)/$',
