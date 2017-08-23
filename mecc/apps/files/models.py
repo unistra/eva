@@ -4,7 +4,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 # from django.urls import reverse
 # from django.utils.html import format_html
@@ -16,7 +16,7 @@ class FileUpload(models.Model):
     creator = models.ForeignKey(User, related_name='file_uploads')
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    content_object = GenericForeignKey()
     additional_type = models.CharField(max_length=255, null=True, blank=True)
     comment = models.TextField(null=True, blank=True, default='')
     uploaded_at = models.DateTimeField(auto_now_add=True, editable=False)
