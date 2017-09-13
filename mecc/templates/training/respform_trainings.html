@@ -41,7 +41,6 @@
             <th class="td-centered border-right-left no-padding ">{% trans "Visa DES" %}</th>
             <th class="td-centered border-right-left no-padding ">{% trans "Validation en CFVU" %}</th>
             <th width="10%" class=" no-padding td-centered no-border-top"></th>
-            <th width="5%" class=" no-padding td-centered no-border-top"></th>
          </tr>
        </thead>
    <tbody class="overflow" >
@@ -64,9 +63,6 @@
     <td class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
     <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening.1}}</td>
-    <td width="5%" class="no-padding td-centered no-border">
-        <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
-    </td>
 </tr>
 
 {%endfor%}

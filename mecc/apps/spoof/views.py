@@ -23,7 +23,7 @@ def spoof_user(request, template='spoof/form.html'):
         été trouvé." % asked_user)
         return render(request, template, data)
     if new_user.is_superuser or new_user.has_perm('cannot_be_spoofed'):
-        data['error'] = _("Vous ne pouvez pas usurper \
+        data['error'] = _("Vous ne pouvez pas endosser \
         l'identité de %s." % asked_user)
         return render(request, template, data)
 

@@ -138,6 +138,7 @@ class TrainingEdit(UpdateView):
             e.name for e in self.request.user.groups.all()]
         if not input_is_open:
             context['can_edit'] = False
+        
 
         return context
 
@@ -162,7 +163,8 @@ class TrainingDelete(DeleteView):
         context['additionals'] = additionals
         context['specifics'] = specifics
         links = ObjectsLink.objects.filter(id_training=self.object.id)
-        context['meccs'] = StructureObject.objects.filter(id__in=[link.id_child for link in links])
+        context['meccs'] = StructureObject.objects.filter(
+            id__in=[link.id_child for link in links])
         return context
 
     def get_success_url(self):
@@ -234,6 +236,9 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
 
 @is_correct_respform
 def edit_rules(request, id, template="training/edit_rules.html"):
+    """
+    Correct respform can edit rule
+    """
     data = {}
     recovered = request.session.pop('recovered', False)
     if recovered:
@@ -245,12 +250,12 @@ spécificités déjà saisies pour la nouvelle année."
         code_year=currentyear().code_year, is_in_use=True)
     data['rules_list'] = rules_list = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
-    for aa in rules_list:
-        print(aa.__dict__)
+    # for aa in rules_list:
+    #     print(aa.__dict__)
     data['custom'] = [a for a in [
         e.rule_gen_id for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
-     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
+    ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
         training=training, code_year=currentyear().code_year)]
     data['notification_to'] = settings.MAIL_FROM
     if hasattr(settings, 'EMAIL_TEST'):
@@ -557,7 +562,6 @@ def duplicate_add(request):
         {'status': 'added', 'n_trains': n_trains, 'labels': labels})
 
 
-
 @is_post_request
 @login_required
 def send_mail(request):
@@ -580,3 +584,4 @@ def send_mail(request):
     mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect(request.META.get('HTTP_REFERER'))
+
