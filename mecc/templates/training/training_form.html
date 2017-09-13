@@ -63,32 +63,32 @@
              <div class="form-group">
                 <label>
                 {% trans "Etat d'avancement Saisie des règles" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control" disabled="true" value="{{object.get_progress_rule_display}}"> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Etat d'avancement Saisie Tableau MECC" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control"  disabled="true" value="{{object.get_progress_table_display}}"> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Date de validation en Conseil de Composante" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control"  disabled="true" value="{{object.date_val_cmp}}"> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Date Réserve DES" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control"  disabled="true" value="{{object.date_res_des}}"> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Date Visa DES" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control"  disabled="true" value="{{object.date_visa_des}}"> </div>
              </div>
              <div class="form-group fill-space">
                 <label>
                 {% trans "Date de validation en CFVU" %}</label>
-                <div> <input class="form-control" disabled="true"> </div>
+                <div> <input class="form-control" disabled="true" value="{{object.date_val_cfvu}}"> </div>
              </div>
              <div class="buttons_list bold italic {% if object.input_opening.1 == 'ouverte'%} green{%else%} red{%endif%} ">
                  <span id="input_progress">{% if object %}Saisie {{object.input_opening.1}}{% endif %}</span>
@@ -96,14 +96,15 @@
       </div>
   </div>
 </div>
-
 <div class="buttons_list has-top-border" style="margin-top:1em;">
 <a href=
 {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
 {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
 {% else %}"{%url 'training:list_all' %}"
 {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
+
 <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
+
 <button name="controle" class="btn-primary btn btn-sm" id="controle" type="Submit" >{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</button>
 <button name="preview" class="btn-primary btn btn-sm" id="previewMECC" type="Submit" >{% trans "Pré-visualiser les MECC" %}</button>
 </div>
@@ -142,8 +143,16 @@ $(document).ready(function () {
 var x = document.getElementsByClassName("alert");
 });
 {%else%}
-$(":input:not(#new_training)").prop("disabled", true);
+{% if request.session.visited_cmp in 'RESPFORM'%}
+$(":input#new_training").prop("disabled", true);
+
+{%else%}
+$(":input").prop("disabled", true);
+
 {%endif%}
+{%endif%}
+
+
 
 </script>
 {%endblock%}
