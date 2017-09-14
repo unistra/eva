@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 {% load staticfiles %}
 {% load dipstrapfiles %}
+{% load mecc_tags %}
 {% load i18n %}
 
 
 <html>
 <head>
-    <title>{% block title %}{% trans "Modalité d'évaluation des connaissances et compétences" %}{% endblock %}</title>
+    <title>{% block title %}{% trans 'ÉVA' %}{% settings_get "STAGE" as stage %}{% if stage %} - {{ stage|upper }}{% endif %}{% endblock %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -41,7 +42,7 @@
             <span class="last"></span>
         </div>
         <div class="container">
-                <a class="navbar-brand" href="/">{% trans 'ÉVA' %}</a>
+                <a class="navbar-brand" href="/">{% trans 'ÉVA' %}{% settings_get "STAGE" as stage %}{% if not stage == "prod" %} - <span class="{{ stage }}">[{{ stage|upper }}]</span>{% endif %}</a>
                 <span class="nav-bar-txt" style="font-size:1em;">{{request.display.user.last_name}} {{request.display.user.first_name}}</span>
                 <span class='nav-bar-txt pull-right'>{% trans "Année universitaire " %}{{request.display.current_year}}</span>
 

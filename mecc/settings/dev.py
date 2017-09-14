@@ -101,3 +101,9 @@ EMAIL_HOST = 'localhost'
 SERVER_EMAIL = 'root@localhost'
 EMAIL_SUBJECT_PREFIX = '[MECC]'
 EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr']  # For test purpose comment if not needed
+
+#########
+# STAGE #
+#########
+
+STAGE = 'dev'

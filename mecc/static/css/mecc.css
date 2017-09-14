@@ -955,3 +955,21 @@ form {
    float:left;
    margin-right: 5px;
 }
+
+
+/* stage relative class */
+.dev {
+    color: red;*/
+}
+
+.test {
+    color: pink;
+}
+
+.preprod {
+    color: yellow;
+}
+
+.prod {
+
+}
