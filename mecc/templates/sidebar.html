@@ -152,7 +152,7 @@
         {% if request.user.meccuser|is_profile:'RESPFORM' or request.user.is_superuser%}
         <li>
             <a href="{% url 'training:list_resp' %}"
-            {%if request.session.visited_cmp == "RESPFORM"%}
+            {%if request.session.visited_cmp == "RESPFORM" and 'list_resp' in request.path%}
                class="item-selected"
             {% endif %}>{% trans 'MES FORMATIONS' %}</a>
         </li>
