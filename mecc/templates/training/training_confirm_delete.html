@@ -4,7 +4,7 @@
 <strong>
 {% trans 'Formation : ' %}{{ object.label }}
 </strong>
-<br> {{message}} 
+<br> {{message |safe}} 
 </p>
 {% if removable%} 
 {% if specifics %}

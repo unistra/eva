@@ -9,20 +9,23 @@ from django.contrib.auth.models import Group
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
-from mecc.apps.utils.queries import currentyear
+
+
+ALLS = ObjectsLink.objects.all()
 
 
 def training_has_consumed(training, current_year):
     """
     Return true if training has on of its object consumed by another training
     """
-    all_links = ObjectsLink.objects.filter(code_year=current_year)
+    all_links = ALLS.filter(code_year=current_year)
     all_id_imported = {link.id_child for link in all_links.filter(
         is_imported=True).exclude(id_training=training.id)}
     id_in_training = {link.id_child for link in all_links.filter(
         id_training=training.id).exclude(is_imported=True)}
 
-    one_is_present = any(id_training in all_id_imported for id_training in id_in_training)
+    one_is_present = any(
+        id_training in all_id_imported for id_training in id_in_training)
 
     message = _("Cela entraine la suppression du tableau MECC (les éléments \
     importés continuent d'exister dans leur formation d'orgine")
@@ -32,20 +35,9 @@ def training_has_consumed(training, current_year):
 
 def remove_training(request, training_id):
     """
-    Return dict telling if can be removed and ifnot why
+    Return dict telling if can be removed and if not why
     """
     current_year = currentyear().code_year
-
-    def user_has_profile(user, profile, code_cmp):
-        """
-        Return true if user has this profile on cmp
-        """
-        profile_list = profile if isinstance(profile, list) else [profile]
-        profiles = user.meccuser.profile.filter(
-            cmp=code_cmp, code__in=profile_list)
-
-        return True if profiles else False
-
     training = Training.objects.get(id=training_id)
     training_code = training.supply_cmp
     try:
@@ -59,54 +51,69 @@ def remove_training(request, training_id):
     structs = StructureObject.objects.filter(
         code_year=current_year, owner_training_id=training_id)
 
+    diret_gescol = ['DIRETU', 'GESCOL']
+    others = ['DIRCOMP', 'RAC', 'REFSCOL']
     mecc_validated = _("MECC validées en")
-    removable = False
-    message = _("Vous ne pouvez pas supprimer cette formation")
-    # check training strucutre object are not used anywhere else
-    if training_has_consumed(training, current_year):
-        message = _("Le tableau MECC de cette formation contient des objets consomés par \
-        d'autres formations. Veuillez contacter les responsables concernés via les outils \
-        de gestion intégrés.")
-        return {"removable": removable, "message": message}
+    message = ""
+    removable = True
 
-    # check user can edit/remove it
-    if user_has_profile(request.user, [
-            'DIRETU', 'GESCOL', 'DIRCOMP', 'RAC', 'REFSCOL'
-    ], training_code) or request.user.is_superuser:
-        if training.date_val_cfvu:
-            if user_has_profile(request.user, [
-                    'DIRETU', 'GESCOL', 'DIRCOMP', 'RAC', 'REFSCOL'], training_code):
-                message = _("%s CFVU le %s. La suppression n'est pas autorisée. \
+    def has_consumed(removable, message):
+        """" check training strucutre object are not used anywhere else """
+        if training_has_consumed(training, current_year):
+            removable = False
+            message += _("Le tableau MECC contient des objets consommés par \
+            d'autres formations. </br>Veuillez contacter les responsables des \
+            formations concernés via les outils intégrés. </br> \
+            <strong>Vous ne pouvez pas supprimer votre formation en l'état.</strong>")
+        
+        return removable, message
+
+    def user_has_profile(user, profile, code_cmp):
+        """
+        Return true if user has this profile on cmp
+        """
+        profile_list = profile if isinstance(profile, list) else [profile]
+        profiles = user.meccuser.profile.filter(
+            cmp=code_cmp, code__in=profile_list)
+
+        return True if profiles else False
+
+    if user_has_profile(request.user, diret_gescol, training_code):
+        if date_cfvu:
+            removable = False
+            message += ("%s CFVU le %s. La suppression n'est pas autorisée.<br> \
                 Veuillez contacter la DES si besoin" % (
-                    mecc_validated, date_cfvu))
-            if Group.objects.get(name='DES1') in request.user.groups.all(
-            ) or request.user.is_superuser:
-                removable = True
-                message = _("%s CFVU le %s. \
-                %s composante le %s.\
-                Êtes vous sûr de vouloir supprimer ?" % (
-                    mecc_validated, date_cfvu, mecc_validated, date_cmp))
-            return {"removable": removable, "message": message}
-        elif training.date_val_cmp:
-            if user_has_profile(request.user, ['DIRETU', 'GESCOL'], training_code):
-                message = _("%s composante le %s. \
-                Vous n'êtes pas autorisé(e) à supprimer cette formation.\
+                mecc_validated, date_cfvu))
+        if date_cmp:
+            removable = False
+            message += _("%s composante le %s. \
+                Vous n'êtes pas autorisé(e) à supprimer cette formation.<br>\
                 Veuillez contacter votre RAC ou référent outil si besoin." % (
                     mecc_validated, date_cmp))
-            if Group.objects.get(name="DES1") in request.user.groups.all(
-            ) or request.user.is_superuser\
-                    or user_has_profile(request.user, ['DIRCOMP', 'RAC', 'REFSCOL'], training_code):
-                removable = True
-                message = _("%s composante le %s. Êtes vous sûr de vouloir supprimer ?" % (
-                    mecc_validated, date_cmp))
-            return {"removable": removable, "message": message}
-        elif structs or training.has_custom_paragraph:
-            removable = True
-            message = _(
-                "Il existe déjà des spécificités de règles \
-                et/ou un tableau MECC pour cette formation.\
-                Êtes vous sûr de vouloir supprimer ?")
-        else:
-            message = _("Êtes vous sûr de vouloir supprimer ?")
-            removable = True
+        removable, message = has_consumed(removable, message)
+        return {"removable": removable, "message": message}
+
+    if user_has_profile(request.user, others, training_code):
+        if date_cfvu:
+            removable = False
+            message += ("%s CFVU le %s. La suppression n'est pas autorisée. <br>\
+                Veuillez contacter la DES si besoin" % (
+                mecc_validated, date_cfvu))
+        if date_cmp:
+            message += _("%s composante le %s." % (mecc_validated, date_cmp))
+            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+        removable, message = has_consumed(removable, message)
+        return {"removable": removable, "message": message}
+        
+    if Group.objects.get(name='DES1') in request.user.groups.all(
+            ) or request.user.is_superuser:
+        removable, message = has_consumed(removable, message)
+        if date_cfvu and removable:
+            message += _("%s CFVU le %s.</br>" % (mecc_validated, date_cfvu))
+        if date_cmp and removable:
+            message += _("%s composante le %s.</br>" % (mecc_validated, date_cmp))
+        if removable:
+            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+        return {"removable": removable, "message": message}
+
     return {"removable": removable, "message": message}

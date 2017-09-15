@@ -42,7 +42,7 @@ def import_objectslink(request):
             ObjectsLink.objects.get(
                 id_child=e, code_year=current_year, is_imported=None) for e in selected_id
         ]   # based on id_child and **not** imported objectlink in
-            # order to retrieve the original one :)
+        # order to retrieve the original one :)
         not_imported = False
         for e in object_link_list:
             childs = ObjectsLink.objects.filter(
@@ -602,6 +602,33 @@ def update_mecc_position(request):
             obj.save()
 
     return JsonResponse({'status': 200})
+
+
+@is_post_request
+def copy_old_mecctable(request):
+    """
+    Copy year -1 mecctable if exists and :
+    •   duplique tous les objets propres de la formation de l’année précédente vers la nouvelle
+        année (copie des enregistrements de la table Objets, avec ID Année = n-1 et ID de la formation
+        propriétaire = ID de la formation courante)
+    •   duplique tous les liens entre objets de l’année précédente vers la nouvelle année, y compris
+        avec des objets importés (copie des enregistrements de la table Architecture_objets, avec ID
+        Année = n-1 et ID interne de la formation (contexte) = ID de la formation courante)
+            o   les coefficients et les notes seuil des fils au sein des pères sont récupérés par ce
+                traitement.
+            o   si des objets importés n’existent pas encore dans la nouvelle année, ils apparaissent
+                d’abord avec un libellé contenant l’ID suivi d’un ? et sans descendance. Leur affichage
+                redevient normal dès lors que ces objets sont dupliqués par leur propriétaire. Sinon, on
+                peut décider de le décrocher de la formation.
+    •   Les changements dans les attributs Régime et Session de la formation (Onglet Général)
+        doivent être appliqués aux objets propres de la structure lors de la duplication ; un message
+        d’information sera d’abord affiché. 
+    """
+    current_so = StructureObject.objects.get(id=request.POST.get('current_so'))
+    old_so = StructureObject.objects.get(
+        id=current_so.auto_id, year=current_so.year - 1)
+
+# Using generic classview
 
 
 class StructureObjectListView(ListView):

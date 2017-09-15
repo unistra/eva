@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^update_grade_coeff/$',
         update_grade_coeff,
         name='update_grade_coeff'),
+        
     # urls for StructureObject
     url(r'^structureobject/$',
         StructureObjectListView.as_view(),

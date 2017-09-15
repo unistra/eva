@@ -73,22 +73,34 @@
              <div class="form-group">
                 <label>
                 {% trans "Date de validation en Conseil de Composante" %}</label>
-                <div> <input class="form-control"  disabled="true" value="{{object.date_val_cmp}}"> </div>
+                <div> <input class="form-control"  disabled="true" {% if object.date_val_cmp  %}
+                 value="{{object.date_val_cmp}}"
+                {% else %}
+                {% endif %}> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Date Réserve DES" %}</label>
-                <div> <input class="form-control"  disabled="true" value="{{object.date_res_des}}"> </div>
+                <div> <input class="form-control"  disabled="true" {% if object.date_res_des  %}
+                 value="{{object.date_res_des}}"
+                {% else %}
+                {% endif %}> </div>
              </div>
              <div class="form-group">
                 <label>
                 {% trans "Date Visa DES" %}</label>
-                <div> <input class="form-control"  disabled="true" value="{{object.date_visa_des}}"> </div>
+                <div> <input class="form-control"  disabled="true" {% if object.date_visa_des  %}
+                 value="{{object.date_visa_des}}"
+                {% else %}
+                {% endif %}></div>
              </div>
              <div class="form-group fill-space">
                 <label>
                 {% trans "Date de validation en CFVU" %}</label>
-                <div> <input class="form-control" disabled="true" value="{{object.date_val_cfvu}}"> </div>
+                <div> <input class="form-control" disabled="true"  {% if object.date_val_cfvu  %}
+                 value="{{object.date_val_cfvu}}"
+                {% else %}
+                {% endif %}> </div>
              </div>
              <div class="buttons_list bold italic {% if object.input_opening.1 == 'ouverte'%} green{%else%} red{%endif%} ">
                  <span id="input_progress">{% if object %}Saisie {{object.input_opening.1}}{% endif %}</span>

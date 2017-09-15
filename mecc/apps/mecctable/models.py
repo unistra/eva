@@ -173,6 +173,9 @@ class ObjectsLink(models.Model):
 
 
 class Exam(models.Model):
+    """
+    Model for 'epreuve'
+    """
     REGIME_CHOICE = [
         ('E', _('ECI')),
         ('C', _('CC/CT')),
