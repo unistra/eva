@@ -64,7 +64,7 @@ def remove_training(request, training_id):
             message += _("Le tableau MECC contient des objets consommés par \
             d'autres formations. </br>Veuillez contacter les responsables des \
             formations concernés via les outils intégrés. </br> \
-            <strong>Vous ne pouvez pas supprimer votre formation en l'état.</strong>")
+            <strong>Vous ne pouvez pas supprimer votre formation en l'état.</strong></br>")
         
         return removable, message
 
@@ -82,14 +82,18 @@ def remove_training(request, training_id):
         if date_cfvu:
             removable = False
             message += ("%s CFVU le %s. La suppression n'est pas autorisée.<br> \
-                Veuillez contacter la DES si besoin" % (
+                Veuillez contacter la DES si besoin.</br>" % (
                 mecc_validated, date_cfvu))
+            return {"removable": removable, "message": message}
+                
         if date_cmp:
             removable = False
-            message += _("%s composante le %s. \
+            message += _("%s composante le %s.</br> \
                 Vous n'êtes pas autorisé(e) à supprimer cette formation.<br>\
-                Veuillez contacter votre RAC ou référent outil si besoin." % (
+                Veuillez contacter votre RAC ou référent outil si besoin.</br>" % (
                     mecc_validated, date_cmp))
+            return {"removable": removable, "message": message}
+            
         removable, message = has_consumed(removable, message)
         return {"removable": removable, "message": message}
 
@@ -97,7 +101,7 @@ def remove_training(request, training_id):
         if date_cfvu:
             removable = False
             message += ("%s CFVU le %s. La suppression n'est pas autorisée. <br>\
-                Veuillez contacter la DES si besoin" % (
+                Veuillez contacter la DES si besoin</br>"" % (
                 mecc_validated, date_cfvu))
         if date_cmp:
             message += _("%s composante le %s." % (mecc_validated, date_cmp))
