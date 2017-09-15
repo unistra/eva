@@ -152,8 +152,7 @@ class TrainingDelete(DeleteView):
         current_year = currentyear().code_year
         can_remove = remove_training(self.request, self.object.id)
         context['message'] = can_remove.get('message')
-        context['removable'] = aaa = can_remove.get('removable')
-        print(aaa)
+        context['removable'] = can_remove.get('removable')
         add_parag = apps.get_model('training', 'AdditionalParagraph')
         spe_parag = apps.get_model('training', 'SpecificParagraph')
         additionals = add_parag.objects.filter(
