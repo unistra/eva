@@ -247,7 +247,7 @@ spécificités déjà saisies pour la nouvelle année."
     data['training'] = training = Training.objects.get(id=id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
-    data['rules_list'] = rules_list = rules.filter(is_eci=True) if training.MECC_type \
+    data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
     # for aa in rules_list:
     #     print(aa.__dict__)

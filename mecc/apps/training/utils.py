@@ -100,13 +100,15 @@ def remove_training(request, training_id):
         if date_cfvu:
             removable = False
             message += ("%s CFVU le %s. La suppression n'est pas autorisée. <br>\
-                Veuillez contacter la DES si besoin</br>" % (
+                Veuillez contacter la DES si besoin.</br>" % (
                 mecc_validated, date_cfvu))
-        if date_cmp:
-            message += _("%s composante le %s." % (mecc_validated, date_cmp))
-            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+            return {"removable": removable, "message": message}
+
         if removable:
             removable, message = has_consumed(removable, message)
+        if date_cmp and removable:
+            message += _("%s composante le %s." % (mecc_validated, date_cmp))
+            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
         return {"removable": removable, "message": message}
         
     if Group.objects.get(name='DES1') in request.user.groups.all(
