@@ -105,19 +105,19 @@ def remove_training(request, training_id):
                 mecc_validated, date_cfvu))
             return {"removable": removable, "message": message}
 
-        if date_cmp and not confirmed:
+        if date_cmp:
             removable = False
-            confirmed = "TODO"
-            message += _("%s composante le %s.</br>" %
-                         (mecc_validated, date_cmp))
-            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
-            return {"removable": removable, "message": message,
+            if not confirmed:
+                confirmed = "TODO"
+                message += _("%s composante le %s.</br>" %
+                             (mecc_validated, date_cmp))
+                message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+                return {"removable": removable, "message": message,
                     'confirmed': confirmed}
 
-        if removable and confirmed:
-            removable, message = has_consumed(removable, message)
+        removable, message = has_consumed(removable, message)
         return {"removable": removable, "message": message}
-
+        
     if Group.objects.get(name='DES1') in request.user.groups.all(
     ) or request.user.is_superuser:
         if date_cmp and not confirmed:
@@ -133,7 +133,7 @@ def remove_training(request, training_id):
             return {"removable": removable, "message": message,
                     'confirmed': confirmed}
 
-        if removable and confirmed:
+        if removable:
             removable, message = has_consumed(removable, message)
 
         return {"removable": removable, "message": message, "confirmed": confirmed}
