@@ -153,6 +153,8 @@ class TrainingDelete(DeleteView):
         can_remove = remove_training(self.request, self.object.id)
         context['message'] = can_remove.get('message')
         context['removable'] = can_remove.get('removable')
+        context['confirmed'] = can_remove.get('confirmed')
+
         add_parag = apps.get_model('training', 'AdditionalParagraph')
         spe_parag = apps.get_model('training', 'SpecificParagraph')
         additionals = add_parag.objects.filter(

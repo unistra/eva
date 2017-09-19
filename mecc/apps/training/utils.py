@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
-
+from mecc.apps.adm.models import Profile
 
 ALLS = ObjectsLink.objects.all()
 
@@ -40,6 +40,8 @@ def remove_training(request, training_id):
     current_year = currentyear().code_year
     training = Training.objects.get(id=training_id)
     training_code = training.supply_cmp
+    confirmed = request.GET.get('confirm')
+
     try:
         date_cmp = datetime.strftime(training.date_val_cmp, '%d/%m/%Y')
     except TypeError:
@@ -52,7 +54,7 @@ def remove_training(request, training_id):
         code_year=current_year, owner_training_id=training_id)
 
     diret_gescol = ['DIRETU', 'GESCOL']
-    others = ['DIRCOMP', 'RAC', 'REFSCOL']
+    others = ['DIRCOMP', 'RAC', 'REFAPP']
     mecc_validated = _("MECC validées en")
     message = ""
     removable = True
@@ -65,7 +67,7 @@ def remove_training(request, training_id):
             d'autres formations. </br>Veuillez contacter les responsables des \
             formations concernés via les outils intégrés. </br> \
             <strong>Vous ne pouvez pas supprimer votre formation en l'état.</strong></br>")
-        
+
         return removable, message
 
     def user_has_profile(user, profile, code_cmp):
@@ -75,7 +77,6 @@ def remove_training(request, training_id):
         profile_list = profile if isinstance(profile, list) else [profile]
         profiles = user.meccuser.profile.filter(
             cmp=code_cmp, code__in=profile_list)
-
         return True if profiles else False
 
     if user_has_profile(request.user, diret_gescol, training_code):
@@ -85,14 +86,14 @@ def remove_training(request, training_id):
                 Veuillez contacter la DES si besoin.</br>" % (
                 mecc_validated, date_cfvu))
             return {"removable": removable, "message": message}
-                
+
         if date_cmp:
             removable = False
             message += _("%s composante le %s.</br> \
                 Vous n'êtes pas autorisé(e) à supprimer cette formation.<br>\
                 Veuillez contacter votre RAC ou référent outil si besoin.</br>" % (
-                    mecc_validated, date_cmp))
-        if removable:          
+                mecc_validated, date_cmp))
+        if removable:
             removable, message = has_consumed(removable, message)
         return {"removable": removable, "message": message}
 
@@ -104,22 +105,35 @@ def remove_training(request, training_id):
                 mecc_validated, date_cfvu))
             return {"removable": removable, "message": message}
 
-        if removable:
+        if date_cmp and not confirmed:
+            removable = False
+            confirmed = "TODO"
+            message += _("%s composante le %s.</br>" %
+                         (mecc_validated, date_cmp))
+            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+            return {"removable": removable, "message": message,
+                    'confirmed': confirmed}
+
+        if removable and confirmed:
             removable, message = has_consumed(removable, message)
-        if date_cmp and removable:
-            message += _("%s composante le %s." % (mecc_validated, date_cmp))
-            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
-        return {"removable": removable, "message": message}
-        
-    if Group.objects.get(name='DES1') in request.user.groups.all(
-            ) or request.user.is_superuser:
-        removable, message = has_consumed(removable, message)
-        if date_cfvu and removable:
-            message += _("%s CFVU le %s.</br>" % (mecc_validated, date_cfvu))
-        if date_cmp and removable:
-            message += _("%s composante le %s.</br>" % (mecc_validated, date_cmp))
-        if removable:
-            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
         return {"removable": removable, "message": message}
 
-    return {"removable": removable, "message": message}
+    if Group.objects.get(name='DES1') in request.user.groups.all(
+    ) or request.user.is_superuser:
+        if date_cmp and not confirmed:
+            removable = False
+            confirmed = "TODO"
+            message += _("%s composante le %s.</br>" %
+                         (mecc_validated, date_cmp))
+            if date_cfvu:
+                message += _("%s CFVU le %s.</br>" %
+                             (mecc_validated, date_cfvu))
+
+            message += _("Êtes vous sûr de vouloir supprimer ?</br>")
+            return {"removable": removable, "message": message,
+                    'confirmed': confirmed}
+
+        if removable and confirmed:
+            removable, message = has_consumed(removable, message)
+
+        return {"removable": removable, "message": message, "confirmed": confirmed}

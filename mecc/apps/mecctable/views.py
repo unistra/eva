@@ -628,9 +628,8 @@ def copy_old_mecctable(request):
     old_so = StructureObject.objects.get(
         id=current_so.auto_id, year=current_so.year - 1)
 
+
 # Using generic classview
-
-
 class StructureObjectListView(ListView):
     model = StructureObject
 

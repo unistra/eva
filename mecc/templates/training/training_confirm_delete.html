@@ -50,12 +50,23 @@
 {% endif %}
     </form>
 {% else %}
-
+{%if confirmed == "TODO"%}
+<form action="" method="get">
+    <input type="hidden" name="confirm" value="true">
+    <input type="submit" value="Oui" class="btn btn-primary" />
+{% if request.session.from_duplicated %}
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+    {% else %} 
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+{% endif %}
+    </form>
+{%else%}
 {% if request.session.from_duplicated %}
 
 <a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
     {% else %}
 <a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} 
+{% endif %}
 {% endif %}
 
 {% endblock %}
