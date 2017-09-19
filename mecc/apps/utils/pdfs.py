@@ -154,11 +154,11 @@ def add_simple_paragraph(story, rule, sp, ap):
     for p in paragraphs:
         if p.is_in_use:
             if p.id in [e.paragraph_gen_id for e in sp]:
-                text = sp.get(paragraph_gen_id=p.id).text_specific_paragraph
+                text = sp.filter(paragraph_gen_id=p.id).first().text_specific_paragraph
                 append_text(
                     story, text,
                     "textColor=blue", spacer=0)
-                text = sp.get(paragraph_gen_id=p.id).text_motiv
+                text = sp.filter(paragraph_gen_id=p.id).first().text_motiv
                 style = 'textColor=red'
                 append_text(story, text, style, special="motiv")
             else:

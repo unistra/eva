@@ -22,8 +22,8 @@ from mecc.apps.mecctable.models import ObjectsLink, StructureObject
 def Training_post_delete(sender, **kwargs):
     """
     When a Training is deleted, derogations and additional paragraphs are
-    useless and so need to be deleted, the same for linksobjects and structureobject
-    which are not used anymore
+    useless and so need to be deleted, the same for linksobjects and
+    structureobject which are not used anymore
     """
     # 1. get concerned training
     training = kwargs.get('instance')

@@ -251,14 +251,13 @@ spécificités déjà saisies pour la nouvelle année."
         code_year=currentyear().code_year, is_in_use=True)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
-    # for aa in rules_list:
-    #     print(aa.__dict__)
-    data['custom'] = [a for a in [
-        e.rule_gen_id for e in SpecificParagraph.objects.filter(
+    d = data['custom'] = [a.rule_gen_id for a in [
+        e for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
         training=training, code_year=currentyear().code_year)]
     data['notification_to'] = settings.MAIL_FROM
+    print(d)
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
