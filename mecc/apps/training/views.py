@@ -257,7 +257,6 @@ spécificités déjà saisies pour la nouvelle année."
     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
         training=training, code_year=currentyear().code_year)]
     data['notification_to'] = settings.MAIL_FROM
-    print(d)
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
@@ -400,18 +399,19 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
 def gen_pdf_all_rules(request, training_id):
 
-    year = currentyear().code_year
     training = Training.objects.get(id=training_id)
+    year = training.code_year
     r = Rule.objects.filter(
         degree_type=training.degree_type,
         is_in_use=True,
-        code_year=currentyear().code_year)
+        code_year=year)
     rules = r.filter(is_eci=True) if training.MECC_type \
         in 'E' else r.filter(is_ccct=True)
 
     sp = SpecificParagraph.objects.filter(code_year=year, training=training)
     ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
     # PDF gen
+    print([e.text_specific_paragraph for e in sp])
     title = training.label
     response, doc = setting_up_pdf(title, margin=42)
     story = complete_rule(year, title, training, rules, sp, ap)
