@@ -84,7 +84,7 @@
          <td width="52%" class="no-padding border-right border-bottom"><a class="select " onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
          <td width="10%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "(D)" %}{% endif %}</td>
          <td width="14%" class="no-padding td-centered border-bottom underlined">
-             {% if True %}
+             {% if can_edit and training.input_opening.0 != "4" %}
             <a class="select customize" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">
                 {% if e.n_rule in custom %}
 {% trans "Modifier" %}{% else %}{% trans "Saisir" %}{%endif%}</a>
