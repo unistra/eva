@@ -138,7 +138,7 @@ class TrainingEdit(UpdateView):
             e.name for e in self.request.user.groups.all()]
         if not input_is_open:
             context['can_edit'] = False
-        
+
         return context
 
 
@@ -149,18 +149,21 @@ class TrainingDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainingDelete, self).get_context_data(**kwargs)
-        current_year = currentyear().code_year
+        year = self.object.code_year
         can_remove = remove_training(self.request, self.object.id)
         context['message'] = can_remove.get('message')
         context['removable'] = can_remove.get('removable')
         context['confirmed'] = can_remove.get('confirmed')
-
+        rules = [e.n_rule for e in Rule.objects.filter(
+            degree_type=self.object.degree_type).filter(
+            code_year=self.object.code_year)]
         add_parag = apps.get_model('training', 'AdditionalParagraph')
         spe_parag = apps.get_model('training', 'SpecificParagraph')
         additionals = add_parag.objects.filter(
-            training=self.object, code_year=current_year)
+            training=self.object, code_year=year, rule_gen_id__in=rules)
         specifics = spe_parag.objects.filter(
-            training=self.object, code_year=current_year)
+            training=self.object, code_year=year, rule_gen_id__in=rules)
+
         context['additionals'] = additionals
         context['specifics'] = specifics
         links = ObjectsLink.objects.filter(id_training=self.object.id)
@@ -407,11 +410,12 @@ def gen_pdf_all_rules(request, training_id):
         code_year=year)
     rules = r.filter(is_eci=True) if training.MECC_type \
         in 'E' else r.filter(is_ccct=True)
-
-    sp = SpecificParagraph.objects.filter(code_year=year, training=training)
-    ap = AdditionalParagraph.objects.filter(training=training, code_year=year)
+    n_rules = [e.n_rule for e in rules]
+    sp = SpecificParagraph.objects.filter(
+        code_year=year, training=training,  rule_gen_id__in=n_rules)
+    ap = AdditionalParagraph.objects.filter(
+        training=training, code_year=year, rule_gen_id__in=n_rules)
     # PDF gen
-    print([e.text_specific_paragraph for e in sp])
     title = training.label
     response, doc = setting_up_pdf(title, margin=42)
     story = complete_rule(year, title, training, rules, sp, ap)
@@ -584,4 +588,3 @@ def send_mail(request):
     mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect(request.META.get('HTTP_REFERER'))
-
