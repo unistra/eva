@@ -116,7 +116,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="{%if la_liste%}#{%else%}#####{%endif%}"class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="{%if la_liste%}#{%else%}{%url 'mecctable:copy_old_mecctable' training.id %}{%endif%}"class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste %}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>

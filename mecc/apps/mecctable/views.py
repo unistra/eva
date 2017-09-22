@@ -19,6 +19,7 @@ from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from django_cas.decorators import login_required
+from itertools import chain
 
 
 from .models import StructureObject, ObjectsLink, Exam
@@ -504,7 +505,12 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
         def get_childs(link, is_imported, rank=0):
             rank += 1
-            structure = current_structures.get(id=link.id_child)
+            not_yet_imported = False
+            try:
+                structure = current_structures.get(id=link.id_child)
+            except ObjectDoesNotExist:
+                # not_yet_imported = True
+                structure = StructureObject.objects.get(id=link.id_child)   
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
@@ -517,7 +523,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                     e, imported, rank=rank) for e in children],
                 'rank': rank - 1,
                 'loop': range(0, rank - 1),
+                'not_yet_imported': not_yet_imported,
             }
+            print(imported)
             return items
         for link in links:
             imported = True if link.is_imported else False
@@ -604,8 +612,7 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
-@is_post_request
-def copy_old_mecctable(request):
+def copy_old_mecctable(request, id_training):
     """
     Copy year -1 mecctable if exists and :
     •   duplique tous les objets propres de la formation de l’année précédente vers la nouvelle
@@ -624,9 +631,52 @@ def copy_old_mecctable(request):
         doivent être appliqués aux objets propres de la structure lors de la duplication ; un message
         d’information sera d’abord affiché. 
     """
-    current_so = StructureObject.objects.get(id=request.POST.get('current_so'))
-    old_so = StructureObject.objects.get(
-        id=current_so.auto_id, year=current_so.year - 1)
+    training = Training.objects.get(id=id_training)
+    old_year = training.code_year - 1
+    old_training = Training.objects.get(
+        n_train=training.n_train, code_year=old_year)
+    # current_so = StructureObject.objects.filter(owner_training_id=id_training)
+    old_so = StructureObject.objects.filter(
+        owner_training_id=old_training.id, code_year=old_year)
+    old_ol = ObjectsLink.objects.filter(code_year=old_year)
+    old_parents = old_ol.filter(id_parent__in=[e.id for e in old_so])
+    old_childs = old_ol.filter(id_child__in=[e.id for e in old_so])
+    sttt = {e for e in chain(old_childs, old_parents)}
+    import copy
+    for e in old_so:
+
+        try:
+            new_so = StructureObject.objects.get(
+                code_year=training.code_year, auto_id=e.auto_id,
+                owner_training_id=training.id)
+        except ObjectDoesNotExist:
+            new_so = copy.copy(e)
+            new_so.id = None  # NEEDED TO NOT OVERRIDE EXISTING OBJECT !!!
+            new_so.owner_training_id = training.id
+            new_so.code_year = training.code_year
+            new_so.auto_id = e.auto_id
+            new_so.save()
+        print('------------------------------------')
+        print("OLD SO = %s" % e.id)
+        print("NEW SO = %s" % new_so.id)
+        for ol in sttt:
+            to_set = None
+            if e.id == ol.id_child:
+                to_set = "id_child"
+            if e.id == ol.id_parent:
+                to_set = "id_parent"
+            if to_set:
+                print(ol.__dict__)
+                new_ol = copy.copy(ol)
+                new_ol.id = None
+                new_ol.n_train_child = training.n_train
+                new_ol.id_training = training.id
+                new_ol.code_year = training.code_year
+                setattr(new_ol, to_set, new_so.id)
+                print(new_ol.__dict__)
+                print('-*-*-*-*-*-*-')
+                new_ol.save()
+            # print(ol.__dict__)
 
 
 # Using generic classview

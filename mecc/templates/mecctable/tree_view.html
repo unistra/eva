@@ -12,8 +12,13 @@
         {%if a.is_imported%}
             {{a.structure.label}}
         {% else %}
-            <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
-            onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}</a>
+        {% if a.not_yet_imported == False%}
+        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
+        onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}} 
+        {%else%}
+        <a>{{a.structure.label}} - ID:{{a.structure.id}} - ?
+            {%endif%}
+        </a>
         {%endif%}
     </span>
 <!--- endof mecc-label
@@ -105,7 +110,7 @@
          </div>
      </div>
 
-    {%if a.has_childs %}
+    {%if a.has_childs and not a.not_yet_imported%}
         <div class="{% if not a.is_imported%}sortme{%endif%} wrapper meccRow" >
          {%for ch in a.children %}
               {%with a=ch %}
