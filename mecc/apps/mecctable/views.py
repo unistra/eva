@@ -653,12 +653,11 @@ def copy_old_mecctable(request, id_training):
             new_so = copy.copy(e)
             new_so.id = None  # NEEDED TO NOT OVERRIDE EXISTING OBJECT !!!
             new_so.owner_training_id = training.id
+            new_so.regime = training.MECC_type
+            new_so.session = training.session_type
             new_so.code_year = training.code_year
             new_so.auto_id = e.auto_id
             new_so.save()
-        print('------------------------------------')
-        print("OLD SO = %s" % e.id)
-        print("NEW SO = %s" % new_so.id)
         for ol in sttt:
             to_set = None
             if e.id == ol.id_child:
@@ -666,15 +665,12 @@ def copy_old_mecctable(request, id_training):
             if e.id == ol.id_parent:
                 to_set = "id_parent"
             if to_set:
-                print(ol.__dict__)
                 new_ol = copy.copy(ol)
                 new_ol.id = None
                 new_ol.n_train_child = training.n_train
                 new_ol.id_training = training.id
                 new_ol.code_year = training.code_year
                 setattr(new_ol, to_set, new_so.id)
-                print(new_ol.__dict__)
-                print('-*-*-*-*-*-*-')
                 new_ol.save()
             # print(ol.__dict__)
 
