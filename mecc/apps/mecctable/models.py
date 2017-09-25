@@ -1,3 +1,8 @@
+"""
+Model for mecctable objects :
+Structures, link between them and exams
+"""
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -68,8 +73,7 @@ class StructureObject(models.Model):
 
 # ROF prefixed are synchronized => no input for them
     ROF_ref = models.CharField(_(
-        "Référence de l'objet ROF"), max_length=20,
-        null=True, blank=True)
+        "Référence de l'objet ROF"), max_length=20, null=True, blank=True)
     ROF_code_year = models.IntegerField(
         _("Année de l'objet ROF"), blank=True, null=True)
     ROF_nature = models.CharField(
@@ -90,7 +94,7 @@ class StructureObject(models.Model):
         if self.auto_id in ['', ' ', 0, None]:
             try:
                 self.auto_id = StructureObject.objects.all(
-                    ).latest('id').id + 1
+                ).latest('id').id + 1
             except ObjectDoesNotExist:
                 self.auto_id = 1
         super(StructureObject, self).save(*args, **kwargs)
@@ -124,6 +128,9 @@ class StructureObject(models.Model):
 
 
 class ObjectsLink(models.Model):
+    """
+    Model for link between structures objects
+    """
     NATURE_CHOICE = [
         ("INT", _("ID formation d’origine = ID formation contexte")),
         ("EXT", _("ID formation d’origine ≠ ID formation contexte")),
@@ -152,6 +159,9 @@ class ObjectsLink(models.Model):
 
     @property
     def nature_parent(self):
+        """
+        return parent nature if exists
+        """
         parent = StructureObject.objects.get(
             id=self.id_parent) if self.id_parent not in [0, '0'] else None
 

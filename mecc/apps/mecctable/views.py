@@ -11,6 +11,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Q
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
@@ -41,13 +42,15 @@ def import_objectslink(request):
             'selected_id[]'))]
         object_link_list = [
             ObjectsLink.objects.get(
-                id_child=e, code_year=current_year, is_imported=None) for e in selected_id
+                id_child=e, code_year=current_year,
+                is_imported=None) for e in selected_id
         ]   # based on id_child and **not** imported objectlink in
         # order to retrieve the original one :)
         not_imported = False
         for e in object_link_list:
             childs = ObjectsLink.objects.filter(
-                code_year=current_year, id_parent=id_parent, id_training=id_training)
+                code_year=current_year, id_parent=id_parent,
+                id_training=id_training)
             order_in_child = childs.count() + 1
             if e.id_child not in [c.id_child for c in childs]:
 
@@ -510,7 +513,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 structure = current_structures.get(id=link.id_child)
             except ObjectDoesNotExist:
                 # not_yet_imported = True
-                structure = StructureObject.objects.get(id=link.id_child)   
+                structure = StructureObject.objects.get(id=link.id_child)
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
@@ -615,64 +618,104 @@ def update_mecc_position(request):
 def copy_old_mecctable(request, id_training):
     """
     Copy year -1 mecctable if exists and :
-    •   duplique tous les objets propres de la formation de l’année précédente vers la nouvelle
-        année (copie des enregistrements de la table Objets, avec ID Année = n-1 et ID de la formation
-        propriétaire = ID de la formation courante)
-    •   duplique tous les liens entre objets de l’année précédente vers la nouvelle année, y compris
-        avec des objets importés (copie des enregistrements de la table Architecture_objets, avec ID
-        Année = n-1 et ID interne de la formation (contexte) = ID de la formation courante)
-            o   les coefficients et les notes seuil des fils au sein des pères sont récupérés par ce
-                traitement.
-            o   si des objets importés n’existent pas encore dans la nouvelle année, ils apparaissent
-                d’abord avec un libellé contenant l’ID suivi d’un ? et sans descendance. Leur affichage
-                redevient normal dès lors que ces objets sont dupliqués par leur propriétaire. Sinon, on
-                peut décider de le décrocher de la formation.
-    •   Les changements dans les attributs Régime et Session de la formation (Onglet Général)
-        doivent être appliqués aux objets propres de la structure lors de la duplication ; un message
-        d’information sera d’abord affiché. 
+    •   duplique tous les objets propres de la formation de l’année précédente
+        vers la nouvelle année (copie des enregistrements de la table Objets,
+        avec ID Année = n-1 et ID de la formation propriétaire = ID de la
+        formation courante)
+    •   duplique tous les liens entre objets de l’année précédente vers la
+        nouvelle année, y compris avec des objets importés (copie des
+        enregistrements de la table Architecture_objets, avec ID Année = n-1 et
+        ID interne de la formation (contexte) = ID de la formation courante)
+            o   les coefficients et les notes seuil des fils au sein des pères
+                sont récupérés par ce traitement.
+            o   si des objets importés n’existent pas encore dans la nouvelle
+                année, ils apparaissent d’abord avec un libellé contenant l’ID
+                suivi d’un ? et sans descendance. Leur affichage redevient
+                normal dès lors que ces objets sont dupliqués par leur
+                propriétaire. Sinon, on peut décider de le décrocher de la
+                formation.
+    •   Les changements dans les attributs Régime et Session de la formation
+        (Onglet Général) doivent être appliqués aux objets propres de la
+        structure lors de la duplication ; un message d’information sera
+        d’abord affiché.
     """
+    # USEFULL DATAS
     training = Training.objects.get(id=id_training)
     old_year = training.code_year - 1
+    current_structures = StructureObject.objects.filter(
+        code_year=training.code_year)
+    current_links = ObjectsLink.objects.filter(code_year=training.code_year)
     old_training = Training.objects.get(
         n_train=training.n_train, code_year=old_year)
-    # current_so = StructureObject.objects.filter(owner_training_id=id_training)
-    old_so = StructureObject.objects.filter(
-        owner_training_id=old_training.id, code_year=old_year)
-    old_ol = ObjectsLink.objects.filter(code_year=old_year)
-    old_parents = old_ol.filter(id_parent__in=[e.id for e in old_so])
-    old_childs = old_ol.filter(id_child__in=[e.id for e in old_so])
-    sttt = {e for e in chain(old_childs, old_parents)}
-    import copy
-    for e in old_so:
+    old_structures = StructureObject.objects.filter(code_year=old_year)
+    old_links = ObjectsLink.objects.filter(
+        code_year=old_year, id_training=old_training.id)
 
+    import copy
+
+    def copy_structure(to_copy):
+        """
+        Return a copy of a structure with brand new stuff
+        ACHTUNG : ONLY USEABLE HERE WITH THIS MODEL ON DJANGO
+        """
+        new_struct = copy.copy(to_copy)
+        new_struct.id = None  # Needed to not override exisitng object !
+        new_struct.owner_training_id = training.id
+        new_struct.regime = training.MECC_type
+        new_struct.session = training.session_type
+        new_struct.code_year = training.code_year
+        new_struct.auto_id = to_copy.auto_id
+        new_struct.save()
+        return new_struct
+
+    for old_link in old_links:
+        # 1.0 GET old child structure
+        old_struct_child = old_structures.get(id=old_link.id_child)
+        # 1.1 Get new child structure
         try:
-            new_so = StructureObject.objects.get(
-                code_year=training.code_year, auto_id=e.auto_id,
+            new_struct_child = current_structures.get(
+                auto_id=old_struct_child.auto_id,
                 owner_training_id=training.id)
         except ObjectDoesNotExist:
-            new_so = copy.copy(e)
-            new_so.id = None  # NEEDED TO NOT OVERRIDE EXISTING OBJECT !!!
-            new_so.owner_training_id = training.id
-            new_so.regime = training.MECC_type
-            new_so.session = training.session_type
-            new_so.code_year = training.code_year
-            new_so.auto_id = e.auto_id
-            new_so.save()
-        for ol in sttt:
-            to_set = None
-            if e.id == ol.id_child:
-                to_set = "id_child"
-            if e.id == ol.id_parent:
-                to_set = "id_parent"
-            if to_set:
-                new_ol = copy.copy(ol)
-                new_ol.id = None
-                new_ol.n_train_child = training.n_train
-                new_ol.id_training = training.id
-                new_ol.code_year = training.code_year
-                setattr(new_ol, to_set, new_so.id)
-                new_ol.save()
-            # print(ol.__dict__)
+            # 1.2 or create it
+            new_struct_child = copy_structure(old_struct_child)
+
+        # 2.0 Get old parent structure, beware that it can
+        # be root if id_parent == 0
+
+        if old_link.id_parent == 0:
+            new_parent_id = 0
+        else:
+            # 2.1 IF structure parent != root => Get it
+            old_struct_parent = old_structures.get(id=old_link.id_parent)
+            try:
+                new_struct_parent = current_structures.get(
+                    auto_id=old_struct_parent.auto_id,
+                    owner_training_id=training.id)
+            except ObjectDoesNotExist:
+                # 2.2 or create it
+                new_struct_parent = copy_structure(old_struct_parent)
+            new_parent_id = new_struct_parent.id
+
+        new_child_id = new_struct_child.id
+
+        # 3.0 get new link
+        try:
+            new_link = current_links.get(
+                id_parent=new_parent_id, id_child=new_child_id,
+                id_training=training.id)
+        except ObjectDoesNotExist:
+            # 3.1 or create it
+            new_link = copy.copy(old_link)
+            new_link.id = None
+            new_link.id_training = training.id
+            new_link.code_year = training.code_year
+            new_link.id_parent = new_parent_id
+            new_link.id_child = new_child_id
+            new_link.n_train_child = training.n_train
+            new_link.save()
+
+    return redirect('/mecctable/training/' + str(id_training))
 
 
 # Using generic classview
