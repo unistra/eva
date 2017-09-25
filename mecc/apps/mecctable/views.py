@@ -11,7 +11,6 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
@@ -20,7 +19,6 @@ from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from django_cas.decorators import login_required
-from itertools import chain
 
 
 from .models import StructureObject, ObjectsLink, Exam
