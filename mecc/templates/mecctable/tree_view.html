@@ -10,14 +10,11 @@
 -->
         {{a.structure.nature}} :
         {%if a.is_imported%}
-            {{a.structure.label}}
+            {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ?
+            {%endif%}
         {% else %}
-        {% if a.not_yet_imported == False%}
         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
         onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}} 
-        {%else%}
-        <a>{{a.structure.label}} - ID:{{a.structure.id}} - ?
-            {%endif%}
         </a>
         {%endif%}
     </span>

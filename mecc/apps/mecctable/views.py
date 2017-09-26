@@ -510,7 +510,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
             try:
                 structure = current_structures.get(id=link.id_child)
             except ObjectDoesNotExist:
-                # not_yet_imported = True
+                not_yet_imported = True
                 structure = StructureObject.objects.get(id=link.id_child)
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
@@ -526,7 +526,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 'loop': range(0, rank - 1),
                 'not_yet_imported': not_yet_imported,
             }
-            print(imported)
             return items
         for link in links:
             imported = True if link.is_imported else False
@@ -654,7 +653,7 @@ def copy_old_mecctable(request, id_training):
     def copy_structure(to_copy):
         """
         Return a copy of a structure with brand new stuff
-        ACHTUNG : ONLY USEABLE HERE WITH THIS MODEL ON DJANGO
+        ACHTUNG : ONLY USEABLE HERE
         """
         new_struct = copy.copy(to_copy)
         new_struct.id = None  # Needed to not override exisitng object !
@@ -664,7 +663,23 @@ def copy_old_mecctable(request, id_training):
         new_struct.code_year = training.code_year
         new_struct.auto_id = to_copy.auto_id
         new_struct.save()
+        # take advantage to update_current_links
+        update_other_current_links(to_copy, new_struct)
+
         return new_struct
+
+    def update_other_current_links(old_struct, new_struct):
+        """
+        Update all current lnks with new created structure => used for create
+        auto remove ? on not yet imported structures
+        """
+        for link in current_links:
+            if link.id_child == old_struct.id:
+                link.id_child = new_struct.id
+                link.save()
+            if link.id_parent == old_struct.id:
+                link.id_parent = new_struct.id
+                link.save()
 
     for old_link in old_links:
         # 1.0 GET old child structure
@@ -675,9 +690,12 @@ def copy_old_mecctable(request, id_training):
                 auto_id=old_struct_child.auto_id,
                 owner_training_id=training.id)
         except ObjectDoesNotExist:
-            # 1.2 or create it
-            new_struct_child = copy_structure(old_struct_child)
-
+            # 1.2 or create it if it belong to this current training
+            if old_struct_child.owner_training_id == old_link.id_training:
+                new_struct_child = copy_structure(old_struct_child)
+            else:
+                # else return the old one
+                new_struct_child = old_struct_child
         # 2.0 Get old parent structure, beware that it can
         # be root if id_parent == 0
 
@@ -692,7 +710,15 @@ def copy_old_mecctable(request, id_training):
                     owner_training_id=training.id)
             except ObjectDoesNotExist:
                 # 2.2 or create it
-                new_struct_parent = copy_structure(old_struct_parent)
+                if old_struct_parent.owner_training_id == old_link.id_training:
+                    new_struct_parent = copy_structure(old_struct_parent)
+                else:
+                    # continue
+                    # Specs say that imported structure which doesn't exist
+                    # in current year is childless but in order to get further
+                    # functionality i'm going to store it anyway (auto update
+                    # if old structure is imported)
+                    new_struct_parent = old_struct_parent
             new_parent_id = new_struct_parent.id
 
         new_child_id = new_struct_child.id
@@ -700,8 +726,7 @@ def copy_old_mecctable(request, id_training):
         # 3.0 get new link
         try:
             new_link = current_links.get(
-                id_parent=new_parent_id, id_child=new_child_id,
-                id_training=training.id)
+                id_parent=new_parent_id, id_child=new_child_id)
         except ObjectDoesNotExist:
             # 3.1 or create it
             new_link = copy.copy(old_link)
