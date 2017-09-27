@@ -973,3 +973,14 @@ form {
 .prod {
 
 }
+
+/* dashboard relative class */
+.stat-result {
+    color: #358CD3;
+    text-align: right;
+    font-weight: bold!important;
+}
+
+.align-right {
+    text-align: right;
+}

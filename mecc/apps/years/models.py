@@ -11,7 +11,7 @@ from mecc.apps.files.models import FileUpload
 
 class InstituteYear(models.Model):
     """
-    Institue year model
+    Institute year model
     """
     id_cmp = models.IntegerField(_('ID composante'))
     code_year = models.IntegerField(_('Code année'))

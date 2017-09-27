@@ -1,0 +1,41 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<div class="modal fade" id="rules_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{% trans "Liste des règles générales modifiées ou nouvelles" %}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                  <div>
+                      <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
+                      <table class="table">
+                      {% if rules %}
+                        {% for rule in rules %}
+                        <tr>
+                            <td ><a href="{% url 'rules:rule_edit' id=rule.id %}">{{ rule }}</a></td>
+                            <td class="align-right"><span class="red">{% if rule.is_edited == "O" %}{% trans "Modifiée" %}{% elif rule.is_edited == "X" %}{% trans "Nouvelle" %}{% endif %}</span></td>
+                            <td class="align-right">{% if rule.is_eci %}ECI{% endif %}</td>
+                            <td class="align-right">{% if rule.is_cctt %}CC/CT{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                      {% else %}
+                         <tr>
+                             <td>
+                                  {% trans 'Aucune règles'%}
+                             </td>
+                         </tr>
+                      {% endif %}
+                  </table>
+                  </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

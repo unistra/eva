@@ -32,7 +32,7 @@ class Rule(models.Model):
     @property
     def is_empty(self):
         """
-        Return true if the rule conains any paragraph
+        Return true if the rule contains any paragraph
         """
         return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
 

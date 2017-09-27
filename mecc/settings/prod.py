@@ -43,3 +43,8 @@ SECRET_KEY = '{{ secret_key }}'
 
 DIPSTRAP_VERSION = '{{ dipstrap_version }}'
 DIPSTRAP_STATIC_URL += '%s/' % DIPSTRAP_VERSION
+
+#########
+# STAGE #
+#########
+STAGE = '{{ goal }}'

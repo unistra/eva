@@ -17,8 +17,8 @@
         {% if request.user|has_group:'DES1' or request.user.is_superuser %}
 
           <li>
-              <a href="/"
-              {% if 'board' in request.path %}
+              <a href="/dashboards"
+              {% if 'dashboards' in request.path %}
                  class="item-selected"
               {% endif %}>{% trans 'Tableau de bord général' %}</a>
 

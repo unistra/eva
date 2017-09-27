@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+<div>
+    <table class="table" style="order:1">
+        <tr>
+            <td>{% trans "Formation dont la saisie (règles et/ou tableau) n'est pas achevée" %}</td>
+            <td class="stat-result">3</td>
+            <td>(6.38%)</td>
+        </tr>
+        <tr>
+            <td>{% trans "Formations en attente de validation en Conseil de composante (saisie achevée)" %}</td>
+            <td class="stat-result">38</td>
+            <td>(80.85 %)</td>
+        </tr>
+        <tr>
+            <td>{% trans "Nb de composantes - toutes les formations 'en attente de validation Conseil composante'" %}</td>
+            <td class="stat-result">1</td>
+            <td><a href="">{% trans "Voir la liste" %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Formations validées en Conseil de composante en attente de visa DES" %}</td>
+            <td class="stat-result">2</td>
+            <td>(4.26%)</td>
+        </tr>
+        <tr>
+            <td>{% trans "Formations validées en Conseil de composante et visées par la DES (prêtes pour CFVU)" %}</td>
+            <td class="stat-result">4</td>
+            <td>(8.51%)</td>
+        </tr>
+        <tr>
+            <td>{% trans "Nb de composantes - toutes les formations prêtes pour CFVU (Conseil composante + visa DES)" %}</td>
+            <td class="stat-result">1</td>
+            <td><a href="">{% trans "Voir la liste" %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Formations validées en CFVU" %}</td>
+            <td class="stat-result">0</td>
+            <td><a href="">(0%)</td>
+        </tr>
+    </table>
+</div>
