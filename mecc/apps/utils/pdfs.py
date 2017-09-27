@@ -185,7 +185,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
     for p in paragraphs:
         if p.is_in_use:
             txt = ''
-            derog = _("Dérogation <br> possible") if \
+            derog = _("Dérogation <br></br> possible") if \
                 p.is_interaction else ''
             if p.is_interaction:
                 txt = derog

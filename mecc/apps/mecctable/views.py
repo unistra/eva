@@ -611,8 +611,57 @@ def update_mecc_position(request):
 
     return JsonResponse({'status': 200})
 
-
 def copy_old_mecctable(request, id_training):
+    """
+    Rewrite of copy_old_mecctable otherwise my head will explode
+    """
+    # GIVE ME ALL YOUR DATAS !!!!!!!!!
+    # * YEARS
+    current_year = currentyear().code_year
+    old_year = current_year - 1
+    years = [current_year, old_year]
+
+    #  * TRAINING
+    trainings = Training.objects.filter(code_year__in=years)
+    current_trainings = trainings.filter(code_year=current_year)
+    old_trainings = trainings.filter(code_year=old_year)
+    training = trainings.get(id=id_training)
+    old_training = old_trainings.get(n_train=training.n_train)
+
+    # * STRUCTURES
+    structures = StructureObject.objects.filter(code_year__in=years)
+    current_structures = structures.filter(code_year=current_year)
+    old_structures = structures.filter(code_year=old_year)
+
+    # * LINKS
+    links = ObjectsLink.objects.filer(code_year__in=years)
+    current_links = links.filter(code_year=current_year)
+    old_links = links.filter(code_year=old_year)
+    old_links_concerned = old_links.filter(id_training=old_training.id) 
+
+
+    # ITERATE OVER ALL OLD LINK CONCERNED
+    for ol in old_links_concerned:
+
+        #  récuperer les anciennes structures par rapport au lien dans la boucle
+        old_struct_child = old_structures.get(id=ol.id_child)
+        old_struct_parent = old_structures.get(
+            id=ol.id_parent) if ol.id_parent != 0 else None
+        if not ol.is_imported:
+            # process si la structure n'est pas importée :
+            #   
+            #   - copier les structures parent et enfants si elles n'existent pas
+            #   - creer un nouveau lien
+            
+        # IF OL is imported
+            pass
+        else:
+            pass
+
+    return redirect('/mecctable/training/' + str(id_training))
+
+    
+def copy_old_mecctable2(request, id_training):
     """
     Copy year -1 mecctable if exists and :
     •   duplique tous les objets propres de la formation de l’année précédente
@@ -648,6 +697,7 @@ def copy_old_mecctable(request, id_training):
     old_links = ObjectsLink.objects.filter(
         code_year=old_year, id_training=old_training.id)
 
+
     import copy
 
     def copy_structure(to_copy):
@@ -677,9 +727,15 @@ def copy_old_mecctable(request, id_training):
             if link.id_child == old_struct.id:
                 link.id_child = new_struct.id
                 link.save()
+                dict_link = link.__dict__
+                dict_link.pop('_state', None)
+                current_links.update(**dict_link)
             if link.id_parent == old_struct.id:
                 link.id_parent = new_struct.id
                 link.save()
+                dict_link = link.__dict__
+                dict_link.pop('_state', None)
+                current_links.update(**dict_link)
 
     for old_link in old_links:
         # 1.0 GET old child structure
@@ -688,14 +744,30 @@ def copy_old_mecctable(request, id_training):
         try:
             new_struct_child = current_structures.get(
                 auto_id=old_struct_child.auto_id,
-                owner_training_id=training.id)
+                owner_training_id=old_struct_child.owner_training_id)
         except ObjectDoesNotExist:
             # 1.2 or create it if it belong to this current training
             if old_struct_child.owner_training_id == old_link.id_training:
                 new_struct_child = copy_structure(old_struct_child)
             else:
                 # else return the old one
-                new_struct_child = old_struct_child
+                # il faut récuperer l'ancienne structure et verifier
+                # qu'elle existe dans les currents sinon on utilise
+                # l'ancienne et amen car on va juste mettre un ? =)
+                # recuperer la formation qui est liée à l'ancien lien
+                old_other_training = Training.objects.get(
+                    id=old_struct_child.owner_training_id)
+                current_other_training = Training.objects.get(
+                    n_train=old_other_training.n_train,
+                    code_year=old_year)
+                try:
+                    new_struct_child = current_structures.get(
+                        auto_id=old_struct_child.auto_id,
+                        owner_training_id=current_other_training.id)
+                    print("icicic")
+                except ObjectDoesNotExist:
+                    new_struct_child = old_struct_child
+                print('old!')
         # 2.0 Get old parent structure, beware that it can
         # be root if id_parent == 0
 
@@ -707,7 +779,7 @@ def copy_old_mecctable(request, id_training):
             try:
                 new_struct_parent = current_structures.get(
                     auto_id=old_struct_parent.auto_id,
-                    owner_training_id=training.id)
+                    owner_training_id=old_struct_parent.owner_training_id)
             except ObjectDoesNotExist:
                 # 2.2 or create it
                 if old_struct_parent.owner_training_id == old_link.id_training:
@@ -718,7 +790,19 @@ def copy_old_mecctable(request, id_training):
                     # in current year is childless but in order to get further
                     # functionality i'm going to store it anyway (auto update
                     # if old structure is imported)
-                    new_struct_parent = old_struct_parent
+                    old_other_training = Training.objects.get(
+                        id=old_struct_parent.owner_training_id)
+                    current_other_training = Training.objects.get(
+                        n_train=old_other_training.n_train,
+                        code_year=old_year)
+                    # print(old_training_link.__dict__)
+                    try:
+                        new_struct_parent = current_structures.get(
+                            auto_id=old_struct_parent.auto_id,
+                            owner_training_id=current_other_training.id)
+                    except ObjectDoesNotExist:
+                        print('jazendkjin')
+                        new_struct_parent = old_struct_parent
             new_parent_id = new_struct_parent.id
 
         new_child_id = new_struct_child.id
@@ -737,6 +821,11 @@ def copy_old_mecctable(request, id_training):
             new_link.id_child = new_child_id
             new_link.n_train_child = training.n_train
             new_link.save()
+
+
+
+
+
 
     return redirect('/mecctable/training/' + str(id_training))
 

@@ -115,6 +115,7 @@ class TrainingEdit(UpdateView):
     pk_url_kwarg = 'id'
 
     def get_success_url(self):
+        print(self.request.POST)
         if self.request.method == 'POST' and 'new_training' \
            in self.request.POST:
             return reverse('training:new')

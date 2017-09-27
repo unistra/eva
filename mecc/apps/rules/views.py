@@ -31,13 +31,13 @@ class RulesListView(ListView):
         """
         qs = super(RulesListView, self).get_queryset()
         return qs.filter(code_year=currentyear().code_year if currentyear(
-            ) is not None else None)
+        ) is not None else None)
 
     def get_context_data(self, **kwargs):
         context = super(RulesListView, self).get_context_data(**kwargs)
         context['degree_types'] = DegreeType.objects.all()
         context['asked_year'] = currentyear().code_year if currentyear(
-            ) is not None else None
+        ) is not None else None
         return context
 
 
@@ -143,21 +143,26 @@ def manage_degreetype(request):
             return JsonResponse(data)
 
         elif todo == 'del':
+            # FIX : verifie que le customized correspond au type de regle :)
             has_current, customized = rule.has_current_exceptions
             if has_current:
-                specifics = [e.training.label for e in customized.get(
-                             'specifics')]
-                additionals = [e.training.label for e in customized.get(
-                              'additionals')]
-                return JsonResponse({
-                    'customized': len(customized),
-                    'text': ", ".join(specifics + additionals),
-                    'specifics': specifics,
-                    'additionals': additionals
+                if degree_type.id in [
+                    e.training.degree_type_id for e in customized.get(
+                        'specifics') + customized.get('additionals')]:
+                    specifics = [e.training.label for e in customized.get(
+                        'specifics')]
+
+                    additionals = [e.training.label for e in customized.get(
+                        'additionals')]
+                    return JsonResponse({
+                        'customized': len(customized),
+                        'text': ", ".join(specifics + additionals),
+                        'specifics': specifics,
+                        'additionals': additionals
                     })
-            else:
-                rule.degree_type.remove(degree_type)
-                return JsonResponse(data)
+
+            rule.degree_type.remove(degree_type)
+            return JsonResponse(data)
 
 
 @login_required
@@ -249,7 +254,7 @@ class ParagraphDelete(DeleteView):
 
     def get_success_url(self):
         rule = self.request.session['visited_rule'] if \
-         self.request.session['visited_rule'] else self.object.rule.all()[0].id
+            self.request.session['visited_rule'] else self.object.rule.all()[0].id
         return reverse('rules:rule_edit', kwargs={'id': rule})
 
     def get_context_data(self, **kwargs):
@@ -315,7 +320,7 @@ def history_home(request, year=None, template='rules/history.html'):
         e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
     # display current year for selecting year if this year doesn't contain rule
     disp_curr_y = (currentyear().code_year, "%s/%s" % (
-        currentyear().code_year, int(currentyear().code_year)+1))
+        currentyear().code_year, int(currentyear().code_year) + 1))
     if disp_curr_y not in availables_years:
         availables_years.append(disp_curr_y)
 
@@ -431,12 +436,12 @@ def details_rule(request):
     def gimme_txt(paraid, rulid):
         try:
             o = SpecificParagraph.objects.get(
-                    paragraph_gen_id=paraid,
-                    rule_gen_id=rulid,
-                    code_year=currentyear().code_year,
-                    training=Training.objects.get(
-                        id=request.POST.get('training_id')),
-                )
+                paragraph_gen_id=paraid,
+                rule_gen_id=rulid,
+                code_year=currentyear().code_year,
+                training=Training.objects.get(
+                    id=request.POST.get('training_id')),
+            )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
 
@@ -466,7 +471,7 @@ def details_rule(request):
         'paragraphs': [
             {'alinea': e.id,
              'text': e.text_standard if not (
-                e.is_interaction and specific) else gimme_txt(e.id, x)[0],
+                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
              'is_derog': gimme_txt(e.id, x)[1],
              'can_be_derog': e.is_interaction,
              'info': _('Dérogation')}

@@ -18,24 +18,12 @@
         <td style="width: 45%" class="v-align-m">{{e.user.last_name}}</td>
         <td style="width: 45%" class="v-align-m">{{e.user.first_name}}</td>
         <td style="width: 10%" class="v-align-m">{{e.cmp}}</td>
-        <td style="width: 5%" class="v-align-m">
-            <form class="" action="{% url 'training:process_resp'%}" method="post">
-                <div class="hidden" hidden >
-                    {% csrf_token %}
-
-                        <input type="text" name="formation"  value="{{object.id}}" readonly>
-                        <input type="text" name="username"  readonly value="{{e.user.username}}">
-
-                    </div>
-                    {% if can_edit %}
-                    <button type="submit" class="btn-link" name="remove">
-                        <strong><a class="glyphicon glyphicon-trash"></a></strong></button>
-                    {% endif %}
-            </form>
-
-
+        <td style="width: 5%" class="v-align-m"> 
+            {% if can_edit %}
+                <a class="glyphicon glyphicon-trash select" onclick="delete_respform({{e.id}}, {{object.id}})"></a>
+            {% endif %}            
         </td>
-      </tr>
+            </tr>
       {% endfor %}
     </tbody>
     {% else %}
@@ -138,6 +126,23 @@
     </div>
     {% if can_edit %}
     <script type="text/javascript">
+
+        function delete_respform(id_respform, id_training){
+            console.log(id_respform);
+            console.log(id_training);
+            $.ajax({
+                url: "{% url 'commission:get_pple'%}",
+                type: "GET",
+                data: {
+                    member: search,
+                    research_type : 'RESPFORM',
+                    id_training: {{object.id}}
+                },
+                success: function(data) 
+                {})
+    
+    
+                }
     {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 
