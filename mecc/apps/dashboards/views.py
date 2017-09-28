@@ -23,6 +23,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     uy = UniversityYear.objects.get(is_target_year=True)
     iy = InstituteYear.objects.filter(code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
     institutes = Institute.objects.filter(training__code_year=uy.code_year).distinct() #.annotate(training=Count('training__pk'))
+    institutes_cfvu = Institute.objects.filter(pk__in=iy.values('id_cmp'))
     trainings = Training.objects.filter(code_year=uy.code_year)
     trainings_eci = trainings.filter(MECC_type='E')
     trainings_cc_ct = trainings.filter(MECC_type='C')
@@ -45,7 +46,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['rules_counter'] = rules_counter
     data['doc_cadre'] = doc_cadre
     data['university_year'] = uy
-    data['institute_year'] = iy
+    data['institutes_cfvu'] = institutes_cfvu
     data['institutes_cfvu_counter'] = institutes_cfvu_counter
 
 
