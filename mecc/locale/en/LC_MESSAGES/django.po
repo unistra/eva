@@ -289,7 +289,7 @@ msgstr "Validity end year"
 
 #: mecc/apps/degree/models.py:56
 msgid "Référence Programme ROF"
-msgstr "ROF reference""
+msgstr "ROF reference"
 
 #: mecc/apps/degree/models.py:57
 msgid "Référence dans le SI Scolarité (APOGEE)"
@@ -530,8 +530,7 @@ msgstr "PDF"
 
 #: mecc/apps/years/forms.py:110
 msgid "Déposer le document cadre"
-msgstr "Upload framework document
-"
+msgstr "Upload framework document"
 
 #: mecc/apps/years/models.py:13 mecc/templates/institute/granted.html:23
 #: mecc/templates/institute/institute_form.html:27

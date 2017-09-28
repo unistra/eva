@@ -12,18 +12,19 @@
 
                       <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
                       <ul>
-                      {% if institutes_cfvu %}
-                      {% regroup institutes_cfvu|dictsort:"field.name" by field.name as institutes_list %}
-                      {% for institute in institutes_list %}
-                        <li>{{ institute.grouper }}</li>
-                            <ul>
-                            {% for label in institute.list  %}
-                                    <li>{{ label }}</li>
-                            {% endfor %}
-                            </ul>
-                      {% endfor %}
 
 
+
+                      {% if cfvu_entries %}
+                          {% regroup cfvu_entries by domain as institutes_list %}
+                          {% for institute in institutes_list %}
+                                    <li>{{ institute.grouper }}</li>
+                                    <ul>
+                                    {% for label in institute.list  %}
+                                            <li>{{ label.cmp }}  <span class="red" style="margin-left:30px">{{ label.date}}</span></li>
+                                    {% endfor %}
+                                </ul>
+                          {% endfor %}
                       {% else %}
                          <li>
                               {% trans 'Aucune composante'%}
