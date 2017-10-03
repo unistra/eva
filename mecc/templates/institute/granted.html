@@ -44,7 +44,6 @@
   {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
   <form method="post">
   {% crispy form_institute_year%}
-
   </form>
   {% else %}
   {% crispy disabled_institute_year%}

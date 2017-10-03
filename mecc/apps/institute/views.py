@@ -38,16 +38,30 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     Dispatch forms according to user profile
     """
     data = {}
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
-    data['university_year'] = current_year
+    current_year = currentyear().code_year
     institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year)
+    if request.POST:
+        date_to_pass = request.POST.get('date_expected_MECC')
+        request.POST = {}
+        try:
+            expected_mecc = datetime.strptime(
+                date_to_pass, '%d/%m/%Y')
+            institute_year.date_expected_MECC = datetime.strftime(
+                expected_mecc, '%Y-%m-%d')
+            institute_year.save()
+        except ValueError:
+            granted_edit_institute(
+                request, code, template='institute/granted.html')
+        return granted_edit_institute(
+            request, code, template='institute/granted.html')  # Redirect after POST
+    data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
-    institute_year = InstituteYear.objects.get(
-        id_cmp=institute.id, code_year=current_year.code_year)
+
     profiles = Profile.objects.filter(
         cmp=code).filter(
             Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP")
@@ -62,31 +76,19 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     except TypeError:
         institute_year.date_expected_MECC = ''
     data['form_university_year'] = DircompUniversityYearForm(
-        instance=current_year)
+        instance=currentyear())
     data['form_institute_year'] = DircompInstituteYearForm(
         instance=institute_year)
     data['disabled_institute_year'] = DisabledInstituteYearForm(
         instance=institute_year)
     data['cadre_gen'] = FileUpload.objects.filter(
-        object_id=current_year.id).first()
+        object_id=currentyear().id).first()
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (
-            current_year.code_year, current_year.code_year + 1))
+            current_year, current_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (
-            current_year.code_year, current_year.code_year + 1))
-    if request.POST:
-        try:
-            expected_mecc = datetime.strptime(
-                request.POST.get('date_expected_MECC', ''), '%d/%m/%Y')
-            institute_year.date_expected_MECC = datetime.strftime(
-                expected_mecc, '%Y-%m-%d')
-            institute_year.save()
-        except ValueError:
-            granted_edit_institute(
-                request, code, template='institute/dircomp.html')
-        return granted_edit_institute(
-            request, code, template='institute/granted.html')  # Redirect after POST
+            current_year, current_year + 1))
 
     return render(request, template, data)
 
