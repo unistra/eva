@@ -77,8 +77,13 @@
     <td width="5%" class="no-padding td-centered no-border">
 
         {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user.is_superuser%}
+        
+        {% if item.supply_cmp == institute.code or institute == 'ALL' %}
+        
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
+
         {% endif %}
+        {% endif %} 
     </td>
 </tr>
 

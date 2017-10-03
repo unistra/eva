@@ -56,12 +56,12 @@ class TrainingListView(ListView):
         self.request.session['list_training'] = False
 
         context = super(TrainingListView, self).get_context_data(**kwargs)
-
-        self.request.session['visited_cmp_label'] = context['label_cmp'] = Institute.objects.get(
-            code=id_cmp).label if id_cmp is not None else "Toutes composantes"
-        self.request.session['visited_cmp_id'] = context['code_cmp'] = Institute.objects.get(
-            code=id_cmp).pk if id_cmp is not None else None
-
+        context['institute'] = institute = Institute.objects.get(
+            code=id_cmp) if id_cmp else "ALL"
+        self.request.session['visited_cmp_label'] = context[
+            'label_cmp'] = institute.label if id_cmp is not None else "Toutes composantes"
+        self.request.session['visited_cmp_id'] = context[
+            'code_cmp'] = institute.pk if id_cmp is not None else None
         context['letter_file'] = FileUpload.objects.filter(
             object_id=context['code_cmp'], additional_type='letter_%s/%s' % (
                 currentyear().code_year, currentyear().code_year + 1))
