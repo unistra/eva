@@ -12,8 +12,9 @@ from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from mecc.apps.files.models import FileUpload
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
-from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
-from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
+from mecc.apps.training.models import Training, SpecificParagraph, \
+    AdditionalParagraph
+from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
 
@@ -29,6 +30,20 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.apps import apps
+
+
+@is_ajax_request
+@is_post_request
+def remove_respform(request):
+    """
+    AJAX call for removing respform --'
+    """
+    done = manage_respform({
+        "username": request.POST.get('resp_username'),
+        "remove": True,
+        "formation": request.POST.get('id_training')
+    }, request.POST.get('id_training'))
+    return JsonResponse({'status': 200 if done else 300})
 
 
 @is_DES1

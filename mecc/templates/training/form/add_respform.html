@@ -20,7 +20,7 @@
         <td style="width: 10%" class="v-align-m">{{e.cmp}}</td>
         <td style="width: 5%" class="v-align-m"> 
             {% if can_edit %}
-                <a class="glyphicon glyphicon-trash select" onclick="delete_respform({{e.id}}, {{object.id}})"></a>
+                <a class="glyphicon glyphicon-trash select" onclick="delete_respform('{{e.user.username}}', {{object.id}}, this)"></a>
             {% endif %}            
         </td>
             </tr>
@@ -127,22 +127,24 @@
     {% if can_edit %}
     <script type="text/javascript">
 
-        function delete_respform(id_respform, id_training){
-            console.log(id_respform);
-            console.log(id_training);
-            $.ajax({
-                url: "{% url 'commission:get_pple'%}",
-                type: "GET",
+        function delete_respform(resp_username, id_training, clicked){
+            let row_index = clicked.parentElement.parentElement.rowIndex;
+            
+       $.ajax({
+                url: "{% url 'training:remove_respform'%}",
+                type: "POST",
                 data: {
-                    member: search,
-                    research_type : 'RESPFORM',
-                    id_training: {{object.id}}
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    resp_username : resp_username,
+                    id_training: id_training
                 },
-                success: function(data) 
-                {})
-    
-    
+                success: function(data) {
+                    document.getElementById("respformtable").deleteRow(row_index);
                 }
+            })  
+        }
+
+        
     {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 
