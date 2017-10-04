@@ -1,0 +1,121 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+ 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+<div class="modal" id="send_mail_respform" role="dialog" style="z-index: 1200; display: block">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <div class="disp-flex space-between">
+                    <div>
+                        <h1 class="title-modal">{% trans "Définition des épreuves" %}</h1>
+                        {% trans "Année universitaire : " %} {{request.display.current_year}}
+                    </div>
+                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_old_exams">{% trans "Récupérer les ÉPREUVES <br>de l'anée précédente pour cet objet" %}</button>
+                </div>
+                <div class="disp-flex space-between paddin-top">
+                    <div >
+                        <span>{% trans "Object : " %} </span>
+                        <strong>
+                            <span id="struct_object">UE CHIMIE un titre ultra long qui casse la tete</span>
+                        </strong>
+                    </div>
+                    <div  class="margin-left05">
+                        <span>{% trans "Type : " %} </span>
+                        <strong>
+                            <span id="struct_type" class>UE</span>
+                        </strong>
+                    </div>
+                    <div  class="margin-left05">
+                        <span>{% trans "Régime : " %} </span>
+                        <strong>
+                            <span id="struct_regime">ECI 2 sessions</span>
+                        </strong>
+                    </div>
+                    <div  class="margin-left05">
+                        <span>{% trans "SI Scol : " %} </span>
+                        <strong>
+                            <span id="struct_siscol"> CHCGUIA</span>
+                        </strong>
+                    </div>
+                    <div class="margin-left05">
+                        <span>{% trans "ROF : " %} </span>
+                        <strong>
+                            <span id="struct_rof"> -- </span>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                h
+                    <div id="jsGrid"></div>
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        $(function() {
+            
+               $("#jsGrid").jsGrid({
+                   height: "auto",
+                   width: "100%",
+            
+                   editing: true,
+                   sorting: true,
+                   paging: true,
+                   autoload: true,
+            
+                   pageSize: 15,
+                   pageButtonCount: 5,
+            
+                   deleteConfirm: "Do you really want to delete the client?",
+            
+                   controller: {
+                       loadData: function() {
+                           var d = $.Deferred();
+            
+                           $.ajax({
+                               url: "http://services.odata.org/V3/(S(3mnweai3qldmghnzfshavfok))/OData/OData.svc/Products",
+                               dataType: "json"
+                           }).done(function(response) {
+                               d.resolve(response.value);
+                           });
+            
+                           return d.promise();
+                       }
+                   },
+            
+                   fields: [
+                       { name: "Name", type: "text" },
+                       { name: "Description", type: "textarea", width: 150 },
+                       { name: "Rating", type: "number", width: 50, align: "center",
+                           itemTemplate: function(value) {
+                               return $("<div>").addClass("rating").append(Array(value + 1).join("&#9733;"));
+                           }
+                       },
+                       { name: "Price", type: "number", width: 50,
+                           itemTemplate: function(value) {
+                               return value.toFixed(2) + "€"; }
+                       },
+                       {
+                        type: "control",
+                        modeSwitchButton: false,
+                        editButton: false,
+                        headerTemplate: function() {
+                            return $("<button>").attr("type", "button").text("Add")
+                                    .on("click", function () {
+                                        showDetailsDialog("Add", {});
+                                    });
+                        }
+                    }
+                   ]
+               });
+            
+           });
+</script>

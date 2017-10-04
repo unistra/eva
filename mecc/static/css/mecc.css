@@ -53,6 +53,9 @@
 .v-align-m {
     vertical-align: middle!important;
 }
+.margin-left05 {
+    margin-left: 0.5em;
+}
 .margin-left1 {
     margin-left: 1em;
 }
@@ -61,6 +64,9 @@
 }
 .margin-left6 {
     margin-left: 6em;
+}
+.margin05{
+    margin: 0.5em;
 }
 .blue, .asteriskField {
     color: #004E8F!important;

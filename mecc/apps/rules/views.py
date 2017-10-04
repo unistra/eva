@@ -143,7 +143,7 @@ def manage_degreetype(request):
             return JsonResponse(data)
 
         elif todo == 'del':
-            # FIX : verifie que le customized correspond au type de regle :)
+            # FIXED : verifie que le customized correspond au type de regle :)
             has_current, customized = rule.has_current_exceptions
             if has_current:
                 if degree_type.id in [
