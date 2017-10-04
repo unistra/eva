@@ -42,6 +42,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     supply_institutes = institutes.filter(code__in=supply_filter).distinct()
     doc_cadre = FileUpload.objects.get(object_id=uy.id)
     rules = Rule.objects.filter(code_year=uy.code_year).filter(is_edited__in=('O','X')).order_by('display_order')
+
     # set datas for view
     data['institutes_counter'] = supply_institutes.count()
     data['trainings_counter'] = trainings.count()
