@@ -32,7 +32,7 @@ class Rule(models.Model):
     @property
     def is_empty(self):
         """
-        Return true if the rule contains any paragraph
+        Return true if the rule conains any paragraph
         """
         return True if len(Paragraph.objects.filter(rule=self)) is 0 else False
 
@@ -53,7 +53,7 @@ class Rule(models.Model):
             - list of additionals and derogations
         """
         # get_model in order to avoid cyclic import
-        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')
+        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')  
         additionals = [e for e in additional_paragraph.objects.filter(
             code_year=self.code_year,
             rule_gen_id=self.n_rule)]

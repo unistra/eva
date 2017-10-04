@@ -6,7 +6,7 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     ExamUpdateView, mecctable_home, mecctable_update, remove_object, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
-    send_mail_respform, copy_old_mecctable
+    send_mail_respform, copy_old_mecctable, list_exams
 
 
 urlpatterns = [
@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^update_grade_coeff/$',
         update_grade_coeff,
         name='update_grade_coeff'),
-        
+
     # urls for StructureObject
     url(r'^structureobject/$',
         StructureObjectListView.as_view(),
@@ -75,6 +75,10 @@ urlpatterns = [
         name='mecctable_objectslink_update'),
 
     # urls for Exam
+    # AJAX FTW
+    url(r'^list_exams/(?P<id_structure>\w+)$',
+        list_exams,
+        name='list_exams'),
     url(r'^exam/$', ExamListView.as_view(),
         name='mecctable_exam_list'),
     url(r'^exam/create/$', ExamCreateView.as_view(),
@@ -85,7 +89,7 @@ urlpatterns = [
     url(r'^exam/update/(?P<id>\S+)/$',
         ExamUpdateView.as_view(),
         name='mecctable_exam_update'),
-        
+
     url(r'^copy_old_mecctable/(?P<id_training>\w+)$',
         copy_old_mecctable,
         name='copy_old_mecctable'),

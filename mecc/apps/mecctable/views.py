@@ -27,6 +27,16 @@ from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 LOGGER = logging.getLogger(__name__)
 
 
+def list_exams(request, id_structure):
+    """
+    return json with all exam of a structure
+    """
+    structure_concerned = StructureObject.objects.get(id=id_structure)
+    exams = [e.__dict__ for e in Exam.objects.filter(
+        id_attached=structure_concerned.id)]
+    return JsonResponse(exams, safe=False)
+
+
 @login_required
 def import_objectslink(request):
     """
@@ -611,6 +621,7 @@ def update_mecc_position(request):
 
     return JsonResponse({'status': 200})
 
+
 def copy_old_mecctable(request, id_training):
     """
     Rewrite of copy_old_mecctable otherwise my head will explode
@@ -637,30 +648,29 @@ def copy_old_mecctable(request, id_training):
     links = ObjectsLink.objects.filer(code_year__in=years)
     current_links = links.filter(code_year=current_year)
     old_links = links.filter(code_year=old_year)
-    old_links_concerned = old_links.filter(id_training=old_training.id) 
-
+    old_links_concerned = old_links.filter(id_training=old_training.id)
 
     # ITERATE OVER ALL OLD LINK CONCERNED
     for ol in old_links_concerned:
 
-        #  récuperer les anciennes structures par rapport au lien dans la boucle
+        # récuperer les anciennes structures par rapport au lien dans la boucle
         old_struct_child = old_structures.get(id=ol.id_child)
         old_struct_parent = old_structures.get(
             id=ol.id_parent) if ol.id_parent != 0 else None
         if not ol.is_imported:
             # process si la structure n'est pas importée :
-            #   
+            #
             #   - copier les structures parent et enfants si elles n'existent pas
             #   - creer un nouveau lien
-            
-        # IF OL is imported
+
+            # IF OL is imported
             pass
         else:
             pass
 
     return redirect('/mecctable/training/' + str(id_training))
 
-    
+
 def copy_old_mecctable2(request, id_training):
     """
     Copy year -1 mecctable if exists and :
@@ -696,7 +706,6 @@ def copy_old_mecctable2(request, id_training):
     old_structures = StructureObject.objects.filter(code_year=old_year)
     old_links = ObjectsLink.objects.filter(
         code_year=old_year, id_training=old_training.id)
-
 
     import copy
 
@@ -821,11 +830,6 @@ def copy_old_mecctable2(request, id_training):
             new_link.id_child = new_child_id
             new_link.n_train_child = training.n_train
             new_link.save()
-
-
-
-
-
 
     return redirect('/mecctable/training/' + str(id_training))
 
