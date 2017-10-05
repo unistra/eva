@@ -7,38 +7,38 @@
     <table class="table" style="order:1">
         <tr>
             <td>{% trans "Formations dont la saisie (règles et/ou tableau) n'est pas achevée" %}</td>
-            <td class="stat-result">3</td>
-            <td>(6.38%)</td>
+            <td class="stat-result">{{ trainings_uncompleted_counter }}</td>
+            <td>({% widthratio trainings_uncompleted_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
             <td>{% trans "Formations en attente de validation en Conseil de composante (saisie achevée)" %}</td>
-            <td class="stat-result">38</td>
-            <td>(80.85 %)</td>
+            <td class="stat-result">{{trainings_completed_no_validation_counter}}</td>
+            <td>({% widthratio trainings_completed_no_validation_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
             <td>{% trans "Nb de composantes - toutes les formations 'en attente de validation Conseil composante'" %}</td>
-            <td class="stat-result">1</td>
-            <td><a href="">{% trans "Voir la liste" %}</td>
+            <td class="stat-result">{{institutes_trainings_completed_no_validation_counter}}</td>
+            <td><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_trainings_council_waiting_list">{% trans "Voir la liste" %}</a></td>
         </tr>
         <tr>
             <td>{% trans "Formations validées en Conseil de composante en attente de visa DES" %}</td>
-            <td class="stat-result">2</td>
-            <td>(4.26%)</td>
+            <td class="stat-result">{{trainings_validated_des_waiting_counter}}</td>
+            <td>({% widthratio trainings_validated_des_waiting_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
             <td>{% trans "Formations validées en Conseil de composante et visées par la DES (prêtes pour CFVU)" %}</td>
-            <td class="stat-result">4</td>
-            <td>(8.51%)</td>
+            <td class="stat-result">{{trainings_validated_cfvu_waiting_counter}}</td>
+            <td>({% widthratio trainings_validated_cfvu_waiting_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
             <td>{% trans "Nb de composantes - toutes les formations prêtes pour CFVU (Conseil composante + visa DES)" %}</td>
-            <td class="stat-result">1</td>
-            <td><a href="">{% trans "Voir la liste" %}</td>
+            <td class="stat-result">{{institutes_trainings_waiting_cfvu_counter}}</td>
+            <td><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_list_cfvu_ready">{% trans "Voir la liste" %}</a></td>
         </tr>
         <tr>
             <td>{% trans "Formations validées en CFVU" %}</td>
-            <td class="stat-result">0</td>
-            <td><a href="">(0%)</td>
+            <td class="stat-result">{{trainings_validated_cfvu_counter}}</td>
+            <td>({% widthratio trainings_validated_cfvu_counter trainings_counter 100 %}%)</td>
         </tr>
     </table>
 </div>

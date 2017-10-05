@@ -30,12 +30,12 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         inst = institutes.get(pk=year.id_cmp)
         cfvu_entries.append(dict(domain=inst.field.name,cmp=inst.label,date=year.date_expected_MECC))
 
-    trainings = Training.objects.filter(code_year=uy.code_year)
-    trainings_eci = trainings.filter(MECC_type='E')
-    trainings_cc_ct = trainings.filter(MECC_type='C')
+    t = Training.objects.filter(code_year=uy.code_year)
+    t_eci = t.filter(MECC_type='E')
+    t_cc_ct = t.filter(MECC_type='C')
 
     # get institutes who are supplier for a training
-    for training in trainings:
+    for training in t:
         if training.supply_cmp in institutes.values_list('code', flat=True):
             supply_filter.append(training.supply_cmp)
 
@@ -43,11 +43,20 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     doc_cadre = FileUpload.objects.get(object_id=uy.id)
     rules = Rule.objects.filter(code_year=uy.code_year).filter(is_edited__in=('O','X')).order_by('display_order')
 
+    t_uncompleted = t.filter(progress_rule="E") | t.filter(progress_table="E")
+    t_completed_no_validation = t.filter(progress_rule="A", progress_table="A", date_val_cmp__isnull=True)
+    t_validated_des_waiting = t.filter(date_val_cmp__isnull=False, date_visa_des__isnull=True)
+    t_validated_no_cfvu_waiting = t.filter(date_val_cmp__isnull=False) | t.filter(date_visa_des__isnull=False)
+    t_validated_cfvu_waiting = t.filter(date_val_cmp__isnull=False, date_visa_des__isnull=False, date_val_cfvu__isnull=True)
+    t_validated_cfvu = t.filter(date_val_cfvu__isnull=False)
+
+    institutes_trainings_completed_no_validation = institutes.filter(training__supply_cmp__in=t_completed_no_validation.values_list('supply_cmp', flat=True)).exclude(code__in=t_uncompleted.values_list('supply_cmp', flat=True))
+    institutes_trainings_waiting_cfvu = institutes.filter(training__supply_cmp__in=t_validated_cfvu_waiting.values_list('supply_cmp', flat=True)).exclude(code__in=t_validated_no_cfvu_waiting.values_list('supply_cmp', flat=True))
     # set datas for view
     data['institutes_counter'] = supply_institutes.count()
-    data['trainings_counter'] = trainings.count()
-    data['trainings_eci_counter'] = trainings_eci.count()
-    data['trainings_cc_ct_counter'] = trainings_cc_ct.count()
+    data['trainings_counter'] = t.count()
+    data['trainings_eci_counter'] = t_eci.count()
+    data['trainings_cc_ct_counter'] = t_cc_ct.count()
     data['institutes'] = supply_institutes
     data['rules'] = rules
     data['rules_counter'] = rules.count()
@@ -55,6 +64,15 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['university_year'] = uy
     data['cfvu_entries'] = cfvu_entries
     data['institutes_cfvu_counter'] = iy.count()
+    data['trainings_uncompleted_counter'] = t_uncompleted.count()
+    data['trainings_completed_no_validation_counter'] = t_completed_no_validation.count()
+    data['institutes_trainings_completed_no_validation'] = institutes_trainings_completed_no_validation
+    data['institutes_trainings_completed_no_validation_counter'] = institutes_trainings_completed_no_validation.count()
+    data['trainings_validated_des_waiting_counter'] = t_validated_des_waiting.count()
+    data['trainings_validated_cfvu_waiting_counter'] = t_validated_cfvu_waiting.count()
+    data['trainings_validated_cfvu_counter'] = t_validated_cfvu.count()
+    data['institutes_trainings_waiting_cfvu'] = institutes_trainings_waiting_cfvu
+    data['institutes_trainings_waiting_cfvu_counter'] = institutes_trainings_waiting_cfvu.count()
 
 
 
