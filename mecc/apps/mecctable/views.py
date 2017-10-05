@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import json
 import logging
 from decimal import InvalidOperation
@@ -27,14 +29,40 @@ from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 LOGGER = logging.getLogger(__name__)
 
 
+def add_exam(request, id_exam):
+    """
+    return json with added exam
+    """
+    print('in add_exam')
+    return JsonResponse({})
+
+
+def update_exam(request, id_exam):
+    """
+    return json with updated exam
+    """
+    print('in update_exam')
+    return JsonResponse({})
+
+
+def delete_exam(request, id_exam):
+    """
+    return json with confirmation of deleted exam
+    """
+    print('in delete_exam')
+    return JsonResponse({})
+
+
 def list_exams(request, id_structure):
     """
     return json with all exam of a structure
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
-    exams = [e.__dict__ for e in Exam.objects.filter(
-        id_attached=structure_concerned.id)]
-    return JsonResponse(exams, safe=False)
+    exams = Exam.objects.filter(
+        id_attached=structure_concerned.id, code_year=currentyear().code_year)
+    asked_exams = exams.filter(is_session_2=True) if request.GET.get(
+        'session2') else exams.filter(is_session_2=False)
+    return JsonResponse([e.as_json for e in asked_exams], safe=False)
 
 
 @login_required

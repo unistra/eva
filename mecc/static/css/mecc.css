@@ -923,7 +923,6 @@ li:hover .sub-level, li:focus {
     -webkit-border-radius: 0px !important;
     -moz-border-radius: 0px !important;
     border-collapse: collapse !important;
-    background-image: none !important;
 }
 * {
     border-radius: 0 !important;
