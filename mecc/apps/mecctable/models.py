@@ -242,3 +242,28 @@ class Exam(models.Model):
         _("Note seuil de l'épreuve"), null=True)
     is_session_2 = models.BooleanField(_("Témoin Report session 2"))
     threshold_session_2 = models.IntegerField(_("Seuil de report session 2"))
+
+    @property
+    def as_json(self):
+        """
+        In order to give us a custom json of each object 
+        """
+        return dict(
+            id=self.id,
+            code_year=self.code_year,
+            id_attached=self.id_attached,
+            session=self.session,
+            _id=self._id,
+            regime=self.regime,
+            type_exam=self.type_exam,
+            label=self.label,
+            additionnal_info=self.additionnal_info,
+            exam_duration="%s:%s" % (
+                self.exam_duration_h, self.exam_duration_m),
+            convocation=self.convocation,
+            type_ccct=self.type_ccct,
+            coefficient=self.coefficient,
+            eliminatory_grade=self.eliminatory_grade,
+            is_session_2=self.is_session_2,
+            threshold_session_2=self.threshold_session_2
+        )
