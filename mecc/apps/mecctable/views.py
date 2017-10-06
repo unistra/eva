@@ -29,11 +29,49 @@ from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 LOGGER = logging.getLogger(__name__)
 
 
-def add_exam(request, id_exam):
+def add_exam(request):
     """
     return json with added exam
     """
-    print('in add_exam')
+    # Get concerned training
+    structure = StructureObject.objects.get(
+        id=request.POST.get('id_structure'))
+    print(structure.id)
+    # Get object (as a string)
+    exam = request.POST.get('exam')
+    # Convert it in dict
+    obj = json.loads(exam)
+
+    print(obj.get('exam_duration'))
+    time = obj.get('exam_duration')
+    for delim in ':h':
+        time = time.replace(delim, ' ')
+    times = time.split()
+    print(times)
+    print(times[0])
+    print(times[1])
+    try:
+        created_exam = Exam.objects.create(
+            code_year=currentyear().code_year,
+            id_attached=request.POST.get('id_structure'),
+            session=structure.session,
+            regime=structure.regime,
+            type_exam=obj.get('type_exam'),
+            label=obj.get('label'),
+            additionnal_info=obj.get('additionnal_info'),
+            exam_duration_h=int(times[0]) if int(times[0]) else 0,
+            exam_duration_m=int(times[1]) if int(times[1]) else 0,
+            convocation=obj.get('convocation'),
+            type_ccct=obj.get('type_ccct'),
+            coefficient=obj.get('coefficient'),
+            eliminatory_grade=obj.get('eliminatory_grade'),
+            is_session_2=obj.get('is_session_2'),
+            threshold_session_2=obj.get('threshold_session_2')
+        )
+    except Exception as e:
+        print(e)
+        print(created_exam)
+    print('DONE')
     return JsonResponse({})
 
 
@@ -58,6 +96,10 @@ def list_exams(request, id_structure):
     return json with all exam of a structure
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
+    print(structure_concerned.id)
+    for e in Exam.objects.all():
+        print(e.__dict__)
+        print('********')
     exams = Exam.objects.filter(
         id_attached=structure_concerned.id, code_year=currentyear().code_year)
     asked_exams = exams.filter(is_session_2=True) if request.GET.get(

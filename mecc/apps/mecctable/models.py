@@ -243,6 +243,15 @@ class Exam(models.Model):
     is_session_2 = models.BooleanField(_("Témoin Report session 2"))
     threshold_session_2 = models.IntegerField(_("Seuil de report session 2"))
 
+    def save(self, *args, **kwargs):
+        if self._id in ['', ' ', 0, None]:
+            try:
+                self._id = Exam.objects.all(
+                ).latest('id').id + 1
+            except ObjectDoesNotExist:
+                self._id = 1
+        super(Exam, self).save(*args, **kwargs)
+
     @property
     def as_json(self):
         """

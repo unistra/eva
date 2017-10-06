@@ -2,15 +2,15 @@
 
     jsGrid.locales.fr = {
         grid: {
-            noDataContent: "Pas de données",
-            deleteConfirm: "Êtes-vous sûr ?",
+            noDataContent: "Acune donnée",
+            deleteConfirm: "Voulez vous vraiment supprimer cette épreuve ?",
             pagerFormat: "Pages: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}",
             pagePrevText: "<",
             pageNextText: ">",
             pageFirstText: "<<",
             pageLastText: ">>",
             loadMessage: "Chargement en cours...",
-            invalidMessage: "Des données incorrectes sont entrés !"
+            invalidMessage: "Des données incorrectes sont entrées !"
         },
 
         loadIndicator: {

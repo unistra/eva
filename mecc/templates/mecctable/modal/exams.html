@@ -3,6 +3,7 @@
 <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
 
 <script type="text/javascript" src="{% static 'js/jsgrid/jsgrid.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jsgrid/i18n/jsgrid-fr.js' %}"></script>
 
 <div class="modal fade" id="exams_tab" role="dialog" style="z-index: 1200">
     <div class="modal-dialog modal-90">
@@ -50,7 +51,7 @@
                 </div>
             </div>
             <div class="modal-body">
-                
+
                 <h4 class="blue">
                     {% trans "Épreuves de la session pincipale"%}
                 </h4>
@@ -62,7 +63,7 @@
                     </h4>
                     <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
                 </div>
-                
+
                 <div id="second_exam"></div>
 
             </div>
@@ -78,17 +79,18 @@
         document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
         document.getElementById('struct_siscol').innerHTML = st_ref_scol;
         document.getElementById('struct_rof').innerHTML = st_rof_ref;
-        
+
         // Show the modal
         $('#exams_tab').modal('show');
 
 
+        jsGrid.locale("fr");
 
         let url_list = "/mecctable/list_exams/" + id_structure;
-        let url_add = "/mecctable/add_exam/" + id_structure;
+        let url_add = "/mecctable/add_exam/";
         let url_update = "/mecctable/update_exam/" + id_structure;
         let url_delete = "/mecctable/delete_exam/" + id_structure;
-        
+
 
         $("#principal_exam").jsGrid({
             height: "auto",
@@ -99,14 +101,12 @@
             paging: true,
             autoload: true,
             inserting: true,
-            
+
             pageSize: 15,
             pageButtonCount: 5,
 
-            deleteConfirm: "Voulez vous vraiment supprimer cette épreuve ?",
-            noDataContent: "Aucune donnée.",
             // Hide adding field once data is loaded
-            onDataLoaded: function(){
+            onDataLoaded: function () {
                 $(".jsgrid-insert-row").hide();
             },
             controller: {
@@ -117,19 +117,24 @@
                     })
 
                 },
-                insertItem: function () {
+                insertItem: function (item) {
                     var d = $.Deferred();
-
                     $.ajax({
                         url: url_add,
-                        dataType: "json"
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
                     }).done(function (response) {
                         d.resolve(response.value);
                     });
 
                     return d.promise();
                 },
-                updateItem: function () {
+                updateItem: function (item) {
 
                     return $.ajax({
                         dataType: "json",
@@ -137,7 +142,7 @@
                         type: "POST",
                         data: {
                             csrfmiddlewaretoken: '{{ csrf_token }}',
-                            no: 'thing'
+                            exam: JSON.stringify(item)
                         },
                     })
 
@@ -163,12 +168,27 @@
                     width: 40,
                     validate: "required",
                     editing: false,
+                    inserting: false,
                 },
                 {
                     name: "type_exam",
                     type: "select",
                     title: "Type",
-                    items: ["Écrit", "Oral", "Autre"],
+                    items: [{
+                            Name: "Écrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
+                        }
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
                     width: 60
                 },
                 {
@@ -250,18 +270,16 @@
             paging: true,
             autoload: true,
             inserting: true,
-            
+
             pageSize: 15,
             pageButtonCount: 5,
-
-            deleteConfirm: "Voulez vous vraiment supprimer cette épreuve?",
 
             controller: {
                 loadData: function (filter) {
 
                     return $.ajax({
                         url: url_list,
-                        data: 'session2=True',                        
+                        data: 'session2=True',
                         dataType: "json"
                     })
 
@@ -270,7 +288,7 @@
 
                     return $.ajax({
                         url: url_add,
-                        data: 'session2=True',                                                
+                        data: 'session2=True',
                         dataType: "json"
                     })
 
@@ -279,7 +297,7 @@
 
                     return $.ajax({
                         url: url_update,
-                        data: 'session2=True',                                                
+                        data: 'session2=True',
                         dataType: "json"
                     })
 
@@ -288,7 +306,7 @@
 
                     return $.ajax({
                         url: url_delete,
-                        data: 'session2=True',                                                
+                        data: 'session2=True',
                         dataType: "json"
                     })
 
@@ -341,8 +359,14 @@
                 },
                 {
                     type: "control",
-                    editButton: false,
-                    modeSwitchButton: false
+
+                    headerTemplate: function () {
+                        // Add + button to show
+                        return $("<button>").attr("type", "button").text("+")
+                            .on("click", function () {
+                                $("#principal_exam .jsgrid-insert-row").show()
+                            });
+                    }
                 }
             ]
         });
