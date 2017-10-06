@@ -88,7 +88,7 @@
         let url_add = "/mecctable/add_exam/" + id_structure;
         let url_update = "/mecctable/update_exam/" + id_structure;
         let url_delete = "/mecctable/delete_exam/" + id_structure;
-
+        
 
         $("#principal_exam").jsGrid({
             height: "auto",
@@ -98,19 +98,19 @@
             sorting: true,
             paging: true,
             autoload: true,
-            deleteConfirm: function(item) {
-                return "The client \"" + item.Name + "\" will be removed. Are you sure?";
-            },
-
+            inserting: true,
+            
             pageSize: 15,
             pageButtonCount: 5,
 
             deleteConfirm: "Voulez vous vraiment supprimer cette épreuve ?",
             noDataContent: "Aucune donnée.",
-            
+            // Hide adding field once data is loaded
+            onDataLoaded: function(){
+                $(".jsgrid-insert-row").hide();
+            },
             controller: {
                 loadData: function (filter) {
-
                     return $.ajax({
                         url: url_list,
                         dataType: "json"
@@ -229,9 +229,10 @@
                     type: "control",
 
                     headerTemplate: function () {
+                        // Add + button to show
                         return $("<button>").attr("type", "button").text("+")
                             .on("click", function () {
-                                console.log('clicked')
+                                $("#principal_exam .jsgrid-insert-row").show()
                             });
                     }
                 }
@@ -345,5 +346,7 @@
                 }
             ]
         });
+        $(".jsgrid-insert-row").hide()
+        console.log('lalalala')
     }
 </script>

@@ -91,7 +91,11 @@
      id="{{a.link.id}}-grade">
          {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
      </span>
-     <span class="centered border-left-5 mecc-details "> <a onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  </span>
+     <span class="centered border-left-5 mecc-details ">
+        {% if not a.is_imported %}
+            <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  
+        {% endif %}
+     </span>
      <div class="mecc-semesters">
          <div class="mecc-s1 border-left">
              <span class="centered  "></span>
