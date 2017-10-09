@@ -79,7 +79,6 @@
         document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
         document.getElementById('struct_siscol').innerHTML = st_ref_scol;
         document.getElementById('struct_rof').innerHTML = st_rof_ref;
-
         // Show the modal
         $('#exams_tab').modal('show');
 
@@ -217,6 +216,8 @@
                     name: "type_ccct",
                     type: "select",
                     title: "Type CC/CT",
+                    editing: st_regime=="ECI"?false:true,
+                    inserting: st_regime=="ECI"?false:true,
                     width: 45,
                     valueField: "Id",
                     textField: "Name",
@@ -238,8 +239,10 @@
                 },
                 {
                     name: "convocation",
-                    type: "checkbox",
+                    type: st_regime=="ECI"?"checkbox":"text",
                     title: "Convocation",
+                    editing: st_regime=="ECI"?true:false,
+                    inserting: st_regime=="ECI"?true:false,
                     width: 75
                 },
                 {
