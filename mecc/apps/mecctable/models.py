@@ -231,16 +231,17 @@ class Exam(models.Model):
     exam_duration_m = models.IntegerField(_("Durée de l’épreuve-Minutes"))
     convocation = models.CharField(
         verbose_name=_("Convocation"), choices=CONVOCATION_CHOICE,
-        max_length=1)
+        max_length=1, null=True, blank=True)
     type_ccct = models.CharField(
-        verbose_name=_("Type CC ou CT"), choices=TYPECCCT_CHOICE, max_length=1
+        verbose_name=_("Type CC ou CT"), choices=TYPECCCT_CHOICE, max_length=1,
+        null=True, blank=True
     )
     coefficient = models.DecimalField(
         verbose_name=_("Coefficient de l'épreuve"),
         max_digits=2, decimal_places=1)
     eliminatory_grade = models.IntegerField(
         _("Note seuil de l'épreuve"), null=True, blank=True)
-    is_session_2 = models.BooleanField(_("Témoin Report session 2"))
+    is_session_2 = models.NullBooleanField(_("Témoin Report session 2"))
     threshold_session_2 = models.IntegerField(
         _("Seuil de report session 2"), null=True, blank=True)
 

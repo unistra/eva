@@ -294,6 +294,10 @@
 
             pageSize: 15,
             pageButtonCount: 5,
+            // Hide adding field once data is loaded
+            onDataLoaded: function () {
+                $(".jsgrid-insert-row").hide();
+            },
 
             controller: {
                 loadData: function (filter) {
@@ -305,31 +309,64 @@
                     })
 
                 },
-                insertItem: function () {
-
-                    return $.ajax({
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
                         url: url_add,
-                        data: 'session2=True',
-                        dataType: "json"
-                    })
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                    });
+
+                    return d.promise();
 
                 },
-                updateItem: function () {
+                updateItem: function (item) {
 
-                    return $.ajax({
+                    var d = $.Deferred();
+                    $.ajax({
                         url: url_update,
-                        data: 'session2=True',
-                        dataType: "json"
-                    })
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,                            
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                    });
+
+                    return d.promise();
+
 
                 },
-                deleteItem: function () {
-
-                    return $.ajax({
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
                         url: url_delete,
-                        data: 'session2=True',
-                        dataType: "json"
-                    })
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,                            
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                    });
+
+                    return d.promise();
+
 
                 },
             },
@@ -339,7 +376,11 @@
                     type: "number",
                     title: "id auto",
                     width: 40,
-                    validate: "required"
+                    validate: "required",
+                    editing: false,
+                    inserting: false,
+                    
+                    
                 },
                 {
                     name: "type_exam",
@@ -399,7 +440,7 @@
                         // Add + button to show
                         return $("<button>").attr("type", "button").text("+")
                             .on("click", function () {
-                                $("#principal_exam .jsgrid-insert-row").show()
+                                $("#second_exam .jsgrid-insert-row").show()
                             });
                     }
                 }
