@@ -83,10 +83,10 @@ urlpatterns = [
     url(r'^add_exam/$',
         add_exam,
         name='add_exam'),
-    url(r'^update_exam/(?P<id_exam>\d+)$',
+    url(r'^update_exam/(?P<id_structure>\d+)$',
         update_exam,
         name='update_exam'),
-    url(r'^delete_exam/(?P<id_exam>\d+)$',
+    url(r'^delete_exam/(?P<id_structure>\d+)$',
         delete_exam,
         name='delete_exam'),
 

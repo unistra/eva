@@ -36,31 +36,34 @@ def add_exam(request):
     # Get concerned training
     structure = StructureObject.objects.get(
         id=request.POST.get('id_structure'))
-    print(structure.id)
     # Get object (as a string)
     exam = request.POST.get('exam')
     # Convert it in dict
     obj = json.loads(exam)
 
-    print(obj.get('exam_duration'))
     time = obj.get('exam_duration')
     for delim in ':h':
         time = time.replace(delim, ' ')
     times = time.split()
-    print(times)
-    print(times[0])
-    print(times[1])
+    try:
+        part_h = times[0]
+    except Exception as e:
+        part_h = 0
+    try:
+        part_m = times[1]
+    except Exception as e:
+        part_m = 0
     try:
         created_exam = Exam.objects.create(
             code_year=currentyear().code_year,
             id_attached=request.POST.get('id_structure'),
-            session=structure.session,
+            session='2' if request.POST.get('session2') else '1',
             regime=structure.regime,
             type_exam=obj.get('type_exam'),
             label=obj.get('label'),
             additionnal_info=obj.get('additionnal_info'),
-            exam_duration_h=int(times[0]) if int(times[0]) else 0,
-            exam_duration_m=int(times[1]) if int(times[1]) else 0,
+            exam_duration_h=part_h,
+            exam_duration_m=part_m,
             convocation=obj.get('convocation'),
             type_ccct=obj.get('type_ccct'),
             coefficient=obj.get('coefficient'),
@@ -70,25 +73,52 @@ def add_exam(request):
         )
     except Exception as e:
         print(e)
-        print(created_exam)
-    print('DONE')
-    return JsonResponse({})
+    return JsonResponse({"status": 200})
 
 
-def update_exam(request, id_exam):
+def update_exam(request, id_structure):
     """
     return json with updated exam
     """
-    print('in update_exam')
-    return JsonResponse({})
+    exams = Exam.objects.filter(
+        id_attached=id_structure, code_year=currentyear().code_year)
+
+    obj = json.loads(request.POST.get('exam'))
+
+    non_updated_exam = exams.get(id=obj.get('id'))
+    non_updated_exam.delete()
+
+    # Handling duration field
+    time = obj.pop('exam_duration')
+    for delim in ':h':
+        time = time.replace(delim, ' ')
+    times = time.split()
+    try:
+        part_h = times[0]
+    except IndexError:
+        part_h = 0
+    try:
+        part_m = times[1]
+    except IndexError:
+        part_m = 0
+
+    obj['exam_duration_h'] = part_h
+    obj['exam_duration_m'] = part_m
+
+    Exam.objects.create(**obj)
+    return JsonResponse({"status": 200})
 
 
-def delete_exam(request, id_exam):
+def delete_exam(request, id_structure):
     """
     return json with confirmation of deleted exam
     """
-    print('in delete_exam')
-    return JsonResponse({})
+    exams = Exam.objects.filter(
+        id_attached=id_structure, code_year=currentyear().code_year)
+    obj = json.loads(request.POST.get('exam'))
+    to_del = exams.get(id=obj.get('id'))
+    to_del.delete()
+    return JsonResponse({"status": 200})
 
 
 def list_exams(request, id_structure):
@@ -96,14 +126,10 @@ def list_exams(request, id_structure):
     return json with all exam of a structure
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
-    print(structure_concerned.id)
-    for e in Exam.objects.all():
-        print(e.__dict__)
-        print('********')
     exams = Exam.objects.filter(
         id_attached=structure_concerned.id, code_year=currentyear().code_year)
-    asked_exams = exams.filter(is_session_2=True) if request.GET.get(
-        'session2') else exams.filter(is_session_2=False)
+    asked_exams = exams.filter(session='2') if request.GET.get(
+        'session2') else exams.filter(session='1')
     return JsonResponse([e.as_json for e in asked_exams], safe=False)
 
 
@@ -692,7 +718,7 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
-def copy_old_mecctable(request, id_training):
+def copy_old_mecctable2(request, id_training):
     """
     Rewrite of copy_old_mecctable otherwise my head will explode
     """
@@ -715,7 +741,7 @@ def copy_old_mecctable(request, id_training):
     old_structures = structures.filter(code_year=old_year)
 
     # * LINKS
-    links = ObjectsLink.objects.filer(code_year__in=years)
+    links = ObjectsLink.objects.filter(code_year__in=years)
     current_links = links.filter(code_year=current_year)
     old_links = links.filter(code_year=old_year)
     old_links_concerned = old_links.filter(id_training=old_training.id)
@@ -741,7 +767,7 @@ def copy_old_mecctable(request, id_training):
     return redirect('/mecctable/training/' + str(id_training))
 
 
-def copy_old_mecctable2(request, id_training):
+def copy_old_mecctable(request, id_training):
     """
     Copy year -1 mecctable if exists and :
     •   duplique tous les objets propres de la formation de l’année précédente

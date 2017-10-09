@@ -239,9 +239,10 @@ class Exam(models.Model):
         verbose_name=_("Coefficient de l'épreuve"),
         max_digits=2, decimal_places=1)
     eliminatory_grade = models.IntegerField(
-        _("Note seuil de l'épreuve"), null=True)
+        _("Note seuil de l'épreuve"), null=True, blank=True)
     is_session_2 = models.BooleanField(_("Témoin Report session 2"))
-    threshold_session_2 = models.IntegerField(_("Seuil de report session 2"))
+    threshold_session_2 = models.IntegerField(
+        _("Seuil de report session 2"), null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self._id in ['', ' ', 0, None]:
@@ -267,7 +268,7 @@ class Exam(models.Model):
             type_exam=self.type_exam,
             label=self.label,
             additionnal_info=self.additionnal_info,
-            exam_duration="%s:%s" % (
+            exam_duration='%02d:%02d' % (
                 self.exam_duration_h, self.exam_duration_m),
             convocation=self.convocation,
             type_ccct=self.type_ccct,

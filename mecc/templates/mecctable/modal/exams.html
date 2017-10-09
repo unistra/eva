@@ -135,24 +135,34 @@
                     return d.promise();
                 },
                 updateItem: function (item) {
-
-                    return $.ajax({
-                        dataType: "json",
+                    var d = $.Deferred();
+                    $.ajax({
                         url: url_update,
                         type: "POST",
+                        dataType: "json",
                         data: {
                             csrfmiddlewaretoken: '{{ csrf_token }}',
-                            exam: JSON.stringify(item)
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
                         },
-                    })
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                    });
+
+                    return d.promise();
 
                 },
-                deleteItem: function () {
+                deleteItem: function (item) {
                     var d = $.Deferred();
-
                     $.ajax({
                         url: url_delete,
-                        dataType: "json"
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
                     }).done(function (response) {
                         d.resolve(response.value);
                     });
@@ -205,9 +215,20 @@
                 },
                 {
                     name: "type_ccct",
-                    type: "text",
+                    type: "select",
                     title: "Type CC/CT",
-                    width: 45
+                    width: 45,
+                    valueField: "Id",
+                    textField: "Name",
+                    items: [{
+                        Name: "CC",
+                        Id: "C"
+                    },
+                    {
+                        Name: "CT",
+                        Id: "T"
+                    },
+                ],
                 },
                 {
                     name: "exam_duration",
@@ -235,7 +256,7 @@
                 },
                 {
                     name: "is_session_2",
-                    type: "text",
+                    type: "checkbox",
                     title: "Repport session 2",
                     width: 70
                 },
@@ -321,10 +342,24 @@
                     validate: "required"
                 },
                 {
-                    name: "type",
+                    name: "type_exam",
                     type: "select",
                     title: "Type",
-                    items: ["Écrit", "Oral", "Autre"],
+                    items: [{
+                            Name: "Écrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
+                        }
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
                     width: 60
                 },
                 {
