@@ -72,6 +72,29 @@
 </div>
 
 <script>
+    var type_dict = {
+        "A": "Autre",
+        "O": "Oral",
+        "E": "Écrit"
+    }
+
+    function add_to_big_table(item, id_structure, session) {
+        let regime = item.regime == "E" ? "ECI" : "CC/CT";
+        let type = type_dict[item.type_exam];
+        let coef = item.coefficient;
+        let convoc = item.convocation == true ? "Avec convoc" : "Sans convoc";
+        let id = item.id;
+
+        let to_write = "<span class='border-left exam_id-" + id + "'>" + regime + "-" + type + " (" + coef + ")<br>" +
+            convoc + "</span>"
+
+        let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
+        $(to_catch).append(to_write);
+
+
+
+    }
+
     function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol, st_rof_ref) {
         // update title
         document.getElementById('struct_object').innerHTML = st_label;
@@ -107,6 +130,19 @@
             // Hide adding field once data is loaded
             onDataLoaded: function () {
                 $(".jsgrid-insert-row").hide();
+
+            },
+            onItemInserted: function (args) {
+                add_to_big_table(args.item, id_structure, "1")
+            },
+            onItemUpdated: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+                add_to_big_table(args.item, id_structure, "1")
+            },
+            onInit: function () {
+                $(".repport_session_2 input").on('click', function () {
+                    console.log('alallalalalalallalal')
+                });
             },
             controller: {
                 loadData: function (filter) {
@@ -134,6 +170,7 @@
                     return d.promise();
                 },
                 updateItem: function (item) {
+                    console.log('ciciciicqslknkd')
                     var d = $.Deferred();
                     $.ajax({
                         url: url_update,
@@ -180,6 +217,7 @@
                     inserting: false,
                 },
                 {
+                    css: "select_type",
                     name: "type_exam",
                     type: "select",
                     title: "Type",
@@ -216,20 +254,19 @@
                     name: "type_ccct",
                     type: "select",
                     title: "Type CC/CT",
-                    editing: st_regime=="ECI"?false:true,
-                    inserting: st_regime=="ECI"?false:true,
+                    visible: st_regime == "ECI" ? false : true,
                     width: 45,
                     valueField: "Id",
                     textField: "Name",
                     items: [{
-                        Name: "CC",
-                        Id: "C"
-                    },
-                    {
-                        Name: "CT",
-                        Id: "T"
-                    },
-                ],
+                            Name: "CC",
+                            Id: "C"
+                        },
+                        {
+                            Name: "CT",
+                            Id: "T"
+                        },
+                    ],
                 },
                 {
                     name: "exam_duration",
@@ -239,10 +276,9 @@
                 },
                 {
                     name: "convocation",
-                    type: st_regime=="ECI"?"checkbox":"text",
+                    type: st_regime == "ECI" ? "checkbox" : "text",
                     title: "Convocation",
-                    editing: st_regime=="ECI"?true:false,
-                    inserting: st_regime=="ECI"?true:false,
+                    visible: st_regime == "ECI" ? true : false,
                     width: 75
                 },
                 {
@@ -258,16 +294,19 @@
                     width: 40
                 },
                 {
+                    css: "repport_session_2",
                     name: "is_session_2",
                     type: "checkbox",
                     title: "Repport session 2",
-                    width: 70
+                    visible: st_session == "Session unique" ? false : true,
+                    width: 70,
                 },
                 {
                     name: "threshold_session_2",
                     type: "number",
                     title: "À partir de ...",
-                    width: 70
+                    width: 70,
+                    visible: st_session == "Session unique" ? false : true,
                 },
                 {
                     type: "control",
@@ -339,7 +378,7 @@
                         type: "POST",
                         dataType: "json",
                         data: {
-                            session2: true,                            
+                            session2: true,
                             csrfmiddlewaretoken: '{{ csrf_token }}',
                             exam: JSON.stringify(item),
                             id_structure: id_structure
@@ -359,7 +398,7 @@
                         type: "POST",
                         dataType: "json",
                         data: {
-                            session2: true,                            
+                            session2: true,
                             csrfmiddlewaretoken: '{{ csrf_token }}',
                             exam: JSON.stringify(item),
                             id_structure: id_structure
@@ -382,8 +421,8 @@
                     validate: "required",
                     editing: false,
                     inserting: false,
-                    
-                    
+
+
                 },
                 {
                     name: "type_exam",
@@ -450,6 +489,5 @@
             ]
         });
         $(".jsgrid-insert-row").hide()
-        console.log('lalalala')
     }
 </script>

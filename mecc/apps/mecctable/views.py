@@ -595,6 +595,12 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     current_structures = StructureObject.objects.filter(code_year=code_year)
     current_links = ObjectsLink.objects.filter(code_year=code_year)
+    current_exams = Exam.objects.filter(code_year=code_year)
+
+    #     exams = Exam.objects.filter(
+    #     id_attached=structure_concerned.id, code_year=currentyear().code_year)
+    # asked_exams = exams.filter(session='2') if request.GET.get(
+    #     'session2') else exams.filter(session='1')
 
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
         'order_in_child').distinct()
@@ -621,6 +627,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
+            # ADDING FUN WITH EXAMS !
+            exams_1 = current_exams.filter(id_attached=structure.id, session="1")
+            exams_2 = current_exams.filter(id_attached=structure.id, session="2")
             items = {
                 "link": link,
                 'structure': structure,
@@ -631,6 +640,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 'rank': rank - 1,
                 'loop': range(0, rank - 1),
                 'not_yet_imported': not_yet_imported,
+                'exams_1': exams_1,
+                'exams_2': exams_2,
             }
             return items
         for link in links:
