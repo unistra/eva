@@ -166,11 +166,9 @@
 .mecc-semesters{
     display: flex;
     flex:1;
-    align-items: stretch;
 }
 .mecc-s1, .mecc-s2{
     flex-grow: 1;
-    text-align: center;
     align-items: stretch;
     width:50%;
     display: flex;
