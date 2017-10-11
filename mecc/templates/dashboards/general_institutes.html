@@ -7,8 +7,8 @@
     <table class="table" style="order:1">
         <tr>
             <td>{% trans "Lettres de présentation mises en ligne" %}</td>
-            <td class="stat-result">3 sur 4</td>
-            <td><a href="">{% trans "Accéder" %}</a></td>
+            <td class="stat-result">{{ institutes_letters_counter }} {% trans 'sur' %} {{ institutes_counter }}</td>
+            <td><a data-toggle="modal" class="hand no-border align-right" aria-hidden="true" data-target="#institutes_files">{% trans "Accéder" %}</a></td>
         </tr>
 
     </table>

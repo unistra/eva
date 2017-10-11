@@ -41,15 +41,15 @@
                                             <td  width="30%">{{ i.institute }}</td>
                                             <td class="align-right bold">{{ i.t_count }}</td>
                                             <td class="align-right bold">{{ i.t_uncompleted_count }}</td>
-                                            <td class="align-right">{% widthratio i.t_uncompleted_count trainings_counter 100 %}%</td>
+                                            <td class="align-right">{% widthratio i.t_uncompleted_count i.t_count 100 %}%</td>
                                             <td class="align-right bold">{{ i.t_completed_no_val_count}}</td>
-                                            <td class="align-right">{% widthratio i.t_completed_no_val_count trainings_counter 100 %}%</td>
+                                            <td class="align-right">{% widthratio i.t_completed_no_val_count i.t_count 100 %}%</td>
                                             <td class="align-right bold">{{ i.t_validated_des_waiting_count }}</td>
-                                            <td class="align-right">{% widthratio i.t_validated_des_waiting_count trainings_counter 100 %}%</td>
+                                            <td class="align-right">{% widthratio i.t_validated_des_waiting_count i.t_count 100 %}%</td>
                                             <td class="align-right bold">{{ i.t_validated_cfvu_waiting_count }}</td>
-                                            <td class="align-right">{% widthratio i.t_validated_cfvu_waiting_count trainings_counter 100 %}%</td>
+                                            <td class="align-right">{% widthratio i.t_validated_cfvu_waiting_count i.t_count 100 %}%</td>
                                             <td class="align-right bold">{{ i.t_validated_cfvu_count }}</td>
-                                            <td class="align-right">{% widthratio i.t_validated_cfvu_count trainings_counter 100 %}%</td>
+                                            <td class="align-right">{% widthratio i.t_validated_cfvu_count i.t_count 100 %}%</td>
 
                                         </tr>
                                         {% endfor %}

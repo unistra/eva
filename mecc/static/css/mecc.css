@@ -289,6 +289,7 @@ a.green:hover {
 .dashboard-table th {
     padding: 10px;
     text-align: center;
+    font-size: 11px;
 }
 
 .dashboard-count-row {
