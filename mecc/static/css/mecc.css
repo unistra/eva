@@ -279,6 +279,25 @@ a.green:hover {
 }
 
 /*******************************************************************************
+/* Dashboard table relative */
+
+.dashboard-table {
+    display: table;
+    table-layout: fixed;
+}
+
+.dashboard-table th {
+    padding: 10px;
+    text-align: center;
+}
+
+.dashboard-count-row {
+    background-color: #D3D7DA;
+    border: 1.5px solid black;
+    font-weight: bold!important;
+}
+
+/*******************************************************************************
 /* CKEDITOR custom css*/
 
 .django-ckeditor-widget {

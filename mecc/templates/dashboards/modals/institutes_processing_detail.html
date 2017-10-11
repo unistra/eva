@@ -1,0 +1,84 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<div class="modal fade" id="institutes_proc_detail_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title" id="myModalLabel">{% trans "Etat détaillé d'avancement par composante" %}</h2>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                    <div>
+                        <h3> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h3>
+                            {% if institutes_data %}
+                            <table class="table-bordered dashboard-table" id="institutes-processing-detail">
+                                <thead class='table-head'>
+                                    <tr >
+                                        <th rowspan="2">{% trans "Composante" %}</th>
+                                        <th rowspan="2">{% trans "Nb total formations gérées dans l'application" %}</th>
+                                        <th colspan="2">{% trans "Nb formations en cours de saisie (règles et/ou tableau non achevé)" %}</th>
+                                        <th colspan="2">{% trans "Nb formations en attente de validation en conseil de Composante" %}</th>
+                                        <th colspan="2">{% trans "Nb formations validées en Conseil de composante en attente de visa DES" %}</th>
+                                        <th colspan="2">{% trans "Nb formations validées en Conseil de composante ET visées par la DES" %}</th>
+                                        <th colspan="2">{% trans "Nb formations validées en CFVU" %}</th>
+                                    </tr>
+                                    <tr class='table-head'>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        {% for i in institutes_data %}
+                                        <tr class="hover-row">
+                                            <td  width="30%">{{ i.institute }}</td>
+                                            <td class="align-right bold">{{ i.t_count }}</td>
+                                            <td class="align-right bold">{{ i.t_uncompleted_count }}</td>
+                                            <td class="align-right">{% widthratio i.t_uncompleted_count trainings_counter 100 %}%</td>
+                                            <td class="align-right bold">{{ i.t_completed_no_val_count}}</td>
+                                            <td class="align-right">{% widthratio i.t_completed_no_val_count trainings_counter 100 %}%</td>
+                                            <td class="align-right bold">{{ i.t_validated_des_waiting_count }}</td>
+                                            <td class="align-right">{% widthratio i.t_validated_des_waiting_count trainings_counter 100 %}%</td>
+                                            <td class="align-right bold">{{ i.t_validated_cfvu_waiting_count }}</td>
+                                            <td class="align-right">{% widthratio i.t_validated_cfvu_waiting_count trainings_counter 100 %}%</td>
+                                            <td class="align-right bold">{{ i.t_validated_cfvu_count }}</td>
+                                            <td class="align-right">{% widthratio i.t_validated_cfvu_count trainings_counter 100 %}%</td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="dashboard-count-row">
+                                            <td>{% trans "TOTAL" %}</td>
+                                            <td class="align-right">{{ trainings_counter}}</td>
+                                            <td class="align-right">{{ trainings_uncompleted_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_uncompleted_counter trainings_counter 100 %}%</td>
+                                            <td class="align-right">{{ trainings_completed_no_validation_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_completed_no_validation_counter trainings_counter 100 %}%</td>
+                                            <td class="align-right">{{ trainings_validated_des_waiting_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_validated_des_waiting_counter trainings_counter 100 %}%</td>
+                                            <td class="align-right">{{ trainings_validated_cfvu_waiting_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_validated_cfvu_waiting_counter trainings_counter 100 %}%</td>
+                                            <td class="align-right">{{ trainings_validated_cfvu_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_validated_cfvu_counter trainings_counter 100 %}%</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                            {% else %}
+                                {% trans 'Aucune composante'%}
+                            {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>
