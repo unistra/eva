@@ -24,27 +24,26 @@
               </th>
               <th></th>
           </tr>
-          <thead>
-
-              <tbody>
-                  {% for e in commission_staff %}
-                  <tr class="hover-row">
-                      <td>{{e.last_name}}</td>
-                      <td>{{e.first_name}}</td>
-                      <td>{{e.username}}</td>
-                      <td>
-                          <select class='select-type' id="val">
-               <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
-               <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
-               <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
-               </select>
-                      </td>
-                      <td>
-                          <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
-                      </td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
+      </thead>
+      <tbody>
+          {% for e in commission_staff %}
+          <tr class="hover-row">
+              <td>{{e.last_name}}</td>
+              <td>{{e.first_name}}</td>
+              <td>{{e.username}}</td>
+              <td>
+                <select class='select-type' id="val">
+                    <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
+                    <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
+                    <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
+                </select>
+              </td>
+              <td>
+                  <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
   </table>
   {% else %} {% trans "Il n'y a aucun membre." %}
   <br>
