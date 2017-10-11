@@ -97,16 +97,16 @@
         {% endif %}
      </span>
      <div class="mecc-semesters" style="font-size: 55%;">
-         <div class="mecc-s1 mecc-s1-{{a.structure.id}} border-left">
+         <div class="mecc-s1 mecc-s1-{{a.structure.id}} border-left">          
              {% for e in a.exams_1  %}
              <span class="border-left exam_id-{{e.id}}"> {{e.get_regime_display}}-{{e.get_type_exam_display}} ({{e.coefficient}}) <br>
                 {%if e.convocation == "True"%} {% trans 'Avec convoc'%} {%else%} {% trans "Sans convoc"%}{%endif%}</span>
              {% endfor %}
-       
+           
          </div>
          <div class="mecc-s2 mecc-s2-{{a.structure.id}} border-left-3">
                 {% for e in a.exams_2  %}
-                <span class="border-left exam_id-{{e.id}}"> {{e.get_regime_display}}-{{e.get_type_exam_display}} ({{e.coefficient}}) <br>
+                <span class="border-right exam_id-{{e.id}}"> {{e.get_regime_display}}-{{e.get_type_exam_display}} ({{e.coefficient}}) <br>
                    {%if e.convocation == "True"%} {% trans 'Avec convoc'%} {%else%} {% trans "Sans convoc"%}{%endif%}</span>
                 {% endfor %}
          </div>

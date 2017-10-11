@@ -172,8 +172,12 @@
     align-items: stretch;
     width:50%;
     display: flex;
+    overflow-x: auto;
+    position: relative;    
 }
 
 .mecc-s1 span, .mecc-s2 span {
     flex-grow: 1;
+    white-space: nowrap;
+    padding-left: 0.5em;
 }
