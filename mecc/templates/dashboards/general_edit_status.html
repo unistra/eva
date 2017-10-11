@@ -16,7 +16,7 @@
             <td>({% widthratio trainings_completed_no_validation_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
-            <td class="align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "Nb de composantes - toutes les formations 'en attente de validation Conseil composante'" %}</td>
+            <td class="align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="italic">{% trans "Nb de composantes - toutes les formations 'en attente de validation Conseil composante'" %}</span></td>
             <td class="stat-result">{{institutes_trainings_completed_no_validation_counter}}</td>
             <td><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_trainings_council_waiting_list">{% trans "Voir la liste" %}</a></td>
         </tr>
@@ -31,7 +31,7 @@
             <td>({% widthratio trainings_validated_cfvu_waiting_counter trainings_counter 100 %}%)</td>
         </tr>
         <tr>
-            <td class="align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% trans "Nb de composantes - toutes les formations prêtes pour CFVU (Conseil composante + visa DES)" %}</td>
+            <td class="align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="italic">{% trans "Nb de composantes - toutes les formations prêtes pour CFVU (Conseil composante + visa DES)" %}</span></td>
             <td class="stat-result">{{institutes_trainings_waiting_cfvu_counter}}</td>
             <td><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_list_cfvu_ready">{% trans "Voir la liste" %}</a></td>
         </tr>
