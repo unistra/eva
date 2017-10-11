@@ -597,11 +597,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     current_links = ObjectsLink.objects.filter(code_year=code_year)
     current_exams = Exam.objects.filter(code_year=code_year)
 
-    #     exams = Exam.objects.filter(
-    #     id_attached=structure_concerned.id, code_year=currentyear().code_year)
-    # asked_exams = exams.filter(session='2') if request.GET.get(
-    #     'session2') else exams.filter(session='1')
-
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
         'order_in_child').distinct()
 

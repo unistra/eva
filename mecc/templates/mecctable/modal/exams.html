@@ -15,7 +15,7 @@
                         <h1 class="title-modal">{% trans "Définition des épreuves" %}</h1>
                         {% trans "Année universitaire : " %} {{request.display.current_year}}
                     </div>
-                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_old_exams">{% trans "Récupérer les ÉPREUVES <br>de l'anée précédente pour cet objet" %}</button>
+                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_old_exams">{% trans "Récupérer les ÉPREUVES <br>de l'année précédente pour cet objet" %}</button>
                 </div>
                 <div class="disp-flex space-between paddin-top">
                     <div>
@@ -53,7 +53,7 @@
             <div class="modal-body">
 
                 <h4 class="blue">
-                    {% trans "Épreuves de la session pincipale"%}
+                    {% trans "Épreuves de la session principale"%}
                 </h4>
                 <div id="principal_exam"></div>
                 <br>
@@ -209,7 +209,7 @@
 
             fields: [{
                     name: "_id",
-                    type: "number",
+                    type: "text",
                     title: "id auto",
                     width: 40,
                     validate: "required",
@@ -283,13 +283,13 @@
                 },
                 {
                     name: "coefficient",
-                    type: "number",
+                    type: "text",
                     title: "Coef",
                     width: 40
                 },
                 {
                     name: "eliminatory_grade",
-                    type: "number",
+                    type: "text",
                     title: "Note seuil",
                     width: 40
                 },
@@ -303,7 +303,7 @@
                 },
                 {
                     name: "threshold_session_2",
-                    type: "number",
+                    type: "text",
                     title: "À partir de ...",
                     width: 70,
                     visible: st_session == "Session unique" ? false : true,
@@ -340,7 +340,13 @@
             onDataLoaded: function () {
                 $(".jsgrid-insert-row").hide();
             },
-
+            onItemInserted: function (args) {
+                add_to_big_table(args.item, id_structure, "2")
+            },
+            onItemUpdated: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+                add_to_big_table(args.item, id_structure, "2")
+            },
             controller: {
                 loadData: function (filter) {
 
@@ -415,7 +421,7 @@
 
             fields: [{
                     name: "_id",
-                    type: "number",
+                    type: "text",
                     title: "id auto",
                     width: 40,
                     validate: "required",
@@ -465,13 +471,13 @@
                 },
                 {
                     name: "coefficient",
-                    type: "number",
+                    type: "text",
                     title: "Coef",
                     width: 40
                 },
                 {
                     name: "eliminatory_grade",
-                    type: "number",
+                    type: "text",
                     title: "Note seuil",
                     width: 40
                 },
