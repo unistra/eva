@@ -298,6 +298,23 @@ a.green:hover {
     font-weight: bold!important;
 }
 
+.dashboard-topten-table {
+    display: table;
+    table-layout: fixed;
+    border-color: #358CD3;
+    border-width: 0.15em;
+    border-style: solid;
+    width: 500px;
+    margin-bottom: 2em;
+}
+
+.dashboard-topten-table th, td {
+    padding: 3px;
+    font-size: 13px;
+
+}
+
+
 /*******************************************************************************
 /* CKEDITOR custom css*/
 
