@@ -75,6 +75,22 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="additional_info" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h1 class="title-modal">{% trans "Complément" %}</h1>
+            </div>
+            <div class="modal-body">
+                <textarea name="additional" id="additional" style="width:75%;" rows="10"></textarea>
+            </div>
+            <div class ="modal-footer">
+                <button class="btn-default btn" aria-hidden="true" id="confirm_additional">{% trans "Confirmer" %}</button>
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+                    
+            </div>
 <script>
     var type_dict = {
         "A": "Autre",
@@ -138,7 +154,11 @@
 
             },
             onItemInserted: function (args) {
+                console.log('inserted')
                 add_to_big_table(args.item, id_structure, "1")
+            },
+            onItemInserting: function (args) {
+                console.log('im inserting')
             },
             onItemUpdated: function (args) {
                 $(".exam_id-" + args.item.id).remove();
@@ -180,6 +200,7 @@
                     return d.promise();
                 },
                 updateItem: function (item) {
+                    console.log('je suis en train de strudddd')
                     var d = $.Deferred();
                     $.ajax({
                         url: url_update,
@@ -259,9 +280,10 @@
                 },
                 {
                     name: "additionnal_info",
-                    type: "textarea",
+                    type: "text",
                     title: "Complément",
-                    width: 75
+                    width: 75,
+                    css: "additionnal_info"
                 },
                 {
                     name: "type_ccct",
@@ -320,6 +342,7 @@
                     title: "À partir de ...",
                     width: 70,
                     visible: st_session == "Session unique" ? false : true,
+                    css: "thresold"
                 },
                 {
                     type: "control",
@@ -328,7 +351,11 @@
                         // Add + button to show
                         return $("<button>").attr("type", "button").text("+")
                             .on("click", function () {
+                                $("#principal_exam .jsgrid-insert-row .thresold input").hide()
+
                                 $("#principal_exam .jsgrid-insert-row").show()
+
+
                             });
                     }
                 }
@@ -480,9 +507,10 @@
                 },
                 {
                     name: "additionnal_info",
-                    type: "textarea",
+                    type: "text",
                     title: "Complément",
-                    width: 75
+                    width: 75,
+                    css: "additionnal_info"
                 },
                 {
                     name: "exam_duration",
@@ -517,4 +545,33 @@
         });
         $(".jsgrid-insert-row").hide()
     }
+    // Jquery power !!
+
+    // delegate stuff 
+    $("#principal_exam").delegate('.repport_session_2 input', 'click',
+        function (e) {
+            if (this.checked) {
+                $("#principal_exam .thresold input").val('0')
+                $(
+                    "#principal_exam .thresold input"
+                ).show()
+            } else {
+                $(
+                    "#principal_exam .thresold input"
+                ).hide()
+            }
+        })
+    $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'click', function(e){
+        let that=this
+        $('#additional').val(that.value);
+        $('#additional_info').modal('show');
+        $('#confirm_additional').on('click', function(){
+            let val = $('#additional').val()
+            that.value = val;
+            $('#additional_info').modal('hide');
+            
+        })
+    })
+        
+    
 </script>
