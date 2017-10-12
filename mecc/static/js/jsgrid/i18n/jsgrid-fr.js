@@ -2,7 +2,7 @@
 
     jsGrid.locales.fr = {
         grid: {
-            noDataContent: "Acune donnée",
+            noDataContent: "Aucune donnée",
             deleteConfirm: "Voulez vous vraiment supprimer cette épreuve ?",
             pagerFormat: "Pages: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}",
             pagePrevText: "<",
