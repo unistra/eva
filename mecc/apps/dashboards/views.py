@@ -46,7 +46,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     supply_institutes = institutes.filter(code__in=supply_filter).distinct()
     doc_cadre = FileUpload.objects.get(object_id=uy.id)
     institutes_letters = FileUpload.objects.filter(object_id__in=institutes.values_list('pk', flat=True), additional_type="letter_%s/%s" % (uy.code_year, uy.code_year+1))
-    print(institutes_letters.count())
+
     rules = Rule.objects.filter(code_year=uy.code_year).filter(
         is_edited__in=('O', 'X')).order_by('display_order')
 
@@ -106,5 +106,6 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['institutes_data'] = institutes_data
     data['institutes_letters'] = institutes_letters
     data['institutes_letters_counter'] = institutes_letters.count()
+    data['top_ten_count'] = range(1,11)
 
     return render(request, template, data)

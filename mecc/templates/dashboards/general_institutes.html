@@ -10,6 +10,28 @@
             <td class="stat-result">{{ institutes_letters_counter }} {% trans 'sur' %} {{ institutes_counter }}</td>
             <td><a data-toggle="modal" class="hand no-border align-right" aria-hidden="true" data-target="#institutes_files">{% trans "Accéder" %}</a></td>
         </tr>
+        <tr>
+            <table class="dashboard-topten-table">
+                <legend>{% trans "Dérogations sollicitées (10 les plus fréquentes)" %}</legend>
+                <thead>
+                    <th></th>
+                    <th></th>
+                    <th>Régime</th>
+                    <th>Nb comp.</th>
+                </thead>
+                <tbody>
+                    {% for  i in top_ten_count  %}
+
+                    <tr>
+                        <td>{{ i }}</td>
+                        <td>bla{{i}}</td>
+                        <td>bli{{i}}</td>
+                        <td>{{i}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </tr>
 
     </table>
 </div>
