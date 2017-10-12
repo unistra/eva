@@ -67,6 +67,10 @@
                 <div id="second_exam"></div>
 
             </div>
+            <div class="modal-footer">
+
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
         </div>
     </div>
 </div>
@@ -82,11 +86,12 @@
         let regime = item.regime == "E" ? "ECI" : "CC/CT";
         let type = type_dict[item.type_exam];
         let coef = item.coefficient;
-        let convoc = item.convocation == true ? "Avec convoc" : "Sans convoc";
+        let txt = regime == "E" ? item.convocation == true ? "Avec convoc" : "Sans convoc" : item.type_ccct == "C" ?
+            "CC" : "CT";
         let id = item.id;
 
         let to_write = "<span class='border-left exam_id-" + id + "'>" + regime + "-" + type + " (" + coef + ")<br>" +
-            convoc + "</span>"
+            txt + "</span>"
 
         let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
         $(to_catch).append(to_write);
@@ -127,7 +132,7 @@
             pageSize: 15,
             pageButtonCount: 5,
 
-            // Hide adding field once data is loaded
+            // Hide hiding field once data is loaded
             onDataLoaded: function () {
                 $(".jsgrid-insert-row").hide();
 
@@ -138,6 +143,9 @@
             onItemUpdated: function (args) {
                 $(".exam_id-" + args.item.id).remove();
                 add_to_big_table(args.item, id_structure, "1")
+            },
+            onItemDeleted: function (args) {
+                $(".exam_id-" + args.item.id).remove();
             },
             onInit: function () {
                 $(".repport_session_2 input").on('click', function () {
@@ -165,12 +173,13 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
                     });
 
                     return d.promise();
                 },
                 updateItem: function (item) {
-                    console.log('ciciciicqslknkd')
                     var d = $.Deferred();
                     $.ajax({
                         url: url_update,
@@ -183,6 +192,8 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
                     });
 
                     return d.promise();
@@ -201,6 +212,8 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
                     });
 
                     return d.promise();
@@ -347,6 +360,9 @@
                 $(".exam_id-" + args.item.id).remove();
                 add_to_big_table(args.item, id_structure, "2")
             },
+            onItemDeleted: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+            },
             controller: {
                 loadData: function (filter) {
 
@@ -371,6 +387,7 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
                     });
 
                     return d.promise();
@@ -391,6 +408,8 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
                     });
 
                     return d.promise();
@@ -411,6 +430,8 @@
                         },
                     }).done(function (response) {
                         d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
                     });
 
                     return d.promise();
