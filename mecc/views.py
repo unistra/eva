@@ -20,7 +20,7 @@ def home(request):
     except ObjectDoesNotExist:
         pass
     for e in request.user.meccuser.profile.all():
-        if e.code == 'RESPFORM':
+        if e.code == 'REFAPP':
             return redirect('training:list', cmp=e.cmp)
         if e.code == 'DIRETU':
             return redirect('training:list', cmp=e.cmp)

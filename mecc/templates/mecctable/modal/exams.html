@@ -1,6 +1,6 @@
 {% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
-<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+<link type="text/css" rel="stylesheet" href="{% static 'js/jsgrid/jsgrid.min.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'js/jsgrid/jsgrid-theme.min.css' %}" />
 
 <script type="text/javascript" src="{% static 'js/jsgrid/jsgrid.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jsgrid/i18n/jsgrid-fr.js' %}"></script>
@@ -69,7 +69,7 @@
             </div>
             <div class="modal-footer">
 
-                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+                <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
             </div>
         </div>
     </div>
@@ -87,510 +87,547 @@
                 <textarea name="additional" id="additional" style="width:75%;" rows="10"></textarea>
             </div>
             <div class="modal-footer">
-                <button class="btn-default btn" aria-hidden="true" id="confirm_additional">{% trans "Confirmer" %}</button>
-                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+                <button class="btn-primary btn" aria-hidden="true" id="confirm_additional">{% trans "Confirmer" %}</button>
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
 
             </div>
-            <script>
-                var type_dict = {
-                    "A": "Autre",
-                    "O": "Oral",
-                    "E": "Écrit"
+        </div>
+    </div>
+</div>
+<script>
+    var type_dict = {
+        "A": "Autre",
+        "O": "Oral",
+        "E": "Écrit"
+    }
+
+    function add_to_big_table(item, id_structure, session) {
+        let regime = item.regime === "E" ? "ECI" : "CC/CT";
+        let type = type_dict[item.type_exam];
+        let coef = item.coefficient;
+        let txt =
+            regime === "E" ?
+            item.convocation == true ?
+            "Avec convoc" : "Sans convoc" :
+            item.type_ccct === "C" ?
+            "CC" : "CT";
+        let id = item.id;
+
+        let to_write = "<span class='border-left exam_id-" + id + "'>" + regime + "-" + type + " (" + coef +
+            ")<br>" +
+            txt + "</span>"
+
+        let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
+        $(to_catch).append(to_write);
+
+
+
+    }
+
+    function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
+        st_rof_ref) {
+        // update title
+        document.getElementById('struct_object').innerHTML = st_label;
+        document.getElementById('struct_type').innerHTML = st_nature;
+        document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
+        document.getElementById('struct_siscol').innerHTML = st_ref_scol;
+        document.getElementById('struct_rof').innerHTML = st_rof_ref;
+        // Show the modal
+        $('#exams_tab').modal('show');
+
+
+        jsGrid.locale("fr");
+
+        let url_list = "/mecctable/list_exams/" + id_structure;
+        let url_add = "/mecctable/add_exam/";
+        let url_update = "/mecctable/update_exam/" + id_structure;
+        let url_delete = "/mecctable/delete_exam/" + id_structure;
+
+
+        $("#principal_exam").jsGrid({
+            height: "auto",
+            width: "100%",
+
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            inserting: true,
+
+            pageSize: 15,
+            pageButtonCount: 5,
+
+            // Hide hiding field once data is loaded
+            onDataLoaded: function (args) {
+                $(".jsgrid-insert-row").hide();
+
+            },
+            onItemInserted: function (args) {
+                add_to_big_table(args.item, id_structure, "1")
+            },
+            onItemInserting: function (args) {
+                if (args.item.threshold_session_2 > 20) {
+                    args.cancel = true;
+                    alert("'À partir de' ne peut pas être supérieure à 20")
                 }
-
-                function add_to_big_table(item, id_structure, session) {
-                    let regime = item.regime == "E" ? "ECI" : "CC/CT";
-                    let type = type_dict[item.type_exam];
-                    let coef = item.coefficient;
-                    let txt = regime == "E" ? item.convocation == true ? "Avec convoc" : "Sans convoc" : item.type_ccct ==
-                        "C" ?
-                        "CC" : "CT";
-                    let id = item.id;
-
-                    let to_write = "<span class='border-left exam_id-" + id + "'>" + regime + "-" + type + " (" + coef +
-                        ")<br>" +
-                        txt + "</span>"
-
-                    let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
-                    $(to_catch).append(to_write);
-
-
+                if (args.item.threshold_session_2 < 0) {
+                    args.cancel = true;
+                    alert("'À partir de' doit être supérieure à 0")
+                }
+                if (args.item.eliminatory_grade > 20) {
+                    args.cancel = true;
+                    alert("'Note seuil' ne peut pas être supérieure à 20")
+                }
+                if (args.item.eliminatory_grade < 0) {
+                    args.cancel = true;
+                    alert("'Note seuil' doit être supérieure à 0")
+                }
+                // TODO: add other controls
+            },
+            onItemUpdating: function (args) {
+                if (args.item.threshold_session_2 > 20) {
+                    args.cancel = true;
+                    alert("'À partir de' ne peut pas être supérieure à 20")
 
                 }
+                if (args.item.threshold_session_2 < 0) {
+                    args.cancel = true;
+                    alert("'À partir de' doit être supérieure à 0")
+                }
+                if (args.item.eliminatory_grade > 20) {
+                    args.cancel = true;
+                    alert("'Note seuil' ne peut pas être supérieure à 20")
+                }
+                if (args.item.eliminatory_grade < 0) {
+                    args.cancel = true;
+                    alert("'Note seuil' doit être supérieure à 0")
+                }
+            },
+            onItemUpdated: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+                add_to_big_table(args.item, id_structure, "1")
+            },
+            onItemDeleted: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+            },
+            onInit: function () {
+            },
+            controller: {
+                loadData: function (filter) {
+                    return $.ajax({
+                        url: url_list,
+                        dataType: "json"
+                    })
 
-                function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
-                    st_rof_ref) {
-                    // update title
-                    document.getElementById('struct_object').innerHTML = st_label;
-                    document.getElementById('struct_type').innerHTML = st_nature;
-                    document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
-                    document.getElementById('struct_siscol').innerHTML = st_ref_scol;
-                    document.getElementById('struct_rof').innerHTML = st_rof_ref;
-                    // Show the modal
-                    $('#exams_tab').modal('show');
-
-
-                    jsGrid.locale("fr");
-
-                    let url_list = "/mecctable/list_exams/" + id_structure;
-                    let url_add = "/mecctable/add_exam/";
-                    let url_update = "/mecctable/update_exam/" + id_structure;
-                    let url_delete = "/mecctable/delete_exam/" + id_structure;
-
-
-                    $("#principal_exam").jsGrid({
-                        height: "auto",
-                        width: "100%",
-
-                        editing: true,
-                        sorting: true,
-                        paging: true,
-                        autoload: true,
-                        inserting: true,
-
-                        pageSize: 15,
-                        pageButtonCount: 5,
-
-                        // Hide hiding field once data is loaded
-                        onDataLoaded: function () {
-                            $(".jsgrid-insert-row").hide();
-
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_add,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
                         },
-                        onItemInserted: function (args) {
-                            console.log('inserted')
-                            add_to_big_table(args.item, id_structure, "1")
-                        },
-                        onItemInserting: function (args) {
-                            if (args.item.threshold_session_2 > 20) {
-                                args.cancel = true;
-                                alert("'À partir de' ne peut pas être supérieure à 20")
-                            }
-                            if (args.item.threshold_session_2 < 0) {
-                                args.cancel = true;
-                                alert("'À partir de' doit être supérieure à 0")
-                            }
-                            // TODO: add other controls
-                        },
-                        onItemUpdating: function (args) {
-                            if (args.item.threshold_session_2 > 20) {
-                                args.cancel = true;
-                                alert("'À partir de' ne peut pas être supérieure à 20")
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
 
-                            }
-                            if (args.item.threshold_session_2 < 0) {
-                                args.cancel = true;
-                                alert("'À partir de' doit être supérieure à 0")
-                            }
-                        },
-                        onItemUpdated: function (args) {
-                            $(".exam_id-" + args.item.id).remove();
-                            add_to_big_table(args.item, id_structure, "1")
-                        },
-                        onItemDeleted: function (args) {
-                            $(".exam_id-" + args.item.id).remove();
-                        },
-                        onInit: function () {
-                            $(".repport_session_2 input").on('click', function () {});
-                        },
-                        controller: {
-                            loadData: function (filter) {
-                                return $.ajax({
-                                    url: url_list,
-                                    dataType: "json"
-                                })
-
-                            },
-                            insertItem: function (item) {
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_add,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-
-                                });
-
-                                return d.promise();
-                            },
-                            updateItem: function (item) {
-                                console.log('je suis en train de strudddd')
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_update,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-
-                                });
-
-                                return d.promise();
-
-                            },
-                            deleteItem: function (item) {
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_delete,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-
-                                });
-
-                                return d.promise();
-                            },
-                        },
-
-                        fields: [{
-                                name: "_id",
-                                type: "text",
-                                title: "id auto",
-                                width: 40,
-                                validate: "required",
-                                editing: false,
-                                inserting: false,
-                            },
-                            {
-                                css: "select_type",
-                                name: "type_exam",
-                                type: "select",
-                                title: "Type",
-                                items: [{
-                                        Name: "Écrit",
-                                        Id: "E"
-                                    },
-                                    {
-                                        Name: "Oral",
-                                        Id: "O"
-                                    },
-                                    {
-                                        Name: "Autre",
-                                        Id: "A"
-                                    }
-                                ],
-                                valueField: "Id",
-                                textField: "Name",
-                                width: 60
-                            },
-                            {
-                                name: "label",
-                                type: "text",
-                                title: "Intitulé épreuve (25 car.)",
-                                width: 180
-                            },
-                            {
-                                name: "additionnal_info",
-                                type: "text",
-                                title: "Complément",
-                                width: 75,
-                                css: "additionnal_info"
-                            },
-                            {
-                                name: "type_ccct",
-                                type: "select",
-                                title: "Type CC/CT",
-                                visible: st_regime == "ECI" ? false : true,
-                                width: 45,
-                                valueField: "Id",
-                                textField: "Name",
-                                items: [{
-                                        Name: "CC",
-                                        Id: "C"
-                                    },
-                                    {
-                                        Name: "CT",
-                                        Id: "T"
-                                    },
-                                ],
-                            },
-                            {
-                                name: "exam_duration",
-                                type: "text",
-                                title: "Durée",
-                                width: 45
-                            },
-                            {
-                                name: "convocation",
-                                type: st_regime == "ECI" ? "checkbox" : "text",
-                                title: "Convocation",
-                                visible: st_regime == "ECI" ? true : false,
-                                width: 75
-                            },
-                            {
-                                name: "coefficient",
-                                type: "text",
-                                title: "Coef",
-                                width: 40
-                            },
-                            {
-                                name: "eliminatory_grade",
-                                type: "text",
-                                title: "Note seuil",
-                                width: 40
-                            },
-                            {
-                                css: "repport_session_2",
-                                name: "is_session_2",
-                                type: "checkbox",
-                                title: "Repport session 2",
-                                visible: st_session == "Session unique" ? false : true,
-                                width: 70,
-                            },
-                            {
-                                name: "threshold_session_2",
-                                type: "text",
-                                title: "À partir de ...",
-                                width: 70,
-                                visible: st_session == "Session unique" ? false : true,
-                                css: "thresold"
-                            },
-                            {
-                                type: "control",
-
-                                headerTemplate: function () {
-                                    // Add + button to show
-                                    return $("<button>").attr("type", "button").text("+")
-                                        .on("click", function () {
-                                            $("#principal_exam .jsgrid-insert-row .thresold input")
-                                                .hide()
-
-                                            $("#principal_exam .jsgrid-insert-row").show()
-
-
-                                        });
-                                }
-                            }
-                        ]
                     });
 
-
-
-                    $("#second_exam").jsGrid({
-                        height: "auto",
-                        width: "100%",
-
-                        editing: true,
-                        sorting: true,
-                        paging: true,
-                        autoload: true,
-                        inserting: true,
-
-                        pageSize: 15,
-                        pageButtonCount: 5,
-                        // Hide adding field once data is loaded
-                        onDataLoaded: function () {
-                            $(".jsgrid-insert-row").hide();
+                    return d.promise();
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_update,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
                         },
-                        onItemInserted: function (args) {
-                            add_to_big_table(args.item, id_structure, "2")
-                        },
-                        onItemUpdated: function (args) {
-                            $(".exam_id-" + args.item.id).remove();
-                            add_to_big_table(args.item, id_structure, "2")
-                        },
-                        onItemDeleted: function (args) {
-                            $(".exam_id-" + args.item.id).remove();
-                        },
-                        controller: {
-                            loadData: function (filter) {
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
 
-                                return $.ajax({
-                                    url: url_list,
-                                    data: 'session2=True',
-                                    dataType: "json"
-                                })
-
-                            },
-                            insertItem: function (item) {
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_add,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        session2: true,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-                                });
-
-                                return d.promise();
-
-                            },
-                            updateItem: function (item) {
-
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_update,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        session2: true,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-
-                                });
-
-                                return d.promise();
-
-
-                            },
-                            deleteItem: function (item) {
-                                var d = $.Deferred();
-                                $.ajax({
-                                    url: url_delete,
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        session2: true,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                                        exam: JSON.stringify(item),
-                                        id_structure: id_structure
-                                    },
-                                }).done(function (response) {
-                                    d.resolve(response.value);
-                                    $(".jsgrid-insert-row").hide();
-
-                                });
-
-                                return d.promise();
-
-
-                            },
-                        },
-
-                        fields: [{
-                                name: "_id",
-                                type: "text",
-                                title: "id auto",
-                                width: 40,
-                                validate: "required",
-                                editing: false,
-                                inserting: false,
-
-
-                            },
-                            {
-                                name: "type_exam",
-                                type: "select",
-                                title: "Type",
-                                items: [{
-                                        Name: "Écrit",
-                                        Id: "E"
-                                    },
-                                    {
-                                        Name: "Oral",
-                                        Id: "O"
-                                    },
-                                    {
-                                        Name: "Autre",
-                                        Id: "A"
-                                    }
-                                ],
-                                valueField: "Id",
-                                textField: "Name",
-                                width: 60
-                            },
-                            {
-                                name: "label",
-                                type: "text",
-                                title: "Intitulé épreuve (25 car.)",
-                                width: 180
-                            },
-                            {
-                                name: "additionnal_info",
-                                type: "text",
-                                title: "Complément",
-                                width: 75,
-                                css: "additionnal_info"
-                            },
-                            {
-                                name: "exam_duration",
-                                type: "text",
-                                title: "Durée",
-                                width: 45
-                            },
-                            {
-                                name: "coefficient",
-                                type: "text",
-                                title: "Coef",
-                                width: 40
-                            },
-                            {
-                                name: "eliminatory_grade",
-                                type: "text",
-                                title: "Note seuil",
-                                width: 40
-                            },
-                            {
-                                type: "control",
-
-                                headerTemplate: function () {
-                                    // Add + button to show
-                                    return $("<button>").attr("type", "button").text("+")
-                                        .on("click", function () {
-                                            $("#second_exam .jsgrid-insert-row").show()
-                                        });
-                                }
-                            }
-                        ]
                     });
-                    $(".jsgrid-insert-row").hide()
-                }
-                // Jquery power !!
 
-                // delegate stuff 
-                $("#principal_exam").delegate('.repport_session_2 input', 'click',
-                    function (e) {
-                        if (this.checked) {
-                            $("#principal_exam .thresold input").val('0')
-                            $(
-                                "#principal_exam .thresold input"
-                            ).show()
-                        } else {
-                            $(
-                                "#principal_exam .thresold input"
-                            ).hide()
+                    return d.promise();
+
+                },
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_delete,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+                },
+            },
+
+            fields: [{
+                    name: "_id",
+                    type: "text",
+                    title: "id auto",
+                    width: 40,
+                    validate: "required",
+                    editing: false,
+                    inserting: false,
+                },
+                {
+                    css: "select_type",
+                    name: "type_exam",
+                    type: "select",
+                    title: "Type",
+                    items: [{
+                            Name: "Écrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
                         }
-                    })
-                $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'click', function (e) {
-                    let that = this
-                    $('#additional').val(that.value);
-                    $('#additional_info').modal('show');
-                    $('#confirm_additional').on('click', function () {
-                        let val = $('#additional').val()
-                        that.value = val;
-                        $('#additional_info').modal('hide');
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
+                    width: 60
+                },
+                {
+                    name: "label",
+                    type: "text",
+                    title: "Intitulé épreuve (25 car.)",
+                    width: 180
+                },
+                {
+                    name: "additionnal_info",
+                    type: "text",
+                    title: "Complément",
+                    width: 75,
+                    css: "additionnal_info",
+                    cellRenderer: function(value, item){
+                        return "<td>" + value.substr(0, 12) + "\u2026</td>"
+                    }
+                },
+                {
+                    name: "type_ccct",
+                    type: "select",
+                    title: "Type CC/CT",
+                    visible: st_regime == "ECI" ? false : true,
+                    width: 45,
+                    valueField: "Id",
+                    textField: "Name",
+                    items: [{
+                            Name: "CC",
+                            Id: "C"
+                        },
+                        {
+                            Name: "CT",
+                            Id: "T"
+                        },
+                    ],
+                },
+                {
+                    css: "exam_duration",
+                    name: "exam_duration",
+                    type: "text",
+                    title: "Durée",
+                    width: 45
+                },
+                {
+                    name: "convocation",
+                    type: st_regime == "ECI" ? "checkbox" : "text",
+                    title: "Convocation",
+                    visible: st_regime == "ECI" ? true : false,
+                    width: 75
+                },
+                {
+                    name: "coefficient",
+                    css: "coefficient",
+                    type: "text",
+                    title: "Coef",
+                    width: 40
+                },
+                {
+                    name: "eliminatory_grade",
+                    css: "eliminatory_grade",
+                    type: "text",
+                    title: "Note seuil",
+                    width: 40
+                },
+                {
+                    css: "repport_session_2",
+                    name: "is_session_2",
+                    type: "checkbox",
+                    title: "Repport session 2",
+                    visible: st_session == "Session unique" ? false : true,
+                    width: 70,
+                },
+                {
+                    name: "threshold_session_2",
+                    type: "text",
+                    title: "À partir de ...",
+                    width: 70,
+                    visible: st_session == "Session unique" ? false : true,
+                    css: "thresold"
+                },
+                {
+                    type: "control",
 
+                    headerTemplate: function () {
+                        // Add + button to show
+                        return $("<button>").attr("type", "button").text("+")
+                            .on("click", function () {
+                                $("#principal_exam .jsgrid-insert-row .thresold input")
+                                    .hide()
+                                $("#principal_exam .jsgrid-insert-row").show()
+                                $("#principal_exam .jsgrid-insert-row .exam_duration input").attr(
+                                    "placeholder", "2:00");
+                                $("#principal_exam .jsgrid-insert-row .coefficient input").attr(
+                                    "placeholder", "2.5");
+
+
+
+                            });
+                    }
+                }
+            ]
+        });
+
+
+
+        $("#second_exam").jsGrid({
+            height: "auto",
+            width: "100%",
+
+            editing: true,
+            sorting: true,
+            paging: true,
+            autoload: true,
+            inserting: true,
+
+            pageSize: 15,
+            pageButtonCount: 5,
+            // Hide adding field once data is loaded
+            onDataLoaded: function () {
+                $(".jsgrid-insert-row").hide();
+            },
+            onItemInserted: function (args) {
+                add_to_big_table(args.item, id_structure, "2")
+            },
+            onItemUpdated: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+                add_to_big_table(args.item, id_structure, "2")
+            },
+            onItemDeleted: function (args) {
+                $(".exam_id-" + args.item.id).remove();
+            },
+            controller: {
+                loadData: function (filter) {
+
+                    return $.ajax({
+                        url: url_list,
+                        data: 'session2=True',
+                        dataType: "json"
                     })
-                })
-            </script>
+
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_add,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+                    });
+
+                    return d.promise();
+
+                },
+                updateItem: function (item) {
+
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_update,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+
+
+                },
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_delete,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+
+
+                },
+            },
+
+            fields: [{
+                    name: "_id",
+                    type: "text",
+                    title: "id auto",
+                    width: 40,
+                    validate: "required",
+                    editing: false,
+                    inserting: false,
+
+
+                },
+                {
+                    name: "type_exam",
+                    type: "select",
+                    title: "Type",
+                    items: [{
+                            Name: "Écrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
+                        }
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
+                    width: 60
+                },
+                {
+                    name: "label",
+                    type: "text",
+                    title: "Intitulé épreuve (25 car.)",
+                    width: 180
+                },
+                {
+                    name: "additionnal_info",
+                    type: "text",
+                    title: "Complément",
+                    width: 75,
+                    css: "additionnal_info",
+                    cellRenderer: function(value, item){
+                        return "<td>" + value.substr(0, 12) + "\u2026</td>"
+                    }
+                },
+                {
+                    name: "exam_duration",
+                    css: "exam_duration",
+                    type: "text",
+                    title: "Durée",
+                    width: 45
+                },
+                {
+                    css: "coefficient",
+                    name: "coefficient",
+                    type: "text",
+                    title: "Coef",
+                    width: 40
+                },
+                {
+                    name: "eliminatory_grade",
+                    css: "eliminatory_grade",
+                    type: "text",
+                    title: "Note seuil",
+                    width: 40
+                },
+                {
+                    type: "control",
+
+                    headerTemplate: function () {
+                        // Add + button to show
+                        return $("<button>").attr("type", "button").text("+")
+                            .on("click", function () {
+                                $("#second_exam .jsgrid-insert-row").show()
+                                $("#second_exam .jsgrid-insert-row .exam_duration input").attr(
+                                    "placeholder", "2:00");
+                                $("#second_exam .jsgrid-insert-row .coefficient input").attr(
+                                    "placeholder", "2.5");
+                            });
+                    }
+                }
+            ]
+        });
+        $(".jsgrid-insert-row").hide()
+    }
+    // Jquery power !!
+
+    // delegate stuff 
+    $("#principal_exam").delegate('.repport_session_2 input', 'click',
+        function (e) {
+            if (this.checked) {
+                $("#principal_exam .thresold input").val('0')
+                $("#principal_exam .thresold input").show()
+            } else {
+                $(
+                    "#principal_exam .thresold input"
+                ).hide()
+            }
+        })
+    $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'focus', function (e) {
+        let that = this
+        $('#additional').val(that.value);
+        $('#additional_info').modal('show');
+        $('#confirm_additional').on('click', function () {
+            let val = $('#additional').val()
+            that.value = val;
+            $('#additional_info').modal('hide');
+
+        })
+    })
+</script>
