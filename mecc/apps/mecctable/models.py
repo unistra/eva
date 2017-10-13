@@ -238,7 +238,7 @@ class Exam(models.Model):
     )
     coefficient = models.DecimalField(
         verbose_name=_("Coefficient de l'épreuve"),
-        max_digits=2, decimal_places=1)
+        max_digits=2, decimal_places=1, null=True, blank=True)
     eliminatory_grade = models.IntegerField(
         _("Note seuil de l'épreuve"), null=True, blank=True)
     is_session_2 = models.NullBooleanField(_("Témoin Report session 2"))
