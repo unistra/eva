@@ -1,7 +1,7 @@
 import json
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest)
 from django.utils.translation import ugettext as _
@@ -18,7 +18,7 @@ from .utils import upload_files
 def upload_file(request, app_name, model_name, object_pk):
     """Upload a file"""
     try:
-        m = get_model(app_name, model_name)
+        m = apps.get_model(app_name, model_name)
 
     except LookupError:
         message = _('Model does not exist.')
