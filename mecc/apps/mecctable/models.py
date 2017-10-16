@@ -257,7 +257,7 @@ class Exam(models.Model):
     @property
     def as_json(self):
         """
-        In order to give us a custom json of each object 
+        In order to give us a custom json of each object with ease
         """
         return dict(
             id=self.id,
