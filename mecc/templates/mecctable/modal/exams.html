@@ -101,14 +101,17 @@
         "E": "Écrit"
     }
 
-    function _checkall(what, label) {
+    function _checkall(what, label, args) {
 
+        _is_nan(what, label);
+        _is_grade(what, label);
         function _is_nan(what, label) {
-            if (isNaN(what) && what != "") {
+            if (isNaN(what) && (what != "" || what !== null)) {
+                console.log(what)
                 args.cancel = true;
                 alert(label + " doit être un nombre.");
-                return true;
-            } else return false;
+                return false
+            }
         }
 
         function _is_grade(what, label) {
@@ -185,10 +188,13 @@
             },
             onItemInserted: function (args) {
                 add_to_big_table(args.item, id_structure, "1")
+                args.grid.loadData();
             },
             onItemInserting: function (args) {
-                _checkall(args.item.threshold_session_2, "À partir de")
-                _checkall(args.item.eliminatory_grade, "Note seuil")
+                if (typeof args.item.threshold_session_2 !== 'undefined'){
+                    _checkall(args.item.threshold_session_2, "À partir de", args)
+                }
+                _checkall(args.item.eliminatory_grade, "Note seuil", args)
 
                 let duration = args.item.exam_duration
                 let durations_h = duration.slice(0, duration.indexOf(':'))
@@ -344,7 +350,10 @@
                     width: 75,
                     css: "additionnal_info",
                     cellRenderer: function (value, item) {
-                        return "<td>" + value.substr(0, 12) + "\u2026</td>"
+                        let text = value === null ? 
+                            "" : 
+                            value.substr(0,12) + "\u2026";
+                        return "<td>" + text +"</td>"
                     }
                 },
                 {
@@ -452,6 +461,8 @@
             },
             onItemInserted: function (args) {
                 add_to_big_table(args.item, id_structure, "2")
+                args.grid.loadData()
+
             },
             onItemInserting: function (args) {
                 _checkall(args.item.eliminatory_grade, "Note seuil")
@@ -550,6 +561,7 @@
 
                 },
                 deleteItem: function (item) {
+                    console.log(item)
                     var d = $.Deferred();
                     $.ajax({
                         url: url_delete,
@@ -578,11 +590,8 @@
                     type: "text",
                     title: "id auto",
                     width: 40,
-                    validate: "required",
                     editing: false,
                     inserting: false,
-
-
                 },
                 {
                     name: "type_exam",

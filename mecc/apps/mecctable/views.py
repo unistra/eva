@@ -48,13 +48,14 @@ def add_exam(request):
     try:
         part_h = times[0]
     except Exception as e:
-        part_h = 0
+        part_h = None
     try:
         part_m = times[1]
     except Exception as e:
-        part_m = 0
+        part_m = None
+    print(obj)
     try:
-        created_exam = Exam.objects.create(
+        exam = Exam.objects.create(
             code_year=currentyear().code_year,
             id_attached=request.POST.get('id_structure'),
             session='2' if request.POST.get('session2') else '1',
@@ -66,11 +67,11 @@ def add_exam(request):
             exam_duration_m=part_m,
             convocation=obj.get('convocation'),
             type_ccct=obj.get('type_ccct'),
-            coefficient=obj.get('coefficient'),
             eliminatory_grade=obj.get('eliminatory_grade'),
             is_session_2=obj.get('is_session_2'),
             threshold_session_2=obj.get('threshold_session_2')
         )
+        print(exam)
     except Exception as e:
         print(e)
     return JsonResponse({"status": 200})
@@ -82,9 +83,9 @@ def update_exam(request, id_structure):
     """
     exams = Exam.objects.filter(
         id_attached=id_structure, code_year=currentyear().code_year)
-
     obj = json.loads(request.POST.get('exam'))
-
+    print(obj.get('id'))
+    print('^^')
     non_updated_exam = exams.get(id=obj.get('id'))
     non_updated_exam.delete()
 
@@ -96,16 +97,30 @@ def update_exam(request, id_structure):
     try:
         part_h = times[0]
     except IndexError:
-        part_h = 0
+        part_h = None
     try:
         part_m = times[1]
     except IndexError:
-        part_m = 0
+        part_m = None
 
     obj['exam_duration_h'] = part_h
     obj['exam_duration_m'] = part_m
 
-    Exam.objects.create(**obj)
+    # Handling coef field
+    # duration = obj.pop('exam_duration')
+    # print('icic')
+    # coeff = obj.pop('coefficient')
+    # corrected_coeff = None if coeff == "" else coeff
+
+    # obj['coefficient'] = corrected_coeff
+    for e in obj:
+        obj[e] = None if obj[e] == '' else obj[e]
+
+    print(obj)
+    try:
+        Exam.objects.create(**obj)
+    except Exception as e:
+        print(e)
     return JsonResponse({"status": 200})
 
 
@@ -608,10 +623,16 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['form'] = StructureObjectForm
 
     def recurse(link):
+        """
+        Recurse until end of time
+        """
         links = not isinstance(link, (list, tuple)) and [link] or link
         stuff = []
 
         def get_childs(link, is_imported, rank=0):
+            """
+            Looking for children in order to recurse on them
+            """
             rank += 1
             not_yet_imported = False
             try:
@@ -622,9 +643,12 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
             children = current_links.filter(
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
-            # ADDING FUN WITH EXAMS !
-            exams_1 = current_exams.filter(id_attached=structure.id, session="1")
-            exams_2 = current_exams.filter(id_attached=structure.id, session="2")
+            # ADDING FUN WITH EXAMS
+            exams_1 = current_exams.filter(
+                id_attached=structure.id, session="1")
+            print(exams_1[0:2])
+            exams_2 = current_exams.filter(
+                id_attached=structure.id, session="2")
             items = {
                 "link": link,
                 'structure': structure,
