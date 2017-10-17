@@ -226,9 +226,11 @@ class Exam(models.Model):
     label = models.CharField(_("Intitulé de l'épreuve"), max_length=25)
     additionnal_info = models.CharField(
         _("Complément d’information sur l’épreuve"),
-        max_length=200)
-    exam_duration_h = models.IntegerField(_("Durée de l’épreuve-Heures"))
-    exam_duration_m = models.IntegerField(_("Durée de l’épreuve-Minutes"))
+        max_length=200, null=True, blank=True)
+    exam_duration_h = models.IntegerField(
+        _("Durée de l’épreuve-Heures"), null=True, blank=True)
+    exam_duration_m = models.IntegerField(
+        _("Durée de l’épreuve-Minutes"), null=True, blank=True)
     convocation = models.CharField(
         verbose_name=_("Convocation"), choices=CONVOCATION_CHOICE,
         max_length=1, null=True, blank=True)
@@ -270,7 +272,7 @@ class Exam(models.Model):
             label=self.label,
             additionnal_info=self.additionnal_info,
             exam_duration='%02d:%02d' % (
-                self.exam_duration_h, self.exam_duration_m),
+                self.exam_duration_h, self.exam_duration_m) if self.exam_duration_h else None,
             convocation=self.convocation,
             type_ccct=self.type_ccct,
             coefficient=self.coefficient,
