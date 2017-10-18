@@ -107,7 +107,6 @@
         _is_grade(what, label);
         function _is_nan(what, label) {
             if (isNaN(what) && (what != "" || what !== null)) {
-                console.log(what)
                 args.cancel = true;
                 alert(label + " doit être un nombre.");
                 return false
@@ -132,14 +131,14 @@
         let txt =
             regime === "E" ?
             item.convocation == true ?
-            "Avec convoc" : "Sans convoc" :
+            "<span class='green'>!</span>" : "" :
             item.type_ccct === "C" ?
-            "CC" : "CT";
+            "" : "<span class='green'>!</span>"; 
         let id = item.id;
 
-        let to_write = "<span class='border-left exam_id-" + id + "'>" + regime + "-" + type + " (" + coef +
-            ")<br>" +
-            txt + "</span>"
+
+        let to_write = "<span class='border-left exam_id-" + id + "'>" + type + " (" + coef +
+            ")" + txt + "</span>"
 
         let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
         $(to_catch).append(to_write);
@@ -679,6 +678,8 @@
                 $("#principal_exam .thresold input").val('0')
                 $("#principal_exam .thresold input").show()
             } else {
+                $("#principal_exam .thresold input").val('')
+                
                 $(
                     "#principal_exam .thresold input"
                 ).hide()

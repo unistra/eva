@@ -40,20 +40,16 @@ def add_exam(request):
     exam = request.POST.get('exam')
     # Convert it in dict
     obj = json.loads(exam)
+    for e in obj:
+        obj[e] = None if obj[e] == '' else obj[e]
+    try:
+        times = obj.get('exam_duration').split(':')
+    except Exception:
+        times = [None, None]
 
-    time = obj.get('exam_duration')
-    for delim in ':h':
-        time = time.replace(delim, ' ')
-    times = time.split()
-    try:
-        part_h = times[0]
-    except Exception as e:
-        part_h = None
-    try:
-        part_m = times[1]
-    except Exception as e:
-        part_m = None
-    print(obj)
+    part_h = times[0]
+    part_m = times[1]
+
     try:
         exam = Exam.objects.create(
             code_year=currentyear().code_year,
@@ -71,7 +67,6 @@ def add_exam(request):
             is_session_2=obj.get('is_session_2'),
             threshold_session_2=obj.get('threshold_session_2')
         )
-        print(exam)
     except Exception as e:
         print(e)
     return JsonResponse({"status": 200})
@@ -84,8 +79,6 @@ def update_exam(request, id_structure):
     exams = Exam.objects.filter(
         id_attached=id_structure, code_year=currentyear().code_year)
     obj = json.loads(request.POST.get('exam'))
-    print(obj.get('id'))
-    print('^^')
     non_updated_exam = exams.get(id=obj.get('id'))
     non_updated_exam.delete()
 
