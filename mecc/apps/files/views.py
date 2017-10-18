@@ -1,9 +1,14 @@
 import json
+import mimetypes
+import os
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
+
+from django.core.servers.basehttp import FileWrapper
 from django.http import (HttpResponse, HttpResponseNotFound,
-                         HttpResponseBadRequest)
+                         HttpResponseBadRequest, StreamingHttpResponse)
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_http_methods
 
@@ -57,3 +62,22 @@ def delete_file(request, file_id):
     res.delete()
 
     return HttpResponse(json.dumps({'status': 'success'}))
+
+
+@login_required
+def serve_file(request, path, document_root=None, show_indexes=False):
+    """Serve static files """
+    try:
+        _file = os.path.join(settings.MEDIA_ROOT, path)
+        _file_type = mimetypes.guess_type(_file)[0]
+
+        chunk_size = 8192
+        response = StreamingHttpResponse(FileWrapper(open(_file, 'rb'),
+                                                     chunk_size),
+                                         content_type=_file_type)
+        response['Content-Length'] = os.path.getsize(_file)
+
+    except:
+        return HttpResponseNotFound()
+
+    return response
