@@ -48,3 +48,12 @@ DIPSTRAP_STATIC_URL += '%s/' % DIPSTRAP_VERSION
 # STAGE #
 #########
 STAGE = '{{ goal }}'
+
+##########
+# UPLOAD #
+##########
+
+# url for logos upload
+MEDIA_ROOT = '/nfs/mecc/uploads'
+# path for pdf files
+FILES_UPLOAD_PATH = 'docs/%Y'

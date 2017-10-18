@@ -3,6 +3,7 @@ from django.conf import settings
 from django_cas.decorators import login_required
 from django.conf.urls.static import static
 from mecc.apps.institute.views import get_list
+from mecc.apps.files.views import serve_file
 from django.contrib import admin
 admin.autodiscover()
 
@@ -34,6 +35,8 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     (r'^accounts/login/$', 'django_cas.views.login'),
     (r'^accounts/logout/$', 'django_cas.views.logout'),
+    url(r'^%s(?P<path>.*)$' % settings.MEDIA_URL[1:],
+        serve_file, {'document_root': settings.MEDIA_ROOT}),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # debug toolbar for dev
