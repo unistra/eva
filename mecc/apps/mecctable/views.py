@@ -29,6 +29,22 @@ from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 LOGGER = logging.getLogger(__name__)
 
 
+def copy_exam_1_to_2(request, id_structure):
+    """
+    Copy primary exam to secondary exams
+    """
+    structure_concerned = StructureObject.objects.get(id=id_structure)
+    exams = Exam.objects.filter(
+        id_attached=structure_concerned.id, code_year=currentyear().code_year,
+        session='1')
+    for exam in exams:
+        exam.pk = None
+        exam.session = "2"
+        exam.save()
+    print('DONE')
+    return JsonResponse({"status": 200})
+
+
 def add_exam(request):
     """
     return json with added exam
@@ -108,8 +124,6 @@ def update_exam(request, id_structure):
     # obj['coefficient'] = corrected_coeff
     for e in obj:
         obj[e] = None if obj[e] == '' else obj[e]
-
-    print(obj)
     try:
         Exam.objects.create(**obj)
     except Exception as e:
@@ -894,7 +908,6 @@ def copy_old_mecctable(request, id_training):
                     new_struct_child = current_structures.get(
                         auto_id=old_struct_child.auto_id,
                         owner_training_id=current_other_training.id)
-                    print("icicic")
                 except ObjectDoesNotExist:
                     new_struct_child = old_struct_child
                 print('old!')
