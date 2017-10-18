@@ -188,7 +188,7 @@
                   csrfmiddlewaretoken: '{{ csrf_token }}',
                 },
                 success: function(data) {
-                    $("#second_exam").jsGrid("refresh");      
+                    $("#second_exam").jsGrid("loadData");      
                     $(".jsgrid-insert-row").hide()      
                     $('#title_complete').text('{% trans " Copie des épreuves principales terminée."%}');
                     $('#complete').modal('show');
