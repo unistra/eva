@@ -158,7 +158,7 @@
     width:4em;
 }
 .mecc-respens{
-    width:12em;
+    width:10em;
 }
 .mecc-details{
     width:2em;
@@ -168,16 +168,8 @@
     flex:1;
 }
 .mecc-s1, .mecc-s2{
-    flex-grow: 1;
-    align-items: stretch;
     width:50%;
-    display: flex;
-    overflow-x: auto;
-    position: relative;    
 }
 
 .mecc-s1 span, .mecc-s2 span {
-    flex-grow: 1;
-    white-space: nowrap;
-    padding-left: 0.5em;
 }
