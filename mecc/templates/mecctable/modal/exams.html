@@ -138,7 +138,7 @@
 
 
         let to_write = "<span class='border-left exam_id-" + id + "'>" + type + " (" + coef +
-            ")" + txt + "</span>"
+            ")" +  txt + "</span>"
 
         let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
         $(to_catch).append(to_write);

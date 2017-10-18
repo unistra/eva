@@ -637,11 +637,11 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 id_parent=link.id_child).order_by('order_in_child')
             imported = True if link.is_imported or is_imported else False
             # ADDING FUN WITH EXAMS
+            # Get first 3 exams 1 & 2
             exams_1 = current_exams.filter(
-                id_attached=structure.id, session="1")
-            print(exams_1[0:2])
+                id_attached=structure.id, session="1")[:3]
             exams_2 = current_exams.filter(
-                id_attached=structure.id, session="2")
+                id_attached=structure.id, session="2")[:3]
             items = {
                 "link": link,
                 'structure': structure,
@@ -653,7 +653,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 'loop': range(0, rank - 1),
                 'not_yet_imported': not_yet_imported,
                 'exams_1': exams_1,
+                'exams_1_count': True if exams_1.count() == 3 else False,
                 'exams_2': exams_2,
+                'exams_2_count': True if exams_2.count() == 3 else False,
             }
             return items
         for link in links:
