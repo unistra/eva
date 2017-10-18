@@ -75,6 +75,20 @@
     </div>
 </div>
 
+<div class="modal fade" id="complete" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h1 class="title-modal"><span id="title_complete"></span></h1>
+            </div>
+            <div class="modal-footer">
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="additional_info" role="dialog" style="z-index: 1450">
     <div class="modal-dialog modal-75">
@@ -175,7 +189,10 @@
                 },
                 success: function(data) {
                     $("#second_exam").jsGrid("refresh");      
-                    $(".jsgrid-insert-row").hide()                    
+                    $(".jsgrid-insert-row").hide()      
+                    $('#title_complete').text('{% trans " Copie des épreuves principales terminée."%}');
+                    $('#complete').modal('show');
+                    
                 }
             })
         })
