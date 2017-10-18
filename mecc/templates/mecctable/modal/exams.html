@@ -183,7 +183,11 @@
             // Hide hiding field once data is loaded
             onDataLoaded: function (args) {
                 $(".jsgrid-insert-row").hide();
-
+                let nb_exams = args.data.length
+                if(nb_exams === 0) {
+                    $('#get_principal_exam').addClass("disabled")
+                }
+            
             },
             onItemInserted: function (args) {
                 add_to_big_table(args.item, id_structure, "1")
@@ -455,7 +459,7 @@
             pageSize: 15,
             pageButtonCount: 5,
             // Hide adding field once data is loaded
-            onDataLoaded: function () {
+            onDataLoaded: function (args) {
                 $(".jsgrid-insert-row").hide();
             },
             onItemInserted: function (args) {
