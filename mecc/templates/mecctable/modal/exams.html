@@ -112,7 +112,7 @@
     var type_dict = {
         "A": "Autre",
         "O": "Oral",
-        "E": "Écrit"
+        "E": "Ecrit"
     }
 
     function _checkall(what, label, args) {
@@ -220,6 +220,8 @@
             
             },
             onItemInserted: function (args) {
+                console.log(args.item.coefficient)
+                console.log('^')
                 add_to_big_table(args.item, id_structure, "1")
                 args.grid.loadData();
             },
@@ -230,16 +232,27 @@
                 _checkall(args.item.eliminatory_grade, "Note seuil", args)
 
                 let duration = args.item.exam_duration
+                if (args.item.type_exam == "E" || args.item.type_exam == "O"){
+                    if(duration === "" || duration === " "){
+                        args.cancel = true;
+                        alert('La durée est obligatoire');
+                    }
+                }
+
                 let durations_h = duration.slice(0, duration.indexOf(':'))
                 let durations_m = duration.slice(duration.indexOf(':') + 1)
                 durations_h = durations_h === '' ? '0' : durations_h
                 durations_m = durations_m === '' ? '00' : durations_m
-
+                
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
                     alert("'Durée' doit être sour le format H:mm")
                 }
-                if (isNaN(args.item.coefficient) && args.item.coefficient != "") {
+                if(args.item.coefficient === "" || args.item.coefficient === " "){
+                    args.cancel = true;
+                    alert("'Coefficient' est obligatoire")
+                }
+                if (isNaN(args.item.coefficient)) {
                     args.cancel = true;
                     alert("'Coefficient' doit être un nombre")
                 }
@@ -356,7 +369,7 @@
                     type: "select",
                     title: "Type",
                     items: [{
-                            Name: "Écrit",
+                            Name: "Ecrit",
                             Id: "E"
                         },
                         {
@@ -503,6 +516,7 @@
                 _checkall(args.item.eliminatory_grade, "Note seuil")
 
                 let duration = args.item.exam_duration;
+
                 let durations_h = duration.slice(0, duration.indexOf(':'));
                 let durations_m = duration.slice(duration.indexOf(':') + 1);
                 durations_h = durations_h === '' ? '0' : durations_h;
@@ -633,7 +647,7 @@
                     type: "select",
                     title: "Type",
                     items: [{
-                            Name: "Écrit",
+                            Name: "Ecrit",
                             Id: "E"
                         },
                         {

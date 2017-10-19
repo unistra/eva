@@ -196,7 +196,7 @@ class Exam(models.Model):
         ('2', _('2 sessions')),
     ]
     TYPE_EXAM_CHOICES = [
-        ('E', _("Écrit")),
+        ('E', _("Ecrit")),
         ('O', _("Oral")),
         ('A', _("Autre")),
     ]
