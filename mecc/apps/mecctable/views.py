@@ -35,13 +35,16 @@ def copy_exam_1_to_2(request, id_structure):
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
     exams = Exam.objects.filter(
-        id_attached=structure_concerned.id, code_year=currentyear().code_year,
-        session='1')
-    for exam in exams:
-        exam.pk = None
-        exam.session = "2"
-        exam.save()
-    print('DONE')
+        id_attached=structure_concerned.id, code_year=currentyear().code_year)
+    exams_1 = exams.filter(session='1')
+    exams_2 = exams.filter(session='2')
+    id_auto_2 = [e._id for e in exams_2]
+    for exam in exams_1:
+        if exam._id not in id_auto_2:
+            exam.pk = None
+            exam.session = "2"
+            exam.save()
+
     return JsonResponse({"status": 200})
 
 
@@ -62,10 +65,13 @@ def add_exam(request):
         times = obj.get('exam_duration').split(':')
     except Exception:
         times = [None, None]
-
     part_h = times[0]
-    part_m = times[1]
 
+    try:
+        part_m = times[1]
+    except Exception:
+        part_m = None
+    
     try:
         exam = Exam.objects.create(
             code_year=currentyear().code_year,
@@ -76,8 +82,8 @@ def add_exam(request):
             label=obj.get('label'),
             additionnal_info=obj.get('additionnal_info'),
             exam_duration_h=part_h,
-            exam_duration_m=part_m,
-            convocation=obj.get('convocation'),
+            exam_duration_m=part_m if part_m else 0,
+            convocation="O" if obj.get('convocation') else "N",
             type_ccct=obj.get('type_ccct'),
             eliminatory_grade=obj.get('eliminatory_grade'),
             is_session_2=obj.get('is_session_2'),
@@ -116,13 +122,9 @@ def update_exam(request, id_structure):
     obj['exam_duration_h'] = part_h
     obj['exam_duration_m'] = part_m
 
-    # Handling coef field
-    # duration = obj.pop('exam_duration')
-    # print('icic')
-    # coeff = obj.pop('coefficient')
-    # corrected_coeff = None if coeff == "" else coeff
+    s2 = obj.pop("convocation")
+    obj['convocation'] = "O" if s2 else "N"
 
-    # obj['coefficient'] = corrected_coeff
     for e in obj:
         obj[e] = None if obj[e] == '' else obj[e]
     try:
@@ -187,7 +189,7 @@ def import_objectslink(request):
                     id_parent=id_parent,
                     id_child=e.id_child,
                     n_train_child=e.n_train_child,
-                    nature_child=e.nature_child,
+                    nature_child="EXT",
                     order_in_child=order_in_child,
                     is_imported=True,
                     coefficient=e.coefficient,

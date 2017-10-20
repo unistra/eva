@@ -202,7 +202,7 @@ class Exam(models.Model):
     ]
     CONVOCATION_CHOICE = [
         ('O', _("Oui")),
-        ('N', _("None")),
+        ('N', _("Non")),
         ('X', None)  # Non applicable au régime CC/CT
 
     ]
@@ -273,7 +273,7 @@ class Exam(models.Model):
             additionnal_info=self.additionnal_info,
             exam_duration='%02d:%02d' % (
                 self.exam_duration_h, self.exam_duration_m) if self.exam_duration_h else None,
-            convocation=self.convocation,
+            convocation=True if self.convocation == "O" else False,
             type_ccct=self.type_ccct,
             coefficient=self.coefficient,
             eliminatory_grade=self.eliminatory_grade,

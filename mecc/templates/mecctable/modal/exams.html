@@ -119,6 +119,7 @@
 
         _is_nan(what, label);
         _is_grade(what, label);
+
         function _is_nan(what, label) {
             if (isNaN(what) && (what != "" || what !== null)) {
                 args.cancel = true;
@@ -143,26 +144,29 @@
         let type = type_dict[item.type_exam];
         let coef = item.coefficient;
         let txt =
-            regime === "E" ?
+            regime === "ECI" ?
             item.convocation == true ?
             "<span class='green'>!</span>" : "" :
-            item.type_ccct === "C" ?
-            "" : "<span class='green'>!</span>"; 
+            item.type_ccct === "T" ?
+            "<span class='green'>!</span>" : "";
         let id = item.id;
 
 
-        let to_write = "<span class='border-left exam_id-" + id + "'>" + type + " (" + coef +
-            ")" +  txt + "</span>"
+        let to_write = "<td class='border-left exam_id-" + id + "' style='font-size: 70%;'>" + type + " (" + coef +
+            ")" + txt + "</td>"
 
         let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
-        $(to_catch).append(to_write);
-
+        let table_length = $(to_catch + " td").length
+        if (table_length < 4){
+            $(to_catch).prepend(to_write);
+        }
 
 
     }
 
     function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
+            console.log('LA')
         // update title
         document.getElementById('struct_object').innerHTML = st_label;
         document.getElementById('struct_type').innerHTML = st_nature;
@@ -171,28 +175,30 @@
         document.getElementById('struct_rof').innerHTML = st_rof_ref;
         // Show the modal
         $('#exams_tab').modal('show');
-        
+
         jsGrid.locale("fr");
-        
+
         let url_list = "/mecctable/list_exams/" + id_structure;
         let url_add = "/mecctable/add_exam/";
         let url_update = "/mecctable/update_exam/" + id_structure;
         let url_delete = "/mecctable/delete_exam/" + id_structure;
         let url_copy = "/mecctable/copy_exam_1_to_2/" + id_structure;
-        
-        $('#get_principal_exam').on('click', function(e){
+
+        $('#get_principal_exam').on('click', function (e) {
+            console.log('alalallala')
             $.ajax({
                 url: url_copy,
                 type: "POST",
                 data: {
-                  csrfmiddlewaretoken: '{{ csrf_token }}',
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
                 },
-                success: function(data) {
-                    $("#second_exam").jsGrid("loadData");      
-                    $(".jsgrid-insert-row").hide()      
-                    $('#title_complete').text('{% trans " Copie des épreuves principales terminée."%}');
+                success: function (data) {
+                    $("#second_exam").jsGrid("loadData");
+                    $(".jsgrid-insert-row").hide()
+                    $('#title_complete').text(
+                        '{% trans " Copie des épreuves principales terminée."%}');
                     $('#complete').modal('show');
-                    
+
                 }
             })
         })
@@ -212,43 +218,48 @@
 
             // Hide hiding field once data is loaded
             onDataLoaded: function (args) {
+                console.info(args.data)
                 $(".jsgrid-insert-row").hide();
                 let nb_exams = args.data.length
-                if(nb_exams === 0) {
+                if (nb_exams === 0) {
                     $('#get_principal_exam').addClass("disabled")
-                }
-            
+                } else  $('#get_principal_exam').removeClass("disabled")
+
             },
             onItemInserted: function (args) {
-                console.log(args.item.coefficient)
-                console.log('^')
                 add_to_big_table(args.item, id_structure, "1")
                 args.grid.loadData();
             },
             onItemInserting: function (args) {
-                if (typeof args.item.threshold_session_2 !== 'undefined'){
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
                 _checkall(args.item.eliminatory_grade, "Note seuil", args)
 
                 let duration = args.item.exam_duration
-                if (args.item.type_exam == "E" || args.item.type_exam == "O"){
-                    if(duration === "" || duration === " "){
+                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                    if (duration === "" || duration === " ") {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
-
-                let durations_h = duration.slice(0, duration.indexOf(':'))
-                let durations_m = duration.slice(duration.indexOf(':') + 1)
+                // console.log('%cBOOM!', 'color: red; font-size: 5em; font-weight: bold;');
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
+                    ':'))
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
+                    1)
                 durations_h = durations_h === '' ? '0' : durations_h
                 durations_m = durations_m === '' ? '00' : durations_m
-                
+
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
                     alert("'Durée' doit être sour le format H:mm")
                 }
-                if(args.item.coefficient === "" || args.item.coefficient === " "){
+                if (args.item.coefficient === "" || args.item.coefficient === " ") {
                     args.cancel = true;
                     alert("'Coefficient' est obligatoire")
                 }
@@ -258,14 +269,27 @@
                 }
             },
             onItemUpdating: function (args) {
-                if (typeof args.item.threshold_session_2 !== 'undefined'){
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
                 _checkall(args.item.eliminatory_grade, "Note seuil", args)
 
                 let duration = args.item.exam_duration
-                let durations_h = duration.slice(0, duration.indexOf(':'))
-                let durations_m = duration.slice(duration.indexOf(':') + 1)
+                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                    if (duration === "" || duration === " ") {
+                        args.cancel = true;
+                        alert('La durée est obligatoire');
+                    }
+                }
+                // console.log('%cBOOM!', 'color: red; font-size: 5em; font-weight: bold;');
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
+                    ':'))
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
+                    1)
                 durations_h = durations_h === '' ? '0' : durations_h
                 durations_m = durations_m === '' ? '00' : durations_m
 
@@ -273,7 +297,11 @@
                     args.cancel = true;
                     alert("'Durée' doit être sour le format H:mm")
                 }
-                if (isNaN(args.item.coefficient) && args.item.coefficient != "") {
+                if (args.item.coefficient === "" || args.item.coefficient === " ") {
+                    args.cancel = true;
+                    alert("'Coefficient' est obligatoire")
+                }
+                if (isNaN(args.item.coefficient)) {
                     args.cancel = true;
                     alert("'Coefficient' doit être un nombre")
                 }
@@ -398,10 +426,10 @@
                     width: 75,
                     css: "additionnal_info",
                     cellRenderer: function (value, item) {
-                        let text = value === null ? 
-                            "" : 
-                            value.substr(0,12) + "\u2026";
-                        return "<td>" + text +"</td>"
+                        let text = value === null ?
+                            "" :
+                            value.substr(0, 12) + "\u2026";
+                        return "<td>" + text + "</td>"
                     }
                 },
                 {
@@ -464,11 +492,18 @@
                     title: "À partir de ...",
                     width: 70,
                     visible: st_session == "Session unique" ? false : true,
-                    css: "thresold"
+                    css: "thresold",
+                    editTemplate: function (value, item) {
+                        value = value === null ? "": value;
+                        let $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);   
+                        if (item.is_session_2 === false){
+                            $result.hide();
+                        } else $result.show();
+                        return  $result 
+                    },
                 },
                 {
                     type: "control",
-
                     headerTemplate: function () {
                         // Add + button to show
                         return $("<button>").attr("type", "button").text("+")
@@ -676,10 +711,10 @@
                     width: 75,
                     css: "additionnal_info",
                     cellRenderer: function (value, item) {
-                        let text = value === null ? 
-                            "" : 
-                            value.substr(0,12) + "\u2026";
-                        return "<td>" + text +"</td>"
+                        let text = value === null ?
+                            "" :
+                            value.substr(0, 12) + "\u2026";
+                        return "<td>" + text + "</td>"
                     }
                 },
                 {
@@ -732,10 +767,8 @@
                 $("#principal_exam .thresold input").show()
             } else {
                 $("#principal_exam .thresold input").val('')
-                
-                $(
-                    "#principal_exam .thresold input"
-                ).hide()
+
+                $("#principal_exam .thresold input").hide()
             }
         })
     $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'click', function (e) {

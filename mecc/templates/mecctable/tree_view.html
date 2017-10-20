@@ -102,7 +102,7 @@
                 <tr class="mecc-s1-{{a.structure.id}}">
                     {% for e in a.exams_1  %}
                     <td class="border-left exam_id-{{e.id}}" style="font-size: 70%;"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
-                            {% if e.convocation == "True" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
+                            {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
                     {% if a.exams_1_count %} <td class="border-left ">
@@ -118,8 +118,8 @@
                         <tr class="mecc-s2-{{a.structure.id}}">
                             {% for e in a.exams_2  %}
                             <td class="border-left exam_id-{{e.id}}" style="font-size: 70%;"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
-                                    {% if e.convocation == "True" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
-                            </td>
+                                    {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
+                                </td>
                             {% endfor %} 
                             {% if a.exams_2_count %} <td class="border-left ">
                                     <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
