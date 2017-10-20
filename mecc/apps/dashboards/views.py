@@ -1,7 +1,7 @@
 from ..institute.models import Institute
 from ..years.models import InstituteYear, UniversityYear
 from ..degree.models import Degree
-from ..training.models import Training
+from ..training.models import Training, SpecificParagraph
 from ..files.models import FileUpload
 from ..rules.models import Rule
 from django.views.generic.list import ListView
@@ -22,6 +22,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     supply_filter = []
     cfvu_entries = []
     institutes_data = []
+    derog_data = []
     # objects needed
     uy = UniversityYear.objects.get(is_target_year=True)
     iy = InstituteYear.objects.filter(
@@ -45,8 +46,8 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     supply_institutes = institutes.filter(code__in=supply_filter).distinct()
     doc_cadre = FileUpload.objects.get(object_id=uy.id)
-    institutes_letters = FileUpload.objects.filter(object_id__in=institutes.values_list('pk', flat=True), additional_type="letter_%s/%s" % (uy.code_year, uy.code_year+1))
-
+    institutes_letters = FileUpload.objects.filter(object_id__in=institutes.values_list(
+        'pk', flat=True), additional_type="letter_%s/%s" % (uy.code_year, uy.code_year + 1))
     rules = Rule.objects.filter(code_year=uy.code_year).filter(
         is_edited__in=('O', 'X')).order_by('display_order')
 
@@ -82,6 +83,11 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
                                         supply_cmp=s.code).count(),
                                     ))
 
+    derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
+
+    topten_d = derogations.values('rule_gen_id').annotate(Count('rule_gen_id'), nb_cmp=Count(
+        'training__supply_cmp', distinct=True)).order_by('-nb_cmp').exclude(nb_cmp__isnull=True)
+
     # set datas for view
     data['institutes_counter'] = supply_institutes.count()
     data['trainings_counter'] = t.count()
@@ -106,6 +112,9 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['institutes_data'] = institutes_data
     data['institutes_letters'] = institutes_letters
     data['institutes_letters_counter'] = institutes_letters.count()
-    data['top_ten_count'] = range(1,11)
+    data['topten_derog'] = topten_d
+
+    for d in data['topten_derog']:
+        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
 
     return render(request, template, data)
