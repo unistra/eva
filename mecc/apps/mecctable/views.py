@@ -63,7 +63,6 @@ def add_exam(request):
     except Exception:
         times = [None, None]
 
-    print(obj.get('coeff'))
     part_h = times[0]
     part_m = times[1]
 
