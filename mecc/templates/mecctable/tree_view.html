@@ -97,9 +97,9 @@
         {% endif %}
      </span>
      <div class="mecc-semesters" style="">
-         <div class="mecc-s1 mecc-s1-{{a.structure.id}} border-left">   
+         <div class="mecc-s1  border-left">   
             <table>
-                <tr >
+                <tr class="mecc-s1-{{a.structure.id}}">
                     {% for e in a.exams_1  %}
                     <td class="border-left exam_id-{{e.id}}" style="font-size: 70%;"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
                             {% if e.convocation == "True" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
@@ -113,9 +113,9 @@
                 </tr>
             </table>       
          </div>
-         <div class="mecc-s2 mecc-s2-{{a.structure.id}} border-left-3">
+         <div class="mecc-s2  border-left-3">
                 <table>
-                        <tr >
+                        <tr class="mecc-s2-{{a.structure.id}}">
                             {% for e in a.exams_2  %}
                             <td class="border-left exam_id-{{e.id}}" style="font-size: 70%;"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
                                     {% if e.convocation == "True" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
