@@ -63,6 +63,7 @@ def add_exam(request):
     except Exception:
         times = [None, None]
 
+    print(obj.get('coeff'))
     part_h = times[0]
     part_m = times[1]
 
@@ -81,7 +82,8 @@ def add_exam(request):
             type_ccct=obj.get('type_ccct'),
             eliminatory_grade=obj.get('eliminatory_grade'),
             is_session_2=obj.get('is_session_2'),
-            threshold_session_2=obj.get('threshold_session_2')
+            threshold_session_2=obj.get('threshold_session_2'),
+            coefficient=obj.get('coefficient')
         )
     except Exception as e:
         print(e)
