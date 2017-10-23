@@ -38,9 +38,11 @@ def copy_exam_1_to_2(request, id_structure):
         id_attached=structure_concerned.id, code_year=currentyear().code_year)
     exams_1 = exams.filter(session='1')
     exams_2 = exams.filter(session='2')
-    id_auto_2 = [e._id for e in exams_2]
+    id_auto_2 = [ex._id for ex in exams_2]
     for exam in exams_1:
         if exam._id not in id_auto_2:
+            if exam.regime == "C":
+                exam.type_ccct = "T"
             exam.pk = None
             exam.session = "2"
             exam.save()
@@ -656,9 +658,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
             # ADDING FUN WITH EXAMS
             # Get first 3 exams 1 & 2
             exams_1 = current_exams.filter(
-                id_attached=structure.id, session="1")[:3]
+                id_attached=structure.id, session="1")
             exams_2 = current_exams.filter(
-                id_attached=structure.id, session="2")[:3]
+                id_attached=structure.id, session="2")
             items = {
                 "link": link,
                 'structure': structure,
@@ -669,10 +671,10 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
                 'rank': rank - 1,
                 'loop': range(0, rank - 1),
                 'not_yet_imported': not_yet_imported,
-                'exams_1': exams_1,
-                'exams_1_count': True if exams_1.count() == 3 else False,
-                'exams_2': exams_2,
-                'exams_2_count': True if exams_2.count() == 3 else False,
+                'exams_1': exams_1[:3],
+                'exams_1_count': True if exams_1.count() > 3 else False,
+                'exams_2': exams_2[:3],
+                'exams_2_count': True if exams_2.count() > 3 else False,
             }
             return items
         for link in links:
