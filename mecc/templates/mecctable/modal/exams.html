@@ -115,9 +115,14 @@
         "E": "Ecrit"
     }
 
-
     $('#get_principal_exam').on('click', function (e) {
         let id_structure = $("#get_principal_exam").data("id_structure");
+        let st_label = $("#get_principal_exam").data("st_label");
+        let st_nature = $("#get_principal_exam").data("st_nature");
+        let st_regime = $("#get_principal_exam").data("st_regime");
+        let st_session = $("#get_principal_exam").data("st_session");
+        let st_ref_scol = $("#get_principal_exam").data("st_ref_scol");
+        let st_rof_ref = $("#get_principal_exam").data("st_rof_ref");
         let url_copy = "/mecctable/copy_exam_1_to_2/" + id_structure;
         $.ajax({
             url: url_copy,
@@ -127,6 +132,9 @@
             },
             success: function (data) {
                 $("#second_exam").jsGrid("loadData");
+                update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol,
+                    st_rof_ref)
                 $(".jsgrid-insert-row").hide()
                 $('#title_complete').text(
                     '{% trans " Copie des épreuves principales terminée."%}');
@@ -134,6 +142,7 @@
 
             }
         })
+
     })
 
     function _checkall(what, label, args) {
@@ -160,12 +169,11 @@
         }
     }
 
-
-
     function update_mini_table(session, id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
         // called afer each insertion, update or copy
         let url_list = "/mecctable/list_exams/" + id_structure;
+
         if (session === "2") {
             $.ajax({
                 url: url_list,
@@ -185,7 +193,11 @@
             })
         }
 
+
+
+
         function complete_table(items) {
+            console.log(items)
             let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
             // Remove all td in the tr
             $(to_catch + " td").remove()
@@ -196,7 +208,7 @@
                 st_ref_scol + '\', \'' +
                 st_rof_ref + '\');">Voir +</a></td>'
 
-                
+
             for (i = 0; i < items.length; i++) {
                 if (i === 3) {
                     $(to_catch).append(see_more);
@@ -222,7 +234,15 @@
 
     function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
-        $("#get_principal_exam").data("id_structure", id_structure);
+        $("#get_principal_exam").attr({
+            "data-id_structure": id_structure,
+            "data-st_nature": st_nature,
+            "data-st_label": st_label,
+            "data-st_regime": st_regime,
+            "data-st_session": st_session,
+            "data-st_ref_scol": st_ref_scol,
+            "data-st_rof_ref": st_rof_ref,
+        });
 
 
         // update title
