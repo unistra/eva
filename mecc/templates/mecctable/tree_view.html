@@ -105,7 +105,7 @@
                             {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
-                    {% if a.exams_1_count %} <td class="border-left ">
+                    {% if a.exams_1_count %} <td class="border-left " style="font-size: 70%;">
                             <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
@@ -121,7 +121,7 @@
                                     {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                                 </td>
                             {% endfor %} 
-                            {% if a.exams_2_count %} <td class="border-left ">
+                            {% if a.exams_2_count %} <td class="border-left " style="font-size: 70%;">
                                     <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                                     {% trans 'Voir +' %}</a>                      
                                 </td>
