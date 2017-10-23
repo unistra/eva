@@ -268,6 +268,8 @@ class Exam(models.Model):
             text_duration = "%02d:%02d" % (duration_h, duration_m)
         if duration_h and not duration_m:
             text_duration = "%02d:%02d" % (duration_h, 0)
+        if not duration_h and duration_m:
+            text_duration = "%02d:%02d" % (0, duration_m)
 
         return dict(
             id=self.id,
