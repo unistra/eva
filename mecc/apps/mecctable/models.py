@@ -261,6 +261,14 @@ class Exam(models.Model):
         """
         In order to give us a custom json of each object with ease
         """
+        duration_h = self.exam_duration_h if self.exam_duration_h else None
+        duration_m = self.exam_duration_m if self.exam_duration_m else None
+        text_duration = ""
+        if duration_h and duration_m:
+            text_duration = "%02d:%02d" % (duration_h, duration_m)
+        if duration_h and not duration_m:
+            text_duration = "%02d:%02d" % (duration_h, 0)
+
         return dict(
             id=self.id,
             code_year=self.code_year,
@@ -271,8 +279,7 @@ class Exam(models.Model):
             type_exam=self.type_exam,
             label=self.label,
             additionnal_info=self.additionnal_info,
-            exam_duration='%02d:%02d' % (
-                self.exam_duration_h, self.exam_duration_m) if self.exam_duration_h else None,
+            exam_duration=text_duration,
             convocation=True if self.convocation == "O" else False,
             type_ccct=self.type_ccct,
             coefficient=self.coefficient,
