@@ -633,6 +633,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['training'] = training = Training.objects.get(id=id)
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
+    data['notification_to'] = settings.MAIL_FROM
 
     def recurse(link):
         """
