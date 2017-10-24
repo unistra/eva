@@ -63,7 +63,7 @@
                     </h4>
                     <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
                 </div>
-
+                <br>
                 <div id="second_exam"></div>
 
             </div>
@@ -778,6 +778,19 @@
                             value.substr(0, 12) + "\u2026";
                         return "<td>" + text + "</td>"
                     }
+                },
+                {
+                    name: "type_ccct",
+                    type: "select",
+                    title: "Type CC/CT",
+                    visible: st_regime == "ECI" ? false : true,
+                    width: 45,
+                    valueField: "Id",
+                    textField: "Name",
+                    items: [{
+                        Name: "CT",
+                        Id: "T"
+                    }, ],
                 },
                 {
                     name: "exam_duration",
