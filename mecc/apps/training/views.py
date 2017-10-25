@@ -152,9 +152,6 @@ class TrainingEdit(UpdateView):
             input_is_open
         ) or self.request.user.is_superuser or 'DES1' in [
             e.name for e in self.request.user.groups.all()]
-        if not input_is_open:
-            context['can_edit'] = False
-
         return context
 
 
@@ -260,6 +257,7 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     """
     Correct respform can edit rule
     """
+    
     data = {}
     recovered = request.session.pop('recovered', False)
     if recovered:
