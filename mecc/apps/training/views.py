@@ -229,16 +229,17 @@ def duplicate_home(request, year=None, template='training/duplicate.html'):
     """
     View for duplicate training from other year to current year
     """
-    cmp = request.session['visited_cmp']
     data = {}
+    data['cmp'] = cmp = request.session['visited_cmp']
+
     current_year = currentyear()
     request.session['from_duplicated'] = True
     data['current_year'] = "%s/%s" % (current_year.code_year,
                                       current_year.code_year + 1)
-
-    trainings = (Training.objects.all().filter(
+    trains = Training.objects.all()
+    trainings = (trains.filter(
         institutes=Institute.objects.get(code=cmp)).order_by('label')
-        if cmp is not None else Training.objects.all()).order_by('label')
+        if cmp is not None else trains).order_by('label')
     data['availables_years'] = sorted({(e.code_year, "%s/%s" % (
         e.code_year, e.code_year + 1)) for e in trainings}, reverse=True)
     data['existing_trainings'] = existing = trainings.filter(
