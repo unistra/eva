@@ -47,7 +47,7 @@ DIPSTRAP_STATIC_URL += '%s/' % DIPSTRAP_VERSION
 # STAGE #
 #########
 
-STAGE = '{{ env.goal }}'
+STAGE = '{{ goal }}'
 
 ##########
 # UPLOAD #
