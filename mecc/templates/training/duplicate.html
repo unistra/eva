@@ -79,8 +79,10 @@
                     <td width=60% >{{e.label}}</td>
                     <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
                     <td width=5% class="td-centered">
+                        {% if e.supply_cmp == cmp  %}
                         
                         <a class="glyphicon glyphicon-trash select" id="{{e.id}}" href="{% url 'training:delete' e.id%}"></a>
+                        {% endif %}
                     </td>
                 </tr>
                 {%endfor%}

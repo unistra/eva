@@ -59,7 +59,7 @@
 
     <div class="item-80 disp-flex" style="margin-bottom:1em;">
         <div class="item-20">
-            {% trans "ID règle (auto) : " %} {{rule.n_rule | stringformat:"05d"}}
+            {% trans "ID règle (auto) : " %} {{rule.id | stringformat:"05d"}}
         </div>
         <div class="item-35">
             {% trans "Année universitaire : " %} {{rule.code_year}}/{{rule.code_year|add:'1'}}
