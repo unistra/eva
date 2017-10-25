@@ -20,7 +20,7 @@ class Rule(models.Model):
     display_order = models.IntegerField(
         _('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))
-    label = models.CharField(_("Libellé"), max_length=75)
+    label = models.CharField(_("Libellé"), max_length=255)
     is_in_use = models.BooleanField(_('En service'), default=True)
     is_edited = models.CharField(_('Modifiée'), max_length=4,
                                  choices=EDITED_CHOICES, default='X')
@@ -53,7 +53,7 @@ class Rule(models.Model):
             - list of additionals and derogations
         """
         # get_model in order to avoid cyclic import
-        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')  
+        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')
         additionals = [e for e in additional_paragraph.objects.filter(
             code_year=self.code_year,
             rule_gen_id=self.n_rule)]
