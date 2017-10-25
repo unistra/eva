@@ -201,7 +201,7 @@
             // Remove all td in the tr
             $(to_catch + " td").remove()
             // Update it with current items
-            let see_more = '<td class="border-left" style="font-size: 70%;"><a class="hand" onclick="struct_select(' +
+            let see_more = '<td class="border-left" ><a class="hand" onclick="struct_select(' +
                 id_structure + ', \'' +
                 st_label + '\', \'' + st_nature + '\',  \'' + st_regime + '\', \'' + st_session + '\', \'' +
                 st_ref_scol + '\', \'' +
@@ -221,7 +221,7 @@
                         items[i].type_ccct === "T" ?
                         "<span class='green'><strong> !</strong></span>" : "";
 
-                    $(to_catch).append('<td class="border-left"  style="font-size: 70%;">' + type + '(' + coef + ')' +
+                    $(to_catch).append('<td class="border-left">' + type + '(' + coef + ')' +
                         text + '</td>')
                 }
 
