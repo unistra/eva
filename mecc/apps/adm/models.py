@@ -10,7 +10,7 @@ class Profile(models.Model):
     Model for profile with year and cmp
     """
     code = models.CharField(_('Code du profil'), max_length=10)
-    label = models.CharField(_('Libellé du profil'), max_length=30)
+    label = models.CharField(_('Libellé du profil'), max_length=100)
     year = models.IntegerField(_('Année'), blank=True, null=True)
     cmp = models.CharField(_('Composante'), max_length=3)
 
