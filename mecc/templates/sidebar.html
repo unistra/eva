@@ -14,7 +14,7 @@
 
         </li>
         {% endif %}
-        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+        {% if request.user|has_group:'DES1' or request.user|has_group:'VP' or request.user.is_superuser %}
 
           <li>
               <a href="/dashboards"
@@ -159,7 +159,7 @@
         {% endif %}
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
-        <li style="margin-top:3em">
+        <li style>
             <a href=
             {% if request.user|has_group:'DES1' or request.user.is_superuser %}"{% url 'training:list_all'%}"
             {% else %}"{%url 'training:list' request.user.meccuser.cmp%}"
@@ -169,15 +169,32 @@
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>
         {% endif %}
-
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
-        <li class="bottom" id='hideme'>
+        {% if request.user.meccuser|is_profile:'ECI' or request.user.is_superuser%}
+        <li>
             <a href="#"
-            {% if 'gen' in request.path %}
+            {%if 'meccs' in request.path%}
                class="item-selected"
-            {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
+            {% endif %}>{% trans "MECC " %} {{request.display.current_year}}</a>
         </li>
-        {% endif %}
+        {% endif %}      
 
+        <div class="bottom">
+            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
+            <li id="genmecc">
+                <a href="#"
+                {% if 'gen' in request.path %}
+                class="item-selected"
+                {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
+            </li>
+            {% endif %}
+            
+            <li id="historic">
+                <a href="#"
+                {% if 'historic' in request.path %}
+                class="item-selected"
+                {% endif %}>{% trans 'Historique MECC validées' %}</a>
+                
+            </li>
+        </div>
     </ul>
 </div>
