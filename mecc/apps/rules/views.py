@@ -363,38 +363,51 @@ def duplicate_home(request, year=None, template='rules/duplicate.html'):
 @is_ajax_request
 @is_post_request
 def duplicate_add(request):
-    current_year = currentyear()
+    """
+    Duplicate year -x rule for a selected training
+    """
+
     x = request.POST.getlist('list_id[]')
 
     dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
     labels = []
-    for e in dic:
-
-        r = Rule.objects.filter(
-            code_year=e.get('year')).filter(n_rule=e.get('n_rule')).first()
+    rules = Rule.objects.filter(code_year__in={e.get('year') for e in dic})
+    old_rules = rules.filter(n_rule__in=[e.get('n_rule') for e in dic])
+    paragraphs = Paragraph.objects.filter(
+        rule__id__in={e.id for e in old_rules})
+    for old_rule in old_rules:
         rule = Rule.objects.create(
-            display_order=r.display_order,
-            code_year=current_year.code_year,
-            label=r.label,
-            is_in_use=r.is_in_use,
+            display_order=old_rule.display_order,
+            code_year=currentyear().code_year,
+            label=old_rule.label,
+            is_in_use=old_rule.is_in_use,
             is_edited='N',
-            is_eci=r.is_eci,
-            is_ccct=r.is_ccct,
-            n_rule=r.n_rule
+            is_eci=old_rule.is_eci,
+            is_ccct=old_rule.is_ccct,
+            n_rule=old_rule.n_rule
         )
-        for a in r.degree_type.all():
-            degree_type = DegreeType.objects.get(id=a.id)
-            rule.degree_type.add(degree_type)
+
+        for old_degree_type in old_rule.degree_type.all():
+            rule.degree_type.add(old_degree_type)
+
         rule.save()
 
-        paragraphs = Paragraph.objects.filter(
-            code_year=e.get('year')).filter(rule__id=r.id)
-
-        for p in paragraphs:
+        for p in paragraphs.filter(rule__id=old_rule.id):
+            print(p.pk)
+            p.pk = None
+            p.code_year = currentyear().code_year
+            p.save()
+            print(p.pk)
+            print(p.__dict__)
+            print('----******------')
+            print(p.rule.all())
+            p.rule.clear()
+            print(p.rule.all())            
             p.rule.add(rule)
             p.save()
+        
+        labels.append(old_rule.label)
 
-        labels.append(r.label)
     return JsonResponse({'status': 'added', 'n_rule': [
         e.get('n_rule') for e in dic], 'labels': labels})
 
@@ -501,7 +514,6 @@ def details_rules(request):
             )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
-
 
         derog.append(paraid)
         return o.text_specific_paragraph, True
