@@ -51,17 +51,20 @@
     </div>
     <div>
 
+        {% if can_edit %}
         <div class="blue">
             {% trans "Racine" %}<br>
-            <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal"
-            title="{% trans 'Créer un objet à la racine'%}"
-            class="hand glyphicon glyphicon-plus blue no-border"
-            aria-hidden="true" data-target="#form-obj" ></a>
-            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
-            title="{%trans 'Importer un objet mutualisé à la racine'%}"
-            aria-hidden="true" data-toggle="modal" data-target="#shared-object"
-            onclick="asking_inclusion=0;" ></span>
-        </div>
+            
+                <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal"
+                title="{% trans 'Créer un objet à la racine'%}"
+                class="hand glyphicon glyphicon-plus blue no-border"
+                aria-hidden="true" data-target="#form-obj" ></a>
+                <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
+                title="{%trans 'Importer un objet mutualisé à la racine'%}"
+                aria-hidden="true" data-toggle="modal" data-target="#shared-object"
+                onclick="asking_inclusion=0;" ></span>
+            </div>
+            {% endif %}
         {% if la_liste|length > 0 %}
         <div class="mecctable-container">
                 <div class="meccRow header">

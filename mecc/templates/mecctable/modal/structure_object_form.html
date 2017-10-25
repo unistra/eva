@@ -328,7 +328,7 @@ if (!is_catalogue) {
 
     function display_UE(here) {
         let option = $(here).find('option:selected').val();
-        if (option === "UE" || option === "ST") {
+        if (option === "UE" || option === "ST" || option =="PT") {
             document.getElementById("div_id_ECTS_credit").className = "form-group"
             if (option === "UE") {
                 document.getElementById("id_ECTS_credit").required = true;

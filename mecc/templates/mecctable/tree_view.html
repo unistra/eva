@@ -13,9 +13,12 @@
             {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ?
             {%endif%}
         {% else %}
+        {% if can_edit %}  
         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
         onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}} 
-        </a>
+    </a>
+    {% else %}{{a.structure.label}} 
+    {% endif %}
         {%endif%}
     </span>
 <!--- endof mecc-label
@@ -25,7 +28,7 @@
     <div class="mecc-actionsButtons">
 
      <span class="centered  mecc-add">
-         {% if a.structure.nature not in "ST PT" and not a.is_imported%}
+         {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit%}
              <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
              data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border"
              title="{%trans 'Créer un objet fils dans cet objet'%}"
@@ -46,6 +49,8 @@
          {%endif%}
      </span>
      <span class="  mecc-remove">
+         {% if can_edit %}
+         
          {% if a.link.is_imported %}
              <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
              title="{%trans 'Décrocher cet objet mutualisé'%}"
@@ -65,6 +70,7 @@
              {% endif %}
          {% endif %}
          {% endif %}
+         {% endif %}
      </span>
      <span class=" mecc-mutual">
          {% if a.structure.mutual and not a.link.is_imported %}
@@ -82,17 +88,21 @@
          {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-coef"
-     {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
+     {% if can_edit  %}
+     {% if not a.is_imported or a.link.is_imported  %}contenteditable='true'{% endif %}
+     {% endif %}
      id="{{a.link.id}}-coeff">
          {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-note"
+     {% if can_edit  %}     
      {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
+     {%endif%}
      id="{{a.link.id}}-grade">
          {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
      </span>
      <span class="centered border-left-5 mecc-details ">
-        {% if not a.is_imported %}
+        {% if not a.is_imported and can_edit%}
             <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  
         {% endif %}
      </span>
@@ -105,7 +115,7 @@
                             {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
-                    {% if a.exams_1_count %} <td class="border-left" >
+                    {% if a.exams_1_count and can_edit%} <td class="border-left" >
                             <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
@@ -121,7 +131,7 @@
                                     {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                                 </td>
                             {% endfor %} 
-                            {% if a.exams_2_count %} <td class="border-left ">
+                            {% if a.exams_2_count and can_edit %} <td class="border-left ">
                                     <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                                     {% trans 'Voir +' %}</a>                      
                                 </td>
