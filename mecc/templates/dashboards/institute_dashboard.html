@@ -4,7 +4,9 @@
 {% load crispy_forms_tags %}
 {% load mecc_tags %}
 {% block page-header %}
-{% trans 'Tableau de bord général de pilotage du processus' %}
+{% trans 'ÉVA' %} {{ request.display.current_year }} <br>
+{{ institute.label }} :
+{% trans 'Tableau de bord de pilotage' %}
 {% endblock %}
 {% block app_content %}
 <script src="{% static 'js/ajax.django.js' %}"></script>
@@ -19,38 +21,32 @@
         <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans "Périmètre de l'application" %}</legend>
         <div class="row">
             <div class="col-sm-12">
-                {% include 'dashboards/general_application_stats.html' %}
+                {% include 'dashboards/institute_application_stats.html' %}
             </div>
         </div>
     </div>
     <div class="col-sm-6" >
         <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Processus de validation par la CFVU' %}</legend>
         <div class="col-sm-12">
-            {% include 'dashboards/general_validation.html' %}
+            {% include 'dashboards/institute_validation.html' %}
         </div>
     </div>
 </div>
 <div class="row has-bottom-border no-margin">
     <div class="col-sm-6 border-right-blue no-margin">
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans "Etat d'avancement du processus de saisie" %}&nbsp;&nbsp;<a data-toggle="modal" class="hand no-border align-right" aria-hidden="true" data-target="#institutes_proc_detail_list">{% trans "Voir le détail" %}</a></legend>
+        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans "Etat d'avancement du processus de saisie" %}</legend>
         <div class="col-sm-12">
-            {% include 'dashboards/general_edit_status.html' %}
+            {% include 'dashboards/institute_edit_status.html' %}
         </div>
 
     </div>
     <div class="col-sm-6" >
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Politique retenue par les composantes' %}</legend>
+        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Dérogations sollicitées par la composante' %}</legend>
         <div class="col-sm-12">
-            {% include 'dashboards/general_institutes.html' %}
+            {% include 'dashboards/institute_institute.html' %}
         </div>
     </div>
 </div>
-{% include "dashboards/modals/institutes_files.html" %}
-{% include "dashboards/modals/institutes_list.html" %}
-{% include "dashboards/modals/institutes_list_cfvu.html" %}
-{% include "dashboards/modals/institutes_list_cfvu_ready.html" %}
-{% include "dashboards/modals/institutes_list_waiting_council.html" %}
-{% include "dashboards/modals/institutes_processing_detail.html" %}
 {% include "dashboards/modals//preview_rule.html" %}
 {% include "dashboards/modals/rules_list.html" %}
 {% endblock %}

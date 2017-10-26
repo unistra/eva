@@ -39,7 +39,7 @@
                        {% if 'institute/---' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Validations' %}</a></li>
-                     <li><a href="/"
+                     <li><a href="/dashboards/institute/{{e.cmp}}"
                        {% if 'valid' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Tableau de bord' %}</a></li>
@@ -176,7 +176,7 @@
                class="item-selected"
             {% endif %}>{% trans "MECC " %} {{request.display.current_year}}</a>
         </li>
-        {% endif %}      
+        {% endif %}
 
         <div class="bottom">
             {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
@@ -187,13 +187,13 @@
                 {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
             </li>
             {% endif %}
-            
+
             <li id="historic">
                 <a href="#"
                 {% if 'historic' in request.path %}
                 class="item-selected"
                 {% endif %}>{% trans 'Historique MECC validées' %}</a>
-                
+
             </li>
         </div>
     </ul>
