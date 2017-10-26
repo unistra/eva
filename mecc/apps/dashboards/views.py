@@ -85,8 +85,8 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
 
-    topten_d = derogations.values('rule_gen_id').annotate(Count('rule_gen_id'), nb_cmp=Count(
-        'training__supply_cmp', distinct=True)).order_by('-nb_cmp').exclude(nb_cmp__isnull=True)
+    topten_d = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_cmp=Count(
+        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)
 
     # set datas for view
     data['institutes_counter'] = supply_institutes.count()
