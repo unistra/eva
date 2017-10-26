@@ -112,7 +112,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['institutes_data'] = institutes_data
     data['institutes_letters'] = institutes_letters
     data['institutes_letters_counter'] = institutes_letters.count()
-    data['topten_derog'] = topten_d
+    data['topten_derog'] = topten_d[:10]
 
     for d in data['topten_derog']:
         d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
