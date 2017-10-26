@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
-from django_cas.decorators import login_required
+from django_cas.decorators import login_required, user_passes_test
 from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
@@ -22,7 +22,6 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     supply_filter = []
     cfvu_entries = []
     institutes_data = []
-    derog_data = []
     # objects needed
     uy = UniversityYear.objects.get(is_target_year=True)
     iy = InstituteYear.objects.filter(
@@ -113,6 +112,98 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['institutes_letters'] = institutes_letters
     data['institutes_letters_counter'] = institutes_letters.count()
     data['topten_derog'] = topten_d[:10]
+
+    for d in data['topten_derog']:
+        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
+
+    return render(request, template, data)
+
+@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
+    data = {}
+    supply_filter = []
+    cfvu_entries = []
+    institutes_data = []
+    # objects needed
+    uy = UniversityYear.objects.get(is_target_year=True)
+    iy = InstituteYear.objects.filter(
+        code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+
+    institute = Institute.objects.get(code=code)
+    iycmp = InstituteYear.objects.get(code_year=uy.code_year, id_cmp=institute.pk)
+
+    for year in iy:
+        cfvu_entries.append(dict(domain=institute.field.name,
+                                 cmp=institute.label, date=year.date_expected_MECC))
+
+    t = Training.objects.filter(code_year=uy.code_year, supply_cmp=code)
+    t_eci = t.filter(MECC_type='E')
+    t_cc_ct = t.filter(MECC_type='C')
+
+    # get institutes who are supplier for a training
+    for training in t:
+        if training.supply_cmp in code:
+            supply_filter.append(training.supply_cmp)
+
+    doc_cadre = FileUpload.objects.get(object_id=uy.id)
+    institute_letters = FileUpload.objects.filter(object_id=institute.pk,
+        additional_type="letter_%s/%s" % (uy.code_year, uy.code_year + 1))
+    rules = Rule.objects.filter(code_year=uy.code_year).filter(
+        is_edited__in=('O', 'X')).order_by('display_order')
+
+    t_uncompleted = t.filter(progress_rule="E") | t.filter(progress_table="E")
+    t_completed_no_validation = t.filter(
+        progress_rule="A", progress_table="A", date_val_cmp__isnull=True)
+    t_validated_des_waiting = t.filter(
+        date_val_cmp__isnull=False, date_visa_des__isnull=True)
+    t_validated_no_cfvu_waiting = t.filter(
+        date_val_cmp__isnull=True) | t.filter(date_visa_des__isnull=True)
+    t_validated_cfvu_waiting = t.filter(
+        date_val_cmp__isnull=False, date_visa_des__isnull=False, date_val_cfvu__isnull=True)
+    t_validated_cfvu = t.filter(date_val_cfvu__isnull=False)
+    t_first_cfvu = t_validated_cfvu.earliest('date_val_cfvu')
+
+    institutes_data.append(dict(institute=institute.label,
+                                t_count=t.filter(
+                                    supply_cmp=code).count(),
+                                t_uncompleted_count=t_uncompleted.filter(
+                                    supply_cmp=code).count(),
+                                t_completed_no_val_count=t_completed_no_validation.filter(
+                                    supply_cmp=code).count(),
+                                t_validated_des_waiting_count=t_validated_des_waiting.filter(
+                                    supply_cmp=code).count(),
+                                t_validated_cfvu_waiting_count=t_validated_cfvu_waiting.filter(
+                                    supply_cmp=code).count(),
+                                t_validated_cfvu_count=t_validated_cfvu.filter(
+                                    supply_cmp=code).count(),
+                                ))
+    derogations = SpecificParagraph.objects.filter(training__supply_cmp=code, code_year=uy.code_year)
+
+    topten_d = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_formations=Count(
+        'training__id', distinct=True))
+
+    # set datas for view
+    data['institute'] = institute
+    data['trainings_counter'] = t.count()
+    data['trainings_eci_counter'] = t_eci.count()
+    data['trainings_cc_ct_counter'] = t_cc_ct.count()
+    data['rules'] = rules
+    data['rules_counter'] = rules.count()
+    data['doc_cadre'] = doc_cadre
+    data['university_year'] = uy
+    data['university_year_cmp'] = iycmp
+    data['cfvu_entries'] = cfvu_entries
+    data['institute_cfvu_counter'] = iy.count()
+    data['trainings_uncompleted_counter'] = t_uncompleted.count()
+    data['trainings_completed_no_validation_counter'] = t_completed_no_validation.count()
+    data['trainings_validated_des_waiting_counter'] = t_validated_des_waiting.count()
+    data['trainings_validated_cfvu_waiting_counter'] = t_validated_cfvu_waiting.count()
+    data['trainings_validated_cfvu_counter'] = t_validated_cfvu.count()
+    data['institute_data'] = institutes_data
+    data['institute_letters'] = institute_letters
+    data['institute_letters_counter'] = institute_letters.count()
+    data['topten_derog'] = topten_d
+    data['first_cfvu'] = t_first_cfvu.date_val_cfvu
 
     for d in data['topten_derog']:
         d['rule'] = Rule.objects.get(id=d['rule_gen_id'])

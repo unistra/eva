@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+<div>
+    <table class="table" style="order:1">
+        <tr>
+            <td>{% trans "Formations gérées par l'application ÉVA" %}</td>
+            <td class="stat-result">{{ trainings_counter }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="align-right">{% trans "dont ECI" %}</td>
+            <td class="stat-result">{{ trainings_eci_counter }} </td>
+            <td>({% widthratio trainings_eci_counter trainings_counter 100 %}%)</td>
+        </tr>
+        <tr>
+            <td class="align-right">{% trans "dont CC/CT" %}</td>
+            <td class="stat-result">{{ trainings_cc_ct_counter }} </td>
+            <td>({% widthratio trainings_cc_ct_counter trainings_counter 100 %}%)</td>
+        </tr>
+    </table>
+</div>
