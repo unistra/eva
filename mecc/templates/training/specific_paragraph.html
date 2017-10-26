@@ -86,23 +86,27 @@
             <tbody>
                 {% for e in parag  %}
                 {% if e.is_in_use %}
-                <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
-                    <td style="width: 5%; text-align: center;">{{e.id}}</td>
-                    <td style="width: 65%;">
+
                         {% if e.id in specific_ids %}
-                            {% for sp in specific_paragraph  %}
-                                {% if sp.paragraph_gen_id == e.id  %}
+                        {% for sp in specific_paragraph  %}
+                        {% if sp.paragraph_gen_id == e.id  %}
+                        <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
+                                <td style="width: 5%; text-align: center;">{{e.id}}</td>
+                                <td style="width: 65%;">
                                     <span class="blue">
                                         {{sp.text_specific_paragraph|safe}}
                                     </span>
-                                {% endif %}
-                            </td>
-                        <td style="width: 25%;text-align:left;" class="td-centered border-left">
-                                <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
-                                <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{sp.id}})"> {% trans "Supprimer la dérogation" %}</a>
-
+                                </td>
+                                <td style="width: 25%;text-align:left;" class="td-centered border-left">
+                                    <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                                    <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{sp.id}})"> {% trans "Supprimer la dérogation" %}</a>
+                                    
+                                    {% endif %}
                             {% endfor %}
                         {% else %}
+                        <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
+                                <td style="width: 5%; text-align: center;">{{e.id}}</td>
+                                <td style="width: 65%;">
                         {{e.text_standard | safe}}
 
                     </td>

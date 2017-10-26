@@ -280,7 +280,6 @@ spécificités déjà saisies pour la nouvelle année."
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
-        
     input_is_open = training.input_opening[0] in ['1', '3']
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
