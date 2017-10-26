@@ -691,7 +691,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']) else False
     data['can_edit'] = (
         is_powerfull and input_is_open) or request.user.is_superuser or 'DES1' in [
-            e.name for e in request.user.groups.all()]
+            e.name for e in request.user.groups.all()] 
+    if training.input_opening[0] == "4":
+        data['can_edit'] = False
     return render(request, template, data)
 
 

@@ -269,7 +269,7 @@ spécificités déjà saisies pour la nouvelle année."
         code_year=currentyear().code_year, is_in_use=True)
     data['rules_list'] = rules.filter(is_eci=True) if training.MECC_type \
         in 'E' else rules.filter(is_ccct=True)
-    d = data['custom'] = [a.rule_gen_id for a in [
+    data['custom'] = [a.rule_gen_id for a in [
         e for e in SpecificParagraph.objects.filter(
             code_year=currentyear().code_year, training=training)]
     ] + [e.rule_gen_id for e in AdditionalParagraph.objects.filter(
@@ -280,11 +280,11 @@ spécificités déjà saisies pour la nouvelle année."
 Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
+        
     input_is_open = training.input_opening[0] in ['1', '3']
-
     data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
         e.name for e in request.user.groups.all()]
-    if training.input_opening[0] in ['4', '2']:
+    if training.input_opening[0] == '4':
         data['can_edit'] = False
     return render(request, template, data)
 
