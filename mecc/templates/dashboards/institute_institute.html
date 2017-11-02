@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for i in topten_derog|dictsort:"rule.label"  %}
+                {% for i in topten_derog|dictsort:"rule.display_order"  %}
                 <tr>
                     <td>{{i.rule}}</td>
                     <td class="align-right">{% if i.rule.is_eci and i.rule.is_ccct %}{% trans "Tous" %}{% elif i.rule.is_ccct %}{% trans "CC/CT" %}{% elif i.rule.is_eci %}{% trans "ECI" %}{% endif %}</td>

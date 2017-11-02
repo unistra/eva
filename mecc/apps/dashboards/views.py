@@ -1,6 +1,6 @@
 from ..institute.models import Institute
 from ..years.models import InstituteYear, UniversityYear
-from ..degree.models import Degree
+from ..degree.models import Degree, DegreeType
 from ..training.models import Training, SpecificParagraph
 from ..files.models import FileUpload
 from ..rules.models import Rule
@@ -118,19 +118,21 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     return render(request, template, data)
 
+
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
     supply_filter = []
     cfvu_entries = []
-    institutes_data = []
+    trainings_data = []
     # objects needed
     uy = UniversityYear.objects.get(is_target_year=True)
     iy = InstituteYear.objects.filter(
         code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
 
     institute = Institute.objects.get(code=code)
-    iycmp = InstituteYear.objects.get(code_year=uy.code_year, id_cmp=institute.pk)
+    iycmp = InstituteYear.objects.get(
+        code_year=uy.code_year, id_cmp=institute.pk)
 
     for year in iy:
         cfvu_entries.append(dict(domain=institute.field.name,
@@ -146,8 +148,7 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
             supply_filter.append(training.supply_cmp)
 
     doc_cadre = FileUpload.objects.get(object_id=uy.id)
-    institute_letters = FileUpload.objects.filter(object_id=institute.pk,
-        additional_type="letter_%s/%s" % (uy.code_year, uy.code_year + 1))
+
     rules = Rule.objects.filter(code_year=uy.code_year).filter(
         is_edited__in=('O', 'X')).order_by('display_order')
 
@@ -161,23 +162,17 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     t_validated_cfvu_waiting = t.filter(
         date_val_cmp__isnull=False, date_visa_des__isnull=False, date_val_cfvu__isnull=True)
     t_validated_cfvu = t.filter(date_val_cfvu__isnull=False)
-    t_first_cfvu = t_validated_cfvu.earliest('date_val_cfvu')
 
-    institutes_data.append(dict(institute=institute.label,
-                                t_count=t.filter(
-                                    supply_cmp=code).count(),
-                                t_uncompleted_count=t_uncompleted.filter(
-                                    supply_cmp=code).count(),
-                                t_completed_no_val_count=t_completed_no_validation.filter(
-                                    supply_cmp=code).count(),
-                                t_validated_des_waiting_count=t_validated_des_waiting.filter(
-                                    supply_cmp=code).count(),
-                                t_validated_cfvu_waiting_count=t_validated_cfvu_waiting.filter(
-                                    supply_cmp=code).count(),
-                                t_validated_cfvu_count=t_validated_cfvu.filter(
-                                    supply_cmp=code).count(),
-                                ))
-    derogations = SpecificParagraph.objects.filter(training__supply_cmp=code, code_year=uy.code_year)
+    # trainings_data.append(dict(training=training.label,
+    #                            t_count=t.count(),
+    #                            t_eci_count=t_eci.count(),
+    #                            t_cc_ct_count=t_cc_ct.count(),
+    #                            ))
+
+    trainings_data = t.values('degree_type').annotate(t_count=Count('pk'))
+
+    derogations = SpecificParagraph.objects.filter(
+        training__supply_cmp=code, code_year=uy.code_year)
 
     topten_d = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_formations=Count(
         'training__id', distinct=True))
@@ -199,13 +194,20 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     data['trainings_validated_des_waiting_counter'] = t_validated_des_waiting.count()
     data['trainings_validated_cfvu_waiting_counter'] = t_validated_cfvu_waiting.count()
     data['trainings_validated_cfvu_counter'] = t_validated_cfvu.count()
-    data['institute_data'] = institutes_data
-    data['institute_letters'] = institute_letters
-    data['institute_letters_counter'] = institute_letters.count()
+    data['institute_data'] = trainings_data
+    data['trainings_eci_counter'] = t_eci.count()
+    data['trainings_cc_ct_counter'] = t_cc_ct.count()
+
     data['topten_derog'] = topten_d
-    data['first_cfvu'] = t_first_cfvu.date_val_cfvu
+    data['first_cfvu'] = uy.date_expected
 
     for d in data['topten_derog']:
         d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
+
+    for td in trainings_data:
+        td['degree_type_label'] = DegreeType.objects.get(id=td['degree_type'])
+        td['t_eci_count'] = t_eci.filter(degree_type=td['degree_type']).count()
+        td['t_cc_ct_count'] = t_cc_ct.filter(
+            degree_type=td['degree_type']).count()
 
     return render(request, template, data)

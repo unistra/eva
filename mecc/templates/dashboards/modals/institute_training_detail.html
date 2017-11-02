@@ -1,0 +1,66 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<div class="modal fade" id="institute_training_detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h2 class="modal-title" id="myModalLabel">{% trans "Détail par type de diplôme et régime" %}</h2>
+                <h3>{{ institute.label }}</h3>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                    <div>
+                        <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
+                            {% if institute_data %}
+                            <table class="table-bordered dashboard-table" id="institutes-processing-detail">
+                                <thead class='table-head'>
+                                    <tr >
+                                        <th rowspan="2">{% trans "Type de diplôme" %}</th>
+                                        <th rowspan="2">{% trans "Nb total formations par type de diplôme" %}</th>
+                                        <th colspan="2">{% trans "dont ECI" %}</th>
+                                        <th colspan="2">{% trans "dont CC/CT" %}</th>
+                                    </tr>
+                                    <tr class='table-head'>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+                                        <th>{% trans "Nombre" %}</th>
+                                        <th>{% trans "%" %}</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        {% for t in institute_data %}
+                                        <tr class="hover-row">
+                                            <td  width="30%">{{ t.degree_type_label }}</td>
+                                            <td class="align-right bold">{{ t.t_count }}</td>
+                                            <td class="align-right bold">{{ t.t_eci_count }}</td>
+                                            <td class="align-right">{% widthratio t.t_eci_count t.t_count 100 %}%</td>
+                                            <td class="align-right bold">{{ t.t_cc_ct_count }}</td>
+                                            <td class="align-right">{% widthratio t.t_cc_ct_count t.t_count 100 %}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="dashboard-count-row">
+                                            <td>{% trans "TOTAL" %}</td>
+                                            <td class="align-right">{{ trainings_counter}}</td>
+                                            <td class="align-right">{{ trainings_eci_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_eci_counter trainings_counter 100 %}%</td>
+                                            <td class="align-right">{{ trainings_cc_ct_counter }}</td>
+                                            <td class="align-right">{% widthratio trainings_cc_ct_counter trainings_counter 100 %}%</td>
+
+
+                                        </tr>
+                                </tbody>
+                            </table>
+                            {% else %}
+                                {% trans 'Aucun diplôme'%}
+                            {% endif %}
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

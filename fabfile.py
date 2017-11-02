@@ -124,7 +124,7 @@ def preprod():
         'web': ['django-pprd-w1.u-strasbg.fr', 'django-pprd-w2.u-strasbg.fr'],
         'lb': ['rp3.u-strasbg.fr'],
     }
-    # env.user = 'root'  # user for ssh
+    env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
     env.server_name = 'eva-pprd.unistra.fr'
     env.short_server_name = 'eva-pprd'
@@ -153,7 +153,7 @@ def prod():
         'web': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
         'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr']
     }
-    # env.user = 'root'  # user for ssh
+    env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
     env.server_name = 'eva.unistra.fr'
     env.short_server_name = 'eva'

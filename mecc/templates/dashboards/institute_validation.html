@@ -16,9 +16,9 @@
             <td class="align-right"><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#rules_list">{% trans "Voir la liste" %}</a></td>
         </tr>
         <tr>
-            <td>{% trans "Date prévisionelle Conseil de composante MECC" %}</td>
+            <td>{% trans "Date prévisionnelle Conseil de composante MECC" %}</td>
             <td></td>
-            <td class="align-right blue"><span {% if university_year_cmp.date_expected_MECC > first_cfvu %}class="red"{% endif %}>{{ university_year_cmp.date_expected_MECC }}</span></td>
+            <td class="align-right blue"><span {% if university_year_cmp.date_expected_MECC > first_cfvu %}class="red"{% endif %}>{{ university_year_cmp.date_expected_MECC|default_if_none:"" }}</span></td>
         </tr>
         <tr>
             <td>{% trans "Date 1ère séance CFVU MECC" %}</td>
