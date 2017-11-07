@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from mecc.apps.training.views import TrainingListView, TrainingCreate, TrainingDelete, \
-    TrainingEdit, process_respform, list_training, respform_list, \
-    duplicate_home, duplicate_add, edit_rules, \
+    TrainingEdit, process_respform, list_training, list_training_mecc, \
+    respform_list, duplicate_home, duplicate_add, edit_rules, \
     specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
     edit_additional_paragraph, ask_delete_specific, delete_specific, \
     recover_everything, gen_pdf_all_rules, send_mail, remove_respform
@@ -28,6 +28,8 @@ urlpatterns = [
         name='process_resp'),
     url(r'^list_all/$', list_training,
         name='list_all'),
+    url(r'^list_all_meccs/$', list_training_mecc,
+        name='list_all_meccs'),
     url(r'^list_resp/$', respform_list,
         name='list_resp'),
     url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_home,
@@ -53,8 +55,3 @@ urlpatterns = [
     url(r'^remove_respform/$', remove_respform,
         name='remove_respform'),
 ]
-
-
-
-
-

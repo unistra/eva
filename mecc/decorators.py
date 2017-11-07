@@ -133,3 +133,21 @@ def group_required(*group_names):
                 return True
         return False
     return user_passes_test(in_groups)
+
+
+def profile_required(*profile_names):
+    """Requires user membership in at least one of the profiles passed in."""
+    def in_profiles(u):
+        if bool(u.meccuser.profile.filter(code__in=profile_names)) | u.is_superuser:
+                return True
+        return False
+    return user_passes_test(in_profiles)
+
+
+def profile_or_group_required(profile_names, group_names):
+    """Requires user membership in profile or group"""
+    def in_profile_or_group(u):
+        if profile_required(profile_names) or group_required(group_names):
+            return True
+        return False
+    return user_passes_test(in_profile_or_group)

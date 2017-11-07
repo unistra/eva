@@ -14,7 +14,7 @@ from django_cas.decorators import login_required, user_passes_test
 from mecc.decorators import is_ajax_request, is_post_request
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
-from mecc.decorators import group_required
+from mecc.decorators import group_required, profile_required, profile_or_group_required
 from django.http import JsonResponse
 
 @login_required
@@ -120,8 +120,11 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     return render(request, template, data)
 
+
 @login_required
-@group_required('DES1', 'RAC', 'DIRCOMP')
+#@group_required('DES1', 'RAC', 'DIRCOMP')
+#@profile_required('ECI')
+@profile_or_group_required(('DES1', 'RAC', 'DIRCOMP'), ('ECI'))
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
     supply_filter = []

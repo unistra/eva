@@ -171,8 +171,8 @@
         {% endif %}
         {% if request.user.meccuser|is_profile:'ECI' %}
         <li>
-            <a href="#"
-            {%if 'meccs' in request.path%}
+            <a href="{% url 'training:list_all_meccs'%}"
+            {%if 'trainins/list_all_meccs/' in request.path%}
                class="item-selected"
             {% endif %}>{% trans "MECC " %} {{request.display.current_year}}</a>
         </li>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load groups %}
+{% load staticfiles %}
+
+{% block page-header %}
+{% trans "Modalités d'évaluation des connaissances et des compétences" %} {{request.display.current_year}}
+{% endblock %}
+
+{% block app_content %}
+<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
+{% if institutes %}
+{% regroup institutes by field as institute_list %}
+{% for field in institute_list %}
+    {{ field.grouper }}
+    <table>
+        {% for item in field.list %}
+        <tr>
+            <td width="50%">
+                <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}</a>
+            </td>
+            <td>
+                <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span>
+            </td>
+            <td>
+                <a href="#">MECC</a>
+            </td>
+            <td>
+                {% for letter in letters  %}
+                    {% if letter.object_id == item.id %}
+                        <a href="{{ letter.file.url }}">{% trans "Lettre de présentation" %} (1)</a>
+                    {% else %}
+                        <a href="#">{% trans "Lettre de présentation" %} (0)</a>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <a href="#" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endfor %}
+{% endif %}
+{%endblock%}

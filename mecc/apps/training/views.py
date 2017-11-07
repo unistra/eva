@@ -17,7 +17,7 @@ from mecc.apps.training.models import Training, SpecificParagraph, \
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
-
+from mecc.apps.utils.queries import currentyear
 from django_cas.decorators import login_required
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -55,6 +55,21 @@ def list_training(request, template='training/list_cmp.html'):
     data = {}
     request.session['list_training'] = True
     data['institutes'] = Institute.objects.all().order_by('field', 'label')
+    return render(request, template, data)
+
+
+@login_required
+def list_training_mecc(request, template='training/list_cmp_mecc.html'):
+    """
+    View for ECI/VP
+    """
+
+    current_year = currentyear().code_year
+    data = {}
+    request.session['list_training'] = True
+    data['institutes'] = Institute.objects.all().order_by('field', 'label')
+    data['letters'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='letter_%s/%s' % (current_year, current_year + 1))
+    data['others'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
     return render(request, template, data)
 
 
@@ -257,7 +272,7 @@ def edit_rules(request, id, template="training/edit_rules.html"):
     """
     Correct respform can edit rule
     """
-    
+
     data = {}
     recovered = request.session.pop('recovered', False)
     if recovered:
