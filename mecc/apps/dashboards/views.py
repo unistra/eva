@@ -1,9 +1,10 @@
-from ..institute.models import Institute
-from ..years.models import InstituteYear, UniversityYear
 from ..degree.models import Degree, DegreeType
-from ..training.models import Training, SpecificParagraph
 from ..files.models import FileUpload
+from ..institute.models import Institute
+from ..adm.models import MeccUser, Profile
 from ..rules.models import Rule
+from ..training.models import Training, SpecificParagraph
+from ..years.models import InstituteYear, UniversityYear
 from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
@@ -16,7 +17,8 @@ from django.core.urlresolvers import reverse
 from mecc.decorators import group_required
 from django.http import JsonResponse
 
-
+@login_required
+@group_required('DES1', 'VP')
 def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data = {}
     supply_filter = []
@@ -118,8 +120,8 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     return render(request, template, data)
 
-
-@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
+@login_required
+@group_required('DES1', 'RAC', 'DIRCOMP')
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
     supply_filter = []
@@ -163,12 +165,6 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         date_val_cmp__isnull=False, date_visa_des__isnull=False, date_val_cfvu__isnull=True)
     t_validated_cfvu = t.filter(date_val_cfvu__isnull=False)
 
-    # trainings_data.append(dict(training=training.label,
-    #                            t_count=t.count(),
-    #                            t_eci_count=t_eci.count(),
-    #                            t_cc_ct_count=t_cc_ct.count(),
-    #                            ))
-
     trainings_data = t.values('degree_type').annotate(t_count=Count('pk'))
 
     derogations = SpecificParagraph.objects.filter(
@@ -197,7 +193,6 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     data['institute_data'] = trainings_data
     data['trainings_eci_counter'] = t_eci.count()
     data['trainings_cc_ct_counter'] = t_cc_ct.count()
-
     data['topten_derog'] = topten_d
     data['first_cfvu'] = uy.date_expected
 
