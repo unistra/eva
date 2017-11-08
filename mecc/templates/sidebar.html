@@ -17,8 +17,8 @@
         {% if request.user|has_group:'DES1' or request.user|has_group:'VP' or request.user.is_superuser %}
 
           <li>
-              <a href="/dashboards"
-              {% if 'dashboards' in request.path %}
+              <a href="/dashboards/"
+              {% if request.path == '/dashboards/' %}
                  class="item-selected"
               {% endif %}>{% trans 'Tableau de bord général' %}</a>
 
@@ -114,14 +114,14 @@
 
         <li>
             <a href="{% url 'institute:home'%}"
-            {% if 'institute' in request.path %}
+            {% if 'institute' in request.path and not 'dashboards' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Composantes' %}</a>
 
         </li>
         {% endif %}
 
-        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
 
         <li>
             <a href="{% url 'years:home' %}"
@@ -164,7 +164,11 @@
             {% if request.user|has_group:'DES1' or request.user.is_superuser %}"{% url 'training:list_all'%}"
             {% else %}"{%url 'training:list' request.user.meccuser.cmp%}"
             {%endif%}
-            {% if 'training/list_all/' in request.path or 'training/list/' in request.path%}
+            {% if 'training/list_all/' in request.path or 'training/list/' in request.path %}
+               class="item-selected"
+            {% elif 'dashboards/institute/' in request.path and request.user|has_group:'DES1' %}
+               class="item-selected"
+            {% elif 'dashboards/institute/' in request.path and request.user.is_superuser %}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>

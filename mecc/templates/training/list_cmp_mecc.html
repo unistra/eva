@@ -24,14 +24,14 @@
                 <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span>
             </td>
             <td>
-                <a href="#">MECC</a>
+                <a href="#" style="margin-left:10px;">MECC</a>
             </td>
             <td>
                 {% for letter in letters  %}
                     {% if letter.object_id == item.id %}
-                        <a href="{{ letter.file.url }}">{% trans "Lettre de présentation" %} (1)</a>
+                        <a href="{{ letter.file.url }}" style="margin-left:10px;">{% trans "Lettre de présentation" %} (1)</a>
                     {% else %}
-                        <a href="#">{% trans "Lettre de présentation" %} (0)</a>
+                        <a href="#" style="margin-left:10px;">{% trans "Lettre de présentation" %} (0)</a>
                     {% endif %}
                 {% endfor %}
             </td>
@@ -41,6 +41,7 @@
         </tr>
         {% endfor %}
     </table>
+
 {% endfor %}
 {% endif %}
 {%endblock%}
