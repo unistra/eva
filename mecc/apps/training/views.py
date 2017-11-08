@@ -14,6 +14,7 @@ from mecc.apps.files.models import FileUpload
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
+from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
@@ -66,10 +67,25 @@ def list_training_mecc(request, template='training/list_cmp_mecc.html'):
 
     current_year = currentyear().code_year
     data = {}
-    request.session['list_training'] = True
-    data['institutes'] = Institute.objects.all().order_by('field', 'label')
+    supply_filter = []
+
+    uy = UniversityYear.objects.get(is_target_year=True)
+
+    institutes = Institute.objects.filter(
+        training__code_year=uy.code_year).distinct()
+
+    t = Training.objects.filter(code_year=uy.code_year)
+
+    # get institutes who are supplier for a training
+    for training in t:
+        if training.supply_cmp in institutes.values_list('code', flat=True):
+            supply_filter.append(training.supply_cmp)
+
+    supply_institutes = institutes.filter(code__in=supply_filter).distinct().order_by('field', 'label')
+    data['institutes'] = supply_institutes
     data['letters'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='letter_%s/%s' % (current_year, current_year + 1))
     data['others'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
+
     return render(request, template, data)
 
 
