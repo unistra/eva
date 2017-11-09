@@ -2,6 +2,20 @@
 Django view for training part
 """
 
+from django_cas.decorators import login_required
+from django.apps import apps
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMultiAlternatives
+from django.core.urlresolvers import reverse
+from django.db import transaction
+from django.db.models import Count
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
+
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.institute.models import Institute
 from mecc.apps.rules.models import Rule, Paragraph
@@ -14,23 +28,10 @@ from mecc.apps.files.models import FileUpload
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
-from mecc.apps.years.models import InstituteYear, UniversityYear
+from mecc.apps.years.models import UniversityYear
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
-from mecc.apps.utils.queries import currentyear
-from django_cas.decorators import login_required
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.core.urlresolvers import reverse
-from django.shortcuts import render, redirect
-from django.db import transaction
-from django.http import JsonResponse, HttpResponseRedirect
-from django.utils.translation import ugettext as _
-from django.contrib import messages
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.apps import apps
 
 
 @is_ajax_request
@@ -81,10 +82,12 @@ def list_training_mecc(request, template='training/list_cmp_mecc.html'):
         if training.supply_cmp in institutes.values_list('code', flat=True):
             supply_filter.append(training.supply_cmp)
 
+
     supply_institutes = institutes.filter(code__in=supply_filter).distinct().order_by('field', 'label')
     data['institutes'] = supply_institutes
     data['letters'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='letter_%s/%s' % (current_year, current_year + 1))
-    data['others'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
+    files = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
+    data['others'] = files.values('object_id').annotate(f_count=Count('object_id'))
 
     return render(request, template, data)
 

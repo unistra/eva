@@ -34,13 +34,13 @@
         <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}
         </a>
         {% if request.user|has_group:'DES1' or request.user.is_superuser %}
-        <a class='comp-left' href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-</a>
+        <a class='comp-left' href="{% url 'dashboards:institute' item.code %}">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </a>
         {% endif %}
         {% endfor %}
     </ul>
-
-    </li>
+</li>
 {% endfor %}
 
 {% endif %}
