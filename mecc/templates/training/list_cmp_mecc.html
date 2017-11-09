@@ -36,11 +36,14 @@
             },
             success: function(data) {
                 document.getElementById('myModalLabel').innerHTML = data.institute
-                document.getElementById('')
                 li = "";
-                $.each(data.files, function(k, v) {
-                    li = li + '<li><a href="' + v.url + '" title="'+ v.name + ' ' + v.comment + '">' + v.name + '</a> {% trans "ajouté par"%} ' + v.creator + ' {% trans "dépôt le" %} ' + v.uploaded_at + '</li>';
-                });
+                if(data.files.length>0) {
+                    $.each(data.files, function(k, v) {
+                        li = li + '<li><a href="' + v.url + '" title="'+ v.name + ' ' + v.comment + '">' + v.name + '</a> {% trans "ajouté par"%} <span class="italic">' + v.creator + '</span> {% trans "dépôt le" %} ' + v.uploaded_at + '</li>';
+                    });
+                } else {
+                    li = '<li><strong>{% trans "Pas de documents" %}';
+                }
                 document.getElementById('files_list').innerHTML = li;
             }
         });
