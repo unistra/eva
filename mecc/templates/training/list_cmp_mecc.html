@@ -26,16 +26,15 @@
             {% endfor %}
         </td>
         <td>
-            <a class="select " onclick="detail_files({{item.id}})" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}</a>
-        </td>
-        <td>
-            {% for other in others %}
-                {% if other.object_id == item.id %}
-                    <span id="files_count">({{ other.f_count }})</span>
-                {% else %}
-                    <span id="files_count">(0)</span>
-                {% endif %}
-            {% endfor %}
+            <a class="select " onclick="detail_files({{item.id}})" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}
+                {% for other in others %}
+                    {% if other.object_id == item.id %}
+                        <span id="files_count">({{ other.f_count }})</span>
+                    {% else %}
+                        <span id="files_count">(0)</span>
+                    {% endif %}
+                {% endfor %}
+            </a>
         </td>
     </tr>
     {% endfor %}
