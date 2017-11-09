@@ -4,7 +4,7 @@ from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
     add_pple, remove_pple, validate_institute, send_mail, send_mail_des, \
     process_delete_file, process_training_notify, process_upload_letter,  \
     process_upload_misc, process_check_validate, documents_institute, \
-    check_validate_institute
+    check_validate_institute, details_files
 from django_cas.decorators import login_required
 
 
@@ -45,4 +45,6 @@ urlpatterns = [
         name='process_delete_file'),
     url(r'^documents/(?P<code>\w+)/$', documents_institute,
         name='documents'),
+    url(r'^details_files/$', details_files,
+        name='details_files'),
 ]

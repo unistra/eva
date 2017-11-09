@@ -28,7 +28,7 @@ from mecc.apps.utils.queries import institute_staff
 from datetime import datetime
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.decorators import is_post_request, group_required
+from mecc.decorators import is_post_request, group_required, is_ajax_request
 from mecc.apps.files.models import FileUpload
 
 
@@ -716,3 +716,35 @@ def process_training_notify(request):
         response = {'status': 0, 'message': _("Error")}
 
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+@login_required
+@is_ajax_request
+def details_files(request):
+
+
+    current_year = currentyear().code_year
+    cmp = request.POST.get('val')
+    institute = Institute.objects.get(id=cmp)
+    files = FileUpload.objects.filter(
+        object_id=cmp,
+        additional_type='misc_%s/%s' % (current_year, current_year + 1)
+    )
+
+    f_data = []
+    for f in files:
+        a = {
+            'url': f.file.url,
+            'name': f.filename(),
+            'comment': f.comment,
+            'creator': f.creator.get_full_name(),
+            'uploaded_at' : formats.date_format(f.uploaded_at.date(), "SHORT_DATE_FORMAT")
+        }
+        f_data.append(a)
+    # list(files.values('file', 'creator', 'uploaded_at')),
+    json_response = {
+        'files': f_data if len(f_data) > 0 else 0,
+        'institute': institute.label
+    }
+
+    return JsonResponse(json_response)

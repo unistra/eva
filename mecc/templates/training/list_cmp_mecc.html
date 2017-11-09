@@ -1,47 +1,50 @@
-{% extends "base.html" %}
-{% load i18n %}
-{% load crispy_forms_tags %}
-{% load groups %}
-{% load staticfiles %}
+{% extends "base.html" %} {% load i18n crispy_forms_tags groups staticfiles %} {% block page-header %} {% trans "Modalités d'évaluation des connaissances et des compétences" %} {{request.display.current_year}} {% endblock %} {% block app_content %}
+<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2> {% if institutes %} {% regroup institutes by field as institute_list %} {% for field in institute_list %} {{ field.grouper }}
+<table>
+    {% for item in field.list %}
+    <tr>
+        <td width="50%">
+            <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}</a>
+        </td>
+        <td>
+            <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span></a>
+        </td>
+        <td>
+            <a href="#" style="margin-left:10px;">MECC</a>
+        </td>
+        <td>
+            {% for letter in letters %} {% if letter.object_id == item.id %}
+            <a href="{{ letter.file.url }}" style="margin-left:10px;">{% trans "Lettre de présentation" %} (1)</a> {% else %}
+            <a href="#" style="margin-left:10px;">{% trans "Lettre de présentation" %} (0)</a> {% endif %} {% endfor %}
+        </td>
+        <td>
+            <a class="select " onclick="detail_files({{item.id}})" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
-{% block page-header %}
-{% trans "Modalités d'évaluation des connaissances et des compétences" %} {{request.display.current_year}}
-{% endblock %}
-
-{% block app_content %}
-<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
-{% if institutes %}
-{% regroup institutes by field as institute_list %}
-{% for field in institute_list %}
-    {{ field.grouper }}
-    <table>
-        {% for item in field.list %}
-        <tr>
-            <td width="50%">
-                <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}</a>
-            </td>
-            <td>
-                <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span>
-            </td>
-            <td>
-                <a href="#" style="margin-left:10px;">MECC</a>
-            </td>
-            <td>
-                {% for letter in letters  %}
-                    {% if letter.object_id == item.id %}
-                        <a href="{{ letter.file.url }}" style="margin-left:10px;">{% trans "Lettre de présentation" %} (1)</a>
-                    {% else %}
-                        <a href="#" style="margin-left:10px;">{% trans "Lettre de présentation" %} (0)</a>
-                    {% endif %}
-                {% endfor %}
-            </td>
-            <td>
-                <a href="#" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-{% endfor %}
-{% endif %}
-{%endblock%}
+{% endfor %} {% include "training/modal_preview_files.html" %}
+<script type="text/javascript">
+    function detail_files(institute) {
+        $.ajax({
+            url: "{% url 'institute:details_files'%}",
+            type: "POST",
+            data: {
+                val: institute,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                document.getElementById('myModalLabel').innerHTML = data.institute
+                document.getElementById('')
+                li = "";
+                $.each(data.files, function(k, v) {
+                    li = li + '<li><a href="' + v.url + '" title="'+ v.name + ' ' + v.comment + '">' + v.name + '</a> {% trans "ajouté par"%} ' + v.creator + ' {% trans "dépôt le" %} ' + v.uploaded_at + '</li>';
+                });
+                document.getElementById('files_list').innerHTML = li;
+            }
+        });
+        $('#preview_files').modal('show');
+    }
+</script>
+{% endif %} {%endblock%}
