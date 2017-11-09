@@ -122,8 +122,6 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
 
 @login_required
-#@group_required('DES1', 'RAC', 'DIRCOMP')
-#@profile_required('ECI')
 @profile_or_group_required(('DES1', 'RAC', 'DIRCOMP'), ('ECI'))
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
