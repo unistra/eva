@@ -51,7 +51,7 @@
                     <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
                     <td width=15% class=" ">{{e.degree_type}}</td>
                     <td width=60% class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.ref_cpa_rof}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
@@ -77,7 +77,7 @@
                     <td width=10% class="td-centered">{{e.code_year}}</td>
                     <td width=15% >{{e.degree_type}}</td>
                     <td width=60% >{{e.label}}</td>
-                    <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
+                    <td width=10% class="td-centered">{{e.ref_cpa_rof}}</td>
                     <td width=5% class="td-centered">
                         {% if e.supply_cmp == cmp  %}
                         
