@@ -65,7 +65,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     profiles = Profile.objects.filter(
         cmp=code).filter(
             Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP")
-        )
+    )
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
         data['can_edit_diretu'] = True
     else:
@@ -217,7 +217,8 @@ def get_list(request, employee_type, pk):
     """
     status = {'prof': 'Enseignant', 'adm': 'Administratif'}
     t = get_list_from_cmp_by_ldap(cmp=pk)
-    result = [e for e in t if e.get('status') == status.get(employee_type)]
+    result = [e for e in t if e.get('status') == status.get(
+        employee_type)] if employee_type != "all" else t
     return JsonResponse(result, safe=False)
 
 
@@ -243,6 +244,7 @@ class InstituteCreate(CreateView):
     """
     Create institute view
     """
+
     def get_context_data(self, **kwargs):
         context = super(InstituteCreate, self).get_context_data(**kwargs)
         try:
@@ -491,9 +493,12 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
         institutes__code=code).order_by('degree_type')
-    data['notification_to'] = [ user.email for user in staff.filter(meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
-    data['notification_cc'] = [ user.email for user in staff.filter(meccuser__profile__code="REFAPP").distinct()]
-    data['notification_full'] = data['notification_to']+data['notification_cc']
+    data['notification_to'] = [user.email for user in staff.filter(
+        meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
+    data['notification_cc'] = [user.email for user in staff.filter(
+        meccuser__profile__code="REFAPP").distinct()]
+    data['notification_full'] = data[
+        'notification_to'] + data['notification_cc']
     data['notification_object'] = "%s" % institute.label
     data['mail_prefix'] = settings.EMAIL_SUBJECT_PREFIX
 
@@ -709,7 +714,8 @@ def process_training_notify(request):
     tobject = Training.objects.get(id=request.POST.get('code'))
 
     if tobject:
-        respform = User.objects.filter(meccuser__id__in=tobject.resp_formations.values('id'))
+        respform = User.objects.filter(
+            meccuser__id__in=tobject.resp_formations.values('id'))
         response = {'status': 1, 'message': _(
             "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'], 'form': tobject.label, 'resp': list(respform.values('email'))}
     else:
@@ -721,7 +727,6 @@ def process_training_notify(request):
 @login_required
 @is_ajax_request
 def details_files(request):
-
 
     current_year = currentyear().code_year
     cmp = request.POST.get('val')
@@ -738,7 +743,7 @@ def details_files(request):
             'name': f.filename(),
             'comment': f.comment,
             'creator': f.creator.get_full_name(),
-            'uploaded_at' : formats.date_format(f.uploaded_at.date(), "SHORT_DATE_FORMAT")
+            'uploaded_at': formats.date_format(f.uploaded_at.date(), "SHORT_DATE_FORMAT")
         }
         f_data.append(a)
     # list(files.values('file', 'creator', 'uploaded_at')),

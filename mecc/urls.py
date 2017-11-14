@@ -28,7 +28,7 @@ urlpatterns = patterns(
         namespace='rules')),
     url(r'^file/', include('mecc.apps.files.urls',
         namespace='files')),
-    url(r'^ressources/(?P<employee_type>|prof|adm)/(?P<pk>[a-zA-Z]{3}).json',
+    url(r'^ressources/(?P<employee_type>|prof|adm|all)/(?P<pk>[a-zA-Z]{3}).json',
         get_list, name='get_list'),
     url(r'^training/', include('mecc.apps.training.urls',
         namespace='training')),
