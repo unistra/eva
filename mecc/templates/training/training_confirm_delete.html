@@ -36,6 +36,12 @@
     </li>
     {% endfor %}
 </ul>
+{%trans "Les épreuves vont être supprimées"%}
+<ul>
+    {% for e, s in exams  %}
+    <li >{{s.label}} : {{e.label}} </li>
+    {% endfor %}
+</ul>
 </p>
 {% endif %}
 
