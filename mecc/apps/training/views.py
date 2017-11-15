@@ -25,7 +25,7 @@ from mecc.apps.utils.manage_pple import manage_respform
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from mecc.apps.files.models import FileUpload
-from mecc.apps.mecctable.models import StructureObject, ObjectsLink
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
 from mecc.apps.years.models import UniversityYear
@@ -82,12 +82,15 @@ def list_training_mecc(request, template='training/list_cmp_mecc.html'):
         if training.supply_cmp in institutes.values_list('code', flat=True):
             supply_filter.append(training.supply_cmp)
 
-
-    supply_institutes = institutes.filter(code__in=supply_filter).distinct().order_by('field', 'label')
+    supply_institutes = institutes.filter(
+        code__in=supply_filter).distinct().order_by('field', 'label')
     data['institutes'] = supply_institutes
-    data['letters'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='letter_%s/%s' % (current_year, current_year + 1))
-    files = FileUpload.objects.filter(object_id__in=data['institutes'].values_list('pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
-    data['others'] = files.values('object_id').annotate(f_count=Count('object_id'))
+    data['letters'] = FileUpload.objects.filter(object_id__in=data['institutes'].values_list(
+        'pk', flat=True), additional_type='letter_%s/%s' % (current_year, current_year + 1))
+    files = FileUpload.objects.filter(object_id__in=data['institutes'].values_list(
+        'pk', flat=True), additional_type='misc_%s/%s' % (current_year, current_year + 1))
+    data['others'] = files.values('object_id').annotate(
+        f_count=Count('object_id'))
 
     return render(request, template, data)
 
@@ -214,8 +217,11 @@ class TrainingDelete(DeleteView):
         context['additionals'] = additionals
         context['specifics'] = specifics
         links = ObjectsLink.objects.filter(id_training=self.object.id)
-        context['meccs'] = StructureObject.objects.filter(
+        context['meccs'] = structs = StructureObject.objects.filter(
             id__in=[link.id_child for link in links])
+        context['exams'] = exams = [(e, structs.get(id=e.id_attached)) for e in Exam.objects.filter(
+            id_attached__in=[s.id for s in structs])]
+        print(exams)
         return context
 
     def get_success_url(self):
