@@ -29,7 +29,7 @@
 </div>
   {% crispy form %}
   <div style="display:none">
-   <input id="input_dircomp_username_member" name="dircomp_username"  />
+    <input id="input_dircomp_username_member" name="dircomp_username"  />
    <input id="input_dircomp_last_name" name="dircomp_last_name" />
    <input id="input_dircomp_first_name" name="dircomp_first_name" />
    <input id="input_dircomp_mail" name="dircomp_mail" >
@@ -228,7 +228,6 @@ $.getJSON(url_prof, function (data) {
           var b = document.getElementById('input_dircomp_last_name').value;
           if (a != prof_fill) {
               document.getElementById('id_id_dircomp').className +=' input-red';
-            document.getElementById('id_id_dircomp').disabled = true;
         } else {
             document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
             document.getElementById('id_id_dircomp').disabled = false;
@@ -307,7 +306,6 @@ $.getJSON(url_prof, function (data) {
              var b = document.getElementById('input_rac_last_name').value;
              if (a != rac_fill) {
                document.getElementById('id_id_rac').className +=' input-red'
-               document.getElementById('id_id_dircomp').disabled = true;
            } else {
                document.getElementById('id_id_rac').className ='input_prof textinput textInput form-control'
                document.getElementById('id_id_dircomp').disabled = false;
