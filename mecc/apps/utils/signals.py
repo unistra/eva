@@ -15,7 +15,8 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.training.models import Training, AdditionalParagraph, \
     SpecificParagraph
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject, \
+    Exam
 
 
 @receiver(post_delete, sender=Training)
@@ -23,7 +24,7 @@ def Training_post_delete(sender, **kwargs):
     """
     When a Training is deleted, derogations and additional paragraphs are
     useless and so need to be deleted, the same for linksobjects and
-    structureobject which are not used anymore
+    structureobject which are not used anymore, the same stuff for exams
     """
     # 1. get concerned training
     training = kwargs.get('instance')
@@ -37,10 +38,11 @@ def Training_post_delete(sender, **kwargs):
         additionnal.delete()
     for derog in derogs:
         derog.delete()
-    # 4. get objects link and structures objects
+    # 4. get objects link and structures objects and exams concerned
     links = ObjectsLink.objects.filter(id_training=training.id)
     structs = StructureObject.objects.filter(
         id__in=[link.id_child for link in links])
+    exams = Exam.objects.filter(id_attached__in=[s.id for s in structs])
     # 5. get all objects link using concerned structs not in this training
     used = ObjectsLink.objects.filter(id_child__in=[struct.id for struct in structs]).exclude(
         id_training=training.id)
@@ -51,7 +53,10 @@ def Training_post_delete(sender, **kwargs):
     # 7. delete all link related to the training concerned
     for link in links:
         link.delete()
-    # 8. dance :)
+    # 8. delete all exams
+    for exam in exams:
+        exam.delete()
+    # 9. dance :)
 
 
 @receiver(post_save, sender=User)
