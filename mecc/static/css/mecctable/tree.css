@@ -171,5 +171,6 @@
     width:50%;
 }
 
-.mecc-s1 span, .mecc-s2 span {
+.smaller{
+    font-size: 80%;
 }

@@ -111,12 +111,12 @@
             <table>
                 <tr class="mecc-s1-{{a.structure.id}}">
                     {% for e in a.exams_1  %}
-                    <td class="small border-left exam_id-{{e.id}}" > {{e.get_type_exam_display}} ({{e.coefficient}}) 
+                    <td class="smaller border-left exam_id-{{e.id}}" > {{e.get_type_exam_display}} ({{e.coefficient}}) 
                             {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
                     {% if a.exams_1_count and can_edit%} <td class="border-left" >
-                            <a class="small hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
+                            <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
                     {%endif%}
@@ -127,12 +127,12 @@
                 <table>
                         <tr class="mecc-s2-{{a.structure.id}}">
                             {% for e in a.exams_2  %}
-                            <td class="small border-left exam_id-{{e.id}}"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
+                            <td class="smaller border-left exam_id-{{e.id}}"> {{e.get_type_exam_display}} ({{e.coefficient}}) 
                                     {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                                 </td>
                             {% endfor %} 
                             {% if a.exams_2_count and can_edit %} <td class="border-left ">
-                                    <a class="small hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
+                                    <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                                     {% trans 'Voir +' %}</a>                      
                                 </td>
                             {%endif%}
