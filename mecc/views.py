@@ -34,7 +34,7 @@ def home(request):
         if e.code == "GESCOL":
             return redirect('training:list', cmp=e.cmp)
         if e.code in ['DIRCOMP', 'RAC']:
-            return redirect('institute:dircomp_edit', code=e.cmp)
+            return redirect('dashboards:institute', code=e.cmp)
         if e.code == "ECI":
             return redirect('training:list_all_meccs')
     return render(request, 'base.html')
