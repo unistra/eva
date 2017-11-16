@@ -16,6 +16,8 @@ urlpatterns = patterns(
         namespace='years')),
     url(r'^dashboards/', include('mecc.apps.dashboards.urls',
         namespace='dashboards')),
+    url(r'^doc_gen/', include('mecc.apps.doc_gen.urls',
+        namespace='doc_gen')),
     url(r'^mecctable/', include('mecc.apps.mecctable.urls',
         namespace='mecctable')),
     url(r'^degree/', include('mecc.apps.degree.urls',
