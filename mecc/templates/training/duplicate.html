@@ -32,26 +32,26 @@
         <table class="duplicate-table duplicate-table-1">
             <thead class="thead">
                 <tr class="row-head">
-                    <th width=5% class="td-centered">
+                    <th width="5%" class="td-centered">
                         <input type="checkbox" onClick="check_all(this)" />
                     </th>
-                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
-                    <th width=15% class="td-centered">{%trans 'Type diplôme'%}</th>
-                    <th width=60%>{%trans 'Libellé Formation'%}</th>
-                    <th width=10% class="td-centered">{%trans 'Réf Année ROF'%}</th>
+                    <th width="10%" class="td-centered">{%trans 'Source'%}</th>
+                    <th width="15%" class="td-centered">{%trans 'Type diplôme'%}</th>
+                    <th width="50%">{%trans 'Libellé Formation'%}</th>
+                    <th width="20%" class="td-centered">{%trans 'Réf Année ROF'%}</th>
                 </tr>
             </thead>
             <tbody class="tbody" id="source">
                 {%if not trainings%}<tr id='empty'><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
                 {%for e in trainings%}
                 <tr id="source_{{e.id}}" class="{% if not e.is_used%} grey{%endif%}">
-                    <td width=5% class="td-centered">
+                    <td width="5%" class="td-centered">
                         <input type="checkbox" id="{{e.id}}" name="train_{{e.id}}" class="checkbox_train">
                     </td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
-                    <td width=15% class=" ">{{e.degree_type}}</td>
-                    <td width=60% class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.ref_cpa_rof}}</td>
+                    <td width="10%" class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
+                    <td width="15%" class=" ">{{e.degree_type}}</td>
+                    <td width="50%" class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
+                    <td width="20%" class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.ref_cpa_rof}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
@@ -62,11 +62,11 @@
         <table class="duplicate-table duplicate-table-2">
             <thead class="thead">
                 <tr class="row-head">
-                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
-                    <th width=15% class="td-centered">{%trans 'Type diplôme'%}</th>
-                    <th width=60%>{%trans 'Libellé Formation'%}</th>
-                    <th width=10% class="td-centered">{%trans 'Réf Année ROF'%}</th>
-                    <th width=5% ></th>
+                    <th width="10%" class="td-centered">{%trans 'Source'%}</th>
+                    <th width="20%" class="td-centered">{%trans 'Type diplôme'%}</th>
+                    <th width="50%" >{%trans 'Libellé Formation'%}</th>
+                    <th width="15%" class="td-centered">{%trans 'Réf Année ROF'%}</th>
+                    <th width="5%" ></th>
                 </tr>
             </thead>
             <tbody class="tbody" id="current">
@@ -74,11 +74,11 @@
 
                 {%for e in existing_trainings%}
                 <tr class="{% if not e.is_used%} grey{%endif%}" id="current_{{e.id}}">
-                    <td width=10% class="td-centered">{{e.code_year}}</td>
-                    <td width=15% >{{e.degree_type}}</td>
-                    <td width=60% >{{e.label}}</td>
-                    <td width=10% class="td-centered">{{e.ref_cpa_rof}}</td>
-                    <td width=5% class="td-centered">
+                    <td width="10%" class="td-centered">{{e.code_year}}</td>
+                    <td width="20%" >{{e.degree_type}}</td>
+                    <td width="50%" >{{e.label}}</td>
+                    <td width="15%" class="td-centered">{{e.ref_cpa_rof}}</td>
+                    <td width="5%" class="td-centered">
                         {% if e.supply_cmp == cmp  %}
                         
                         <a class="glyphicon glyphicon-trash select" id="{{e.id}}" href="{% url 'training:delete' e.id%}"></a>
