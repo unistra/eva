@@ -4,18 +4,23 @@ from ..institute.models import Institute
 from ..adm.models import MeccUser, Profile
 from ..rules.models import Rule
 from ..training.models import Training, SpecificParagraph
+from ..utils.pdfs import derogations, setting_up_pdf, NumberedCanvas
+from ..utils.queries import currentyear
 from ..years.models import InstituteYear, UniversityYear
-from django.views.generic.list import ListView
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count
-from django.utils.translation import ugettext as _
-from django.shortcuts import render
+
 from django_cas.decorators import login_required, user_passes_test
-from mecc.decorators import is_ajax_request, is_post_request
-from django.shortcuts import redirect
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from mecc.decorators import group_required, profile_required, profile_or_group_required
+from django.db.models import Count
 from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
+from django.views.generic.list import ListView
+
+from mecc.decorators import group_required, profile_required, profile_or_group_required
+from mecc.decorators import is_ajax_request, is_post_request
+
 
 @login_required
 @group_required('DES1', 'VP')
@@ -207,3 +212,18 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
             degree_type=td['degree_type']).count()
 
     return render(request, template, data)
+
+
+@login_required
+@group_required('DES1', 'VP')
+def general_derog_pdf(request):
+    year = currentyear().code_year
+    #derogations = get_object_or_404(DegreeType, id=id_degreetype)
+    title = "MECC - %s - %s" % (
+        year, year)
+    response, doc = setting_up_pdf(title, margin=42)
+
+    story = derogations(title, year)
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+    return response

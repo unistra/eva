@@ -1,21 +1,29 @@
 from django.http import HttpResponse
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table
+    Table, PageBreak
 from reportlab.pdfgen import canvas
 from django.db.models import Q
 from reportlab.lib.units import mm
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 import re
 from .queries import rules_degree_for_year
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from mecc.apps.rules.models import Paragraph as ParagraphRules
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, \
+    getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+
+from mecc.apps.institute.models import Institute
+from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
+from mecc.apps.training.models import Training, SpecificParagraph
+from mecc.apps.years.models import InstituteYear, UniversityYear
+from django.db.models import Count
 from django.utils.translation import ugettext as _
 
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
+styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
@@ -100,20 +108,20 @@ def list_of_parag_with_bullet(text):
     for t, v in r:
         if v == 'li':
             _list.append(Paragraph(
-            "<para leftIndent=40>%s</para>" % (
-            t), styles['Bullet_1']))
+                "<para leftIndent=40>%s</para>" % (
+                    t), styles['Bullet_1']))
         else:
             _list.append(Paragraph(
-            "<para >%s</para>" % (
-            t), styles['Justify']))
+                "<para >%s</para>" % (
+                    t), styles['Justify']))
     return _list
+
 
 def add_simple_paragraph(story, rule, sp, ap):
     """
     print content of paragraph with Specific and additionnel values in state of
     standard values
     """
-
 
     def append_text(story, text, style, special=False, spacer=6):
         """
@@ -154,7 +162,8 @@ def add_simple_paragraph(story, rule, sp, ap):
     for p in paragraphs:
         if p.is_in_use:
             if p.id in [e.paragraph_gen_id for e in sp]:
-                text = sp.filter(paragraph_gen_id=p.id).first().text_specific_paragraph
+                text = sp.filter(paragraph_gen_id=p.id).first(
+                ).text_specific_paragraph
                 append_text(
                     story, text,
                     "textColor=blue", spacer=0)
@@ -196,7 +205,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
                     Paragraph("<para align=right textColor=grey fontSize=8>\
                         %s</para>" % txt, styles['Normal'])
                 ]
-                )
+            )
 
     table = Table(t, colWidths=(400, 125), style=[
         # comment usefull to visualize border and grid
@@ -347,4 +356,131 @@ def degree_type_rules(title, degreetype, year):
         cr.filter(Q(is_eci=False, is_ccct=True)),
         story
     )
+    return story
+
+
+def derogations(title, year):
+    toptend = None
+    story = []
+    supply_filter = []
+    derog_eci_ccct = []
+    derog_eci = []
+
+    # ############ DATAS ################################
+    uy = UniversityYear.objects.get(is_target_year=True)
+    institutes = Institute.objects.filter(
+        training__code_year=uy.code_year).distinct()
+
+    t = Training.objects.filter(code_year=uy.code_year)
+
+    for training in t:
+        if training.supply_cmp in institutes.values_list('code', flat=True):
+            supply_filter.append(training.supply_cmp)
+
+    derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
+
+    toptend = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_cmp=Count(
+        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)[:10]
+
+    for d in toptend:
+        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
+        d['supply_cmps'] = derogations.filter(rule_gen_id=d['rule_gen_id']).values_list(
+            'training__supply_cmp', flat=True).distinct()
+        d['cmps'] = institutes.filter(
+            code__in=d['supply_cmps']).values_list('label', flat=True)
+        d['is_eci'] = d['rule'].is_eci
+        d['is_ccct'] = d['rule'].is_ccct
+
+        if d['rule'].is_eci and d['rule'].is_ccct:
+            derog_eci_ccct.append(d)
+        elif d['rule'].is_eci:
+            derog_eci.append(d)
+    # ############ TITLE ################################
+
+    header = [
+        _("Éva"),
+        _("Synthèse des dérogations"),
+        _("Année universitaire %s/%s" % (year, year + 1))
+    ]
+    ttle = []
+    for e in header:
+        ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
+
+    t = [[logo_uds, ttle]]
+
+    table = Table(t, colWidths=(145, 405))
+
+    story.append(table)
+    story.append(Spacer(0, 82))
+
+    # ############ NO DEROG ################################
+    if toptend is None:
+        story.append(Spacer(0, 24))
+        story.append(Paragraph(_("Aucune dérogation."), styles['Normal']))
+        return story
+
+    # ############ ECI+CC/CT ###############################
+    block_derogations(
+        _("Régime ECI et CC/CT"),
+        derog_eci_ccct,
+        #toptend.filter(Q(is_eci=True, is_ccct=True)),
+        story
+    )
+
+    # ############ CCCT ##########{{}}######################
+    block_derogations(
+        _("Régime ECI"),
+        derog_eci,
+        #cr.filter(Q(is_eci=True, is_ccct=False)),
+        story
+    )
+
+    return story
+
+
+def block_derogations(title, derogations, story):
+
+    style = [
+        ('TEXTCOLOR', (0, -1), (0, -1), colors.darkblue),
+    ]
+    if len(derogations) > 0:
+        t = [
+            [""],
+            [Paragraph("<para fontSize=13 spaceAfter=14 textColor=\
+                darkblue><strong>%s</strong></para>" % title, styles["Normal"])]
+        ]
+
+        table = Table(t, colWidths=(550))
+        story.append(table)
+        story.append(Spacer(0, 6))
+
+    headers = [_('Nom de la règle'), _('NB composantes'),
+               _('Liste des composantes')]
+
+    style = TableStyle([
+                       # ('VALIGN', (0, -1), (-1, -1), 'MIDDLE'),
+                       ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                       ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                       ('BACKGROUND', (0, 0), (2, 0), colors.lightgrey),
+                       # ('ALIGN', (1, -1), (-1, -1), 'CENTER'),
+                       # ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                       ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                       ])
+
+    colWidth = (200, 90, 260)
+
+    data = []
+    data.append(headers)
+
+    for d in derogations:
+        data += [(str(d['rule']), "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; " +
+                  str(d['nb_cmp']), "<br />".join(d['cmps']))]
+
+    data = [[Paragraph(cell, styles['Justify'])
+             for cell in row] for row in data]
+    table = Table(data, colWidths=colWidth, style=style)
+
+    story.append(table)
+
     return story
