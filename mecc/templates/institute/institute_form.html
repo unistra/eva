@@ -226,12 +226,8 @@ $.getJSON(url_prof, function (data) {
           // remove hidden input value if somehow doesnt match
           var a = document.getElementById('id_id_dircomp').value;
           var b = document.getElementById('input_dircomp_last_name').value;
-          if (a != prof_fill) {
-              document.getElementById('id_id_dircomp').className +=' input-red';
-        } else {
             document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
             document.getElementById('id_id_dircomp').disabled = false;
-        }
 
           if (a.indexOf(b) == -1){
               $("#input_dircomp_username_member").val("");
@@ -304,12 +300,8 @@ $.getJSON(url_prof, function (data) {
              // remove hidden input value if somehow doesnt match
              var a = document.getElementById('id_id_rac').value;
              var b = document.getElementById('input_rac_last_name').value;
-             if (a != rac_fill) {
-               document.getElementById('id_id_rac').className +=' input-red'
-           } else {
                document.getElementById('id_id_rac').className ='input_prof textinput textInput form-control'
                document.getElementById('id_id_dircomp').disabled = false;
-           }
              if (a.indexOf(b) == -1){
                  $("#input_rac_username_member").val("");
                  $("#input_rac_last_name").val("");
