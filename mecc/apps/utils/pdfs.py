@@ -360,6 +360,8 @@ def degree_type_rules(title, degreetype, year):
 
 
 def derogations(title, year):
+    # TODO: Add breakpage when first block use nearly the whole space !
+
     toptend = None
     story = []
     supply_filter = []
@@ -380,7 +382,7 @@ def derogations(title, year):
     derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
 
     toptend = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_cmp=Count(
-        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)[:10]
+        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)
 
     for d in toptend:
         d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
@@ -398,9 +400,9 @@ def derogations(title, year):
     # ############ TITLE ################################
 
     header = [
-        _("Éva"),
-        _("Synthèse des dérogations"),
-        _("Année universitaire %s/%s" % (year, year + 1))
+        _("MECC"),
+        _("Année universitaire %s/%s" % (year, year + 1)),
+        _("Synthèse des dérogations")
     ]
     ttle = []
     for e in header:
@@ -412,7 +414,7 @@ def derogations(title, year):
     table = Table(t, colWidths=(145, 405))
 
     story.append(table)
-    story.append(Spacer(0, 82))
+    story.append(Spacer(0, 22))
 
     # ############ NO DEROG ################################
     if toptend is None:
@@ -424,7 +426,6 @@ def derogations(title, year):
     block_derogations(
         _("Régime ECI et CC/CT"),
         derog_eci_ccct,
-        #toptend.filter(Q(is_eci=True, is_ccct=True)),
         story
     )
 
@@ -432,7 +433,6 @@ def derogations(title, year):
     block_derogations(
         _("Régime ECI"),
         derog_eci,
-        #cr.filter(Q(is_eci=True, is_ccct=False)),
         story
     )
 
