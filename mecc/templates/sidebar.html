@@ -157,7 +157,7 @@
             {% endif %}>{% trans 'MES FORMATIONS' %}</a>
         </li>
         {% endif %}
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,DIRCOMP,GESCOL,REFAPP,DIRETU' %}
 
         <li style>
             <a href=
@@ -183,7 +183,7 @@
         {% endif %}
 
         <div class="bottom">
-            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
+            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC, DIRCOMP, GESCOL, REFAPP, DIRETU, RESPENS'%}
             <li id="genmecc">
                 <a href="{% url 'doc_gen:home'%}"
                 {% if 'start/' in request.path %}

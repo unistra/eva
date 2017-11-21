@@ -20,12 +20,9 @@ def is_profile(meccuser, profile_code):
 
 @register.filter(name='has_profile')
 def has_profile(meccuser, profiles):
-    INVAR = ['RAC', 'DIRCOMP', 'GESCOL', 'REFAPP', 'DIRETU']
-    for e in profiles:
-        profile = Profile.objects.get(code=e)
-        if profile in meccuser.profile.all():
-            return True
-    return False
+    profile_list = [code.strip() for code in profiles.split(',')]
+    user_profiles = [e.code for e in meccuser.profile.all()]
+    return True if any(True for x in profile_list if x in user_profiles) else False
 
 # @register.filter(name='in_list_profile')
 # def in_list_profile(meccuser, list_profile):
