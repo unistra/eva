@@ -10,7 +10,7 @@
 .centerme {
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-direction: column/* works with row or column */
+    -webkit-flex-direction: column;/* works with row or column */
     flex-direction: column;
     -webkit-justify-content: space-around;
     justify-content: space-around;
@@ -66,7 +66,7 @@
 
 #id_RESPENS_id {
     background-color: white;
-}<
+}
 
 #div_id_label .controls {
     margin-right: 0;
