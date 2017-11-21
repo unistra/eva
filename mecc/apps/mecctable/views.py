@@ -952,7 +952,6 @@ def copy_old_mecctable(request, id_training):
                             auto_id=old_struct_parent.auto_id,
                             owner_training_id=current_other_training.id)
                     except ObjectDoesNotExist:
-                        print('jazendkjin')
                         new_struct_parent = old_struct_parent
             new_parent_id = new_struct_parent.id
 
