@@ -74,8 +74,7 @@ class StructureObject(models.Model):
 # ROF prefixed are synchronized => no input for them
     ROF_ref = models.CharField(_(
         "Référence de l'objet ROF"), max_length=20, null=True, blank=True)
-    ROF_code_year = models.IntegerField(
-        _("Année de l'objet ROF"), blank=True, null=True)
+    ROF_code_year = models.CharField(_("Année de l'objet ROF"), max_length=20, blank=True, null=True)
     ROF_nature = models.CharField(
         verbose_name=_("Type de l'objet ROF"), choices=TYPE_CHOICE,
         max_length=2, null=True, blank=True)

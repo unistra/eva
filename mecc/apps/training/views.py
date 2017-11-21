@@ -106,7 +106,6 @@ class TrainingListView(ListView):
         id_cmp = self.kwargs.get('cmp')
         self.request.session['visited_cmp'] = id_cmp
         self.request.session['list_training'] = False
-
         context = super(TrainingListView, self).get_context_data(**kwargs)
         context['institute'] = institute = Institute.objects.get(
             code=id_cmp) if id_cmp else "ALL"
@@ -128,13 +127,13 @@ class TrainingListView(ListView):
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
             code_year=currentyear().code_year
-            if currentyear() is not None else None).order_by('degree_type')
+            if currentyear() is not None else None).order_by(
+                'degree_type', 'label')
 
         if self.kwargs['cmp'] is None:
             return trainings
 
         if self.kwargs['cmp'] in institutes:
-
             return trainings.filter(institutes__code=self.kwargs['cmp'])
 
     template_name = 'training/training_list.html'
@@ -253,11 +252,10 @@ def respform_list(request, template='training/respform_trainings.html'):
     """
     request.session['visited_cmp'] = 'RESPFORM'
     request.session['list_training'] = False
-
     data = {}
     data['trainings'] = Training.objects.filter(
-        resp_formations=request.user.meccuser).filter(
-            code_year=currentyear().code_year if currentyear() is not None else None)
+        resp_formations=request.user.meccuser,
+        code_year=currentyear().code_year if currentyear() is not None else None)
     return render(request, template, data)
 
 
@@ -527,6 +525,7 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
 
     data['training'] = t = Training.objects.get(id=training_id)
     data['paragraph'] = p = Paragraph.objects.get(id=paragraph_id)
+    # old_paragraph =
     data['rule'] = r = Rule.objects.get(id=rule_id)
     data['title'] = _("Dérogation")
     data['from_id'] = rule_id
