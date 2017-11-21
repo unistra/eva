@@ -9,7 +9,6 @@ from django.contrib.auth.models import Group
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink
-from mecc.apps.adm.models import Profile
 
 ALLS = ObjectsLink.objects.all()
 

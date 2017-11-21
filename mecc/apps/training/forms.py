@@ -1,13 +1,16 @@
-from django import forms
+from ckeditor.widgets import CKEditorWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Submit
-from django.utils.translation import ugettext as _
-from .models import Training, SpecificParagraph, AdditionalParagraph
+from django import forms
 from django.core.exceptions import ValidationError
-from ckeditor.widgets import CKEditorWidget
+from django.utils.translation import ugettext as _
+from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
 
 
 class AdditionalParagraphForm(forms.ModelForm):
+    """
+    Additional paragraph form
+    """
     text_additional_paragraph = forms.CharField(
         widget=CKEditorWidget(), label='', required=True)
 
@@ -39,6 +42,9 @@ class AdditionalParagraphForm(forms.ModelForm):
 
 
 class SpecificParagraphDerogForm(forms.ModelForm):
+    """
+    Specific paragraph form
+    """
     text_specific_paragraph = forms.CharField(
         widget=CKEditorWidget(), label='', required=True)
     text_motiv = forms.CharField(
@@ -91,6 +97,9 @@ class RespTrainingForm(forms.ModelForm):
 
 
 class ValidationTrainingForm(forms.ModelForm):
+    """
+    Training form with validation
+    """
     def __init__(self, *args, **kwargs):
         super(ValidationTrainingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()

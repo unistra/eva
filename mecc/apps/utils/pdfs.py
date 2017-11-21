@@ -1,23 +1,22 @@
+import re
+
+from django.db.models import Count, Q
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
+
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, PageBreak
+    Table, TableStyle
 from reportlab.pdfgen import canvas
-from django.db.models import Q
 from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
-import re
-from .queries import rules_degree_for_year
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, \
-    getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import Training, SpecificParagraph
-from mecc.apps.years.models import InstituteYear, UniversityYear
-from django.db.models import Count
-from django.utils.translation import ugettext as _
+from mecc.apps.utils.queries import rules_degree_for_year
+from mecc.apps.years.models import UniversityYear
 
 
 styles = getSampleStyleSheet()
@@ -52,6 +51,9 @@ def watermark_do_not_distribute(canvas, doc):
 
 
 class NumberedCanvas(canvas.Canvas):
+    """
+    Canvas allowing to count pages
+    """
     def __init__(self, *args, **kwargs):
         canvas.Canvas.__init__(self, *args, **kwargs)
         self._saved_page_states = []
@@ -70,6 +72,9 @@ class NumberedCanvas(canvas.Canvas):
         canvas.Canvas.save(self)
 
     def draw_page_number(self, page_count):
+        """
+        drow page number with custom format and position
+        """
         if page_count > 0:
             self.setFillGray(0.2)
             self.setFont("Helvetica", 8.5)

@@ -1,3 +1,6 @@
+"""
+Custom widget here
+"""
 import os
 
 from django.forms.widgets import ClearableFileInput
@@ -5,7 +8,9 @@ from django.utils.translation import ugettext as _
 
 
 class CustomFileInput(ClearableFileInput):
-
+    """
+    File input with asked behaviour
+    """
 
     template_with_initial = (
         '<a href="%(initial_url)s" target="_blank">%(initial)s</a> <br>'
@@ -13,11 +18,8 @@ class CustomFileInput(ClearableFileInput):
     )
 
     def render(self, name, value, attrs=None):
-
-        substitutions = {
-        }
+        substitutions = {}
         template = '%(input)s'
-
 
         substitutions['input'] = super(ClearableFileInput, self).render(
             name, value, attrs)

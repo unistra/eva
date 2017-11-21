@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.utils import IntegrityError as ie
 from django.core.exceptions import ObjectDoesNotExist
+
 from mecc.apps.commission.models import ECICommissionMember
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.adm.models import MeccUser, Profile

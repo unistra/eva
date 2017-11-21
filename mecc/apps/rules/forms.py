@@ -1,12 +1,17 @@
-from django import forms
+"""
+Forms for rules
+"""
+from ckeditor.widgets import CKEditorWidget
 
-from .models import Rule, Paragraph
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Field, Div, Submit
-from django.utils.translation import ugettext as _
+
+from django import forms
 from django.core.exceptions import ValidationError
-from ckeditor.widgets import CKEditorWidget
+from django.utils.translation import ugettext as _
+
+from mecc.apps.rules.models import Rule, Paragraph
 
 
 class ParagraphForm(forms.ModelForm):

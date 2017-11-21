@@ -44,6 +44,9 @@ def rules_degree_for_year(degree_type_code, year):
 
 
 def currentyear():
+    """
+    Return current year
+    """
     return UniversityYear.objects.filter(is_target_year=True).first()
 
 

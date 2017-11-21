@@ -1,11 +1,13 @@
-from django.db import models
-from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
-from django.core.exceptions import ValidationError
-import re
+"""
+Model for years with institute year and university year
+"""
 import datetime
+import re
 from django.apps import apps
-
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.utils.translation import ugettext as _
 from mecc.apps.files.models import FileUpload
 
 
@@ -86,11 +88,9 @@ class UniversityYear(models.Model):
             except UniversityYear.DoesNotExist:
                     pass
 
-
     def getPdf(self):
         return FileUpload.objects.filter(
             object_id=self.id).first()
-
 
     def delete(self):
         Rule = apps.get_model('rules.Rule')

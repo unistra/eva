@@ -1,22 +1,23 @@
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView
-from .models import Rule, Paragraph
-from .forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect, get_object_or_404
-from mecc.apps.degree.models import DegreeType
-from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-from django.utils.translation import ugettext as _
-from django_cas.decorators import login_required
-from mecc.decorators import is_post_request, is_ajax_request
 from django.db import transaction
-from mecc.apps.utils.queries import currentyear
-from mecc.apps.utils.pdfs import degree_type_rules, \
-    setting_up_pdf, NumberedCanvas, one_rule
+from django.db.models import Q
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.translation import ugettext as _
+from django.views.generic.edit import CreateView, DeleteView
+from django.views.generic.list import ListView
+from django_cas.decorators import login_required
+
+from mecc.decorators import is_post_request, is_ajax_request
+from mecc.apps.degree.models import DegreeType
+from mecc.apps.rules.models import Rule, Paragraph
+from mecc.apps.rules.forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
     Training
+from mecc.apps.utils.pdfs import degree_type_rules, \
+    setting_up_pdf, NumberedCanvas, one_rule
+from mecc.apps.utils.queries import currentyear
 
 
 class RulesListView(ListView):

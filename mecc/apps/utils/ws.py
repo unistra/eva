@@ -1,12 +1,13 @@
-from django.conf import settings
+"""
+Webservices stuff here
+"""
+import json
+import urllib
+import britney_utils
 
 from britney.middleware import auth, format
 from britney.errors import SporeMethodCallError, SporeMethodStatusError
-
-import britney_utils
-import urllib
-import json
-
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 TEACHER_GRADES = [

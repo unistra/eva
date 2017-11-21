@@ -1,10 +1,11 @@
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
+from django_cas.decorators import login_required
+
 from mecc.apps.utils.switch_users import request_with_other_user, \
     check_generic_password
-from django.contrib.auth.models import User
-from django_cas.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
 from mecc.decorators import is_post_request, user_can_spoof
 
 

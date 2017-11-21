@@ -2,7 +2,6 @@
 Django view for training part
 """
 
-from django_cas.decorators import login_required
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
@@ -15,23 +14,24 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from django_cas.decorators import login_required
 
-from mecc.apps.utils.queries import currentyear
 from mecc.apps.institute.models import Institute
-from mecc.apps.rules.models import Rule, Paragraph
-from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
-    is_ajax_request, is_correct_respform
+from mecc.apps.files.models import FileUpload
 from mecc.apps.utils.manage_pple import manage_respform
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
-from mecc.apps.files.models import FileUpload
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
+from mecc.apps.rules.models import Rule, Paragraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
-from mecc.apps.years.models import UniversityYear
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training
+from mecc.apps.years.models import UniversityYear
+from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
+    is_ajax_request, is_correct_respform
 
 
 @is_ajax_request

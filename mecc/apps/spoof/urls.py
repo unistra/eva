@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import home, release_user, spoof_user
+from mecc.apps.spoof.views import home, release_user, spoof_user
 
 
 urlpatterns = [

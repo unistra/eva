@@ -1,7 +1,8 @@
-from mecc.apps.adm.models import MeccUser, Profile
-from mecc.apps.training.models import Training
 from django.db.models import Q
 from django.contrib.auth.models import User
+
+from mecc.apps.adm.models import MeccUser, Profile
+from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
 
 

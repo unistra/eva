@@ -1,3 +1,7 @@
+"""
+Allow to switch user
+"""
+
 from django.contrib.auth import login, load_backend, BACKEND_SESSION_KEY
 from django.contrib.auth.models import User
 

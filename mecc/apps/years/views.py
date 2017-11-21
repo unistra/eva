@@ -1,22 +1,20 @@
-from .models import UniversityYear, InstituteYear
-from ..institute.models import Institute
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from .forms import UniversityYearFormUpdate, UniversityYearFormCreate
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
-from django.shortcuts import render
 from django_cas.decorators import login_required
-from mecc.apps.utils.queries import rules_for_year
-from mecc.decorators import is_ajax_request, is_post_request
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
-from mecc.apps.training.models import Training
 from mecc.apps.files.models import FileUpload
 from mecc.apps.files.utils import create_file
-from mecc.decorators import is_post_request, is_ajax_request
+from mecc.apps.institute.models import Institute
+from mecc.apps.training.models import Training
+from mecc.apps.utils.queries import rules_for_year
+from mecc.apps.years.forms import UniversityYearFormUpdate, UniversityYearFormCreate
+from mecc.apps.years.models import UniversityYear, InstituteYear
+from mecc.decorators import is_ajax_request, is_post_request
 
-from django.http import JsonResponse
 
 
 @is_ajax_request
