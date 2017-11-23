@@ -366,7 +366,7 @@ def degree_type_rules(title, degreetype, year):
 
 def derogations(title, year):
     # TODO: Add breakpage when first block use nearly the whole space !
-
+    # TODO: REFACTOR data fetching in model!
     toptend = None
     story = []
     supply_filter = []

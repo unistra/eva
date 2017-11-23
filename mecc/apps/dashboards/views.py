@@ -12,7 +12,7 @@ from django_cas.decorators import login_required, user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -20,6 +20,10 @@ from django.views.generic.list import ListView
 
 from mecc.decorators import group_required, profile_required, profile_or_group_required
 from mecc.decorators import is_ajax_request, is_post_request
+
+from bs4 import BeautifulSoup
+import xlsxwriter
+from io import BytesIO
 
 
 @login_required
@@ -218,12 +222,99 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
 @group_required('DES1', 'VP')
 def general_derog_pdf(request):
     year = currentyear().code_year
-    #derogations = get_object_or_404(DegreeType, id=id_degreetype)
     title = "MECC - %s - %s" % (
         year, year)
     response, doc = setting_up_pdf(title, margin=42)
-
     story = derogations(title, year)
     doc.build(story, canvasmaker=NumberedCanvas)
 
+    return response
+
+
+@login_required
+@group_required('DES1', 'VP')
+def derogations_export_excel(request):
+
+    # create workbook with worksheet
+    doc_name = "eva_derogations_%s" % currentyear().code_year
+    output = BytesIO()
+    book = xlsxwriter.Workbook(output)
+    sheet = book.add_worksheet(_('Dérogations'))
+
+    # Formats
+    bold = book.add_format({'bold': True})
+    main = book.add_format()
+    main.set_align('left')
+
+    # Headers rows
+    headers = [
+        _('Régime'),
+        _('ID règle'),
+        _('Nom de règle'),
+        _('ID alinéa'),
+        _('Composante'),
+        _('ID formation'),
+        _('Intitulé formation'),
+        _('Dérogation'),
+        _('Motivation')
+    ]
+
+    # Datas fetching
+    data = []
+    derogations = SpecificParagraph.objects.filter(
+        code_year=currentyear().code_year)
+
+    for v in derogations:
+        cmp = Institute.objects.get(code=v.training.supply_cmp).label
+        clean_paragraph = BeautifulSoup(
+            v.text_specific_paragraph, 'html.parser').get_text()
+        clean_motivation = BeautifulSoup(
+            v.text_motiv, 'html.parser').get_text()
+
+        rule = Rule.objects.get(id=v.rule_gen_id)
+
+        if rule:
+            if rule.is_eci and rule.is_ccct:
+                regime = "ECI et CC/CT"
+            elif rule.is_eci:
+                regime = "ECI"
+            elif rule.is_ccct:
+                regime = "CC/CT"
+        else:
+            regime = ""
+
+        data.append([regime, v.pk,
+                     v.paragraph_gen_id,
+                     v.rule_gen_id,
+                     cmp,
+                     v.training.pk,
+                     v.training.label,
+                     " ".join(clean_paragraph.split()),
+                     " ".join(clean_motivation.split())
+                     ])
+
+    sheet.set_column('A:A', 15)
+    sheet.set_column('B:C', 14)
+    sheet.set_column('E:E', 55)
+    sheet.set_column('F:F', 12)
+    sheet.set_column('G:G', 45)
+    sheet.set_column('H:I', 80)
+
+    row = 0
+    for i, header in enumerate(headers):
+        sheet.write(row, i, header, bold)
+    row += 1
+
+    for r, columns in enumerate(data):
+        for column, cell_data in enumerate(columns):
+            sheet.write(row, column, cell_data, main)
+        row += 1
+
+    book.close()
+    output.seek(0)
+
+    response = HttpResponse(
+        output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="%s.xlsx"' % doc_name
     return response

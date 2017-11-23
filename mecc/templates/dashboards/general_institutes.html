@@ -38,7 +38,7 @@
             <td colspan="2">
                 <ul>
                     <li class="link-list"><a href="{% url 'dashboards:general_derog_pdf' %}">{% trans "Synthèse dérogations (pdf)" %}</a></li>
-                    <li class="link-list"><a href="#">{% trans "Détail des dérogations et motivations (excel)" %}</a></li>
+                    <li class="link-list"><a href="{% url 'dashboards:derogations_export_excel' %}">{% trans "Détail des dérogations et motivations (excel)" %}</a></li>
                     <li class="link-list"><a href="#">{% trans "Détail des alinéas additionnels (excel)" %}</a></li>
                 </ul>
             </td>
