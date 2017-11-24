@@ -159,6 +159,7 @@ class SpecificParagraph(models.Model):
         _('Type alinéa'), choices=TYPE_PARAPGRAPH, max_length=1)
     text_specific_paragraph = models.TextField(_("Texte d'alinéa spécifique"))
     text_motiv = models.TextField(_("Texte de motivation"))
+    origin_id = models.IntegerField(_('ID original'), default=None, null=True, blank=True)
 
     def __str__(self):
         return _("Alinéa spécifique n° %s" % self.pk)
@@ -171,6 +172,8 @@ class AdditionalParagraph(models.Model):
     code_year = models.IntegerField(_('Code année'), unique=False)
     training = models.ForeignKey(Training)
     rule_gen_id = models.IntegerField(_('ID règle générale'))
+    origin_id = models.IntegerField(_('ID original'), default=None, blank=True, null=True)
+
     text_additional_paragraph = models.TextField(
         _("Texte d'alinéa additionnel"))
 
