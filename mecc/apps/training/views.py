@@ -488,7 +488,6 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     rule = data['rule'] = Rule.objects.get(id=rule_id)
     data['from_id'] = rule_id
     old_year = currentyear().code_year - 1
-    old_rule = Rule.objects.get(code_year=old_year, n_rule=)
     old_additional = AdditionalParagraph.objects.filter(
         code_year=old_year, rule_gen_id=n_rule).first() if old == 'Y' else None
 # Create temporary additional; just in order to fill the form with ease
