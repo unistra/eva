@@ -361,7 +361,7 @@ def recover_everything(request, training_id):
     # Recover old specific paragraph if there isn't during current year
     for e in rules:
         try:
-            old_rule = old_rule.get(n_rule=e.n_rule)
+            old_rule = old_rules.get(n_rule=e.n_rule)
         except Rule.DoesNotExist:
             continue
 
