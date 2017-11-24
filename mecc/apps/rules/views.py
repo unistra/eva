@@ -394,16 +394,11 @@ def duplicate_add(request):
         rule.save()
 
         for p in paragraphs.filter(rule__id=old_rule.id):
-            print(p.pk)
+            p.origin_parag = p.id
             p.pk = None
             p.code_year = currentyear().code_year
             p.save()
-            print(p.pk)
-            print(p.__dict__)
-            print('----******------')
-            print(p.rule.all())
             p.rule.clear()
-            print(p.rule.all())            
             p.rule.add(rule)
             p.save()
         
