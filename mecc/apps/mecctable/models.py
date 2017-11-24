@@ -61,7 +61,7 @@ class StructureObject(models.Model):
             'Session pour la formation (hérité de la formation propriétaire)'),
         blank=False,
         choices=SESSION_CHOICE, max_length=1)
-    label = models.CharField(_("Intitulé de l'objet"), max_length=120)
+    label = models.CharField(_("Intitulé de l'objet"), max_length=200)
     is_in_use = models.BooleanField(_('En service'), default=True)
     period = models.CharField(
         verbose_name=_("Période de l'objet"), blank=False,
@@ -168,18 +168,6 @@ class ObjectsLink(models.Model):
             return parent.nature
         else:
             return None
-
-# Involve too much queries, very bad !
-    # @property
-    # def depth(self, count=0):
-    #     def get_depth(link, count=0):
-    #         if link.id_parent in [0, '0']:
-    #             return count
-    #         else:
-    #             gparent = ObjectsLink.objects.get(id_child=link.id_parent)
-    #             return get_depth(gparent, count+1)
-    #     return range(get_depth(self))
-
 
 class Exam(models.Model):
     """
