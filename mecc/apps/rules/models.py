@@ -109,7 +109,8 @@ class Paragraph(models.Model):
         l'alinéa dérogatoire"), blank=True)
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"), blank=True)
-
+    origin_parag = models.IntegerField(_("Num. de paragraph d'orgin"), null=True)
+    
     def __str__(self):
         return "Alinéa n° %s" % self.pk
 
