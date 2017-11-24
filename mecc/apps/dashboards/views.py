@@ -283,9 +283,10 @@ def derogations_export_excel(request):
         else:
             regime = ""
 
-        data.append([regime, v.pk,
-                     v.paragraph_gen_id,
+        data.append([regime,
                      v.rule_gen_id,
+                     rule.label,
+                     v.pk,
                      cmp,
                      v.training.pk,
                      v.training.label,
