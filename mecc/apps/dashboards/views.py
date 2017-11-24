@@ -3,7 +3,7 @@ from ..files.models import FileUpload
 from ..institute.models import Institute
 from ..adm.models import MeccUser, Profile
 from ..rules.models import Rule
-from ..training.models import Training, SpecificParagraph
+from ..training.models import Training, SpecificParagraph, AdditionalParagraph
 from ..utils.pdfs import derogations, setting_up_pdf, NumberedCanvas
 from ..utils.queries import currentyear
 from ..years.models import InstituteYear, UniversityYear
@@ -300,6 +300,98 @@ def derogations_export_excel(request):
     sheet.set_column('F:F', 12)
     sheet.set_column('G:G', 45)
     sheet.set_column('H:I', 80)
+
+    row = 0
+    for i, header in enumerate(headers):
+        sheet.write(row, i, header, bold)
+    row += 1
+
+    for r, columns in enumerate(data):
+        for column, cell_data in enumerate(columns):
+            sheet.write(row, column, cell_data, main)
+        row += 1
+
+    book.close()
+    output.seek(0)
+
+    response = HttpResponse(
+        output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="%s.xlsx"' % doc_name
+    return response
+
+
+@login_required
+@group_required('DES1', 'VP')
+def alineas_export_excel(request):
+
+    # create workbook with worksheet
+    doc_name = "eva_alineas_%s" % currentyear().code_year
+    output = BytesIO()
+    book = xlsxwriter.Workbook(output)
+    sheet = book.add_worksheet(_('Dérogations'))
+
+    # Formats
+    bold = book.add_format({'bold': True})
+    main = book.add_format()
+    main.set_align('left')
+
+    # Headers rows
+    headers = [
+        _('Régime'),
+        _('ID règle'),
+        _('Nom de règle'),
+        _('Composante'),
+        _('ID formation'),
+        _('Intitulé formation'),
+        _('Alinéa additionnel')
+
+    ]
+
+    # Datas fetching
+    data = []
+    derogations = SpecificParagraph.objects.filter(
+        code_year=currentyear().code_year)
+
+    for v in derogations:
+        cmp = Institute.objects.get(code=v.training.supply_cmp).label
+        clean_paragraph = BeautifulSoup(
+            v.text_specific_paragraph, 'html.parser').get_text()
+        clean_motivation = BeautifulSoup(
+            v.text_motiv, 'html.parser').get_text()
+
+        rule = Rule.objects.get(id=v.rule_gen_id)
+        additionals = AdditionalParagraph.objects.filter(
+            code_year=currentyear().code_year,
+            rule_gen_id=rule.n_rule).values_list('text_additional_paragraph')
+        if additionals:
+            clean_additionals = BeautifulSoup(
+                additionals[0][0], 'html.parser').get_text()
+
+        if rule:
+            if rule.is_eci and rule.is_ccct:
+                regime = "ECI et CC/CT"
+            elif rule.is_eci:
+                regime = "ECI"
+            elif rule.is_ccct:
+                regime = "CC/CT"
+        else:
+            regime = ""
+
+        data.append([regime,
+                     v.rule_gen_id,
+                     rule.label,
+                     cmp,
+                     v.training.pk,
+                     v.training.label,
+                     " ".join(clean_additionals.split())
+                     ])
+
+    sheet.set_column('A:B', 10)
+    sheet.set_column('C:D', 75)
+    sheet.set_column('E:E', 12)
+    sheet.set_column('F:F', 55)
+    sheet.set_column('G:G', 65)
 
     row = 0
     for i, header in enumerate(headers):
