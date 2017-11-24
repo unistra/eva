@@ -42,7 +42,7 @@ urlpatterns = [
         specific_paragraph, name='specific_paragraph'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/additional/(?P<n_rule>\d+)/(?P<old>\w+)/$',
         edit_additional_paragraph, name='edit_additional_paragraph'),
-    url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/edit/(?P<paragraph_id>\d+)/(?P<n_rule>\d+)//(?P<old>\w+)/$',
+    url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/edit/(?P<paragraph_id>\d+)/(?P<n_rule>\d+)/(?P<old>\w+)/$',
         edit_specific_paragraph, name='edit_specific_paragraph'),
     url(r'^ask_delete_specific/$', ask_delete_specific,
         name='ask_delete_specific'),
