@@ -371,7 +371,12 @@ def recover_everything(request, training_id):
             for s in old_sp:
                 if s.training == old_training:
                     r_derog, created = SpecificParagraph.objects.get_or_create(
-                        origin_id=s.id)
+                        code_year=currentyear().code_year,
+                        training=training,
+                        rule_gen_id=e.n_rule,
+                        paragraph_gen_id=s.paragraph_gen_id,
+                        origin_id=s.id
+                    )
                     if created:
                         r_derog.type_paragraph = s.type_paragraph
                         r_derog.text_specific_paragraph = s.text_specific_paragraph
