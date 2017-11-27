@@ -1,10 +1,9 @@
 {% load i18n %}
 {% load groups%}
 
-
-
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
+        <li></li>
         {% if request.user.is_active and request.user.is_staff %}
         <li>
             <a href="/admin"
@@ -25,7 +24,7 @@
           </li>
           {% endif %}
         {% for e in profiles%}
-            {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP'%}
+            {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP' %}
                 <li class="dropdown">
                    <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse"
                    aria-expanded="false" aria-controls="collapse{{e.pk}}">
@@ -68,7 +67,7 @@
                {% endif %}
               {%endif%}
 
-          {% if e.code == "RESPFORM"%}
+          {% if e.code == "RESPFORM" or e.code == 'RESPENS'%}
           {% if not dircomp %}
 
           <li class="dropdown">
@@ -76,7 +75,7 @@
                   {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
                   <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
                       <li><a href="/institute/granted/{{e.cmp}}"
-                          {% if e.cmp in request.path %}
+                          {% if "granted" in request.path %}
                           class="item-selected"
                           {% endif %}>{% trans 'Général' %}</a></li>
                           <li><a href="/institute/documents/{{e.cmp}}"
@@ -84,9 +83,14 @@
                               class="item-selected"
                               {% endif %}>{% trans 'Documents' %}</a></li>
 
-                          </ul>
+                          </ul></li>
               {%endif%}
           {%endif%}
+          {% if e.code == "RESPENS"  %}
+            <li>
+                <a href="#teach" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
+            </li>
+          {% endif %}
       {% endfor %}
 
       {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
