@@ -35,7 +35,7 @@
 </form>
 
 <div class="comp-right">
-  <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
+  <h3> {% trans "Année cible" %} {{request.display.current_year}}</h3>
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
         <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
