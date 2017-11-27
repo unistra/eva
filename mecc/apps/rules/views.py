@@ -280,9 +280,9 @@ class RuleDelete(DeleteView):
         rule = kwargs['object']
         context = super(RuleDelete, self).get_context_data(**kwargs)
         context['derog'] = SpecificParagraph.objects.filter(
-            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+            rule_gen_id=rule.id, code_year=rule.code_year)
         context['additional'] = AdditionalParagraph.objects.filter(
-            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+            rule_gen_id=rule.id, code_year=rule.code_year)
         return context
 
 
