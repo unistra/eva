@@ -329,6 +329,9 @@ def recover_everything(request, training_id):
     training = Training.objects.get(id=training_id)
     rules = Rule.objects.filter(degree_type=training.degree_type).filter(
         code_year=currentyear().code_year, is_in_use=True)
+    paragraph_from_rules = Paragraph.objects.filter(rule__in=rules)
+    # old_paragraphs = Paragraph.objects.filter(
+    #     id__in=[e.origin_parag for e in paragraph_from_rules])
     old_rules = Rule.objects.filter(code_year=old_year, n_rule__in=[
                                     e.n_rule for e in rules])
     try:
@@ -369,19 +372,21 @@ def recover_everything(request, training_id):
             old_sp = SpecificParagraph.objects.filter(
                 rule_gen_id=old_rule.id, code_year=old_year)
             for s in old_sp:
-                if s.training == old_training:
-                    r_derog, created = SpecificParagraph.objects.get_or_create(
+                current_paragraph = paragraph_from_rules.filter(
+                    origin_parag=s.paragraph_gen_id).first()
+                if current_paragraph:
+                    sp, created = SpecificParagraph.objects.get_or_create(
                         code_year=currentyear().code_year,
                         training=training,
-                        rule_gen_id=e.n_rule,
-                        paragraph_gen_id=s.paragraph_gen_id,
+                        rule_gen_id=e.id,
+                        paragraph_gen_id=current_paragraph.id,
                         origin_id=s.id
-                    )
+                    ) 
                     if created:
-                        r_derog.type_paragraph = s.type_paragraph
-                        r_derog.text_specific_paragraph = s.text_specific_paragraph
-                        r_derog.text_motiv = s.text_motiv
-                        r_derog.save()
+                        sp.type_paragraph = s.type_paragraph
+                        sp.text_specific_paragraph = s.text_specific_paragraph
+                        sp.text_motiv = s.text_motiv
+                        sp.save()
     request.session['recovered'] = True
 
     return HttpResponseRedirect(reverse('training:edit_rules',
