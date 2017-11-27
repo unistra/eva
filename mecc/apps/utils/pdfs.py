@@ -275,7 +275,7 @@ def one_rule(title, rule):
     ttle = []
     for e in header:
         ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
-            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
+            darkblue><strong>%s</strong><" % e, styles['Normal']))
 
     t = [[logo_uds, ttle]]
 
@@ -285,16 +285,16 @@ def one_rule(title, rule):
 
     story.append(Spacer(0, 12))
     degrees = str([e.short_label for e in rule.degree_type.all()])[1:-1]
-    applies = _("RÈGLE APPLICABLE aux diplômes de type : <br> \
+    applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> \
         %s" % degrees)
     if rule.is_eci and rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE à tous les diplômes de type : <br> \
+        applies = _("RÈGLE APPLICABLE à tous les diplômes de type : <br></br> \
         %s" % degrees)
     if rule.is_eci and not rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br> %s <br> en  \
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br> %s <br></br> en  \
         évaluation continue intégrale" % degrees)
     if not rule.is_eci and rule.is_ccct:
-        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br>%s<br> en contrôle \
+        applies = _("RÈGLE APPLICABLE aux diplômes de type : <br></br>%s<br></br> en contrôle \
         terminal, combiné ou non avec un contrôle continu" % degrees)
 
     block_rules(applies, [rule], story)
