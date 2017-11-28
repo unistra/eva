@@ -37,4 +37,6 @@ def home(request):
             return redirect('dashboards:institute', code=e.cmp)
         if e.code == "ECI":
             return redirect('training:list_all_meccs')
+        if e.code == "RESPENS":
+            return redirect('training:my_teachings')
     return render(request, 'base.html')

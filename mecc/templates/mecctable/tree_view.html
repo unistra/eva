@@ -1,5 +1,6 @@
  {% load i18n %}
- <div class="updatable meccRow id-{{a.link.id}} r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}" id="{{a.link.id}}">
+ <div class="{% if can_edit or a.can_be_edited%}  
+ updatable {%endif%}meccRow id-{{a.link.id}} r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}" id="{{a.link.id}}">
 
 <!-- mecc-label -->
     <span class="mecc-label">
@@ -13,7 +14,7 @@
             {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ?
             {%endif%}
         {% else %}
-        {% if can_edit %}  
+        {% if can_edit or a.can_be_edited%}  
         <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
         onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}} 
     </a>
@@ -28,7 +29,7 @@
     <div class="mecc-actionsButtons">
 
      <span class="centered  mecc-add">
-         {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit%}
+         {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited%}
              <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
              data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border"
              title="{%trans 'Créer un objet fils dans cet objet'%}"
@@ -49,7 +50,7 @@
          {%endif%}
      </span>
      <span class="  mecc-remove">
-         {% if can_edit %}
+         {% if can_edit or a.can_be_edited%}
          
          {% if a.link.is_imported %}
              <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
@@ -88,25 +89,25 @@
          {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-coef"
-     {% if can_edit  %}
+     {% if can_edit or a.can_be_edited%}
      {% if not a.is_imported or a.link.is_imported  %}contenteditable='true'{% endif %}
      {% endif %}
      id="{{a.link.id}}-coeff">
          {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
      </span>
      <span class="centered border-left-3  editme mecc-note"
-     {% if can_edit  %}     
+     {% if can_edit or a.can_be_edited %}     
      {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
      {%endif%}
      id="{{a.link.id}}-grade">
          {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
      </span>
      <span class="centered border-left-5 mecc-details ">
-        {% if not a.is_imported and can_edit%}
+        {% if not a.is_imported and can_edit or not a.is_imported and a.can_be_edited%}
             <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  
         {% endif %}
      </span>
-     <div class="mecc-semesters" style="">
+     <div class="mecc-semesters">
          <div class="mecc-s1  border-left">   
             <table>
                 <tr class="mecc-s1-{{a.structure.id}}">
@@ -115,7 +116,7 @@
                             {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
-                    {% if a.exams_1_count and can_edit%} <td class="border-left" >
+                    {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_1_count %} <td class="border-left" >
                             <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
@@ -131,7 +132,7 @@
                                     {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                                 </td>
                             {% endfor %} 
-                            {% if a.exams_2_count and can_edit %} <td class="border-left ">
+                            {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
                                     <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                                     {% trans 'Voir +' %}</a>                      
                                 </td>
@@ -142,7 +143,7 @@
      </div>
 
     {%if a.has_childs and not a.not_yet_imported%}
-        <div class="{% if not a.is_imported%}sortme{%endif%} wrapper meccRow" >
+        <div class="{% if not a.is_imported or not a.can_be_edited%}sortme{%endif%} wrapper meccRow" >
          {%for ch in a.children %}
               {%with a=ch %}
                    {%include "mecctable/tree_view.html"%}
