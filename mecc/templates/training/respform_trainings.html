@@ -5,14 +5,20 @@
 {% load staticfiles %}
 
 {% block page-header %}
+{%if request.session.visited_cmp == "RESPFORM"%}
 {% trans "Mes formations" %}
-{% endblock %}
+{%endif%}
+{%if request.session.visited_cmp == "RESPENS"%}
+{% trans "Mes enseignements" %}
+{%endif%}{% endblock %}
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="active">
         {%if request.session.visited_cmp == "RESPFORM"%}
             {% trans "Mes formations" %}
-
+        {%endif%}
+        {%if request.session.visited_cmp == "RESPENS"%}
+          {% trans "Mes enseignements" %}
         {%endif%}
         </li>
     </ol>

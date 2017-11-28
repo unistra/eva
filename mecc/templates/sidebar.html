@@ -86,9 +86,10 @@
                           </ul></li>
               {%endif%}
           {%endif%}
+
           {% if e.code == "RESPENS"  %}
             <li>
-                <a href="#teach" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
+                <a href="{% url 'training:my_teachings'%}" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
             </li>
           {% endif %}
       {% endfor %}

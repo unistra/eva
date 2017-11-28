@@ -4,8 +4,12 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-        {%if request.session.visited_cmp == "RESPFORM"%}
+            {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+            {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
         {%else%}
             <li>
                 <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
