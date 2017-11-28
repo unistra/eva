@@ -55,3 +55,6 @@ def institute_staff(institute_code):
     Return list of staff people from an Institute
     """
     return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)
+
+
+CURRENT_CODE_YEAR = currentyear().code_year

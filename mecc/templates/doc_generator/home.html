@@ -9,10 +9,52 @@
 
 {% endblock %}
 
-
 {% block app_content %}
-<div class="has-bottom-border no-margin">
-    
-
+<div class="disp-flex">
+    <div class="disp-flex dir-col">
+        <div id="div_year" class="form-group">
+            <label for="year" class="control-label col-lg-4">
+                {% trans 'Année universitaire'%}
+            </label>
+            <div class="controls col-lg-3">
+                <input class="input_prof textinput textInput form-control" id="year" name="year" type="text" value="{{ request.display.current_year }}"
+                    readonly=""> </div>
+        </div>
+        <div id="div_institute" class="form-group">
+            <label for="institute" class="control-label col-lg-4">
+                {% trans 'Composante'%}
+            </label>
+            <div class="controls col-lg-8">
+                <select class="select form-control" id="institute" name="institute">
+                    {% for institute in institutes%}
+                    <option value="{{institute.0.code}}" data-date-expected="{{institute.1.date_expected_MECC|date:'d/m/Y'}}">{{institute.0.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div id="div_target" class="form-group">
+            <label for="target" class="control-label col-lg-4">
+                {% trans 'Objectif'%}
+            </label>
+            <div class="controls col-lg-8">
+                <select class="select form-control" id="target" name="target">
+                    {% for targ in target%}
+                    <option value="{{targ.code}}">{{targ.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="disp-flex">
+        <div id="div_date" class="form-group" style="align-self:flex-end">
+            <label for="year" class="control-label col-lg-5" style="padding-top:0px">
+                {% trans 'Date Conseil/Commission'%}
+            </label>
+            <div class="controls col-lg-6">
+                <input class="input_prof textinput textInput form-control" id="year" name="year" type="text" value=""
+                    > 
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
