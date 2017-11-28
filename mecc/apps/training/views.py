@@ -34,6 +34,24 @@ from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
 
 
+def my_teachings(request, template='training/respform_trainings.html'):
+    """
+    Give owner training of RESPENS
+    """
+    request.session['visited_cmp'] = 'RESPENS'
+    request.session['list_training'] = False
+    current_year = currentyear().code_year
+    data = {}
+    aaa = [profile.cmp for profile in request.user.meccuser.profile.all()
+           if profile.code == "RESPENS"]
+    data = {}
+    struct_object = StructureObject.objects.filter(
+        code_year=current_year, RESPENS_id=request.user.username)
+    data['trainings'] = Training.objects.filter(
+        id__in=[e.owner_training_id for e in struct_object])
+    return render(request, template, data)
+
+
 @is_ajax_request
 @is_post_request
 def remove_respform(request):
@@ -175,7 +193,6 @@ class TrainingEdit(UpdateView):
             return reverse('training:list')
 
     def get_context_data(self, **kwargs):
-
         context = super(TrainingEdit, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['request.display.current_year'] = "%s/%s" % (
@@ -381,7 +398,7 @@ def recover_everything(request, training_id):
                         rule_gen_id=e.id,
                         paragraph_gen_id=current_paragraph.id,
                         origin_id=s.id
-                    ) 
+                    )
                     if created:
                         sp.type_paragraph = s.type_paragraph
                         sp.text_specific_paragraph = s.text_specific_paragraph
