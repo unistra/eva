@@ -154,6 +154,8 @@ document.getElementById('id_id_rac').parentNode.appendChild(clone);
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/ressources/adm/" + code_cmp + ".json"
+let url_all = "/ressources/all/" + code_cmp + ".json"
+
    var _isEdited = false;
    $(':input').change(function () {
      _isEdited = true;
@@ -179,7 +181,7 @@ var url_adm = "/ressources/adm/" + code_cmp + ".json"
 var prof_fill = document.getElementById('id_id_dircomp').value;
 var rac_fill = document.getElementById('id_id_rac').value;
 {% if object %}
-$.getJSON(url_prof, function (data) {
+$.getJSON(url_all, function (data) {
  var options = {
    data: data,
    getValue: function (element) {
