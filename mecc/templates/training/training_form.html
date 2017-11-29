@@ -40,7 +40,7 @@
         <li><a href={%if object.MECC_tab %}"{% url 'mecctable:mecctable_home' object.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
-      <div class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" %}disabled {%endif%}" style="margin-right:1em">
+      <div class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {%endif%}" style="margin-right:1em">
           <form action="" method="post" id="training_form" >
               {%crispy form%}
               {% include "training/form/add_cmp.html" %}
@@ -135,7 +135,11 @@
 </style>
 
 <script type="text/javascript">
-
+{% if not can_edit %}
+$("input").prop("disabled", true);
+$("select").prop("disabled", true);
+$("textarea").prop("disabled", true);
+{% endif %}
  {%if can_edit and object.input_opening.0 != "4"%}
 var _isEdited = false;
 
