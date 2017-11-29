@@ -6,9 +6,10 @@ from django.shortcuts import render,  redirect
 from django.http import JsonResponse
 
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.queries import CURRENT_CODE_YEAR
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
+CURRENT_CODE_YEAR = currentyear().code_year
 
 def home(request, template='doc_generator/home.html'):
     """

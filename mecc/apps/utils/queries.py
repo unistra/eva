@@ -57,4 +57,3 @@ def institute_staff(institute_code):
     return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)
 
 
-CURRENT_CODE_YEAR = currentyear().code_year
