@@ -30,7 +30,7 @@ def home(request, template='doc_generator/home.html'):
     target = []
     profiles_code = [e.code for e in profiles]
     if any(True for profile in profiles if profile.code in [
-            'RESPFORM', 'RESPENS']):
+            'RESPFORM', 'RESPENS']) or request.user.is_superuser:
         target.append({
             'code': "review_my",
             'label': _("Relecture (mes formations)"),
@@ -48,7 +48,7 @@ def home(request, template='doc_generator/home.html'):
             }])
 
     if any(True for profile in profiles if profile.code in [
-            'DES1', 'DIRCOMP', 'RAC', 'REFAPP', 'DIRETU', 'GESCOL']):
+            'DES1', 'DIRCOMP', 'RAC', 'REFAPP', 'DIRETU', 'GESCOL']) or request.user.is_superuser:
         target.extend([{
             'code': "review_all",
             'label': _("Relecture (toutes formations)"),
@@ -66,7 +66,7 @@ def home(request, template='doc_generator/home.html'):
             'label': _('Publication (MECC validées CFVU)'),
             'order': 8,
         }])
-        if 'DES1' in profiles_code:
+        if 'DES1' in profiles_code or request.user.is_superuser :
             target.append({
                 'code': "prepare_cfvu",
                 'label': _("Préparation CFVU"),
@@ -81,5 +81,5 @@ def home(request, template='doc_generator/home.html'):
 
     data['university_year'] = UniversityYear.objects.get(
         code_year=currentyear().code_year)
-    data['target'] = target
+    data['target'] = sorted(target, key=lambda k: k['order'])
     return render(request, template, data)

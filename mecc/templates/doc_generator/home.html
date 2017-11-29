@@ -1,15 +1,8 @@
-{% extends "base.html" %}
-{% load i18n %}
-{% load crispy_forms_tags %}
+{% extends "base.html" %} {% load i18n %} {% load staticfiles %} {% block page-header %}
+{%trans 'Moteur de génération de document MECC' %} {% endblock %} {% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
 
-{% load staticfiles %}
-
-{% block page-header %}
-{% trans 'Moteur de génération de document MECC' %}
-
-{% endblock %}
-
-{% block app_content %}
 <div class="disp-flex">
     <div class="disp-flex dir-col">
         <div id="div_year" class="form-group">
@@ -25,7 +18,7 @@
                 {% trans 'Composante'%}
             </label>
             <div class="controls col-lg-8">
-                <select class="select form-control" id="institute" name="institute">
+                <select class="select form-control" id="institute" name="institute">                       
                     {% for institute in institutes%}
                     <option value="{{institute.0.code}}" data-date-expected="{{institute.1.date_expected_MECC|date:'d/m/Y'}}">{{institute.0.label}}</option>
                     {% endfor %}
@@ -47,14 +40,45 @@
     </div>
     <div class="disp-flex">
         <div id="div_date" class="form-group" style="align-self:flex-end">
-            <label for="year" class="control-label col-lg-5" style="padding-top:0px">
+            <label for="date" class="control-label col-lg-5" style="padding-top:0px">
                 {% trans 'Date Conseil/Commission'%}
             </label>
             <div class="controls col-lg-6">
-                <input class="input_prof textinput textInput form-control" id="year" name="year" type="text" value=""
-                    > 
+                <input class="input_prof textinput textInput form-control" id="date" name="date" type="text" value="">
             </div>
         </div>
     </div>
 </div>
+<script>
+    $('#target').on('change', function(){
+        if (this.value === 'prepare_cc' || this.value === 'prepare_cc_my' || this.value === 'prepare_cfvu'){
+            if (this.value === 'prepare_cfvu'){
+                $('#date').datepicker('update', "{{university_year.date_expected|date:'d/m/Y'}}");
+            }else {
+                let date = $('#institute').find(':selected').data('date-expected')
+                $('#date').datepicker('update', date);
+                
+            }
+        } else {
+            $('#date').datepicker('update', null);
+        }
+    } )
+    $('#institute').on('change', function(){
+        let target = $('#target').val()
+        if (target === 'prepare_cc' || target === 'prepare_cc_my' ){
+            let date = $(this).find(':selected').data('date-expected')
+            $('#date').datepicker('update', date);
+        } else {
+            if (target != 'prepare_cfvu'){
+                $('#date').datepicker('update', null);
+            }
+        }
+    })
+    $('#date').datepicker({
+        orientation: "bottom auto",
+        todayHighlight: true,
+        autoclose: true,
+        language: "fr",
+    });
+</script>
 {% endblock %}
