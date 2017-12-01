@@ -1,4 +1,5 @@
 import re
+from itertools import groupby
 
 from django.db.models import Count, Q
 from django.http import HttpResponse
@@ -226,7 +227,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
 
 def complete_rule(year, title, training, rules, specific, add):
     """
-    Story to get all rule for a slected training
+    Story to get all rule for a selected training
     """
     # ############ define usefull stuff ################################
     story = []
@@ -386,13 +387,40 @@ def derogations(title, year):
 
     derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
 
-    toptend = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_cmp=Count(
-        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)
+    d = []
+    toptend = []
+    cmp_count = {}
+
+    for e in derogations:
+        d.append(dict(rule=Rule.objects.get(
+            id=e.rule_gen_id).n_rule, cmp=e.training.supply_cmp))
+
+    id_rules = [y.get('rule') for y in d]
+    s = sorted(d, key=lambda d: d['rule'])
+    g = groupby(s, lambda d: d['rule'])
+    grouped_rules = []
+
+    for k, v in g:
+        grouped_rules.append(list(v))
+
+    for item in grouped_rules:
+        elm = set([(e['cmp'], e['rule']) for e in item])
+        rule = set([(e['rule']) for e in item])
+        for r in enumerate(rule):
+            cmp_count.update({r[1]: len(elm)})
+
+    rules_count = {e: id_rules.count(e) for e in id_rules}
+    rules_sorted = sorted(rules_count, key=rules_count.get, reverse=True)
+
+    for r in rules_sorted:
+        toptend.append(
+            dict(rule=Rule.objects.get(id=r),
+                 nb_derog=rules_count[r],
+                 nb_cmp=cmp_count[r]))
 
     for d in toptend:
-        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
-        d['supply_cmps'] = derogations.filter(rule_gen_id=d['rule_gen_id']).values_list(
-            'training__supply_cmp', flat=True).distinct()
+        d['supply_cmps'] = derogations.filter(rule_gen_id=d['rule'].id).values_list(
+             'training__supply_cmp', flat=True).distinct()
         d['cmps'] = institutes.filter(
             code__in=d['supply_cmps']).values_list('label', flat=True)
         d['is_eci'] = d['rule'].is_eci

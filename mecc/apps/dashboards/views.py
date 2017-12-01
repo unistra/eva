@@ -24,6 +24,7 @@ from mecc.decorators import is_ajax_request, is_post_request
 from bs4 import BeautifulSoup
 import xlsxwriter
 from io import BytesIO
+from itertools import groupby
 
 
 @login_required
@@ -95,8 +96,36 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
     derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
 
-    topten_d = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_cmp=Count(
-        'training__supply_cmp', distinct=True)).order_by('-nb_derog').exclude(nb_cmp__isnull=True)
+    d = []
+    topten_d = []
+    cmp_count = {}
+
+    for e in derogations:
+        d.append(dict(rule=Rule.objects.get(
+            id=e.rule_gen_id).n_rule, cmp=e.training.supply_cmp))
+
+    id_rules = [y.get('rule') for y in d]
+    s = sorted(d, key=lambda d: d['rule'])
+    g = groupby(s, lambda d: d['rule'])
+    grouped_rules = []
+
+    for k, v in g:
+        grouped_rules.append(list(v))
+
+    for item in grouped_rules:
+        elm = set([(e['cmp'], e['rule']) for e in item])
+        rule = set([(e['rule']) for e in item])
+        for r in enumerate(rule):
+            cmp_count.update({r[1]: len(elm)})
+
+    rules_count = {e: id_rules.count(e) for e in id_rules}
+    rules_sorted = sorted(rules_count, key=rules_count.get, reverse=True)[:10]
+
+    for r in rules_sorted:
+        topten_d.append(
+            dict(rule=Rule.objects.get(id=r),
+                 nb_derog=rules_count[r],
+                 nb_cmp=cmp_count[r]))
 
     # set datas for view
     data['institutes_counter'] = supply_institutes.count()
@@ -122,10 +151,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     data['institutes_data'] = institutes_data
     data['institutes_letters'] = institutes_letters
     data['institutes_letters_counter'] = institutes_letters.count()
-    data['topten_derog'] = topten_d[:10]
-
-    for d in data['topten_derog']:
-        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
+    data['topten_derog'] = topten_d
 
     return render(request, template, data)
 
@@ -180,8 +206,37 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     derogations = SpecificParagraph.objects.filter(
         training__supply_cmp=code, code_year=uy.code_year)
 
-    topten_d = derogations.values('rule_gen_id').annotate(nb_derog=Count('rule_gen_id'), nb_formations=Count(
-        'training__id', distinct=True))
+    d = []
+    topten_d = []
+    train_count = {}
+
+    for e in derogations:
+        d.append(dict(rule=Rule.objects.get(
+            id=e.rule_gen_id).n_rule, train=e.training.id))
+
+    id_rules = [y.get('rule') for y in d]
+    s = sorted(d, key=lambda d: d['rule'])
+    g = groupby(s, lambda d: d['rule'])
+    grouped_rules = []
+
+    for k, v in g:
+        grouped_rules.append(list(v))
+
+    for item in grouped_rules:
+        elm = set([(e['train'], e['rule']) for e in item])
+        rule = set([(e['rule']) for e in item])
+        for r in enumerate(rule):
+            train_count.update({r[1]: len(elm)})
+
+    rules_count = {e: id_rules.count(e) for e in id_rules}
+    rules_sorted = sorted(rules_count, key=rules_count.get, reverse=True)[:10]
+
+    for r in rules_sorted:
+        topten_d.append(
+            dict(
+                 rule=Rule.objects.get(id=r),
+                 nb_derog=rules_count[r],
+                 nb_formations=train_count[r]))
 
     # set datas for view
     data['institute'] = institute
@@ -205,9 +260,6 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     data['trainings_cc_ct_counter'] = t_cc_ct.count()
     data['topten_derog'] = topten_d
     data['first_cfvu'] = uy.date_expected
-
-    for d in data['topten_derog']:
-        d['rule'] = Rule.objects.get(id=d['rule_gen_id'])
 
     for td in trainings_data:
         td['degree_type_label'] = DegreeType.objects.get(id=td['degree_type'])
@@ -264,52 +316,59 @@ def derogations_export_excel(request):
     derogations = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year)
 
-    for v in derogations:
-        cmp = Institute.objects.get(code=v.training.supply_cmp).label
-        clean_paragraph = BeautifulSoup(
-            v.text_specific_paragraph, 'html.parser').get_text()
-        clean_motivation = BeautifulSoup(
-            v.text_motiv, 'html.parser').get_text()
+    if derogations:
+        for v in derogations:
+            cmp = Institute.objects.get(code=v.training.supply_cmp).label
+            clean_paragraph = BeautifulSoup(
+                v.text_specific_paragraph, 'html.parser').get_text()
+            clean_motivation = BeautifulSoup(
+                v.text_motiv, 'html.parser').get_text()
 
-        rule = Rule.objects.get(id=v.rule_gen_id)
+            try:
+                rule = Rule.objects.get(id=v.rule_gen_id)
+            except Rule.DoesNotExist:
+                print(v.rule_gen_id)
+                # pass
 
-        if rule:
-            if rule.is_eci and rule.is_ccct:
-                regime = "ECI et CC/CT"
-            elif rule.is_eci:
-                regime = "ECI"
-            elif rule.is_ccct:
-                regime = "CC/CT"
-        else:
-            regime = ""
+            if rule:
+                if rule.is_eci and rule.is_ccct:
+                    regime = "ECI et CC/CT"
+                elif rule.is_eci:
+                    regime = "ECI"
+                elif rule.is_ccct:
+                    regime = "CC/CT"
+            else:
+                regime = ""
 
-        data.append([regime,
-                     v.rule_gen_id,
-                     rule.label,
-                     v.pk,
-                     cmp,
-                     v.training.pk,
-                     v.training.label,
-                     " ".join(clean_paragraph.split()),
-                     " ".join(clean_motivation.split())
-                     ])
+            data.append([regime,
+                         v.rule_gen_id,
+                         rule.label,
+                         v.pk,
+                         cmp,
+                         v.training.pk,
+                         v.training.label,
+                         " ".join(clean_paragraph.split()),
+                         " ".join(clean_motivation.split())
+                         ])
 
-    sheet.set_column('A:A', 15)
-    sheet.set_column('B:C', 14)
-    sheet.set_column('E:E', 55)
-    sheet.set_column('F:F', 12)
-    sheet.set_column('G:G', 45)
-    sheet.set_column('H:I', 80)
+            sheet.set_column('A:A', 15)
+            sheet.set_column('B:C', 14)
+            sheet.set_column('E:E', 55)
+            sheet.set_column('F:F', 12)
+            sheet.set_column('G:G', 45)
+            sheet.set_column('H:I', 80)
 
-    row = 0
-    for i, header in enumerate(headers):
-        sheet.write(row, i, header, bold)
-    row += 1
+            row = 0
+            for i, header in enumerate(headers):
+                sheet.write(row, i, header, bold)
+            row += 1
 
-    for r, columns in enumerate(data):
-        for column, cell_data in enumerate(columns):
-            sheet.write(row, column, cell_data, main)
-        row += 1
+            for r, columns in enumerate(data):
+                for column, cell_data in enumerate(columns):
+                    sheet.write(row, column, cell_data, main)
+                row += 1
+    else:
+        sheet.write('B1', _('Pas de données'), bold)
 
     book.close()
     output.seek(0)
@@ -353,55 +412,62 @@ def alineas_export_excel(request):
     derogations = SpecificParagraph.objects.filter(
         code_year=currentyear().code_year)
 
-    for v in derogations:
-        cmp = Institute.objects.get(code=v.training.supply_cmp).label
-        clean_paragraph = BeautifulSoup(
-            v.text_specific_paragraph, 'html.parser').get_text()
-        clean_motivation = BeautifulSoup(
-            v.text_motiv, 'html.parser').get_text()
+    if derogations:
 
-        rule = Rule.objects.get(id=v.rule_gen_id)
-        additionals = AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year,
-            rule_gen_id=rule.n_rule).values_list('text_additional_paragraph')
-        if additionals:
-            clean_additionals = BeautifulSoup(
-                additionals[0][0], 'html.parser').get_text()
+        clean_paragraph = ""
+        clean_motivation = ""
+        clean_additionals = ""
 
-        if rule:
-            if rule.is_eci and rule.is_ccct:
-                regime = "ECI et CC/CT"
-            elif rule.is_eci:
-                regime = "ECI"
-            elif rule.is_ccct:
-                regime = "CC/CT"
-        else:
-            regime = ""
+        for v in derogations:
+            cmp = Institute.objects.get(code=v.training.supply_cmp).label
+            try:
+                rule = Rule.objects.get(id=v.rule_gen_id)
+            except Rule.DoesNotExist:
+                pass
 
-        data.append([regime,
-                     v.rule_gen_id,
-                     rule.label,
-                     cmp,
-                     v.training.pk,
-                     v.training.label,
-                     " ".join(clean_additionals.split())
-                     ])
+            additionals = AdditionalParagraph.objects.filter(
+                code_year=currentyear().code_year,
+                rule_gen_id=rule.n_rule).values_list('text_additional_paragraph')
+            if additionals:
+                clean_additionals = BeautifulSoup(
+                    additionals[0][0], 'html.parser').get_text()
 
-    sheet.set_column('A:B', 10)
-    sheet.set_column('C:D', 75)
-    sheet.set_column('E:E', 12)
-    sheet.set_column('F:F', 55)
-    sheet.set_column('G:G', 65)
+            if rule:
+                if rule.is_eci and rule.is_ccct:
+                    regime = "ECI et CC/CT"
+                elif rule.is_eci:
+                    regime = "ECI"
+                elif rule.is_ccct:
+                    regime = "CC/CT"
+            else:
+                regime = ""
 
-    row = 0
-    for i, header in enumerate(headers):
-        sheet.write(row, i, header, bold)
-    row += 1
+            data.append([regime,
+                         v.rule_gen_id,
+                         rule.label,
+                         cmp,
+                         v.training.pk,
+                         v.training.label,
+                         " ".join(clean_additionals.split())
+                         ])
 
-    for r, columns in enumerate(data):
-        for column, cell_data in enumerate(columns):
-            sheet.write(row, column, cell_data, main)
+        sheet.set_column('A:B', 10)
+        sheet.set_column('C:D', 75)
+        sheet.set_column('E:E', 12)
+        sheet.set_column('F:F', 55)
+        sheet.set_column('G:G', 65)
+
+        row = 0
+        for i, header in enumerate(headers):
+            sheet.write(row, i, header, bold)
         row += 1
+
+        for r, columns in enumerate(data):
+            for column, cell_data in enumerate(columns):
+                sheet.write(row, column, cell_data, main)
+            row += 1
+    else:
+        sheet.write('b1', _('Pas de données'), bold)
 
     book.close()
     output.seek(0)
