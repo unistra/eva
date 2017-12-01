@@ -2,6 +2,7 @@
 {%trans 'Moteur de génération de document MECC' %} {% endblock %} {% block app_content %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'js/datatable.min.js' %}"></script>
 
 <div class="disp-flex">
     <div class="disp-flex dir-col">
@@ -49,19 +50,51 @@
         </div>
     </div>
 </div>
+
+<div class="disp-flex has-top-border has-bottom-border">
+    <div class="w-65 has-right-border" >
+        {{trainings}}
+    </div>
+    <div class="w-35">
+        {{trainings}}            
+    </div>
+</div>
+
 <script>
+    function get_trainings (target, institute){
+        console.warn('dans get_train')
+        $.ajax({
+            url: "{% url 'doc_gen:trainings_for_target' %}",
+            type: 'GET',
+            data : {
+                target: target,
+                institute: institute,
+                json: true,
+            },
+            success: function(data) {
+                console.info('done ! ')
+                console.log(data)
+            }  }              
+
+        )
+    }
+
+
     $('#target').on('change', function(){
+        let institute = $('#institute')
         if (this.value === 'prepare_cc' || this.value === 'prepare_cc_my' || this.value === 'prepare_cfvu'){
             if (this.value === 'prepare_cfvu'){
                 $('#date').datepicker('update', "{{university_year.date_expected|date:'d/m/Y'}}");
             }else {
-                let date = $('#institute').find(':selected').data('date-expected')
+                let date = institute.find(':selected').data('date-expected')
                 $('#date').datepicker('update', date);
                 
             }
         } else {
             $('#date').datepicker('update', null);
         }
+        get_trainings(this.value, institute.val())
+        
     } )
     $('#institute').on('change', function(){
         let target = $('#target').val()
@@ -73,6 +106,7 @@
                 $('#date').datepicker('update', null);
             }
         }
+        get_trainings(target, this.value)
     })
     $('#date').datepicker({
         orientation: "bottom auto",
