@@ -7,6 +7,12 @@
     align-items: baseline;
 
 }
+.w-65{
+    width: 65%;
+}
+.w-35{
+    width: 35%;
+}
 .width-3{
     width: 3em;
 }
@@ -504,6 +510,19 @@ td.id_member {
     border-bottom-width: 0.15em;
     -webkit-box-shadow: 0 10px 5px -9px #888888;
     box-shadow: 0 10px 5px -9px #888888;
+}
+.has-right-border {
+    border-right-style: solid;
+    border-right-color: #358CD3;
+    padding-right: 0.25em;
+    border-right-width: 0.15em;
+}
+.has-left-border {
+    border-left-style: solid;
+    border-left-color: #358CD3;
+    padding-left: 0.25em;
+    border-left-width: 0.15em;
+
 }
 .no-border {
     border-width: 0px;
