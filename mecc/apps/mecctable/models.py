@@ -76,7 +76,7 @@ class StructureObject(models.Model):
         "Référence de l'objet ROF"), max_length=20, null=True, blank=True)
     ROF_code_year = models.CharField(_("Année de l'objet ROF"), max_length=20, blank=True, null=True)
     ROF_nature = models.CharField(
-        verbose_name=_("Type de l'objet ROF"), choices=TYPE_CHOICE,
+        verbose_name=_("Type de l'objet ROF"),
         max_length=2, null=True, blank=True)
     ROF_supply_program = models.CharField(
         _("Programme porteur de l'objet ROF"),
