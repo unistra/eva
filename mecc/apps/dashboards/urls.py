@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^general_derog_xls/$', derogations_export_excel,
         name='derogations_export_excel'),
     url(r'^general_alinas_xls/$', alineas_export_excel,
-        name='alineas_export_excel'),        
+        name='alineas_export_excel'),
 ]
