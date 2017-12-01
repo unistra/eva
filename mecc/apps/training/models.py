@@ -66,6 +66,31 @@ class Training(models.Model):
     n_train = models.IntegerField(
         _('Numéro de règle'), unique=False, null=True)
 
+    @property
+    def small_dict(self):
+        return dict(
+            code_year=self.code_year,
+            degree_type=self.degree_type.short_label,
+            label=self.label,
+            is_used=self.is_used,
+            MECC_tab=self.MECC_tab,
+            MECC_type=self.MECC_type,
+            session_type=self.session_type,
+            ref_cpa_rof=self.ref_cpa_rof,
+            ref_si_scol=self.ref_si_scol,
+            progress_rule=self.progress_rule,
+            progress_table=self.progress_table,
+            date_val_cmp=self.date_val_cmp,
+            date_res_des=self.date_res_des,
+            date_visa_des=self.date_visa_des,
+            date_val_cfvu=self.date_val_cfvu,
+            institutes=[{'label': e.label, 'code': e.code}
+                        for e in self.institutes.all()],
+            supply_cmp=self.supply_cmp,
+            resp_formations=[e.user.username for e in self.resp_formations.all()],
+            n_train=self.n_train,
+        )
+
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
@@ -114,7 +139,7 @@ class Training(models.Model):
         Return list of pple who can edit this training
         """
         can_do_alot = Profile.objects.filter(cmp=self.supply_cmp).filter(Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
-                | Q(code='GESCOL') | Q(code='DIRETU'))
+                                                                         | Q(code='GESCOL') | Q(code='DIRETU'))
         return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
 
     @property
@@ -142,7 +167,8 @@ class Training(models.Model):
         Tell us if this training has specific or additional paragraph
         """
         specific_paragraph = SpecificParagraph.objects.filter(training=self)
-        additional_paragraph = AdditionalParagraph.objects.filter(training=self)
+        additional_paragraph = AdditionalParagraph.objects.filter(
+            training=self)
         return True if specific_paragraph or additional_paragraph else False
 
 
@@ -159,7 +185,8 @@ class SpecificParagraph(models.Model):
         _('Type alinéa'), choices=TYPE_PARAPGRAPH, max_length=1)
     text_specific_paragraph = models.TextField(_("Texte d'alinéa spécifique"))
     text_motiv = models.TextField(_("Texte de motivation"))
-    origin_id = models.IntegerField(_('ID original'), default=None, null=True, blank=True)
+    origin_id = models.IntegerField(
+        _('ID original'), default=None, null=True, blank=True)
 
     def __str__(self):
         return _("Alinéa spécifique n° %s" % self.pk)
@@ -172,7 +199,8 @@ class AdditionalParagraph(models.Model):
     code_year = models.IntegerField(_('Code année'), unique=False)
     training = models.ForeignKey(Training)
     rule_gen_id = models.IntegerField(_('ID règle générale'))
-    origin_id = models.IntegerField(_('ID original'), default=None, blank=True, null=True)
+    origin_id = models.IntegerField(
+        _('ID original'), default=None, blank=True, null=True)
 
     text_additional_paragraph = models.TextField(
         _("Texte d'alinéa additionnel"))

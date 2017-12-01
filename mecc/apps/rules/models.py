@@ -9,7 +9,7 @@ from mecc.apps.years.models import UniversityYear
 
 
 class Rule(models.Model):
-    """
+    """ 
     Rule model
     """
     EDITED_CHOICES = (
@@ -28,6 +28,24 @@ class Rule(models.Model):
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField('degree.DegreeType')
     n_rule = models.IntegerField(_('Numéro de règle'), unique=False)
+
+    # @property
+    # def as_json(self):
+    #     """
+    #     Give custom dict 
+    #     """
+    #     dict(
+    #         id=self.id,
+    #         display_order=self.display_order,
+    #         code_year=self.code_year,
+    #         label=self.label,
+    #         is_in_use=self.is_in_use,
+    #         is_edited=self.is_edited,
+    #         is_eci=self.is_eci,
+    #         is_ccct=self.is_ccct,
+    #         degree_type=[e.__dict__ for e in self.degree_type.all()],
+    #         n_rule=self.n_rule,
+    #     )
 
     @property
     def is_empty(self):
