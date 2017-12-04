@@ -42,8 +42,6 @@ def my_teachings(request, template='training/respform_trainings.html'):
     request.session['list_training'] = False
     current_year = currentyear().code_year
     data = {}
-    # aaa = [profile.cmp for profile in request.user.meccuser.profile.all()
-    #        if profile.code == "RESPENS"]
     struct_object = StructureObject.objects.filter(
         code_year=current_year, RESPENS_id=request.user.username)
     data['trainings'] = Training.objects.filter(

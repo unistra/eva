@@ -1,9 +1,10 @@
 """
 View for document generator 3000
 """
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import render,  redirect
-from django.http import JsonResponse
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
@@ -24,6 +25,7 @@ def home(request, template='doc_generator/home.html'):
     profiles = request.user.meccuser.profile.all()
     institute_year = InstituteYear.objects.filter(
         code_year=current_year)
+
     if request.user.is_superuser or 'DES1' in [
             e.name for e in request.user.groups.all()]:
         data['institutes'] = [(e, institute_year.get(id_cmp=e.id))
@@ -32,16 +34,61 @@ def home(request, template='doc_generator/home.html'):
         data['institutes'] = [(e, institute_year.get(
             id_cmp=e.id)) for e in all_institutes.filter(
             code__in=[e.cmp for e in profiles])]
+
+    # GET FIRST IN ORDER TO GET DISPLAY WHEN ARRIVING ON PAGE
+    try:
+        class FakeRequest(object):
+            """
+            Fake request to mock request GET
+            """
+            pass
+
+        fake_request = FakeRequest()
+        fake_request.GET = {'institute': data['institutes'][
+            0][0].code, 'user': request.user}
+
+        data['target'] = available_target(fake_request)
+        fake_request.GET.update({'target': data['target'][0].get('code'), })
+
+    except IndexError:
+        data['trainings'] = None
+        return render(request, template, data)
+
+    data['trainings'] = trainings_for_target(fake_request)
+
+    data['university_year'] = UniversityYear.objects.get(
+        code_year=current_year)
+
+    return render(request, template, data)
+
+
+def available_target(request):
+    """
+    Return list of target according to user and selected institute
+    """
+    json = True if request.GET.get('json') else False
+
     target = []
-    profiles_code = [e.code for e in profiles]
-    if any(True for profile in profiles if profile.code in [
-            'RESPFORM', 'RESPENS']) or request.user.is_superuser:
+    cmp_code = request.GET.get('institute')
+    user = User.objects.get(username=request.GET.get('user'))
+    # Handling profiles
+    p = user.meccuser.profile.all()
+    other = [{'code': "DES1" if 'DES1' in [e.name for e in user.groups.all()]
+              else '', 'cmp:':"ALL"}]
+    profiles = [{'code': e.code, 'cmp': e.cmp} for e in p if p]
+    profiles.extend(other)
+
+    DES1 = any(True for profile in profiles if profile.get('code') == "DES1")
+    profile_cmp = [e.get('code') for e in profiles if e.get('cmp') == cmp_code]
+
+    if any(True for profile in profile_cmp if profile in [
+            'RESPFORM', 'RESPENS']) or user.is_superuser:
         target.append({
             'code': "review_my",
             'label': _("Relecture (mes formations)"),
             'order': 4,
         })
-        if 'RESPENS' not in profiles_code:
+        if 'RESPENS' not in profile_cmp:
             target.extend([{
                 'code': "prepare_cc_my",
                 'label': _("Préparation Conseil de composante (mes formations)"),
@@ -52,8 +99,9 @@ def home(request, template='doc_generator/home.html'):
                 'order': 9,
             }])
 
-    if any(True for profile in profiles if profile.code in [
-            'DES1', 'DIRCOMP', 'RAC', 'REFAPP', 'DIRETU', 'GESCOL']) or request.user.is_superuser:
+    if any(True for profile in profile_cmp if profile in [
+        'DIRCOMP', 'RAC', 'REFAPP', 'DIRETU', 'GESCOL'
+    ]) or user.is_superuser or DES1:
         target.extend([{
             'code': "review_all",
             'label': _("Relecture (toutes formations)"),
@@ -71,13 +119,13 @@ def home(request, template='doc_generator/home.html'):
             'label': _('Publication (MECC validées CFVU)'),
             'order': 8,
         }])
-        if 'DES1' in profiles_code or request.user.is_superuser:
+        if DES1 or user.is_superuser:
             target.append({
                 'code': "prepare_cfvu",
                 'label': _("Préparation CFVU"),
                 'order': 7,
             })
-            if request.user.is_superuser:
+            if user.is_superuser:
                 target.append({
                     'code': "prepare_cc",
                     'label': _("Préparation Conseil de composante"),
@@ -90,31 +138,13 @@ def home(request, template='doc_generator/home.html'):
                 'order': 5,
             })
 
-    data['university_year'] = UniversityYear.objects.get(
-        code_year=current_year)
-    data['target'] = sorted(target, key=lambda k: k['order'])
-
-    # GET FIRST IN ORDER TO GET DISPLAY WHEN ARRIVING ON PAGE
-    try:
-        class FakeRequest(object):
-            """
-            Fake request to mock request GET
-            """
-            pass
-        fake_request = FakeRequest()
-        fake_request.GET = {
-            'target': data['target'][0].get('code'),
-            'institute': data['institutes'][0][0].code,
-            # ''
-        }
-        fake_request.user = request.user
-    except IndexError:
-        data['trainings'] = None
-        return render(request, template, data)
-
-    data['trainings'] = trainings_for_target(fake_request)
-
-    return render(request, template, data)
+    sorted_target = sorted(target, key=lambda k: k['order'])
+    # if True:
+    #     request.GET.update({'target': sorted_target[0].get('code')})
+    #     trainings_for_target(request)
+    #     return sorted_target
+    # else:
+    return JsonResponse(sorted_target, safe=False) if json else sorted_target
 
 
 def trainings_for_target(request):
@@ -123,6 +153,8 @@ def trainings_for_target(request):
     year
     """
     current_year = currentyear().code_year
+    user = User.objects.get(username=request.GET.get('user'))
+
     target = request.GET.get('target')
     institute = request.GET.get('institute')
     json = True if request.GET.get('json') else False
@@ -141,11 +173,11 @@ def trainings_for_target(request):
             '', ' ', None]]
 
     def process_review_my():
-        if request.user.is_superuser:
+        if user.is_superuser:
             return [e.small_dict for e in trainings]
-        profiles = request.user.meccuser.profile.all()
+        profiles = user.meccuser.profile.all()
         struct_object = StructureObject.objects.filter(
-            code_year=current_year, RESPENS_id=request.user.username)
+            code_year=current_year, RESPENS_id=user.username)
         spe_trainings = []
         if [e.cmp for e in profiles if e.code == 'RESPENS']:
             spe_trainings.extend(
@@ -153,7 +185,7 @@ def trainings_for_target(request):
                                  id__in=[e.owner_training_id for e in struct_object]))
         if [e.cmp for e in profiles if e.code == 'RESPFORM']:
             spe_trainings.extend(
-                trainings.filter(resp_formations=request.user.meccuser,
+                trainings.filter(resp_formations=user.meccuser,
                                  code_year=current_year))
 
         return [e.small_dict for e in spe_trainings]
@@ -191,5 +223,5 @@ def trainings_for_target(request):
     }
 
     trains = process[target]()
-    print(trains)
+    # print(trains)
     return JsonResponse(trains, safe=False) if json else trains
