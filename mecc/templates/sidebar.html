@@ -186,7 +186,7 @@
         {% endif %}
 
         <div class="bottom">
-            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC, DIRCOMP, GESCOL, REFAPP, DIRETU, RESPENS'%}
+            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC, DIRCOMP, GESCOL, REFAPP, DIRETU, RESPENS, RESPFORM'%}
             <li id="genmecc">
                 <a href="{% url 'doc_gen:home'%}"
                 {% if 'start/' in request.path %}
