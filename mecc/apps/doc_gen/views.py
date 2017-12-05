@@ -12,6 +12,8 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
+import json
+
 
 def home(request, template='doc_generator/home.html'):
     """
@@ -21,7 +23,7 @@ def home(request, template='doc_generator/home.html'):
     current_year = currentyear().code_year
     trainings = Training.objects.filter(code_year=current_year)
     all_institutes = Institute.objects.filter(
-        code__in=[e.supply_cmp for e in trainings])
+        code__in=[e.supply_cmp for e in trainings]).order_by('label')
     profiles = request.user.meccuser.profile.all()
     institute_year = InstituteYear.objects.filter(
         code_year=current_year)
@@ -54,7 +56,7 @@ def home(request, template='doc_generator/home.html'):
         data['trainings'] = None
         return render(request, template, data)
 
-    data['trainings'] = trainings_for_target(fake_request)
+    data['trainings'] = json.dumps(trainings_for_target(fake_request))
 
     data['university_year'] = UniversityYear.objects.get(
         code_year=current_year)
@@ -159,7 +161,9 @@ def trainings_for_target(request):
     institute = request.GET.get('institute')
     json = True if request.GET.get('json') else False
     trainings = Training.objects.filter(
-        code_year=current_year, institutes__code=institute)
+        code_year=current_year, institutes__code=institute).order_by('degree_type', 'label')
+
+    profiles = user.meccuser.profile.all()
 
     def process_review_all():
         return [e.small_dict for e in trainings]
@@ -173,9 +177,6 @@ def trainings_for_target(request):
             '', ' ', None]]
 
     def process_review_my():
-        if user.is_superuser:
-            return [e.small_dict for e in trainings]
-        profiles = user.meccuser.profile.all()
         struct_object = StructureObject.objects.filter(
             code_year=current_year, RESPENS_id=user.username)
         spe_trainings = []
@@ -189,25 +190,30 @@ def trainings_for_target(request):
                                  code_year=current_year))
 
         return [e.small_dict for e in spe_trainings]
+
     def process_prepare_cc():
         return [e.small_dict for e in trainings if (
             e.progress_rule == 'A' and e.progress_table == 'A')]
 
     def process_prepare_cc_my():
-        print("I'm here : process_prepare_cc_my")
-        pass
-
+        spe_train = trainings.filter(
+            resp_formations=user.meccuser, code_year=current_year)
+        return [e.small_dict for e in spe_train if (
+            e.progress_rule == 'A' and e.progress_table == 'A')]
+      
     def process_prepare_cfvu():
-        print("I'm here : process_prepare_cfvu")
-        pass
-
+        return [e.small_dict for e in trainings if e.date_visa_des not in [
+            '', ' ', None]]
+            
     def process_publish_all():
-        print("I'm here : process_publish_all")
-        pass
+        return [e.small_dict for e in trainings if e.date_val_cfvu not in [
+            '', ' ', None]]
 
     def process_publish_my():
-        print("I'm here : process_publish_my")
-        pass
+        spe_train = trainings.filter(
+            resp_formations=user.meccuser, code_year=current_year)
+        return [e.small_dict for e in spe_train if e.date_val_cfvu not in [
+            '', ' ', None]]
 
     process = {
         'review_all': process_review_all,
