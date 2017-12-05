@@ -397,6 +397,7 @@ def derogations(title, year):
         d.append(dict(rule=Rule.objects.get(
             id=e.rule_gen_id).n_rule, cmp=e.training.supply_cmp))
 
+
     id_rules = [y.get('rule') for y in d]
     s = sorted(d, key=lambda d: d['rule'])
     g = groupby(s, lambda d: d['rule'])
@@ -460,25 +461,28 @@ def derogations(title, year):
         return story
 
     # ############ ECI+CC/CT ###############################
-    block_derogations(
-        _("Régime ECI et CC/CT"),
-        derog_eci_ccct,
-        story
-    )
+    if derog_eci_ccct:
+        block_derogations(
+            _("Régime ECI et CC/CT"),
+            derog_eci_ccct,
+            story
+        )
 
     # ############ ECI ##########{{}}#######################
-    block_derogations(
-        _("Régime ECI"),
-        derog_eci,
-        story
-    )
+    if derog_eci:
+        block_derogations(
+            _("Régime ECI"),
+            derog_eci,
+            story
+        )
 
     # ############ CCCT ##########{{}}######################
-    block_derogations(
-        _("Régime CCCT"),
-        derog_ccct,
-        story
-    )
+    if derog_ccct:
+        block_derogations(
+            _("Régime CCCT"),
+            derog_ccct,
+            story
+        )
 
     return story
 
