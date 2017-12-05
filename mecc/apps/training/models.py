@@ -69,6 +69,7 @@ class Training(models.Model):
     @property
     def small_dict(self):
         return dict(
+            id=self.id,
             code_year=self.code_year,
             degree_type=self.degree_type.short_label,
             label=self.label,
@@ -80,15 +81,16 @@ class Training(models.Model):
             ref_si_scol=self.ref_si_scol,
             progress_rule=self.progress_rule,
             progress_table=self.progress_table,
-            date_val_cmp=self.date_val_cmp,
-            date_res_des=self.date_res_des,
-            date_visa_des=self.date_visa_des,
-            date_val_cfvu=self.date_val_cfvu,
+            date_val_cmp=str(self.date_val_cmp),
+            date_res_des=str(self.date_res_des),
+            date_visa_des=str(self.date_visa_des),
+            date_val_cfvu=str(self.date_val_cfvu),
             institutes=[{'label': e.label, 'code': e.code}
                         for e in self.institutes.all()],
             supply_cmp=self.supply_cmp,
             resp_formations=[e.user.username for e in self.resp_formations.all()],
             n_train=self.n_train,
+            get_MECC_type_display=self.get_MECC_type_display(),
         )
 
     def clean_fields(self, exclude=None):
