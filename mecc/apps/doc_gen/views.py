@@ -189,7 +189,6 @@ def trainings_for_target(request):
                                  code_year=current_year))
 
         return [e.small_dict for e in spe_trainings]
-
     def process_prepare_cc():
         return [e.small_dict for e in trainings if (
             e.progress_rule == 'A' and e.progress_table == 'A')]
@@ -223,5 +222,4 @@ def trainings_for_target(request):
     }
 
     trains = process[target]()
-    # print(trains)
     return JsonResponse(trains, safe=False) if json else trains
