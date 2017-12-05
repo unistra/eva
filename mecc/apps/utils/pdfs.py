@@ -55,6 +55,7 @@ class NumberedCanvas(canvas.Canvas):
     """
     Canvas allowing to count pages
     """
+
     def __init__(self, *args, **kwargs):
         canvas.Canvas.__init__(self, *args, **kwargs)
         self._saved_page_states = []
@@ -373,6 +374,7 @@ def derogations(title, year):
     supply_filter = []
     derog_eci_ccct = []
     derog_eci = []
+    derog_ccct = []
 
     # ############ DATAS ################################
     uy = UniversityYear.objects.get(is_target_year=True)
@@ -420,7 +422,7 @@ def derogations(title, year):
 
     for d in toptend:
         d['supply_cmps'] = derogations.filter(rule_gen_id=d['rule'].id).values_list(
-             'training__supply_cmp', flat=True).distinct()
+            'training__supply_cmp', flat=True)
         d['cmps'] = institutes.filter(
             code__in=d['supply_cmps']).values_list('label', flat=True)
         d['is_eci'] = d['rule'].is_eci
@@ -430,6 +432,8 @@ def derogations(title, year):
             derog_eci_ccct.append(d)
         elif d['rule'].is_eci:
             derog_eci.append(d)
+        elif d['rule'].is_ccct:
+            derog_ccct.append(d)
     # ############ TITLE ################################
 
     header = [
@@ -462,10 +466,17 @@ def derogations(title, year):
         story
     )
 
-    # ############ CCCT ##########{{}}######################
+    # ############ ECI ##########{{}}#######################
     block_derogations(
         _("Régime ECI"),
         derog_eci,
+        story
+    )
+
+    # ############ CCCT ##########{{}}######################
+    block_derogations(
+        _("Régime CCCT"),
+        derog_ccct,
         story
     )
 
