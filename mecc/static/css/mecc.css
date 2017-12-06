@@ -16,6 +16,9 @@
 .width-3{
     width: 3em;
 }
+.width-8{
+    width: 8em;
+}
 .nowrap{
     white-space:nowrap
 }
@@ -231,7 +234,7 @@ a.green:hover {
 /*******************************************************************************
 /* duplicate rules*/
 
-.duplicate-h {
+.duplicate-h, .item-center {
     align-items: center;
 }
 .width-15 {
@@ -658,7 +661,7 @@ label[for=id_is_on_duty] {
     margin-left: 25%;
     margin-top: 1em;
 }
-#comp-right-btn-close {
+#comp-right-btn-close,  {
     margin-top: auto;
     align-self: center;
 }
@@ -1056,4 +1059,30 @@ form {
     padding: 5px;
     margin: 5px;
     text-align: right;
+}
+
+
+
+.small-list li{
+    display: flex;
+    align-items: center;
+    height: 1.25em;
+
+}
+.small-list input{
+    height: 0.8em;
+    width: 0.8em;
+}
+.small-list *{
+    color: grey;
+    font-weight: normal;
+    margin: 0.1em;
+    padding: 0.1em;
+}
+.no-list-style{
+    list-style: none;    
+}
+.centerme-flex{
+    align-self: center;
+    margin: auto;
 }

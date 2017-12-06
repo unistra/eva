@@ -87,7 +87,7 @@
                 <div class="disp-flex dir-col"> 
                     <span>
                         <input type="radio" id="without" name="ref">
-                        <label for="without">{% trans 'Sans référence' %}</label>
+                        <label for="without">{% trans 'Sans références' %}</label>
                     </span>
                     <span>
                         <input type="radio" id="with_si_scol" name="ref" >
@@ -103,17 +103,17 @@
                     <div style="align-self:center;">
                         <span class="blue margin-right1"><strong>{% trans 'Inclure les règles standards'%}</strong></span>
                         <label for="yes">{%trans "Yes"%}</label>
-                        <input type="radio" id="yes" name="standard" >
+                        <input type="radio" id="yes" name="standard" value="yes">
                         <label for="no">{%trans "Non"%}</label>
-                        <input type="radio" id="no" name="standard">
+                        <input type="radio" id="no" name="standard" value="no">
                     </div>
             </div>
         </div>
     </div>
-    <div class="w-35 disp-flex">
-        <div class="disp-flex dir-row space-around buttons_list">
-            <div class="">
-                <input type="radio" id="A" name="model">
+    <div class="w-35 disp-flex dir-col">
+        <div class="choice_model disp-flex dir-row space-around buttons_list centerme-flex">
+            <div class="model_a">
+                <input type="radio" id="A" name="model" value="a">
                 <label for="A">
                     <figure>
                         <figcaption> {% trans 'Modèle A'%}</figcaption>
@@ -121,20 +121,45 @@
                     </figure>
                 </label>
             </div>
-            <div>
-                <input type="radio" id="B" name="model" >
+            <div class="model_b">
+                <input type="radio" id="B" name="model" value="b" >
                 <label for="B">
-                <figure>
+                    <figure>
                         <figcaption> {% trans 'Modèle B'%}</figcaption>
                         <img src="{% static 'img/modelb.png' %}" alt="Model B" width="50%" height="50%">
                     </figure>
-                    </label>
+                </label>
             </div>            
         </div>
 
-        <div>
-            <div></div>
-            <div></div>
+        <div class="disp-flex dir-col" >
+            <div class="disp-flex centerme-flex">
+                <span ><strong>{% trans "Format :" %}</strong></span>
+                <ul class="small-list no-list-style">
+                    <li>
+                        <input type="radio" id="pdf" name="gen_type" value="pdf">
+                        <label for="pdf">{%trans "pdf"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="html" name="gen_type" value="html">
+                        <label for="html">{%trans "html"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="doc" name="gen_type" value="doc">
+                        <label for="doc">{%trans "doc (règles)"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="excel" name="gen_type" value="excel">
+                        <label for="excel">{%trans "excel (tableaux)"%}</label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="disp-flex dir-col space-around item-center " style="height:5em;"  >
+
+                <a href="/training/duplicate/" class="btn-primary btn btn-sm btn-1 width-15" id="generate">{% trans 'Générer'%}</a>  
+                <a href="/training/duplicate/" class="btn-primary btn btn-sm btn-1 width-15" >{% trans 'Quitter'%}</a>  
+            </div>
         </div>
     </div>
 </div>
@@ -186,9 +211,50 @@
 
             success: function (data) {
                 $('#trainings').dataTable().fnClearTable();
-                console.warn(data)
                 if (data.length > 0) {
                     $('#trainings').dataTable().fnAddData(data);
+                }
+                let $radios_gen = $('input:radio[name=gen_type]');
+                $radios_gen.prop('checked', false);
+                $radios_gen.first().prop('checked', true);
+
+                let $radios_model = $('input:radio[name=model]');
+                $radios_model.prop('checked', false);
+                $radios_model.first().prop('checked', true);
+
+                let $radios_standard = $('input:radio[name=standard]');
+                $radios_standard.prop('checked', false)
+                $radios_standard.first().prop('checked', true)
+                
+                if(target == 'review_all'|| target==='review_before'||target==='review_after'||target==='review_my'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    $radios_gen.not('[value=pdf]').attr('disabled', true);
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.attr('disabled', false);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', false)              
+                }
+                if(target == 'prepare_cc'|| target==='prepare_cc_my'||target==='prepare_cfvu'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true)
+                    $radios_gen.not('[value=pdf]').attr('disabled', true)
+
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.not('[value=a]').attr('disabled', true);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', false)
+                    
+                }
+                if(target == 'publish_all'|| target==='publish_my'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true)
+                    $radios_gen.not('[value=pdf]').attr('disabled', false)
+                    $radios_gen.not('[value=pdf]').parent('li').removeClass( "hidden" );     
+
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.attr('disabled', false);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', true)
                 }
             }
         })
