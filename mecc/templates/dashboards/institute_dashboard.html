@@ -51,8 +51,14 @@
     </div>
     <div class="col-sm-6" >
         <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Dérogations sollicitées par la composante' %}</legend>
-        <div class="col-sm-12">
+        <div class="col-sm-9">
             {% include 'dashboards/institute_institute.html' %}
+        </div>
+        <div class="col-sm-3">
+            <ul>
+                <li class="link-list"><a href="{% url 'dashboards:institute_derogations_export_excel' code=institute.code %}">{% trans "Détail des dérogations et motivations (excel)" %}</a></li>
+                <li class="link-list"><a href="{% url 'dashboards:institute_alineas_export_excel'  code=institute.code %}">{% trans "Détail des alinéas additionnels (excel)" %}</a></li>
+            </ul>
         </div>
     </div>
 </div>
