@@ -19,7 +19,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic.list import ListView
 
 from mecc.decorators import group_required, profile_required, profile_or_group_required
-from mecc.decorators import is_ajax_request, is_post_request
+from mecc.decorators import is_ajax_request, is_post_request, has_cmp
 
 from bs4 import BeautifulSoup
 import xlsxwriter
@@ -157,6 +157,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 
 
 @login_required
+@has_cmp
 @profile_or_group_required(('DES1', 'RAC', 'DIRCOMP'), ('ECI'))
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
@@ -477,7 +478,7 @@ def alineas_export_excel(request):
 
 
 @login_required
-@user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' or 'DES1' in [e.code for e in u.meccuser.profile.all()] else False)
+@has_cmp
 @profile_or_group_required(('DES1', 'RAC', 'DIRCOMP'), ('ECI'))
 def institute_derogations_export_excel(request, code):
     # TODO: refactor with derogations_export_excel
@@ -572,13 +573,12 @@ def institute_derogations_export_excel(request, code):
 
 
 @login_required
+@has_cmp
 @profile_or_group_required(('DES1', 'RAC', 'DIRCOMP'), ('ECI'))
 def institute_alineas_export_excel(request, code):
     # TODO: refactor with alineas_export_excel
     # create workbook with worksheet
     #
-    for e in meccuser.profile.all():
-        print(e)
 
     doc_name = "eva_alineas_%s" % currentyear().code_year
     output = BytesIO()

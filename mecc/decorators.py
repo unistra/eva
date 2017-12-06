@@ -119,6 +119,25 @@ def has_requested_cmp(view_func):
             permission to access this page.")
     return wrapper
 
+def has_cmp(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+
+        authorized = any(
+            True for x in [
+                e.cmp for e in request.user.meccuser.profile.all()
+                if e.code in ['DIRETU', 'REFAPP', 'GESCOL', 'DIRCOMP', 'RAC']
+            ] if x in request.path
+        )
+
+        if request.user.is_superuser or authorized or \
+           'DES1' in [e.name for e in request.user.groups.all()]:
+            return view_func(request, *args, **kwargs)
+
+        return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
+            permission to access this page.")
+    return wrapper
+
 
 def is_post_request(view_func):
     """
