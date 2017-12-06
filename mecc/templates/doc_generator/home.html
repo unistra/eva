@@ -111,24 +111,24 @@
         </div>
     </div>
     <div class="w-35 disp-flex">
-        <div class="disp-flex dir-row space-between">
-            <div>
+        <div class="disp-flex dir-row space-around buttons_list">
+            <div class="">
                 <input type="radio" id="A" name="model">
                 <label for="A">
                     <figure>
                         <figcaption> {% trans 'Modèle A'%}</figcaption>
-                        <img src="" alt="Model A">
+                        <img src="{% static 'img/modela.png' %}" alt="Model A" width="50%" height="50%">
                     </figure>
                 </label>
             </div>
             <div>
                 <input type="radio" id="B" name="model" >
                 <label for="B">
-                    <figure>
+                <figure>
                         <figcaption> {% trans 'Modèle B'%}</figcaption>
-                        <img src="" alt="Model B">
+                        <img src="{% static 'img/modelb.png' %}" alt="Model B" width="50%" height="50%">
                     </figure>
-                </label>
+                    </label>
             </div>            
         </div>
 
