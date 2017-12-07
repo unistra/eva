@@ -6,7 +6,7 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-        {%if request.session.visited_cmp in ["RESPFORM", "RESPENS"]%}
+        {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
             {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
             {% else %}
