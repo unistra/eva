@@ -10,7 +10,7 @@
             <td class="stat-result">{{ institutes_letters_counter }} {% trans 'sur' %} {{ institutes_counter }}</td>
             <td><a data-toggle="modal" class="hand no-border align-right" aria-hidden="true" data-target="#institutes_files">{% trans "Accéder" %}</a></td>
         </tr>
-
+        {% if topten_derog %}
         <tr>
             <td>
                 <h4>{% trans "Dérogations sollicitées (10 les plus fréquentes)" %}</h4>
@@ -43,5 +43,6 @@
                 </ul>
             </td>
         </tr>
+        {% endif %}
     </table>
 </div>

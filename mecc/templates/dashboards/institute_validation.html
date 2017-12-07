@@ -8,7 +8,11 @@
         <tr>
             <td>{% trans "Document cadre général" %}</td>
             <td></td>
+            {% if doc_cadre %}
             <td class="align-right"><a href="{{ doc_cadre.file.url }}">{% trans "Accéder" %}</a></td>
+            {% else%}
+            <td class="align-right">{% trans "Aucun document cadre pour le moment" %}</td>
+            {% endif %}
         </tr>
         <tr>
             <td>{% trans "Règles modifiées ou nouvelles" %}</td>

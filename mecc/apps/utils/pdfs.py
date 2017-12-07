@@ -397,8 +397,8 @@ def derogations(title, year):
         d.append(dict(rule=Rule.objects.get(
             id=e.rule_gen_id).n_rule, cmp=e.training.supply_cmp))
 
-
     id_rules = [y.get('rule') for y in d]
+
     s = sorted(d, key=lambda d: d['rule'])
     g = groupby(s, lambda d: d['rule'])
     grouped_rules = []
@@ -417,7 +417,7 @@ def derogations(title, year):
 
     for r in rules_sorted:
         toptend.append(
-            dict(rule=Rule.objects.get(id=r),
+            dict(rule=Rule.objects.get(n_rule=r, code_year=uy.code_year),
                  nb_derog=rules_count[r],
                  nb_cmp=cmp_count[r]))
 
