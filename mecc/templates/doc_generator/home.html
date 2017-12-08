@@ -164,6 +164,11 @@
 </div>
 
 <script>
+
+    // In order to get all trainings concerned and specific values of radio buttons
+    get_trainings($("#target").val(), $('#institute').val())
+
+
     // set datatable
     $('#checkbox_all').on('click', function () {
         $('input[type="checkbox"].select_id').prop('checked', this.checked);
@@ -177,11 +182,9 @@
         let standard = $('input:radio[name=standard]:checked').serialize().split('=')[1];
         let gen_type = $('input:radio[name=gen_type]:checked').serialize().split('=')[1];
         let model = $('input:radio[name=model]:checked').serialize().split('=')[1];
+
         console.log(ref)
-        console.log(standard)
-        console.log(gen_type)
-        console.log(model) 
-        console.log(selected_list) 
+
     })
     var table_suggest = $('#trainings').DataTable({
         "paging": false,
