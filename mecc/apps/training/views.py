@@ -444,8 +444,6 @@ def ask_delete_specific(request):
 @is_correct_respform
 def specific_paragraph(request, training_id, rule_id, template="training/specific_paragraph.html"):
     data = {}
-
-    # CURRENT OBJECTS
     data['url_to_del'] = "/training/delete_specific/"
     data['training'] = t = Training.objects.get(id=training_id)
     data['rule'] = r = Rule.objects.get(id=rule_id)
@@ -460,8 +458,13 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
 
     # GET OLD STUFF
     old_year = currentyear().code_year - 1
+    old_training = Training.objects.filter(
+        n_train=t.n_train, code_year=old_year).first()
     old_specific = SpecificParagraph.objects.filter(
-        code_year=old_year).filter(paragraph_gen_id__in=[e.origin_parag for e in p])
+        code_year=old_year).filter(paragraph_gen_id__in=[
+            e.origin_parag for e in p
+        ], training_id=old_training.id) if old_training else []
+
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year - 1,
@@ -564,8 +567,11 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     old_year = currentyear().code_year - 1 if old == "Y" else None
     old_rule = Rule.objects.filter(
         n_rule=n_rule, code_year=old_year).first() if old == "Y" else None
-    old_training = Training.objects.get(
-        code_year=old_year, n_train=training.n_train) if old_rule else None
+    try:
+        old_training = Training.objects.get(
+            code_year=old_year, n_train=training.n_train) if old_rule else None
+    except Training.DoesNotExist:
+        old_training = None
     try:
         old_sp = SpecificParagraph.objects.get(
             code_year=old_year,
