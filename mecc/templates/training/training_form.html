@@ -115,7 +115,12 @@
 <div class="buttons_list has-top-border" style="margin-top:1em;">
 <a href=
 {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
-{%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
+{%elif request.session.visited_cmp %}
+    {% if request.session.visited_cmp in 'RESPENS' %}
+    "{% url 'training:my_teachings'  %}"
+    {% else %}
+    "{% url 'training:list' request.session.visited_cmp %}"
+    {% endif %}
 {% else %}"{%url 'training:list_all' %}"
 {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
 
