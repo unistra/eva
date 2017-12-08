@@ -86,15 +86,15 @@
             <div>
                 <div class="disp-flex dir-col"> 
                     <span>
-                        <input type="radio" id="without" name="ref" checked="checked">
+                        <input type="radio" id="without" name="ref" checked="checked" value="without">
                         <label for="without">{% trans 'Sans références' %}</label>
                     </span>
                     <span>
-                        <input type="radio" id="with_si_scol" name="ref" >
+                        <input type="radio" id="with_si_scol" name="ref"  value="with_si">
                         <label for="with_si_scol">{% trans "Avec références SI Scolarité" %}</label>
                     </span>
                     <span>
-                        <input type="radio" id="with_rof" name="ref" >
+                        <input type="radio" id="with_rof" name="ref" value="with_rof" >
                         <label for="with_rof">{%trans "Avec références ROF"%}</label>
                     </span>
                 </div>
@@ -103,7 +103,7 @@
                     <div style="align-self:center;">
                         <span class="blue margin-right1"><strong>{% trans 'Inclure les règles standards'%}</strong></span>
                         <label for="yes">{%trans "Yes"%}</label>
-                        <input type="radio" id="yes" name="standard" value="yes">
+                        <input type="radio" id="yes" name="standard" value="yes" checked="checked">
                         <label for="no">{%trans "Non"%}</label>
                         <input type="radio" id="no" name="standard" value="no">
                     </div>
@@ -113,7 +113,7 @@
     <div class="w-35 disp-flex dir-col">
         <div class="choice_model disp-flex dir-row space-around buttons_list centerme-flex">
             <div class="model_a">
-                <input type="radio" id="A" name="model" value="a">
+                <input type="radio" id="A" name="model" value="a" checked="checked">
                 <label for="A">
                     <figure>
                         <figcaption> {% trans 'Modèle A'%}</figcaption>
@@ -137,7 +137,7 @@
                 <span ><strong>{% trans "Format :" %}</strong></span>
                 <ul class="small-list no-list-style">
                     <li>
-                        <input type="radio" id="pdf" name="gen_type" value="pdf">
+                        <input type="radio" id="pdf" name="gen_type" value="pdf" checked="checked">
                         <label for="pdf">{%trans "pdf"%}</label>
                     </li>
                     <li>
@@ -168,6 +168,21 @@
     $('#checkbox_all').on('click', function () {
         $('input[type="checkbox"].select_id').prop('checked', this.checked);
     });
+    $('#generate').on('click', function(){
+        let selected_list = [];
+        $('input[type="checkbox"].select_id:checked').each(function() {
+            selected_list.push(this.value)
+        });
+        let ref = $('input:radio[name=ref]:checked').serialize().split('=')[1];
+        let standard = $('input:radio[name=standard]:checked').serialize().split('=')[1];
+        let gen_type = $('input:radio[name=gen_type]:checked').serialize().split('=')[1];
+        let model = $('input:radio[name=model]:checked').serialize().split('=')[1];
+        console.log(ref)
+        console.log(standard)
+        console.log(gen_type)
+        console.log(model) 
+        console.log(selected_list) 
+    })
     var table_suggest = $('#trainings').DataTable({
         "paging": false,
         // "ordering": false,

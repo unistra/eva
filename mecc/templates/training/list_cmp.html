@@ -11,7 +11,7 @@
 {% block breadcrumb %}
     <ol class="breadcrumb">
         {%if request.session.visited_cmp == "RESPFORM"%}
-            <li class="active">{% trans "Mes formations" %}/li>
+            <li class="active">{% trans "Mes formations" %}</li>
         {%else%}
             <li class="active">{% trans "Offre de formation" %}</li>
         {%endif%}
