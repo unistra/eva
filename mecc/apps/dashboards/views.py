@@ -43,9 +43,11 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
             training__code_year=uy.code_year).distinct()
 
         for year in iy:
-            inst = institutes.get(pk=year.id_cmp)
-            cfvu_entries.append(dict(domain=inst.field.name,
-                                     cmp=inst.label, date=year.date_expected_MECC))
+            inst = institutes.filter(pk=year.id_cmp).first()
+            if inst:
+                cfvu_entries.append(dict(domain=inst.field.name,
+                                         cmp=inst.label,
+                                         date=year.date_expected_MECC))
 
         t = Training.objects.filter(code_year=uy.code_year)
         t_eci = t.filter(MECC_type='E')
@@ -350,7 +352,7 @@ def derogations_export_excel(request):
             data.append([regime,
                          v.rule_gen_id,
                          rule.label,
-                         v.pk,
+                         v.paragraph_gen_id,
                          cmp,
                          v.training.pk,
                          v.training.label,
@@ -543,7 +545,7 @@ def institute_derogations_export_excel(request, code):
             data.append([regime,
                          v.rule_gen_id,
                          rule.label,
-                         v.pk,
+                         v.paragraph_gen_id,
                          cmp,
                          v.training.pk,
                          v.training.label,
