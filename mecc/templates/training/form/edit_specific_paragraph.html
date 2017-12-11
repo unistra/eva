@@ -80,7 +80,7 @@
     <div class="item-100 disp-flex disabled" style="margin-bottom:1em;">
 
         <div class="item-20 disp-flex margin-left6">
-            {% trans "Alinéa n°" %} {{paragraph.display_order}} <br> {% trans "standard" %}
+            {% trans "Alinéa n°" %} {{paragraph.id}} <br> {% trans "standard" %}
         </div>
         <div id ="text_standard">
             {{paragraph.text_standard | safe}}
