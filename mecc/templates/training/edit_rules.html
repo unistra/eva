@@ -138,17 +138,25 @@
     </div>
     <div class="buttons_list" >
 <br>
-    <a href=
+<a href=
     {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
-    {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
+    {%elif request.session.visited_cmp %}
+        {% if request.session.visited_cmp in 'RESPENS' %}
+        "{% url 'training:my_teachings'  %}"
+        {% else %}
+        "{% url 'training:list' request.session.visited_cmp %}"
+        {% endif %}
     {% else %}"{%url 'training:list_all' %}"
-    {% endif %} class="btn-primary btn btn-sm btn-1 ">{% trans "Fermer la fiche" %}</a>
+    {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
     <a href="{% url 'training:gen_pdf_all_rules' training.id%}" target="_blank" class="btn-primary btn btn-sm btn-1 ">{% trans "Récapitulatif des règles de la formation" %}</a>
     {% if can_edit %}
     <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
     <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un message à la DES" %}</a>
     {% endif %}
     </div>
+
+
+
 
 </div>
     {% include "training/send_mail.html"%}
