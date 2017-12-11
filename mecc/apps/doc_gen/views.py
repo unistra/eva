@@ -12,7 +12,32 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
+
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
+    canvas_for_mecctable, canvas_for_preview_mecctable, \
+    preview_mecctable_story, NumberedCanvas_landscape
+
 import json
+
+
+
+def preview_mecctable(request):
+    """
+    View getting all data to generate asked pdf
+    """
+    title = "PREVISUALISATION du TABLEAU"
+    training = Training.objects.filter(id=request.GET.get('training_id')).first()
+    response, doc = setting_up_pdf(title, portrait=False)
+    if training:
+        story = preview_mecctable_story(training)
+    else:
+        story = []
+    doc.build(
+        story,
+        onFirstPage=canvas_for_preview_mecctable,
+        onLaterPages=canvas_for_mecctable,
+        canvasmaker=NumberedCanvas_landscape)
+    return response
 
 
 def home(request, template='doc_generator/home.html'):
@@ -200,11 +225,11 @@ def trainings_for_target(request):
             resp_formations=user.meccuser, code_year=current_year)
         return [e.small_dict for e in spe_train if (
             e.progress_rule == 'A' and e.progress_table == 'A')]
-      
+
     def process_prepare_cfvu():
         return [e.small_dict for e in trainings if e.date_visa_des not in [
             '', ' ', None]]
-            
+
     def process_publish_all():
         return [e.small_dict for e in trainings if e.date_val_cfvu not in [
             '', ' ', None]]

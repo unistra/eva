@@ -132,7 +132,7 @@
                 <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} ">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
+                <a href="{%url 'doc_gen:preview_mecctable'%}?training_id={{training.id}}" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
             </div>
             <div class="flex-item dir-row">
                 <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}

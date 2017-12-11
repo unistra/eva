@@ -12,13 +12,17 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import A4, landscape
+
 
 from mecc.apps.institute.models import Institute
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import Training, SpecificParagraph
 from mecc.apps.utils.queries import rules_degree_for_year
 from mecc.apps.years.models import UniversityYear
 
+from mecc.apps.utils.queries import currentyear
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -27,21 +31,21 @@ styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
-def setting_up_pdf(title, margin=72):
+def setting_up_pdf(title, margin=72, portrait=True):
     """
     Create the HttpResponse object with the appropriate PDF headers.
     """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = ('filename="%s.pdf"' % title)
-
-    doc = SimpleDocTemplate(response, rightMargin=margin, leftMargin=margin,
+    page_size = A4 if portrait else landscape(A4)
+    doc = SimpleDocTemplate(response, pagesize=page_size,
                             topMargin=margin, bottomMargin=18)
     return response, doc
 
 
 def watermark_do_not_distribute(canvas, doc):
     """
-    Add a watermark
+    Add a watermark NE PAS DIFFUSER
     """
     canvas.saveState()
     canvas.setFont("Helvetica", 45)
@@ -49,6 +53,68 @@ def watermark_do_not_distribute(canvas, doc):
     canvas.rotate(45)
     canvas.drawCentredString(550, 100, "NE PAS DIFFUSER")
     canvas.restoreState()
+
+
+def custom_watermark(canvas, watermak_string, font='Helvetica', font_size=45, position_x=550, position_y=100, rotation=45):
+    """
+    Add a custom watermark
+    """
+    canvas.saveState()
+    canvas.setFont(font, font_size)
+    canvas.setFillGray(0.80)
+    canvas.rotate(rotation)
+    canvas.drawCentredString(position_x, position_y, watermak_string)
+    canvas.restoreState()
+
+
+def canvas_for_mecctable(canvas):
+    """
+    canvas for mecctable: set to landscape with watermark
+    """
+    custom_watermark(canvas, "Document intermédiaire")
+
+
+def canvas_for_preview_mecctable(canvas, doc):
+    """
+    canvas for preview mecctable
+    """
+    custom_watermark(canvas, "Prévisualisation", rotation=40,
+                     font_size=40, position_x=500, position_y=-75)
+
+
+
+class NumberedCanvas_landscape(canvas.Canvas):
+    """
+    Canvas allowing to count pages
+    """
+
+    def __init__(self, *args, **kwargs):
+        canvas.Canvas.__init__(self, *args, **kwargs)
+        self._saved_page_states = []
+
+    def showPage(self):
+        self._saved_page_states.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        """add page info to each page (page x of y)"""
+        num_pages = len(self._saved_page_states)
+        for state in self._saved_page_states:
+            self.__dict__.update(state)
+            self.draw_page_number(num_pages)
+            canvas.Canvas.showPage(self)
+        canvas.Canvas.save(self)
+
+    def draw_page_number(self, page_count, position_x=285, position_y=5):
+        """
+        drow page number with custom format and position
+        """
+        if page_count > 0:
+            self.setFillGray(0.2)
+            self.setFont("Helvetica", 8.5)
+            self.drawRightString(
+                position_x * mm, position_y * mm, "Page %d/%d" %
+                (self._pageNumber, page_count))
 
 
 class NumberedCanvas(canvas.Canvas):
@@ -73,7 +139,7 @@ class NumberedCanvas(canvas.Canvas):
             canvas.Canvas.showPage(self)
         canvas.Canvas.save(self)
 
-    def draw_page_number(self, page_count):
+    def draw_page_number(self, page_count, position_x=205, position_y=5):
         """
         drow page number with custom format and position
         """
@@ -81,7 +147,7 @@ class NumberedCanvas(canvas.Canvas):
             self.setFillGray(0.2)
             self.setFont("Helvetica", 8.5)
             self.drawRightString(
-                205 * mm, 5 * mm, "Page %d/%d" %
+                position_x * mm, position_y * mm, "Page %d/%d" %
                 (self._pageNumber, page_count))
 
 
@@ -223,6 +289,34 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
         ('LINEBELOW', (0, 2), (-1, -1), 0.75, colors.lightgrey),
     ])
     story.append(table)
+    return story
+
+
+def preview_mecctable_story(training):
+    """
+    Story for previewing mecctable
+    """
+    story = []
+    # ############ USEFULL STUFF ################################
+    current_year = currentyear().code_year
+    object_links = ObjectsLink.objects.filter(id_training=training.id)
+    struct_object = StructureObject.objects.filter(
+        id__in=[e.id_child for e in object_links])
+
+    print(struct_object)
+    print(object_links)
+
+    # ############ TITLE ################################
+    red_title = "PREVISUALISATION du TABLEAU"
+    left_part = ["L_UP", "L_DOWN"]
+    right_part = ["RIGHT"]
+    header = [[(red_title)],
+            [Table(left_part), Table(right_part)],
+            ]
+    
+    t = Table(header)
+    story.append(t)
+
     return story
 
 

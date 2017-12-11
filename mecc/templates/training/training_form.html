@@ -127,7 +127,7 @@
 <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
 
 <button name="controle" class="btn-primary btn btn-sm" id="controle" type="Submit" >{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</button>
-<button name="preview" class="btn-primary btn btn-sm" id="previewMECC" type="Submit" >{% trans "Pré-visualiser les MECC" %}</button>
+<a name="preview" class="btn-primary btn btn-sm" id="previewMECC" href="{% url 'doc_gen:preview_mecctable'%}?training_id={{object.id}}">{% trans "Pré-visualiser les MECC" %}</a>
 </div>
 
 <style media="screen">
