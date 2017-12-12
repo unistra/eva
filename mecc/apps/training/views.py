@@ -384,7 +384,8 @@ def recover_everything(request, training_id):
 
         if e.has_parag_with_derog and old_rule.has_parag_with_derog:
             old_sp = SpecificParagraph.objects.filter(
-                rule_gen_id=old_rule.id, code_year=old_year)
+                rule_gen_id=old_rule.id, code_year=old_year,
+                training_id=old_training.id)
             for s in old_sp:
                 current_paragraph = paragraph_from_rules.filter(
                     origin_parag=s.paragraph_gen_id).first()
