@@ -200,7 +200,8 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         rules = Rule.objects.filter(code_year=uy.code_year).filter(
             is_edited__in=('O', 'X')).order_by('display_order')
 
-        t_uncompleted = t.filter(progress_rule="E") | t.filter(progress_table="E")
+        t_uncompleted = t.filter(
+            progress_rule="E") | t.filter(progress_table="E")
         t_completed_no_validation = t.filter(
             progress_rule="A", progress_table="A", date_val_cmp__isnull=True)
         t_validated_des_waiting = t.filter(
@@ -239,7 +240,8 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
                 train_count.update({r[1]: len(elm)})
 
         rules_count = {e: id_rules.count(e) for e in id_rules}
-        rules_sorted = sorted(rules_count, key=rules_count.get, reverse=True)[:10]
+        rules_sorted = sorted(
+            rules_count, key=rules_count.get, reverse=True)[:10]
 
         for r in rules_sorted:
             topten_d.append(
@@ -272,8 +274,10 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         data['first_cfvu'] = uy.date_expected
 
         for td in trainings_data:
-            td['degree_type_label'] = DegreeType.objects.get(id=td['degree_type'])
-            td['t_eci_count'] = t_eci.filter(degree_type=td['degree_type']).count()
+            td['degree_type_label'] = DegreeType.objects.get(
+                id=td['degree_type'])
+            td['t_eci_count'] = t_eci.filter(
+                degree_type=td['degree_type']).count()
             td['t_cc_ct_count'] = t_cc_ct.filter(
                 degree_type=td['degree_type']).count()
 
@@ -397,7 +401,7 @@ def alineas_export_excel(request):
     doc_name = "eva_alineas_%s" % currentyear().code_year
     output = BytesIO()
     book = xlsxwriter.Workbook(output)
-    sheet = book.add_worksheet(_('Dérogations'))
+    sheet = book.add_worksheet(_('Alineas'))
 
     # Formats
     bold = book.add_format({'bold': True})
@@ -417,29 +421,20 @@ def alineas_export_excel(request):
     ]
 
     # Datas fetching
-    data = []
-    derogations = SpecificParagraph.objects.filter(
+    alineas = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year)
 
-    if derogations:
+    if alineas:
 
-        clean_paragraph = ""
-        clean_motivation = ""
         clean_additionals = ""
+        data = []
+        for a in alineas:
 
-        for v in derogations:
-            cmp = Institute.objects.get(code=v.training.supply_cmp).label
-            try:
-                rule = Rule.objects.get(id=v.rule_gen_id)
-            except Rule.DoesNotExist:
-                pass
+            rule = Rule.objects.get(id=a.rule_gen_id)
+            cmp = a.training.supply_cmp_label
 
-            additionals = AdditionalParagraph.objects.filter(
-                code_year=currentyear().code_year,
-                rule_gen_id=rule.n_rule).values_list('text_additional_paragraph')
-            if additionals:
-                clean_additionals = BeautifulSoup(
-                    additionals[0][0], 'html.parser').get_text()
+            clean_additionals = BeautifulSoup(
+                a.text_additional_paragraph, 'html.parser').get_text()
 
             if rule:
                 if rule.is_eci and rule.is_ccct:
@@ -452,11 +447,11 @@ def alineas_export_excel(request):
                 regime = ""
 
             data.append([regime,
-                         v.rule_gen_id,
+                         a.rule_gen_id,
                          rule.label,
                          cmp,
-                         v.training.pk,
-                         v.training.label,
+                         a.training.pk,
+                         a.training.label,
                          " ".join(clean_additionals.split())
                          ])
 
@@ -476,7 +471,7 @@ def alineas_export_excel(request):
                 sheet.write(row, column, cell_data, main)
             row += 1
     else:
-        sheet.write('b1', _('Pas de données'), bold)
+        sheet.write('B1', _('Pas de données'), bold)
 
     book.close()
     output.seek(0)
@@ -593,7 +588,7 @@ def institute_alineas_export_excel(request, code):
     doc_name = "eva_alineas_%s" % currentyear().code_year
     output = BytesIO()
     book = xlsxwriter.Workbook(output)
-    sheet = book.add_worksheet(_('Dérogations'))
+    sheet = book.add_worksheet(_('Alineas'))
 
     # Formats
     bold = book.add_format({'bold': True})
@@ -613,29 +608,22 @@ def institute_alineas_export_excel(request, code):
     ]
 
     # Datas fetching
+
     data = []
-    derogations = SpecificParagraph.objects.filter(
-        code_year=currentyear().code_year, training__supply_cmp=code)
+    alineas = AdditionalParagraph.objects.filter(
+        code_year=currentyear().code_year,
+        training__supply_cmp=code)
 
-    if derogations:
-
-        clean_paragraph = ""
-        clean_motivation = ""
+    if alineas:
         clean_additionals = ""
 
-        for v in derogations:
-            cmp = Institute.objects.get(code=v.training.supply_cmp).label
-            try:
-                rule = Rule.objects.get(id=v.rule_gen_id)
-            except Rule.DoesNotExist:
-                pass
+        for a in alineas:
 
-            additionals = AdditionalParagraph.objects.filter(
-                code_year=currentyear().code_year,
-                rule_gen_id=rule.n_rule).values_list('text_additional_paragraph')
-            if additionals:
-                clean_additionals = BeautifulSoup(
-                    additionals[0][0], 'html.parser').get_text()
+            rule = Rule.objects.get(id=a.rule_gen_id)
+            cmp = a.training.supply_cmp_label
+
+            clean_additionals = BeautifulSoup(
+                a.text_additional_paragraph, 'html.parser').get_text()
 
             if rule:
                 if rule.is_eci and rule.is_ccct:
@@ -648,11 +636,11 @@ def institute_alineas_export_excel(request, code):
                 regime = ""
 
             data.append([regime,
-                         v.rule_gen_id,
+                         a.rule_gen_id,
                          rule.label,
                          cmp,
-                         v.training.pk,
-                         v.training.label,
+                         a.training.pk,
+                         a.training.label,
                          " ".join(clean_additionals.split())
                          ])
 
@@ -672,7 +660,7 @@ def institute_alineas_export_excel(request, code):
                 sheet.write(row, column, cell_data, main)
             row += 1
     else:
-        sheet.write('b1', _('Pas de données'), bold)
+        sheet.write('B1', _('Pas de données'), bold)
 
     book.close()
     output.seek(0)
