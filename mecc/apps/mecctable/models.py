@@ -74,7 +74,8 @@ class StructureObject(models.Model):
 # ROF prefixed are synchronized => no input for them
     ROF_ref = models.CharField(_(
         "Référence de l'objet ROF"), max_length=20, null=True, blank=True)
-    ROF_code_year = models.CharField(_("Année de l'objet ROF"), max_length=20, blank=True, null=True)
+    ROF_code_year = models.CharField(
+        _("Année de l'objet ROF"), max_length=20, blank=True, null=True)
     ROF_nature = models.CharField(
         verbose_name=_("Type de l'objet ROF"),
         max_length=2, null=True, blank=True)
@@ -125,6 +126,17 @@ class StructureObject(models.Model):
         else:
             return ""
 
+    @property
+    def get_respens_name_small(self):
+        """
+        Return last_name and first_name of respens
+        """
+        if self.RESPENS_id:
+            user = User.objects.get(username=self.RESPENS_id)
+            return user.first_name[:1] + ". " + user.last_name
+        else:
+            return ""
+
 
 class ObjectsLink(models.Model):
     """
@@ -168,6 +180,7 @@ class ObjectsLink(models.Model):
             return parent.nature
         else:
             return None
+
 
 class Exam(models.Model):
     """
@@ -244,10 +257,7 @@ class Exam(models.Model):
         super(Exam, self).save(*args, **kwargs)
 
     @property
-    def as_json(self):
-        """
-        In order to give us a custom json of each object with ease
-        """
+    def text_duration(self):
         duration_h = self.exam_duration_h if self.exam_duration_h else None
         duration_m = self.exam_duration_m if self.exam_duration_m else None
         text_duration = ""
@@ -257,7 +267,13 @@ class Exam(models.Model):
             text_duration = "%02d:%02d" % (duration_h, 0)
         if not duration_h and duration_m:
             text_duration = "%02d:%02d" % (0, duration_m)
+        return text_duration
 
+    @property
+    def as_json(self):
+        """
+        In order to give us a custom json of each object with ease
+        """
         return dict(
             id=self.id,
             code_year=self.code_year,
@@ -268,7 +284,7 @@ class Exam(models.Model):
             type_exam=self.type_exam,
             label=self.label,
             additionnal_info=self.additionnal_info,
-            exam_duration=text_duration,
+            exam_duration=self.text_duration,
             convocation=True if self.convocation == "O" else False,
             type_ccct=self.type_ccct,
             coefficient=self.coefficient,
