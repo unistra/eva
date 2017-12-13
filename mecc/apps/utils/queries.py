@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from mecc.apps.rules.models import Rule
 from mecc.apps.years.models import UniversityYear
+from mecc.apps.mecctable.models import StructureObject
 
 
 def rules_since_ever(degree_type_code):
@@ -57,3 +59,55 @@ def institute_staff(institute_code):
     return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)
 
 
+def get_mecc_table_order(
+        link, struc_respens, current_structures,
+        current_links, current_exams, all_exam=False):
+    """
+    Recurse until end of time
+    """
+    links = not isinstance(link, (list, tuple)) and [link] or link
+    stuff = []
+
+    def get_childs(link, is_imported, user_can_edit=False, rank=0):
+        """
+        Looking for children in order to recurse on them
+        """
+        rank += 1
+        not_yet_imported = False
+        try:
+            structure = current_structures.get(id=link.id_child)
+            user_can_edit = True if structure.id in struc_respens else user_can_edit
+        except ObjectDoesNotExist:
+            not_yet_imported = True
+            structure = StructureObject.objects.get(id=link.id_child)
+        children = current_links.filter(
+            id_parent=link.id_child).order_by('order_in_child')
+        imported = True if link.is_imported or is_imported else False
+        # ADDING FUN WITH EXAMS
+        # Get 3 first exams_1 & exam_2
+        exams_1 = current_exams.filter(
+            id_attached=structure.id, session="1")
+        exams_2 = current_exams.filter(
+            id_attached=structure.id, session="2")
+        items = {
+            "link": link,
+            'structure': structure,
+            'is_imported': imported,
+            'has_childs': True if len(children) > 0 else False,
+            'children': [get_childs(
+                e, imported, user_can_edit=user_can_edit, rank=rank) for e in children],
+            'rank': rank - 1,
+            'loop': range(0, rank - 1),
+            'not_yet_imported': not_yet_imported,
+            'exams_1': exams_1 if all_exam else exams_1[:3],
+            'exams_1_count': True if exams_1.count() > 3 else False,
+            'exams_2': exams_2 if all_exam else exams_2[:3],
+            'exams_2_count': True if exams_2.count() > 3 else False,
+            'can_be_edited': True if user_can_edit else False,
+        }
+        return items
+    for link in links:
+        imported = True if link.is_imported else False
+        stuff.append(get_childs(link, imported))
+
+    return stuff

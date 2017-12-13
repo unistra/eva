@@ -16,7 +16,7 @@ from django.core.mail import EmailMultiAlternatives
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
-from mecc.apps.utils.queries import currentyear
+from mecc.apps.utils.queries import currentyear, get_mecc_table_order
 from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
@@ -627,9 +627,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
         'order_in_child').distinct()
 
-    so = set(e.cmp_supply_id for e in current_structures.filter(mutual=True))
+    struc_o = set(e.cmp_supply_id for e in current_structures.filter(mutual=True))
 
-    data['all_cmp'] = Institute.objects.filter(code__in=so)
+    data['all_cmp'] = Institute.objects.filter(code__in=struc_o)
     data['training'] = training = Training.objects.get(id=id)
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
@@ -638,60 +638,11 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     respens_struct = [e.id for e in current_structures.filter(
         RESPENS_id=request.user.username)]
 
-    def recurse(link):
-        """
-        Recurse until end of time
-        """
-        links = not isinstance(link, (list, tuple)) and [link] or link
-        stuff = []
-
-        def get_childs(link, is_imported, user_can_edit=False, rank=0):
-            """
-            Looking for children in order to recurse on them
-            """
-            rank += 1
-            not_yet_imported = False
-            try:
-                structure = current_structures.get(id=link.id_child)
-                user_can_edit = True if structure.id in respens_struct else user_can_edit
-            except ObjectDoesNotExist:
-                not_yet_imported = True
-                structure = StructureObject.objects.get(id=link.id_child)
-            children = current_links.filter(
-                id_parent=link.id_child).order_by('order_in_child')
-            imported = True if link.is_imported or is_imported else False
-            # ADDING FUN WITH EXAMS
-            # Get 3 first exams_1 & exam_2
-            exams_1 = current_exams.filter(
-                id_attached=structure.id, session="1")
-            exams_2 = current_exams.filter(
-                id_attached=structure.id, session="2")
-            items = {
-                "link": link,
-                'structure': structure,
-                'is_imported': imported,
-                'has_childs': True if len(children) > 0 else False,
-                'children': [get_childs(
-                    e, imported, user_can_edit=user_can_edit, rank=rank) for e in children],
-                'rank': rank - 1,
-                'loop': range(0, rank - 1),
-                'not_yet_imported': not_yet_imported,
-                'exams_1': exams_1[:3],
-                'exams_1_count': True if exams_1.count() > 3 else False,
-                'exams_2': exams_2[:3],
-                'exams_2_count': True if exams_2.count() > 3 else False,
-                'can_be_edited': True if user_can_edit else False,
-            }
-            return items
-        for link in links:
-            imported = True if link.is_imported else False
-            stuff.append(get_childs(link, imported))
-
-        return stuff
-
     user_profiles = request.user.meccuser.profile.all()
-    data['la_liste'] = aaa = recurse([e for e in root_link])
-    print(aaa)
+    data['la_liste'] = get_mecc_table_order(
+        [e for e in root_link], respens_struct, current_structures,
+        current_links, current_exams, all_exam=True)
+
     input_is_open = training.input_opening[0] in ['1', '3']
     is_powerfull = True if user_profiles.filter(cmp=training.supply_cmp).filter(
         code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']) else False
