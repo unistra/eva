@@ -133,7 +133,7 @@ class StructureObject(models.Model):
         """
         if self.RESPENS_id:
             user = User.objects.get(username=self.RESPENS_id)
-            return user.first_name[:1] + ". " + user.last_name
+            return user.first_name[:1] + ". " + user.last_name.title()
         else:
             return ""
 
