@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
-from .views import home, trainings_for_target, available_target, preview_mecctable
+from .views import home, trainings_for_target, available_target, \
+    preview_mecctable
 
 urlpatterns = [
     url(r'^start/$', home, name='home'),

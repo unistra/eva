@@ -20,14 +20,13 @@ from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
 import json
 
 
-
 def preview_mecctable(request):
     """
     View getting all data to generate asked pdf
     """
     title = "PREVISUALISATION du TABLEAU"
     training = Training.objects.filter(id=request.GET.get('training_id')).first()
-    response, doc = setting_up_pdf(title, portrait=False)
+    response, doc = setting_up_pdf(title, margin=32, portrait=False)
     if training:
         story = preview_mecctable_story(training)
     else:
@@ -35,7 +34,7 @@ def preview_mecctable(request):
     doc.build(
         story,
         onFirstPage=canvas_for_preview_mecctable,
-        onLaterPages=canvas_for_mecctable,
+        onLaterPages=canvas_for_preview_mecctable,
         canvasmaker=NumberedCanvas_landscape)
     return response
 

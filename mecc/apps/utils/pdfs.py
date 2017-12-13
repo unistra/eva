@@ -12,17 +12,18 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.pagesizes import A4, landscape, A2
 
 
 from mecc.apps.institute.models import Institute
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import Training, SpecificParagraph
-from mecc.apps.utils.queries import rules_degree_for_year
+from mecc.apps.utils.queries import rules_degree_for_year, currentyear, \
+    get_mecc_table_order
 from mecc.apps.years.models import UniversityYear
+from reportlab.platypus.flowables import Flowable
 
-from mecc.apps.utils.queries import currentyear
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -31,13 +32,35 @@ styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
+class verticalText(Flowable):
+    '''
+    Rotates a text in a table cell.
+    '''
+
+    def __init__(self, text):
+        Flowable.__init__(self)
+        self.text = text
+
+    def draw(self):
+        canvas = self.canv
+        canvas.rotate(90)
+        fs = canvas._fontsize
+        canvas.translate(1, -fs / 1.2)  # canvas._leading?
+        canvas.drawString(0, 0, self.text)
+
+    def wrap(self, aW, aH):
+        canv = self.canv
+        fn, fs = canv._fontname, canv._fontsize
+        return canv._leading, 1 + canv.stringWidth(self.text, fn, fs)
+
+
 def setting_up_pdf(title, margin=72, portrait=True):
     """
     Create the HttpResponse object with the appropriate PDF headers.
     """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = ('filename="%s.pdf"' % title)
-    page_size = A4 if portrait else landscape(A4)
+    page_size = A4 if portrait else landscape(A2)
     doc = SimpleDocTemplate(response, pagesize=page_size,
                             topMargin=margin, bottomMargin=18)
     return response, doc
@@ -67,7 +90,7 @@ def custom_watermark(canvas, watermak_string, font='Helvetica', font_size=45, po
     canvas.restoreState()
 
 
-def canvas_for_mecctable(canvas):
+def canvas_for_mecctable(canvas, doc):
     """
     canvas for mecctable: set to landscape with watermark
     """
@@ -80,7 +103,6 @@ def canvas_for_preview_mecctable(canvas, doc):
     """
     custom_watermark(canvas, "Prévisualisation", rotation=40,
                      font_size=40, position_x=500, position_y=-75)
-
 
 
 class NumberedCanvas_landscape(canvas.Canvas):
@@ -299,22 +321,138 @@ def preview_mecctable_story(training):
     story = []
     # ############ USEFULL STUFF ################################
     current_year = currentyear().code_year
-    object_links = ObjectsLink.objects.filter(id_training=training.id)
-    struct_object = StructureObject.objects.filter(
-        id__in=[e.id_child for e in object_links])
+    # struct_object = StructureObject.objects.filter(
+    #     id__in=[e.id_child for e in object_links])
+    current_structures = StructureObject.objects.filter(code_year=current_year)
+    current_links = ObjectsLink.objects.filter(code_year=current_year)
+    current_exams = Exam.objects.filter(code_year=current_year)
+    root_link = current_links.filter(
+        id_parent='0', id_training=training.id).order_by(
+        'order_in_child').distinct()
 
-    print(struct_object)
-    print(object_links)
+    links = get_mecc_table_order([e for e in root_link], [],
+                                 current_structures, current_links,
+                                 current_exams)
+
+    big_table = [['OBJETS', '', '', '', '', '', 'EPREUVES'],
+                 ['Intitulé', '', '', '', '', '','Session principale','', '', '', '', '','', 'Session de rattrapage'],
+                 ['Intitulé',
+                  'Responsable',
+                  'Référence APOGEE',
+                  verticalText('Crédit ECTS'),
+                  verticalText('Coefficient'),
+                  verticalText('Note seuil'),
+                  verticalText('Coefficient'),
+                  'Intitulé',
+                  verticalText('Type'),
+                  verticalText('Durée'),
+                  verticalText('Convocation'),
+                  verticalText('Note seuil'),
+                  verticalText('Report session 2 à partir de ...'),
+                  verticalText('Coefficient'),
+                  'Intitulé',
+                  verticalText('Type'),
+                  verticalText('Durée'),
+                  verticalText('Note seuil')],
+                 ]
+
+    title_length = len(big_table)
+
+    def write_the_table(what):
+        """
+        Recursively add data in strucuture
+        """
+        struct = what.get('structure')
+        link = what.get('link')
+        exams_1 = what.get('exams_1')
+        exams_2 = what.get('exams_2')
+
+        def table_exam(exam_list, exam1=True):
+            exam_table = []
+            for e in exam_list:
+                regular = [
+                    '{0:.2f}'.format(e.coefficient),
+                    e.label,
+                    e.get_type_exam_display(),
+                    e.text_duration,
+
+                ]
+                if exam1:
+                    regular.extend([
+                        e.convocation,
+                        e.eliminatory_grade,
+                        e.threshold_session_2,
+                    ])
+                else:
+                    regular.extend([
+                        e.eliminatory_grade,
+
+                    ])
+                exam_table.append(regular)
+
+            exam_table = exam_table if exam_table else [
+                ['', '', '', '', '', '', '']] if exam1 else[['', '', '', '', '']]
+            t = Table(exam_table)
+            t.setStyle(TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
+                                   ]))
+            return t
+
+        big_table.append([
+            "%s%s " % ("    " * what.get('rank'), struct.label),
+            struct.get_respens_name_small,
+            struct.ROF_ref,
+            struct.ECTS_credit if struct.ECTS_credit else '-',
+            '{0:.0f}'.format(link.coefficient) if link.coefficient else '',
+            link.eliminatory_grade,
+            table_exam(exams_1), '', '', '', '', '', '',
+            table_exam(exams_2, exam1=False),
+
+        ])
+        for e in what.get('children'):
+            write_the_table(e)
+
+    for e in links:
+        write_the_table(e)
 
     # ############ TITLE ################################
     red_title = "PREVISUALISATION du TABLEAU"
-    left_part = ["L_UP", "L_DOWN"]
-    right_part = ["RIGHT"]
-    header = [[(red_title)],
-            [Table(left_part), Table(right_part)],
-            ]
-    
-    t = Table(header)
+
+    t = Table(big_table)
+
+    # ############ STYLE ################################
+
+    style_table = [
+        # BASIC
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        # SPAN
+        ('SPAN', (0, 0), (5, 0)),
+
+    ]
+
+
+
+                #    
+                #    ('SPAN', (6, 0), (-1, 0)),
+                #    ('BACKGROUND', (6, 0), (-1, 0), colors.lightblue),
+                #    ('SPAN', (0, 1), (5, 1)),
+                #    ('SPAN', (6, 1), (12, 1)),
+                #    ('BACKGROUND', (6, 1), (12, 2), colors.lightgrey),
+                #    ('SPAN', (13, 1), (-1, 1)),
+                #    ('SPAN', (6, 3), (12, 3)),
+                #    ('BACKGROUND', (13, 1), (-1, 2), colors.grey),
+                #    #    ('SPAN', (6, 0), (-1, 0)),
+                #    #    ('BACKGROUND', (6, 0), (-1, 0), colors.lightblue),
+
+                #    ('BACKGROUND', (6, 3), (12, -1), colors.red),
+                #    #    ('BACKGROUND', (14, 2), (-1, 2), colors.pink),
+
+    for e in range(title_length, len(big_table)):
+        style_table.append(('SPAN', (6, e), (12, e)))
+        style_table.append(('SPAN', (13, e), (-1, e)))
+
+    t.setStyle(TableStyle(style_table))
     story.append(t)
 
     return story
@@ -601,14 +739,14 @@ def block_derogations(title, derogations, story):
                _('Liste des composantes')]
 
     style = TableStyle([
-                       # ('VALIGN', (0, -1), (-1, -1), 'MIDDLE'),
-                       ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                       ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                       ('BACKGROUND', (0, 0), (2, 0), colors.lightgrey),
-                       # ('ALIGN', (1, -1), (-1, -1), 'CENTER'),
-                       # ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                       ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                       ])
+        # ('VALIGN', (0, -1), (-1, -1), 'MIDDLE'),
+        ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+        ('BACKGROUND', (0, 0), (2, 0), colors.lightgrey),
+        # ('ALIGN', (1, -1), (-1, -1), 'CENTER'),
+        # ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ])
 
     colWidth = (200, 90, 260)
 
