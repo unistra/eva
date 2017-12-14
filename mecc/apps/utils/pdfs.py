@@ -314,6 +314,28 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
     return story
 
 
+def table_title_trainings_info(training, in_two_part=True, story=[]):
+    """
+    Create table title for training used in preview mecc and model A and others
+    """
+    # ############ USEFULL STUFF ################################
+
+    # ############ TABLE STRUCTURE ################################
+
+    table = ['', ''] if in_two_part else ['']
+
+    line_2 = "<para><strong>%s : </strong>%s </para>" % (
+        _('Responsable(s)'), [e for e in training.get_respform_names])
+    primary_table = [
+        [training.label, "%s - %s" % (training.get_MECC_type_display(),
+                                      training.get_session_type_display()), training.ref_si_scol],
+        [Paragraph(line_2, styles['Normal'])]
+    ]
+
+
+    final_table = Table(primary_table)
+    return final_table
+
 def preview_mecctable_story(training, story=[]):
     """
     Story for previewing mecctable
@@ -322,8 +344,6 @@ def preview_mecctable_story(training, story=[]):
 
     # ############ USEFULL STUFF ################################
     current_year = currentyear().code_year
-    # struct_object = StructureObject.objects.filter(
-    #     id__in=[e.id_child for e in object_links])
     current_structures = StructureObject.objects.filter(code_year=current_year)
     current_links = ObjectsLink.objects.filter(code_year=current_year)
     current_exams = Exam.objects.filter(code_year=current_year)
@@ -335,10 +355,28 @@ def preview_mecctable_story(training, story=[]):
                                  current_structures, current_links,
                                  current_exams, all_exam=True)
 
-    # ############ TABLE STRUCUTURE ################################
+    # ############ TITLE STUFF ################################
 
-    # Title
-    red_title = "PREVISUALISATION du TABLEAU"
+    story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+        red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
+
+    title_training_table = table_title_trainings_info(training)
+
+    story.append(title_training_table)
+
+    story.append(Paragraph("<para fontSize=12 firstLineIndent=0 spaceAfter=14 textColor=\
+        darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal']))
+    story.append(Spacer(0, 12))
+
+    # ############ TABLE STRUCUTURE ################################
+    col_width = [6 * cm, 2.25 * cm, 1.8 * cm, .6 * cm, .6 * cm, .6 * cm]
+    widht_exam_1 = [0.85 * cm, 4 * cm, .6 *
+                    cm, 1.1 * cm, .6 * cm, .7 * cm, .7 * cm, ]
+    widht_exam_2 = [0.85 * cm, 4 * cm, .6 * cm, 1.1 * cm, .7 * cm]
+    widht_exams = widht_exam_1
+    widht_exams.extend(widht_exam_2)
+    col_width.extend(widht_exam_1)
+    col_width.extend(widht_exam_2)
 
     # - Ugly but tables are almost always ugly
     big_table = [['OBJETS', '', '', '', '', '', 'EPREUVES'],
@@ -414,7 +452,7 @@ def preview_mecctable_story(training, story=[]):
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info + "</para\
                         >" if ex_1.additionnal_info is not None else "",
-                                              styles['SmallNormal'])],
+                                                   styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     ex_1.convocation if ex_1 is not None else '',
@@ -429,7 +467,7 @@ def preview_mecctable_story(training, story=[]):
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_2.additionnal_info + "</para\
                         >" if ex_2.additionnal_info is not None else "",
-                                              styles['SmallNormal'])],
+                                                   styles['SmallNormal'])],
                     ex_2.type_exam if ex_2 is not None else '',
                     ex_2.text_duration if ex_2 is not None else '',
                     ex_2.eliminatory_grade if ex_2 is not None else '',
@@ -437,9 +475,12 @@ def preview_mecctable_story(training, story=[]):
                 ex_1_table.extend(ex_2_table)
                 exam_table.append(ex_1_table)
             exam_table = exam_table if len(exam_table) > 0 else exams_empty
-            inner_table = Table(exam_table, colWidths=widht_exams, rowHeights=None)
             if exam_table == exams_empty:
-                print('je suis tout vide')
+                # TODO: calculate empty space to set rowHeights in order to
+                # avoid blank in table
+                pass
+            inner_table = Table(
+                exam_table, colWidths=widht_exams, rowHeights=None)
             inner_table.setStyle(TableStyle(
                 [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
                  ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),

@@ -88,7 +88,8 @@ class Training(models.Model):
             institutes=[{'label': e.label, 'code': e.code}
                         for e in self.institutes.all()],
             supply_cmp=self.supply_cmp,
-            resp_formations=[e.user.username for e in self.resp_formations.all()],
+            resp_formations=[
+                e.user.username for e in self.resp_formations.all()],
             n_train=self.n_train,
             get_MECC_type_display=self.get_MECC_type_display(),
         )
@@ -134,6 +135,13 @@ class Training(models.Model):
         Return list of respform id
         """
         return [e.id for e in self.resp_formations.all()]
+
+    @property
+    def get_respform_names(self):
+        """
+        Return list of respform name
+        """
+        return ["%s %s" % (e.user.first_name.title(), e.user.last_name.title()) for e in self.resp_formations.all()]
 
     @property
     def list_editable_pple(self):
