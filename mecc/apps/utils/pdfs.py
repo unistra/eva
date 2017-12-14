@@ -333,8 +333,17 @@ def preview_mecctable_story(training, story=[]):
                                  current_structures, current_links,
                                  current_exams)
 
+    # ############ TABLE STRUCUTURE ################################
+
+    # Title
+    red_title = "PREVISUALISATION du TABLEAU"
+
+    # - Ugly but tables are almost always ugly
     big_table = [['OBJETS', '', '', '', '', '', 'EPREUVES'],
-                 ['Intitulé', 'Responsable', Paragraph('Référence APOGEE', styles['CenterBalek']),
+                 ['Intitulé', 'Responsable', Paragraph(
+                     '<para textColor=steelblue><strong>Référence APOGEE \
+                     <br></br><br></br> Référence ROF</strong></para>',
+                     styles['CenterBalek']),
                   verticalText('Crédit ECTS'), verticalText('Coefficient'),
                   verticalText('Note seuil'), 'Session principale',
                      '', '', '', '', '', '', 'Session de rattrapage'],
@@ -350,7 +359,7 @@ def preview_mecctable_story(training, story=[]):
                   verticalText('Durée'),
                   verticalText('Convocation'),
                   verticalText('Note seuil'),
-                  verticalText('Report session 2'),
+                  verticalText(' Report session 2 '),
                   verticalText('Coefficient'),
                   'Intitulé',
                   verticalText('Type'),
@@ -358,27 +367,39 @@ def preview_mecctable_story(training, story=[]):
                   verticalText('Note seuil')],
                  ]
 
-    col_width = [6 * cm, 2.5 * cm, 2 * cm, .6 * cm, .6 * cm, .6 * cm]
-    widht_exam_1 = [1 * cm, 3.25 * cm, .6 *
-                    cm, 1.2 * cm, .6 * cm, .8 * cm, .8 * cm, ]
-    widht_exam_2 = [1 * cm, 3.25 * cm, .6 * cm, 1.2 * cm, .8 * cm]
+    col_width = [6 * cm, 2.25 * cm, 1.8 * cm, .6 * cm, .6 * cm, .6 * cm]
+    widht_exam_1 = [0.85 * cm, 4 * cm, .6 *
+                    cm, 1.1 * cm, .6 * cm, .7 * cm, .7 * cm, ]
+    widht_exam_2 = [0.85 * cm, 4 * cm, .6 * cm, 1.1 * cm, .7 * cm]
     widht_exams = widht_exam_1
     widht_exams.extend(widht_exam_2)
     col_width.extend(widht_exam_1)
     col_width.extend(widht_exam_2)
 
     title_length = len(big_table)
+    global count_row
+    count_row = 2
+    background_blue = []
+    bold_text = []
+
+    # ############ POPULATING TABLE ################################
 
     def write_the_table(what):
         """
         Recursively add data in strucuture
         """
+        global count_row
+        count_row += 1
+
+        if what.get('rank') == 0:
+            background_blue.append(count_row)
+        if what.get('rank') == 1:
+            bold_text.append(count_row)
+
         struct = what.get('structure')
         link = what.get('link')
         exams_1 = what.get('exams_1')
         exams_2 = what.get('exams_2')
-        exam_1_empty = [['', '', '', '', '', '', '']]
-        exam_2_empty = [['', '', '', '', '']]
         exams_empty = [['', '', '', '', '', '', '', '', '', '', '', '']]
 
         def write_exams(list_1, list_2):
@@ -387,8 +408,11 @@ def preview_mecctable_story(training, story=[]):
                 ex_1_table = [
                     str('{0:.2f}'.format(ex_1.coefficient)
                         ) if ex_1 is not None else '',
-                    Paragraph(ex_1.label, styles[
-                              'Normal']) if ex_1 is not None else '',
+                   [Paragraph(ex_1.label if ex_1 is not None else '', styles[
+                        'Normal']), Paragraph("<para textColor=grey\
+                        >" + ex_1.additionnal_info + "</para\
+                        >" if ex_1.additionnal_info is not None else "",
+                        styles['Normal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     ex_1.convocation if ex_1 is not None else '',
@@ -399,52 +423,56 @@ def preview_mecctable_story(training, story=[]):
                 ex_2_table = [
                     str('{0:.2f}'.format(ex_2.coefficient)
                         ) if ex_2 is not None else '',
-                    Paragraph(ex_2.label, styles[
-                              'Normal']) if ex_2 is not None else '',
+                    [Paragraph(ex_2.label if ex_2 is not None else '', styles[
+                        'Normal']), Paragraph("<para textColor=grey\
+                        >" + ex_2.additionnal_info + "</para\
+                        >" if ex_2.additionnal_info is not None else "",
+                        styles['Normal'])],
                     ex_2.type_exam if ex_2 is not None else '',
                     ex_2.text_duration if ex_2 is not None else '',
                     ex_2.eliminatory_grade if ex_2 is not None else '',
-                ]
+                ] if ex_2 is not None else ['', '', '', '', '']
                 ex_1_table.extend(ex_2_table)
                 exam_table.append(ex_1_table)
             exam_table = exam_table if len(exam_table) > 0 else exams_empty
-            print(widht_exams)
             inner_table = Table(exam_table, colWidths=widht_exams)
             inner_table.setStyle(TableStyle(
                 [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
+                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                  ]))
             return inner_table
 
-        def table_exam(exam_list, exam1=True):
-            exam_table = []
-            for e in exam_list:
-                regular = [
-                    '{0:.2f}'.format(e.coefficient),
-                    Paragraph(e.label, styles['Normal']),
-                    e.type_exam,
-                    e.text_duration,
+        # def table_exam(exam_list, exam1=True):
+        #     exam_table = []
+        #     for e in exam_list:
+        #         regular = [
+        #             '{0:.2f}'.format(e.coefficient),
+        #             Paragraph(e.label, styles['Normal']),
+        #             e.type_exam,
+        #             e.text_duration,
 
-                ]
-                if exam1:
-                    regular.extend([
-                        e.convocation,
-                        e.eliminatory_grade,
-                        e.threshold_session_2,
-                    ])
-                else:
-                    regular.extend([
-                        e.eliminatory_grade,
+        #         ]
+        #         if exam1:
+        #             regular.extend([
+        #                 e.convocation,
+        #                 e.eliminatory_grade,
+        #                 e.threshold_session_2,
+        #             ])
+        #         else:
+        #             regular.extend([
+        #                 e.eliminatory_grade,
 
-                    ])
-                exam_table.append(regular)
+        #             ])
+        #         exam_table.append(regular)
 
-            exam_table = exam_table if exam_table else exam_1_empty if exam1 else exam_2_empty
-            inner_table = Table(
-                exam_table, colWidths=widht_exam_1 if exam1 else widht_exam_2)
-            inner_table.setStyle(TableStyle(
-                [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
-                 ]))
-            return inner_table
+        #     exam_table = exam_table if exam_table else exam_1_empty if exam1 else exam_2_empty
+        #     inner_table = Table(
+        #         exam_table, colWidths=widht_exam_1 if exam1 else widht_exam_2)
+        #     inner_table.setStyle(TableStyle(
+        #         [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
+        #          ]))
+        #     return inner_table
 
         big_table.append([
             "%s%s " % ("    " * what.get('rank'), struct.label),
@@ -464,14 +492,9 @@ def preview_mecctable_story(training, story=[]):
     for e in links:
         write_the_table(e)
 
-    # ############ TITLE ################################
-    red_title = "PREVISUALISATION du TABLEAU"
-
-    t = Table(big_table, colWidths=col_width)
-    # t = Table(big_table)
 
     # ############ STYLE ################################
-
+    # Static style
     style_table = [
         # BASIC
         ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
@@ -493,7 +516,6 @@ def preview_mecctable_story(training, story=[]):
         ('SPAN', (5, 2), (5, 1)),
         # BACKGROUND
         ('BACKGROUND', (6, 0), (-1, 0), colors.steelblue),
-        # ('BACKGROUND', (6, 0), (-1, 0), colors.lightsteelblue),
         ('BACKGROUND', (6, 1), (12, 2), colors.lightgrey),
         ('BACKGROUND', (13, 1), (-1, 2), colors.grey),
         # PADDING
@@ -501,13 +523,28 @@ def preview_mecctable_story(training, story=[]):
         ('RIGHTPADDING', (0, 0), (-1, -1), 0),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ('TOPPADDING', (0, 0), (-1, -1), 0),
+        # BOLD
+        ('FACE', (0, 0), (5, 2), 'Helvetica-Bold'),
+        ('FACE', (6, 0), (-1, 1), 'Helvetica-Bold'),
+        # TEXT COLOR
+        ('TEXTCOLOR', (6, 0), (-1, 0), colors.white),
     ]
-
+    # Dynamic style
     for e in range(title_length, len(big_table)):
         style_table.append(('SPAN', (6, e), (-1, e)))
 
-    t.setStyle(TableStyle(style_table))
-    story.append(t)
+    for e in background_blue:
+        style_table.append(
+            ('BACKGROUND', (0, e), (-1, e), colors.lightsteelblue))
+        style_table.append(('FACE', (0, e), (0, e), 'Helvetica-Bold'))
+
+    for e in bold_text:
+        style_table.append(('FACE', (0, e), (0, e), 'Helvetica-Bold'))
+
+    # ############ CREATE TABLE ################################
+    final_table = Table(big_table, colWidths=col_width,
+                        style=style_table, repeatRows=3)
+    story.append(final_table)
 
     return story
 
