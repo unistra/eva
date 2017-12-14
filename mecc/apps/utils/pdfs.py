@@ -29,7 +29,7 @@ styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
-styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=9))
+styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=8))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
@@ -436,16 +436,13 @@ def preview_mecctable_story(training, story=[]):
                 ex_1_table.extend(ex_2_table)
                 exam_table.append(ex_1_table)
             exam_table = exam_table if len(exam_table) > 0 else exams_empty
-            inner_table = Table(exam_table, colWidths=widht_exams)
+            inner_table = Table(exam_table, colWidths=widht_exams, rowHeights=None)
+            if exam_table == exams_empty:
+                print('je suis tout vide')
             inner_table.setStyle(TableStyle(
                 [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
                  ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                  ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                 # PADDING
-                 ('LEFTPADDING', (0, 0), (-1, -1), 0),
-                 ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-                 ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-                 ('TOPPADDING', (0, 0), (-1, -1), 0),
                  ]))
             return inner_table
 
@@ -510,7 +507,7 @@ def preview_mecctable_story(training, story=[]):
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('ALIGN', (0, 0), (-1, 2), 'CENTER'),
         ('ALIGN', (3, 3), (-1, -1), 'CENTER'),
-        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
 
         # SPAN
         ('SPAN', (0, 0), (5, 0)),
