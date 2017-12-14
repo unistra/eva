@@ -30,6 +30,7 @@ styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=8))
+styles.add(ParagraphStyle(name='SmallNormal', fontSize=8))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
@@ -410,10 +411,10 @@ def preview_mecctable_story(training, story=[]):
                     str('{0:.2f}'.format(ex_1.coefficient)
                         ) if ex_1 is not None else '',
                     [Paragraph(ex_1.label if ex_1 is not None else '', styles[
-                        'Normal']), Paragraph("<para textColor=grey\
+                        'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info + "</para\
                         >" if ex_1.additionnal_info is not None else "",
-                                              styles['Normal'])],
+                                              styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     ex_1.convocation if ex_1 is not None else '',
@@ -425,10 +426,10 @@ def preview_mecctable_story(training, story=[]):
                     str('{0:.2f}'.format(ex_2.coefficient)
                         ) if ex_2 is not None else '',
                     [Paragraph(ex_2.label if ex_2 is not None else '', styles[
-                        'Normal']), Paragraph("<para textColor=grey\
+                        'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_2.additionnal_info + "</para\
                         >" if ex_2.additionnal_info is not None else "",
-                                              styles['Normal'])],
+                                              styles['SmallNormal'])],
                     ex_2.type_exam if ex_2 is not None else '',
                     ex_2.text_duration if ex_2 is not None else '',
                     ex_2.eliminatory_grade if ex_2 is not None else '',
@@ -443,39 +444,9 @@ def preview_mecctable_story(training, story=[]):
                 [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
                  ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                  ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                 ('FONTSIZE', (0, 0), (-1, -1), 8),
                  ]))
             return inner_table
-
-        # def table_exam(exam_list, exam1=True):
-        #     exam_table = []
-        #     for e in exam_list:
-        #         regular = [
-        #             '{0:.2f}'.format(e.coefficient),
-        #             Paragraph(e.label, styles['Normal']),
-        #             e.type_exam,
-        #             e.text_duration,
-
-        #         ]
-        #         if exam1:
-        #             regular.extend([
-        #                 e.convocation,
-        #                 e.eliminatory_grade,
-        #                 e.threshold_session_2,
-        #             ])
-        #         else:
-        #             regular.extend([
-        #                 e.eliminatory_grade,
-
-        #             ])
-        #         exam_table.append(regular)
-
-        #     exam_table = exam_table if exam_table else exam_1_empty if exam1 else exam_2_empty
-        #     inner_table = Table(
-        #         exam_table, colWidths=widht_exam_1 if exam1 else widht_exam_2)
-        #     inner_table.setStyle(TableStyle(
-        #         [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
-        #          ]))
-        #     return inner_table
 
         big_table.append([
             "%s%s " % ("    " * what.get('rank'), struct.label),
