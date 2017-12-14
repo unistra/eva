@@ -126,7 +126,7 @@ def has_cmp(view_func):
         authorized = any(
             True for x in [
                 e.cmp for e in request.user.meccuser.profile.all()
-                if e.code in ['DIRETU', 'REFAPP', 'GESCOL', 'DIRCOMP', 'RAC']
+                if e.code in ['ECI', 'DIRETU', 'REFAPP', 'GESCOL', 'DIRCOMP', 'RAC']
             ] if x in request.path
         )
 
