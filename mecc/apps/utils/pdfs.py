@@ -29,6 +29,7 @@ styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
+styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=9))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
 
@@ -331,7 +332,7 @@ def preview_mecctable_story(training, story=[]):
 
     links = get_mecc_table_order([e for e in root_link], [],
                                  current_structures, current_links,
-                                 current_exams)
+                                 current_exams, all_exam=True)
 
     # ############ TABLE STRUCUTURE ################################
 
@@ -343,7 +344,7 @@ def preview_mecctable_story(training, story=[]):
                  ['Intitulé', 'Responsable', Paragraph(
                      '<para textColor=steelblue><strong>Référence APOGEE \
                      <br></br><br></br> Référence ROF</strong></para>',
-                     styles['CenterBalek']),
+                     styles['CenterSmall']),
                   verticalText('Crédit ECTS'), verticalText('Coefficient'),
                   verticalText('Note seuil'), 'Session principale',
                      '', '', '', '', '', '', 'Session de rattrapage'],
@@ -408,11 +409,11 @@ def preview_mecctable_story(training, story=[]):
                 ex_1_table = [
                     str('{0:.2f}'.format(ex_1.coefficient)
                         ) if ex_1 is not None else '',
-                   [Paragraph(ex_1.label if ex_1 is not None else '', styles[
+                    [Paragraph(ex_1.label if ex_1 is not None else '', styles[
                         'Normal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info + "</para\
                         >" if ex_1.additionnal_info is not None else "",
-                        styles['Normal'])],
+                                              styles['Normal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     ex_1.convocation if ex_1 is not None else '',
@@ -427,7 +428,7 @@ def preview_mecctable_story(training, story=[]):
                         'Normal']), Paragraph("<para textColor=grey\
                         >" + ex_2.additionnal_info + "</para\
                         >" if ex_2.additionnal_info is not None else "",
-                        styles['Normal'])],
+                                              styles['Normal'])],
                     ex_2.type_exam if ex_2 is not None else '',
                     ex_2.text_duration if ex_2 is not None else '',
                     ex_2.eliminatory_grade if ex_2 is not None else '',
@@ -476,8 +477,11 @@ def preview_mecctable_story(training, story=[]):
 
         big_table.append([
             "%s%s " % ("    " * what.get('rank'), struct.label),
-            Paragraph(struct.get_respens_name_small, styles['CenterBalek']),
-            Paragraph(struct.ROF_ref, styles['CenterBalek']),
+            Paragraph(
+                struct.get_respens_name_small,
+                styles['CenterSmall']),
+            [Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
+                struct.ref_si_scol, styles['CenterSmall'])],
             struct.ECTS_credit if struct.ECTS_credit else '-',
             '{0:.0f}'.format(link.coefficient) if link.coefficient else '',
             link.eliminatory_grade,
@@ -492,7 +496,6 @@ def preview_mecctable_story(training, story=[]):
     for e in links:
         write_the_table(e)
 
-
     # ############ STYLE ################################
     # Static style
     style_table = [
@@ -502,6 +505,8 @@ def preview_mecctable_story(training, story=[]):
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('ALIGN', (0, 0), (-1, 2), 'CENTER'),
         ('ALIGN', (3, 3), (-1, -1), 'CENTER'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+
         # SPAN
         ('SPAN', (0, 0), (5, 0)),
         ('SPAN', (6, 0), (-1, 0)),
