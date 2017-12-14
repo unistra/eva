@@ -1,3 +1,29 @@
+/* sorting datatables display */
+
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+    cursor: pointer;
+    *cursor: hand
+}
+
+table.dataTable thead .sorting::before::not(.noarrow) {
+    content: '\2195 \00a0\00a0';
+    font-size: 120%;
+}
+
+table.dataTable thead .sorting_asc::before {
+    content: ' \2191 \00a0\00a0';
+    font-size: 120%;
+}
+
+table.dataTable thead .sorting_desc::before {
+    content: ' \2193 \00a0\00a0';
+    font-size: 120%;
+}
+
 #uds_logo{
     width: 15em;;
     height: 2.3em;

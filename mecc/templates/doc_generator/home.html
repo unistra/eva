@@ -58,7 +58,7 @@
             <table class="table " id="trainings">
                 <thead>
                     <tr>
-                        <th>
+                        <th class="noarrow sorting">
                             <input type="checkbox" id="checkbox_all" />
                         </th>
                         <th>{% trans "Type de diplôme" %}</th>
@@ -192,11 +192,15 @@
         "info": false,
         "searching": false,
         'data': {{trainings|safe}},
+        "order": [
+            [1, "asc"]
+        ],
         'language': {
             url: '{% static 'js/i18n/' %}{{LANGUAGE_CODE}}.json'
         },
         "columns": [{
             'targets': 0,
+            "orderable": false,            
             'searchable': false,
             'className': 'dt-body-center noarrow',
             'render': function (data, type, full, meta) {
