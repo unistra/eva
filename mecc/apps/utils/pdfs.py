@@ -441,6 +441,11 @@ def preview_mecctable_story(training, story=[]):
                 [('INNERGRID', (0, 0), (-1, -1), 0.1, colors.black),
                  ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                  ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                 # PADDING
+                 ('LEFTPADDING', (0, 0), (-1, -1), 0),
+                 ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                 ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+                 ('TOPPADDING', (0, 0), (-1, -1), 0),
                  ]))
             return inner_table
 
