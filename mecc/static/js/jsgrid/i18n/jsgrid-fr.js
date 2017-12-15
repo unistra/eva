@@ -25,7 +25,7 @@
                 deleteButtonTooltip: "Effacer",
                 searchButtonTooltip: "Trouve",
                 clearFilterButtonTooltip: "Effacer",
-                insertButtonTooltip: "Ajouter",
+                insertButtonTooltip: "Enregistrer",
                 updateButtonTooltip: "Sauvegarder",
                 cancelEditButtonTooltip: "Annuler"
             }
