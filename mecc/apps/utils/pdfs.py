@@ -331,7 +331,8 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
                                       training.get_session_type_display()), training.ref_si_scol],
         [Paragraph(line_2, styles['Normal'])]
     ]
-
+    
+    secondary_table = []
 
     final_table = Table(primary_table)
     return final_table
