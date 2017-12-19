@@ -37,10 +37,14 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     # objects needed
     try:
         uy = UniversityYear.objects.get(is_target_year=True)
-        iy = InstituteYear.objects.filter(
-            code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
-        institutes = Institute.objects.filter(
-            training__code_year=uy.code_year).distinct()
+        if uy.date_validation:
+            iy = InstituteYear.objects.filter(
+                code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+            institutes = Institute.objects.filter(
+                training__code_year=uy.code_year).distinct()
+        else:
+            raise Http404(_("Paramétrage de la date prévisionnelle MECC non effectuée"))
+
 
         for year in iy:
             inst = institutes.filter(pk=year.id_cmp).first()
