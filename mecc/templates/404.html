@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-
 {% load i18n %}
-
 {% block app_content %}
 {% trans "Page not found" %}
+{# For django >=1.9 #}
+{# {{ exception }} #}
 {% endblock %}

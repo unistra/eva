@@ -38,7 +38,10 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     Dispatch forms according to user profile
     """
     data = {}
-    current_year = currentyear().code_year
+    try:
+        current_year = currentyear().code_year
+    except AttributeError:
+        return render(request, 'msg.html', {'msg': "Initialisation de l'année non effectuée"})
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year)
@@ -474,8 +477,12 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     Check institutes' Mecc validation
     """
     data = {}
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
+    try:
+        current_year = list(UniversityYear.objects.filter(
+            Q(is_target_year=True))).pop(0)
+    except:
+        return render(request, 'msg.html', {'msg' : "Initialisation de l'année non effectuée"})
+
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)

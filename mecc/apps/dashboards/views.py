@@ -12,7 +12,7 @@ from django_cas.decorators import login_required, user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -43,7 +43,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
             institutes = Institute.objects.filter(
                 training__code_year=uy.code_year).distinct()
         else:
-            raise Http404(_("Paramétrage de la date prévisionnelle MECC non effectuée"))
+            return render(request, 'msg.html', {'msg': _("Paramétrage de la date validation cadre en CFVU non effectuée")})
 
 
         for year in iy:
@@ -163,7 +163,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         data['institutes_letters_counter'] = institutes_letters.count()
         data['topten_derog'] = topten_d
     except UniversityYear.DoesNotExist:
-        raise Http404(_("Initialisation de l'année non effectuée"))
+        return render(request, 'msg.html', {'msg': _("Initialisation de l'année non effectuée")})
 
     return render(request, template, data)
 
@@ -293,7 +293,7 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         return render(request, template, data)
 
     except UniversityYear.DoesNotExist:
-        raise Http404(_("Initialisation de l'année non effectuée"))
+        return render(request, 'msg.html', {'msg': _("Initialisation de l'année non effectuée")})
 
 
 @login_required
