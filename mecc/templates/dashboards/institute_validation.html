@@ -27,7 +27,7 @@
         <tr>
             <td>{% trans "Date 1ère séance CFVU MECC" %}</td>
             <td></td>
-            <td class="align-right blue">{{ first_cfvu }}</td>
+            <td class="align-right blue">{{ first_cfvu|default:"" }}</td>
         </tr>
     </table>
 </div>
