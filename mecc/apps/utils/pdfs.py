@@ -12,7 +12,7 @@ from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.pagesizes import A4, landscape, A2
+from reportlab.lib.pagesizes import A4, landscape
 
 
 from mecc.apps.institute.models import Institute
@@ -319,23 +319,68 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
     Create table title for training used in preview mecc and model A and others
     """
     # ############ USEFULL STUFF ################################
+    # STYLES :
+    main_style = [
+        ('BOX', (0, 0), (-2, -1), 0.5, colors.black),
+        ('SPAN', (-1, 0), (-1, -1)),
+        ('SPAN', (0, 1), (-2, 1)),
+        ('VALIGN', (0, 0), (-2, 0), 'MIDDLE'),
+        ('VALIGN', (0, 1), (-2, 1), 'TOP'),
+        ('BACKGROUND', (0, 0), (-2, 0), colors.steelblue),
+        ('SIZE', (0, 0), (-2, 0), 11),
+        ('FACE', (0, 0), (-3, 0), 'Helvetica-Bold'),
 
+        ('TEXTCOLOR', (0, 0), (-2, 0), colors.white),
+        ('BOX', (0, 0), (-2, 0), 0.5, colors.black),
+        # ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+
+    ]
+    side_style = [
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.steelblue),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
+        ('FACE', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FACE', (0, 1), (-1, 1), 'Helvetica'),
+        ('SIZE', (0, 0), (-1, -1), 9),
+        ('TOPPADDING', (0, 0), (-1, -1), 0.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0.5),
+    ]
     # ############ TABLE STRUCTURE ################################
 
-    table = ['', ''] if in_two_part else ['']
-
     line_2 = "<para><strong>%s : </strong>%s </para>" % (
-        _('Responsable(s)'), [e for e in training.get_respform_names])
-    primary_table = [
+        _('Responsable(s)'),
+        ", ".join([e for e in training.get_respform_names]))
+    date_cmp = training.date_val_cmp.strftime(
+        "%d/%m/%Y") if training.date_val_cmp not in [None, ''] else _("Non")
+    date_des = training.date_visa_des.strftime(
+        "%d/%m/%Y") if training.date_visa_des not in [None, ''] else _("Non")
+    date_cfvu = training.date_val_cfvu.strftime(
+        "%d/%m/%Y") if training.date_val_cfvu not in [None, ''] else _("Non")
+    secondary_table = Table([
+        [_("Etat de saisie :")],
+        ["%s : %s  %s : %s" % (
+            _("Règles"), training.get_progress_rule_display().lower(),
+            _("Tableau"), training.get_progress_table_display().lower())
+         ],
+        ["%s:%s" % (_("Validation Composante"), date_cmp)],
+        ["%s:%s" % (_("Visa DES"), date_des)],
+        ["%s:%s" % (_("Validation CFVU"), date_cfvu)],
+    ], style=side_style
+    )
+    # Create here other secondary table display if needed
+    table = [
         [training.label, "%s - %s" % (training.get_MECC_type_display(),
-                                      training.get_session_type_display()), training.ref_si_scol],
-        [Paragraph(line_2, styles['Normal'])]
+                                      training.get_session_type_display()),
+         "%s : %s" % (_('Référence APOGEE'), training.ref_si_scol),
+         secondary_table
+         ],
+        [Paragraph(line_2, styles['Normal']),
+         "empty", "empty", ],
     ]
-    
-    secondary_table = []
 
-    final_table = Table(primary_table)
+    final_table = Table(table, style=main_style, colWidths=[
+                        9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
     return final_table
+
 
 def preview_mecctable_story(training, story=[]):
     """
@@ -365,7 +410,7 @@ def preview_mecctable_story(training, story=[]):
 
     story.append(title_training_table)
 
-    story.append(Paragraph("<para fontSize=12 firstLineIndent=0 spaceAfter=14 textColor=\
+    story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
         darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal']))
     story.append(Spacer(0, 12))
 
