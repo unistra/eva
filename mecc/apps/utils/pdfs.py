@@ -496,10 +496,9 @@ def preview_mecctable_story(training, story=[]):
                 ex_1_table = [
                     str('{0:.2f}'.format(ex_1.coefficient)
                         ) if ex_1 is not None else '',
-                    [Paragraph(ex_1.label if ex_1 is not None else '', styles[
+                    [Paragraph(ex_1.label if ex_1 else '', styles[
                         'SmallNormal']), Paragraph("<para textColor=grey\
-                        >" + ex_1.additionnal_info + "</para\
-                        >" if ex_1.additionnal_info is not None else "",
+                        >" + ex_1.additionnal_info if ex_1 and ex_1.additionnal_info else "" + "</para\>",
                                                    styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
