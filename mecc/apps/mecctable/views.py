@@ -270,7 +270,7 @@ def get_mutual_by_cmp(request):
             is_in_use=True).exclude(nature__in=to_exclude).exclude(
                 owner_training_id=int(training_id))
         if asking_period:
-            s_list = s_list.filter(period=asking_period)
+            s_list = s_list.filter(period__in=[asking_period, 'A'])
         mutual_list = [[
             "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
             e.nature,
@@ -641,7 +641,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     user_profiles = request.user.meccuser.profile.all()
     data['la_liste'] = get_mecc_table_order(
         [e for e in root_link], respens_struct, current_structures,
-        current_links, current_exams, all_exam=True)
+        current_links, current_exams, all_exam=False)
 
     input_is_open = training.input_opening[0] in ['1', '3']
     is_powerfull = True if user_profiles.filter(cmp=training.supply_cmp).filter(
