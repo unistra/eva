@@ -116,7 +116,7 @@
                             {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}    
                     </td>
                     {% endfor %} 
-                    {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_1_count %} <td class="border-left" >
+                    {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %} <td class="border-left" >
                             <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
