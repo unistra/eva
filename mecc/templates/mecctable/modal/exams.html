@@ -197,17 +197,13 @@
             })
         }
 
-
-
-
         function complete_table(items) {
             let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
             // Remove all td in the tr
             $(to_catch + " td").remove()
             // Update it with current items
             let see_more = '<td class="border-left" ><a class="hand" onclick="struct_select(' +
-                id_structure + ', \'' +
-                st_label + '\', \'' + st_nature + '\',  \'' + st_regime + '\', \'' + st_session + '\', \'' +
+                id_structure +'\', \'' + st_nature + '\',  \'' + st_regime + '\', \'' + st_session + '\', \'' +
                 st_ref_scol + '\', \'' +
                 st_rof_ref + '\');">Voir +</a></td>'
 
@@ -235,8 +231,9 @@
         }
     }
 
-    function struct_select(id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
+    function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
+        let st_label =  $(".struct-" + id_structure).text()
         $("#get_principal_exam").attr({
             "data-id_structure": id_structure,
             "data-st_nature": st_nature,

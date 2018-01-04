@@ -15,7 +15,7 @@
             {%endif%}
         {% else %}
         {% if can_edit or a.can_be_edited%}  
-        <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#form-obj"
+        <a data-toggle="modal" class="hand no-border struct-{{a.structure.id}}" aria-hidden="true" data-target="#form-obj"
         onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}} 
     </a>
     {% else %}{{a.structure.label}} 
@@ -104,7 +104,7 @@
      </span>
      <span class="centered border-left-5 mecc-details ">
         {% if not a.is_imported and can_edit or not a.is_imported and a.can_be_edited%}
-            <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  
+            <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>  
         {% endif %}
      </span>
      <div class="mecc-semesters">
@@ -117,7 +117,7 @@
                     </td>
                     {% endfor %} 
                     {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_1_count %} <td class="border-left" >
-                            <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
+                            <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                             {% trans 'Voir +' %}</a>                      
                         </td>
                     {%endif%}
@@ -133,7 +133,7 @@
                                 </td>
                             {% endfor %} 
                             {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
-                                    <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.label}}', '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
+                                    <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
                                     {% trans 'Voir +' %}</a>                      
                                 </td>
                             {%endif%}
