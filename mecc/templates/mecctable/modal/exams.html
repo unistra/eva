@@ -56,6 +56,8 @@
                     {% trans "Épreuves de la session principale"%}
                 </h4>
                 <div id="principal_exam"></div>
+
+                {% if  training.session_type == '2' %}
                 <br>
                 <div class="disp-flex space-between padding-top">
                     <h4 class="blue">
@@ -63,12 +65,10 @@
                     </h4>
                     <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
                 </div>
-                <br>
-                {% if  training.session_type != 2 %}
+                <br>               
                 
-                <div id="second_exam"></div>
-                {% endif %}
-
+                <div id="second_exam"></div>                {% endif %}
+                
             </div>
             <div class="modal-footer">
 
