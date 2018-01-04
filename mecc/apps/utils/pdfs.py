@@ -30,6 +30,8 @@ styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=8))
+styles.add(ParagraphStyle(name='CenterSmallItalic',
+                          alignment=TA_CENTER, fontSize=8, fontName="Times-Italic"))
 styles.add(ParagraphStyle(name='SmallNormal', fontSize=8))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 
@@ -427,8 +429,8 @@ def preview_mecctable_story(training, story=[]):
     # - Ugly but tables are almost always ugly
     big_table = [['OBJETS', '', '', '', '', '', 'EPREUVES'],
                  ['Intitulé', 'Responsable', Paragraph(
-                     '<para textColor=steelblue><strong>Référence APOGEE \
-                     <br></br><br></br> Référence ROF</strong></para>',
+                     '<para textColor=steelblue><strong>Référence ROF \
+                     <br></br><br></br> Référence APOGEE</strong></para>',
                      styles['CenterSmall']),
                   verticalText('Crédit ECTS'), verticalText('Coefficient'),
                   verticalText('Note seuil'), 'Session principale',
@@ -539,7 +541,7 @@ def preview_mecctable_story(training, story=[]):
             "%s%s " % ("    " * what.get('rank'), struct.label),
             Paragraph(
                 struct.get_respens_name_small,
-                styles['CenterSmall']),
+                styles['CenterSmall'] if not struct.external_name else styles['CenterSmallItalic']),
             [Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
                 struct.ref_si_scol, styles['CenterSmall'])],
             struct.ECTS_credit if struct.ECTS_credit else '-',
