@@ -189,6 +189,11 @@ moins une composante porteuse."))
                     Div(
                         'MECC_type',
                         'session_type',
+                        HTML("""
+                        <div class="re-apply">
+                        <a class="btn btn-primary ">Réappliquer <br/>aux objets</a>
+                        </div>
+                        """),
                         Div(
                             HTML("""
                                 <label> &nbsp;</label>
@@ -198,8 +203,9 @@ moins une composante porteuse."))
                                 'ref_si_scol',
                                 css_class='controls'
                             ),
-                            css_class="form-group"
+                            css_class="form-group aaaa"
                         ),
+                        css_class="form-add-stats"
                     )
                 ),
                 Div('institutes', css_class="hidden"),
