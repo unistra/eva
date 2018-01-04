@@ -559,6 +559,9 @@ td.id_member {
 .fixed:after {
     position: fixed;
 }
+.modal{
+    overflow-y: auto;
+}
 .modal-90 {
     width: 75%!important;
     max-height: 100%;
