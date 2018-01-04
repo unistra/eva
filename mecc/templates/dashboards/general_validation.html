@@ -22,7 +22,7 @@
         <tr>
             <td>{% trans "Date 1ère séance CFVU MECC" %}</td>
             <td></td>
-            <td class="align-right blue">{{ university_year.date_expected }}</td>
+            <td class="align-right blue">{{ university_year.date_expected|default:"" }}</td>
         </tr>
         <tr>
             <td>{% trans "Composantes tenant leur Conseil de composante ultérieurement" %}</td>

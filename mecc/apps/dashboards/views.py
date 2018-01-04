@@ -12,7 +12,7 @@ from django_cas.decorators import login_required, user_passes_test
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
@@ -37,10 +37,14 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
     # objects needed
     try:
         uy = UniversityYear.objects.get(is_target_year=True)
-        iy = InstituteYear.objects.filter(
-            code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
-        institutes = Institute.objects.filter(
-            training__code_year=uy.code_year).distinct()
+        if uy.date_validation:
+            iy = InstituteYear.objects.filter(
+                code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+            institutes = Institute.objects.filter(
+                training__code_year=uy.code_year).distinct()
+        else:
+            return render(request, 'msg.html', {'msg': _("Paramétrage de la date validation cadre en CFVU non effectuée")})
+
 
         for year in iy:
             inst = institutes.filter(pk=year.id_cmp).first()
@@ -159,7 +163,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         data['institutes_letters_counter'] = institutes_letters.count()
         data['topten_derog'] = topten_d
     except UniversityYear.DoesNotExist:
-        raise Http404(_("Initialisation de l'année non effectuée"))
+        return render(request, 'msg.html', {'msg': _("Initialisation de l'année non effectuée")})
 
     return render(request, template, data)
 
@@ -170,6 +174,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
 def institute_dashboard(request, code, template='dashboards/institute_dashboard.html'):
     data = {}
     supply_filter = []
+    rules_filter = []
     cfvu_entries = []
     trainings_data = []
     # objects needed
@@ -192,13 +197,17 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
 
         # get institutes who are supplier for a training
         for training in t:
+
             if training.supply_cmp in code:
                 supply_filter.append(training.supply_cmp)
 
         doc_cadre = FileUpload.objects.filter(object_id=uy.id).first()
 
         rules = Rule.objects.filter(code_year=uy.code_year).filter(
-            is_edited__in=('O', 'X')).order_by('display_order')
+            is_edited__in=('O', 'X'),
+            degree_type__in=t.values_list('degree_type', flat=True)).distinct()
+
+        rules.order_by('display_order')
 
         t_uncompleted = t.filter(
             progress_rule="E") | t.filter(progress_table="E")
@@ -241,7 +250,7 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
 
         rules_count = {e: id_rules.count(e) for e in id_rules}
         rules_sorted = sorted(
-            rules_count, key=rules_count.get, reverse=True)[:10]
+            rules_count, key=rules_count.get, reverse=True)
 
         for r in rules_sorted:
             topten_d.append(
@@ -284,7 +293,7 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         return render(request, template, data)
 
     except UniversityYear.DoesNotExist:
-        raise Http404(_("Initialisation de l'année non effectuée"))
+        return render(request, 'msg.html', {'msg': _("Initialisation de l'année non effectuée")})
 
 
 @login_required

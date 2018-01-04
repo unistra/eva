@@ -128,12 +128,17 @@ class TrainingListView(ListView):
             'label_cmp'] = institute.label if id_cmp is not None else "Toutes composantes"
         self.request.session['visited_cmp_id'] = context[
             'code_cmp'] = institute.pk if id_cmp is not None else None
-        context['letter_file'] = FileUpload.objects.filter(
-            object_id=context['code_cmp'], additional_type='letter_%s/%s' % (
-                currentyear().code_year, currentyear().code_year + 1))
-        context['misc_file'] = FileUpload.objects.filter(
-            object_id=context['code_cmp'], additional_type='misc_%s/%s' % (
-                currentyear().code_year, currentyear().code_year + 1))
+
+        try:
+            context['letter_file'] = FileUpload.objects.filter(
+                object_id=context['code_cmp'], additional_type='letter_%s/%s' % (
+                    currentyear().code_year, currentyear().code_year + 1))
+            context['misc_file'] = FileUpload.objects.filter(
+                object_id=context['code_cmp'], additional_type='misc_%s/%s' % (
+                    currentyear().code_year, currentyear().code_year + 1))
+        except AttributeError:
+            """ No year initiliazed !"""
+            pass
 
         return context
 
