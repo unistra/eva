@@ -5,7 +5,7 @@ from mecc.apps.utils.queries import currentyear
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
-from mecc.apps.mecctable.models import ObjectsLink
+from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
@@ -181,6 +181,15 @@ class Training(models.Model):
             training=self)
         return True if specific_paragraph or additional_paragraph else False
 
+    @property
+    def has_exam(self):
+        """
+        Retiurn true if this training has at least one exam
+        """
+        struct = StructureObject.objects.filter(owner_training_id=self.id)
+        exam = Exam.objects.filter(id_attached__in=[e.id for e in struct])
+        return True if exam else False
+    
 
 class SpecificParagraph(models.Model):
     """
