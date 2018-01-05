@@ -391,6 +391,7 @@ def preview_mecctable_story(training, story=[]):
     import itertools
 
     # ############ USEFULL STUFF ################################
+    training_is_ccct = True if training.MECC_type == 'C' else False
     current_year = currentyear().code_year
     current_structures = StructureObject.objects.filter(code_year=current_year)
     current_links = ObjectsLink.objects.filter(code_year=current_year)
@@ -445,7 +446,8 @@ def preview_mecctable_story(training, story=[]):
                   'Intitulé',
                   verticalText('Type'),
                   verticalText('Durée'),
-                  verticalText('Convocation'),
+                  verticalText(
+                      'Convocation' if not training_is_ccct else 'CC/CT'),
                   verticalText('Note seuil'),
                   verticalText(' Report session 2 '),
                   verticalText('Coefficient'),
@@ -502,7 +504,8 @@ def preview_mecctable_story(training, story=[]):
                                                    styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
-                    ex_1.convocation if ex_1 is not None else '',
+                    ex_1.convocation if not training_is_ccct else ex_1.get_type_ccct_display(
+                    ) if ex_1 is not None else '',
                     ex_1.eliminatory_grade if ex_1 is not None else '',
                     ex_1.threshold_session_2 if ex_1 is not None else '',
                 ]
