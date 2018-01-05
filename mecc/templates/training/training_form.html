@@ -21,7 +21,8 @@
             {% endif %}
         {%endif%}
             <li class="active"> {{training.label}}</li>
-    </ol>
+        </ol>
+
 {% endblock %}
 
 {% block page-header %}
@@ -56,8 +57,9 @@
               <div class="disp-flex">
 
               {% include "training/form/add_respform.html" %}
-
-              </div>
+              {% include "generic/modal_simple.html" %}
+              
+            </div>
       </div>
           </form>
       </div>
@@ -146,6 +148,8 @@ $("select").prop("disabled", true);
 $("textarea").prop("disabled", true);
 {% endif %}
  {%if can_edit and object.input_opening.0 != "4"%}
+
+
 var _isEdited = false;
 
 $(document).ready(function () {
@@ -180,7 +184,34 @@ $(":input#previewMECC").prop("disabled", false);
 {%endif%}
 {%endif%}
 
+{% if training.has_custom_paragraph or training.has_exam  %}
+$(":input[name='MECC_type']").prop("disabled", true);
+$(":input[name='session_type']").prop("disabled", true);
+$(":input[name='reapply']").prop("disabled", true);
+{%else%}
+$(":input[name='reapply']").on('click', function(e){
+    e.preventDefault()
+    $('#modal_simple #modal-title').text("Réapliquer aux objets");
+    $('#modal_simple #info_1').text("Le régime et la session ont bien été réappliqués aux objets.");
+    $('#modal_simple').modal('show');
+    let mecc_type = $('input[name=MECC_type]:checked', '#training_form').val();
+    let session_type = $('input[name=session_type]:checked', '#training_form').val();
+    let training_id = {{object.id}};
+    console.warn(training_id)
+  /*  $.ajax({
+        url: "{% url 'commission:change_typemember'%}",
+        type: "POST",
+        data: {
+            training_id: id,
+            type_member: new_type,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+    });
+    */
+    
+})
 
+{% endif %}
 
 </script>
 {%endblock%}
