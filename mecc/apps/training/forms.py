@@ -191,7 +191,7 @@ moins une composante porteuse."))
                         'session_type',
                         HTML("""
                         <div class="re-apply">
-                        <a class="btn btn-primary ">Réappliquer <br/>aux objets</a>
+                        <button class="btn btn-primary " name="reapply">Réappliquer <br/> aux objets</button>
                         </div>
                         """),
                         Div(
