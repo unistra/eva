@@ -97,7 +97,7 @@ caption {
     margin-bottom: 0;
 }
 #training_form>:nth-child(2)>:nth-child(3)>:nth-child(2)>:nth-child(4)>:nth-child(2)>:nth-child(2){
-    margin-bottom: 10px;*/
+    margin-bottom: 10px;
 }
 #training_form>:nth-child(2)>:nth-child(3)>:nth-child(2)>:nth-child(4)>:nth-child(2)>:first-child>:first-child,
 #training_form>:nth-child(2)>:nth-child(3)>:nth-child(2)>:nth-child(4)>:nth-child(2)>:nth-child(2)>:first-child{
@@ -122,4 +122,8 @@ caption {
 .re-apply{
     align-self: center;
     margin-left:1em;
+}
+
+ #ultra_small{
+    display: none!important;
 }
