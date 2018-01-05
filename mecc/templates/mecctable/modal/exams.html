@@ -57,17 +57,19 @@
                 </h4>
                 <div id="principal_exam"></div>
 
-                {% if  training.session_type == '2' %}
                 <br>
-                <div class="disp-flex space-between padding-top">
-                    <h4 class="blue">
-                        {% trans "Épreuves de la session de rattrapage"%}
-                    </h4>
-                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
+                <div class="session2_exams">
+                    
+                    <div class="disp-flex space-between padding-top">
+                        <h4 class="blue">
+                            {% trans "Épreuves de la session de rattrapage"%}
+                        </h4>
+                        <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
+                    </div>
+                    <br>               
+                    
+                    <div id="second_exam"></div>            
                 </div>
-                <br>               
-                
-                <div id="second_exam"></div>                {% endif %}
                 
             </div>
             <div class="modal-footer">
@@ -243,6 +245,15 @@
             "data-st_ref_scol": st_ref_scol,
             "data-st_rof_ref": st_rof_ref,
         });
+    // No second session if unique
+    
+        let is_2_session = st_session.indexOf("2") !== -1
+
+        if (!is_2_session){
+            $('.session2_exams').hide()
+        } else {
+            $('.session2_exams').show()            
+        }
 
 
         // update title
@@ -879,7 +890,6 @@
             $('#additional_info').modal('hide');
         })
     })
-// TODO: pas de session de rattrapage si session unique
 </script>
 
 <style>
