@@ -171,6 +171,7 @@ class TrainingCreate(CreateView):
         context = super(TrainingCreate, self).get_context_data(**kwargs)
         context['institutes'] = Institute.objects.all().order_by('label')
         context['can_edit'] = True
+        context['new'] = True
         return context
 
     def get_success_url(self):

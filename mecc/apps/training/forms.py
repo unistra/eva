@@ -191,7 +191,9 @@ moins une composante porteuse."))
                         'session_type',
                         HTML("""
                         <div class="re-apply">
+                        {% if not new%}
                         <button class="btn btn-primary " name="reapply">Réappliquer <br/> aux objets</button>
+                        {%endif%}
                         </div>
                         """),
                         Div(
