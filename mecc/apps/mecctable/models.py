@@ -225,7 +225,7 @@ class Exam(models.Model):
         choices=REGIME_CHOICE, max_length=1)
     type_exam = models.CharField(
         verbose_name=_(""), choices=TYPE_EXAM_CHOICES, max_length=1)
-    label = models.CharField(_("Intitulé de l'épreuve"), max_length=25)
+    label = models.CharField(_("Intitulé de l'épreuve"), max_length=200)
     additionnal_info = models.CharField(
         _("Complément d’information sur l’épreuve"),
         max_length=200, null=True, blank=True)
