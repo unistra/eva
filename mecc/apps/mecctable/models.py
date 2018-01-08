@@ -45,7 +45,7 @@ class StructureObject(models.Model):
         _('ID automatique de l\'objet'), blank=True)
     nature = models.CharField(
         verbose_name=_('Type d\'objet'), blank=False,
-        choices=TYPE_CHOICE, max_length=2)
+        choices=TYPE_CHOICE, max_length=2) 
     owner_training_id = models.IntegerField(
         _('ID de la formation propriétaire'))
     cmp_supply_id = models.CharField(
@@ -78,10 +78,10 @@ class StructureObject(models.Model):
         _("Année de l'objet ROF"), max_length=20, blank=True, null=True)
     ROF_nature = models.CharField(
         verbose_name=_("Type de l'objet ROF"),
-        max_length=2, null=True, blank=True)
+        max_length=50, null=True, blank=True)
     ROF_supply_program = models.CharField(
         _("Programme porteur de l'objet ROF"),
-        max_length=20, null=True, blank=True)
+        max_length=50, null=True, blank=True)
 
     ref_si_scol = models.CharField(
         _("Référence SI Scolarité"), max_length=20, null=True, blank=True)
