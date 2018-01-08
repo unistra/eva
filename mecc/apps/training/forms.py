@@ -184,7 +184,7 @@ moins une composante porteuse."))
                 ),
                 Div(
                     HTML("""
-                        <div id="ultra_small"> &nbsp; </div>
+                        <div id="ultra_small"></div>
                         """),
                     Div(
                         'MECC_type',
