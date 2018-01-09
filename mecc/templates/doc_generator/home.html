@@ -11,7 +11,7 @@
             <label for="year" class="control-label col-lg-4">
                 {% trans 'Année universitaire'%}
             </label>
-            <div class="controls col-lg-3">
+            <div class="controls col-lg-4">
                 <input class="input_prof textinput textInput form-control" id="year" name="year" type="text" value="{{ request.display.current_year }}"
                     readonly=""> </div>
         </div>
@@ -303,20 +303,23 @@
     }
     $('#generate').on('click', function(e){
         e.preventDefault()
-        var map = {};
+        let url = "/doc_gen/dispatch/?date=" + $('#date').val() + "&target=" + $('#target').val()
+        let not_selected = true
         $("input:checked").each(function() {
-            map[$(this).attr("name")] = $(this).val();
-        });
-        $.ajax({
-            url: "{% url 'doc_gen:dispatch'%}",
-            type: 'GET',
-            data : {
-                training_id : '25'
-            },
-            success: function(data){
-        }
 
-        })
+            if ($(this).attr("name") != null){
+                url += '&' + $(this).attr("name") + '=' +  $(this).val() 
+            }
+            if ($(this).attr('name') === 'selected'){
+                not_selected = false
+            }
+        });
+        if (not_selected){
+            $("#trainings").addClass("all-in-red");
+        } else{
+            $("#trainings").removeClass("all-in-red");
+            window.open(url)
+        }
 
     })
     $('#target').on('change', function () {
