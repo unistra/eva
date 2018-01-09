@@ -518,7 +518,6 @@ Merci. """)
         errors = False
 
         if request.POST:
-
             data['date_mecc'] = request.POST.get('date_mecc')
             datetime_mecc = datetime.strptime(data['date_mecc'], '%d/%m/%Y')
             # datetime.strptime(
@@ -546,6 +545,13 @@ Merci. """)
             if not errors:
                 # TODO tz needed (???)
                 date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
+
+                # Should not happen but for now control if one of the fields is != 'A'
+                for d in data['selected_trainings']:
+                    if d.progress_rule != 'A' or d.progress_table != 'A':
+                        messages.add_message(request, messages.ERROR, _(
+                            "Attention état d'avancement de la saisie des règles ou saisie tableau MECC non achevé pour : ") + d.label)
+
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cfvu=date_mecc)
 
