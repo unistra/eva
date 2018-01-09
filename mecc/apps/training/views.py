@@ -21,7 +21,7 @@ from mecc.apps.files.models import FileUpload
 from mecc.apps.utils.manage_pple import manage_respform
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
-from mecc.apps.utils.queries import currentyear
+from mecc.apps.utils.queries import currentyear, save_training_update_structs
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.rules.models import Rule, Paragraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
@@ -32,6 +32,18 @@ from mecc.apps.training.utils import remove_training
 from mecc.apps.years.models import UniversityYear
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
+
+
+@is_ajax_request
+def update_struct_training(request):
+    """
+    ajax call to update session and regime as you want
+    """
+    done = save_training_update_structs(
+        Training.objects.get(id=request.POST.get('training_id')),
+        request.POST.get('regime_type'), request.POST.get('session_type'))
+
+    return JsonResponse({'status': 200 if done else 300})
 
 
 def my_teachings(request, template='training/respform_trainings.html'):
