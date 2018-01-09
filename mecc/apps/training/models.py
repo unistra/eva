@@ -9,6 +9,7 @@ from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
+from mecc.apps.utils.queries import update_regime_session
 
 
 class Training(models.Model):
@@ -189,7 +190,25 @@ class Training(models.Model):
         struct = StructureObject.objects.filter(owner_training_id=self.id)
         exam = Exam.objects.filter(id_attached__in=[e.id for e in struct])
         return True if exam else False
-    
+
+    def save(self, *args, **kwargs):
+        need_to_edit_struct = False
+        if self.session_type != self.__original_session_type:
+            self.__original_session_type = self.session_type
+            need_to_edit_struct = True
+        if self.MECC_type != self.__original_MECC_type:
+            self.__original_MECC_type = self.MECC_type
+            need_to_edit_struct = True 
+        if need_to_edit_struct:
+            update_regime_session(self, self.MECC_type, self.session_type)
+        
+        super(Training, self).save(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super(Training, self).__init__(*args, **kwargs)
+        self.__original_session_type = self.session_type
+        self.__original_MECC_type = self.MECC_type
+
 
 class SpecificParagraph(models.Model):
     """
