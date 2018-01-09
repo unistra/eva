@@ -13,8 +13,8 @@ def can_edit_or_read(request, training, user):
     user_profiles = user.meccuser.profile.all()
     # Read and write rights
     can_do_alot = Profile.objects.filter(cmp=training.supply_cmp).filter(
-        Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
-        | Q(code='GESCOL') | Q(code='DIRETU'))
+        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU', 'RESPFORM'])
+
     allowed = any(True for x in can_do_alot if x in user_profiles)  \
         or 'DES1' in [e.name for e in user.groups.all()]
     resp_form = [e.id for e in training.resp_formations.all()]
@@ -118,6 +118,7 @@ def has_requested_cmp(view_func):
         return HttpResponseForbidden("<h1>Forbidden</h1>You do not have \
             permission to access this page.")
     return wrapper
+
 
 def has_cmp(view_func):
     @wraps(view_func)
