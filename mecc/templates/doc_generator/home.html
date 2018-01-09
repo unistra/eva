@@ -301,7 +301,24 @@
             }
         })
     }
+    $('#generate').on('click', function(e){
+        e.preventDefault()
+        var map = {};
+        $("input:checked").each(function() {
+            map[$(this).attr("name")] = $(this).val();
+        });
+        $.ajax({
+            url: "{% url 'doc_gen:dispatch'%}",
+            type: 'GET',
+            data : {
+                training_id : '25'
+            },
+            success: function(data){
+        }
 
+        })
+
+    })
     $('#target').on('change', function () {
 
         let institute = $('#institute')

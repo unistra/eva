@@ -1,10 +1,11 @@
 """
 View for document generator 3000
 """
+import json
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
-from django.shortcuts import render,  redirect
+from django.shortcuts import render
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
@@ -12,12 +13,18 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
-
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    canvas_for_mecctable, canvas_for_preview_mecctable, \
+from mecc.apps.utils.pdfs import setting_up_pdf,  \
+    canvas_for_preview_mecctable, \
     preview_mecctable_story, NumberedCanvas_landscape
 
-import json
+
+def dispatch_to_good_pdf(request):
+    """
+    Get ajax data and dispatch to correct pdf 
+    """
+    print(request.__dict__)
+    print('im dispatching...')
+    preview_mecctable(request)
 
 
 def preview_mecctable(request):
@@ -25,7 +32,9 @@ def preview_mecctable(request):
     View getting all data to generate asked pdf
     """
     title = "PREVISUALISATION du TABLEAU"
-    training = Training.objects.filter(id=request.GET.get('training_id')).first()
+    training = Training.objects.filter(
+        id=request.GET.get('training_id')).first()
+    print("la")
     response, doc = setting_up_pdf(title, margin=32, portrait=False)
     if training:
         story = preview_mecctable_story(training)
