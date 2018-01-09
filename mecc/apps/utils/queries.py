@@ -111,3 +111,37 @@ def get_mecc_table_order(
         stuff.append(get_childs(link, imported))
 
     return stuff
+
+
+def update_regime_session(training, regime, session):
+    """
+    update regime and session of training structure according to new elements
+    """
+    structs = StructureObject.objects.filter(owner_training_id=training.id)
+    for struc in structs:
+        struc.regime = regime
+        struc.session = session
+        struc.save()
+
+
+def save_training_update_structs(training, regime_type, session_type):
+    """
+    Reapply regime and session to selected training and all it objects
+    => return true if updated  and else if nothin' was done
+    """
+    # set regime and session type to new stuff
+    old_session_type = training.session_type
+    old_regime_type = training.MECC_type
+    save_me = False
+
+    if old_regime_type != regime_type:
+        training.MECC_type = regime_type
+        save_me = True
+    if old_session_type != session_type:
+        training.session_type = session_type
+        save_me = True
+
+    if save_me:
+        training.save()
+
+    return save_me
