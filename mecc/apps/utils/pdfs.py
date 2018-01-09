@@ -101,6 +101,12 @@ def canvas_for_mecctable(canvas, doc):
     custom_watermark(canvas, "Document intermédiaire")
 
 
+def canvas_for_gen_pdf(canvas, doc):
+    """
+    canvas for generated pdfs: set to landscape with watermark
+    """
+    custom_watermark(canvas, "Document intermédiaire", position_x=600, position_y=-75)
+
 def canvas_for_preview_mecctable(canvas, doc):
     """
     canvas for preview mecctable

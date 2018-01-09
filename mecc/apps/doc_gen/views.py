@@ -19,7 +19,7 @@ from mecc.apps.utils.pdfs import setting_up_pdf,  \
 from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    canvas_for_mecctable, canvas_for_preview_mecctable, \
+    canvas_for_gen_pdf, canvas_for_mecctable, canvas_for_preview_mecctable, \
     degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape
 
 
@@ -298,6 +298,6 @@ def generate(request):
         for dt in degree_type:
             story += degree_type_rules(None, dt, year, custom=True)
 
-    doc.build(story, canvasmaker=NumberedCanvas)
+    doc.build(story, onLaterPages=canvas_for_gen_pdf, canvasmaker=NumberedCanvas)
 
     return response
