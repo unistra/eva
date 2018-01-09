@@ -177,7 +177,7 @@ class NumberedCanvas(canvas.Canvas):
                 (self._pageNumber, page_count))
 
 
-def block_rules(title, rules, story, styled=True):
+def block_rules(title, rules, story, styled=True, custom=False):
     style = [
         ('BOX', (0, 1), (-1, 1), 1, colors.black),
         ('BACKGROUND', (0, 1), (-1, 1), colors.lightgrey),
@@ -192,7 +192,7 @@ def block_rules(title, rules, story, styled=True):
         story.append(table)
 
         for paragraph in rules:
-            add_paragraph(paragraph, story)
+            add_paragraph(paragraph, story, custom=custom)
 
     return story
 
@@ -280,14 +280,16 @@ def add_simple_paragraph(story, rule, sp, ap):
         append_text(story, text, style)
 
 
-def add_paragraph(e, story, sp=None, ap=None, styled=True):
+def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
+
     t = [["", ""]]
 
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
-                  ID %s</para>" % e.pk, styles['Normal']) if styled else ' '])
+                  ID %s</para>" % e.pk, styles['Normal']) if styled else ' ']) \
+                    if not custom else []
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
     for p in paragraphs:
@@ -296,7 +298,10 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True):
             derog = _("Dérogation <br></br> possible") if \
                 p.is_interaction else ''
             if p.is_interaction:
-                txt = derog
+                if not custom:
+                    txt = derog
+                else:
+                    txt = 'derogation(s) : %s ' % p.specific_involved.count()
 
             t.append(
                 [
@@ -696,7 +701,7 @@ def one_rule(title, rule):
     return story
 
 
-def degree_type_rules(title, degreetype, year):
+def degree_type_rules(title, degreetype, year, custom=False):
     degree_type = degreetype.short_label.upper()
 
     cr = rules_degree_for_year(degreetype.id, year)
@@ -705,29 +710,33 @@ def degree_type_rules(title, degreetype, year):
 
 # ############ TITLE ################################
 
-    header = [
-        _("Modalités d'évaluation des connaissances et compétences"),
-        _("Règles générales - %s" % degreetype.short_label),
-        _("Année universitaire %s/%s" % (year, year + 1))
-    ]
-    ttle = []
-    for e in header:
-        ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
-            darkblue><strong>%s</strong></para>" % e, styles['Normal']))
+    # No title means whole rules !
+    if title:
+        header = [
+            _("Modalités d'évaluation des connaissances et compétences"),
+            _("Règles générales - %s" % degreetype.short_label),
+            _("Année universitaire %s/%s" % (year, year + 1))
+        ]
+        ttle = []
+        for e in header:
+            ttle.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+                darkblue><strong>%s</strong></para>" % e, styles['Normal']))
 
-    t = [[logo_uds, ttle]]
+        t = [[logo_uds, ttle]]
 
-    table = Table(t, colWidths=(145, 405))
+        table = Table(t, colWidths=(145, 405))
 
-    story.append(table)
+        story.append(table)
 
-    story.append(Spacer(0, 12))
+        story.append(Spacer(0, 12))
 
 # ############ No rules case ################################
 
     if cr is None:
-        story.append(Spacer(0, 24))
-        story.append(Paragraph(_("Aucune règle."), styles['Normal']))
+        # No title means whole rules so no need to warn
+        if title:
+            story.append(Spacer(0, 24))
+            story.append(Paragraph(_("Aucune règle."), styles['Normal']))
         return story
 
 # ############ ECI/CCT ################################
@@ -736,7 +745,8 @@ def degree_type_rules(title, degreetype, year):
         _("RÈGLES APPLICABLES à tous les diplômes de type \
         %s" % degree_type),
         cr.filter(Q(is_eci=True, is_ccct=True)),
-        story
+        story,
+        custom=custom
     )
 
 # ############ ECI ################################
@@ -745,7 +755,8 @@ def degree_type_rules(title, degreetype, year):
         _("RÈGLES APPLICABLES aux diplômes de type %s en  \
          évaluation continue intégrale" % degree_type),
         cr.filter(Q(is_eci=True, is_ccct=False)),
-        story
+        story,
+        custom=custom
     )
 
 # ############ CCCT ################################
@@ -753,7 +764,8 @@ def degree_type_rules(title, degreetype, year):
         _("RÈGLES APPLICABLES aux diplômes de type %s en contrôle terminal, \
         combiné ou non avec un contrôle continu" % degree_type),
         cr.filter(Q(is_eci=False, is_ccct=True)),
-        story
+        story,
+        custom=custom
     )
     return story
 
