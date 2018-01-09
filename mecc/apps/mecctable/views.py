@@ -645,7 +645,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     input_is_open = training.input_opening[0] in ['1', '3']
     is_powerfull = True if user_profiles.filter(cmp=training.supply_cmp).filter(
-        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']) else False
+        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU', 'RESPFORM']) else False
     data['can_edit'] = (
         is_powerfull and input_is_open) or request.user.is_superuser or 'DES1' in [
             e.name for e in request.user.groups.all()]
