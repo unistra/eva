@@ -3,7 +3,7 @@ View for document generator 3000
 """
 import json
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 
@@ -13,25 +13,32 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
-from mecc.apps.utils.pdfs import setting_up_pdf,  \
-    canvas_for_preview_mecctable, \
+from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
+    canvas_for_preview_mecctable,  degree_type_rules, \
     preview_mecctable_story, NumberedCanvas_landscape
 from mecc.apps.degree.models import DegreeType
 
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    canvas_for_mecctable, canvas_for_preview_mecctable, \
-    degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape
+
+from django_cas.decorators import login_required
 
 
 def dispatch_to_good_pdf(request):
     """
     Get ajax data and dispatch to correct pdf 
     """
-    print(request.__dict__)
-    print('im dispatching...')
-    preview_mecctable(request)
+    # GET ALL INFORMATIONS
+    trainings = request.GET.getlist('selected')
+    date = request.GET.get('date')
+    target = request.GET.get('target')
+    standard = True if request.GET.get('standard') == "yes" else False
+    ref = request.GET.get('ref')
+    gen_type = request.GET.get('gen_type')
+    model = request.GET.get('model')
+    if not trainings:
+        return HttpResponse(status=501)
 
-from django_cas.decorators import login_required
+    print('im dispatching...')
+    return preview_mecctable(request)
 
 
 def preview_mecctable(request):
