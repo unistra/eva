@@ -11,13 +11,15 @@ from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
-
+from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     canvas_for_mecctable, canvas_for_preview_mecctable, \
-    preview_mecctable_story, NumberedCanvas_landscape
+    degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape
 
 import json
+
+from django_cas.decorators import login_required
 
 
 def preview_mecctable(request):
@@ -25,7 +27,8 @@ def preview_mecctable(request):
     View getting all data to generate asked pdf
     """
     title = "PREVISUALISATION du TABLEAU"
-    training = Training.objects.filter(id=request.GET.get('training_id')).first()
+    training = Training.objects.filter(
+        id=request.GET.get('training_id')).first()
     response, doc = setting_up_pdf(title, margin=32, portrait=False)
     if training:
         story = preview_mecctable_story(training)
@@ -44,7 +47,13 @@ def home(request, template='doc_generator/home.html'):
     Home screen for generator 3000
     """
     data = {}
-    current_year = currentyear().code_year
+
+    try:
+        current_year = currentyear().code_year
+    except AttributeError:
+        return render(request, 'msg.html',
+                      {'msg': _("Initialisation de l'année non effectuée")})
+
     trainings = Training.objects.filter(code_year=current_year)
     all_institutes = Institute.objects.filter(
         code__in=[e.supply_cmp for e in trainings]).order_by('label')
@@ -253,3 +262,30 @@ def trainings_for_target(request):
 
     trains = process[target]()
     return JsonResponse(trains, safe=False) if json else trains
+
+
+@login_required
+def generate(request):
+    """
+        Generate document
+    """
+
+    # should we print rules (from ajax call) POC for now
+    show_rules = True
+
+    year = currentyear().code_year
+    degree_type = DegreeType.objects.all()
+    title = "MECC - %s" % (year)
+    response, doc = setting_up_pdf(title, margin=42, portrait=False)
+    story = []
+
+    # TODO: Add header page
+
+    # print or not rules part ?
+    if show_rules:
+        for dt in degree_type:
+            story += degree_type_rules(None, dt, year, custom=True)
+
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+    return response

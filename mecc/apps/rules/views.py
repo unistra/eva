@@ -301,6 +301,20 @@ def gen_pdf(request, id_degreetype, year=None):
 
 
 @login_required
+def gen_all_pdf(request):
+    year = currentyear().code_year
+    degree_type = get_object_or_404(DegreeType, id=id_degreetype)
+    title = "MECC - %s - %s" % (
+        degree_type.short_label, year)
+    response, doc = setting_up_pdf(title, margin=42)
+    story = degree_type_rules(title, degree_type, year)
+
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+    return response
+
+
+@login_required
 def pdf_one_rule(request, rule_id):
     rule = get_object_or_404(Rule, id=rule_id)
     title = "MECC - %s - %s" % (rule.label, rule.code_year)
@@ -401,7 +415,7 @@ def duplicate_add(request):
             p.rule.clear()
             p.rule.add(rule)
             p.save()
-        
+
         labels.append(old_rule.label)
 
     return JsonResponse({'status': 'added', 'n_rule': [
