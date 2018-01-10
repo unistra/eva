@@ -1,4 +1,5 @@
 import re
+import datetime
 from itertools import groupby
 
 from django.db.models import Count, Q
@@ -105,7 +106,9 @@ def canvas_for_gen_pdf(canvas, doc):
     """
     canvas for generated pdfs: set to landscape with watermark
     """
-    custom_watermark(canvas, "Document intermédiaire", position_x=600, position_y=-75)
+    custom_watermark(canvas, "Document intermédiaire",
+                     position_x=600, position_y=-75)
+
 
 def canvas_for_preview_mecctable(canvas, doc):
     """
@@ -294,8 +297,8 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
-                  ID %s</para>" % e.pk, styles['Normal']) \
-                    if styled and not custom else ' ']) 
+                  ID %s</para>" % e.pk, styles['Normal'])
+        if styled and not custom else ' '])
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
     for p in paragraphs:
@@ -393,6 +396,97 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
     final_table = Table(table, style=main_style, colWidths=[
                         9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
     return final_table
+
+
+def models_first_page(model, criteria, trainings, story):
+    current_year = currentyear().code_year
+    # ### UPPER PART
+
+    title = [
+        "<font size=22>M</font size=22>odalités d'<font size=22>E</font size=22>valuation des <font size=22>C</font size=22>onnaissances et des <font size=22>C</font size=22>ompétences",
+        "Année universitaire %s/%s" % (current_year, current_year + 1),
+        trainings.first().institutes.first().label
+    ]
+
+    for e in title:
+        story.append(Paragraph("<para align=center fontSize=16 spaceBefore=16 textColor=\
+            steelblue>%s</para>" % e, styles['Normal']))
+    story.append(Spacer(0, 24))
+
+    story.append(Paragraph("<para align=center fontSize=16 spaceBefore=24 textColor=\
+        steelblue>%s</para>" % "-" * 125, styles['Normal']))
+
+    story.append(Spacer(0, 24))
+    # ### TABLE STYLES
+    style_criteria_table = [
+        ('GRID', (0, 0), (-1, -1), 1, colors.orange),
+
+        # ('BOX', (0, 0), (-1, -1), 1, colors.steelblue),
+        # ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        # ('SIZE', (0, 0), (-1, -1), 16),
+    ]
+    style_training_list = [
+        ('GRID', (0, 0), (-1, -1), 1, colors.pink),
+    ]
+    style_table = [
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        # ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        # ('SIZE', (0, 0), (-1, -1), 16),
+        # ('SPAN', (0, 0), (0, -1),),
+        # ('SIZE', (-1, 0), (-1, 0), 10),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        # ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        # ('LINEABOVE', (-1, -1), (-1, -1), 1, colors.steelblue),
+    ]
+    style_trainings = [
+        ('GRID', (0, 0), (-1, -1), 1, colors.violet),
+
+    ]
+    # ### MAIN PART
+    print(type(criteria))
+
+    criteria_list = [["Critère d'édition"]] + [["%s: %s" % (k, criteria[k])] for k in criteria]
+    print(criteria_list)
+    criteria_table = Table(criteria_list, style=style_criteria_table)
+    training_list = [
+        [e.label, Table([[e.date_val_cmp, e.date_val_cfvu]],
+                        style=style_training_list)] for e in trainings
+    ]
+
+    trainings_table = [["Formation", "Date de validation"]]
+    trainings_table.extend(training_list)
+
+    trainings_table = Table(trainings_table, style=style_trainings)
+    # ### BUILDING TABLE
+    table = [[criteria_table, trainings_table]]
+
+    story.append(Table(table, style=style_table,
+                       colWidths=[8 * cm, 13 * cm]))
+    return story
+
+
+def gen_model_story(trainings, date, target, standard, ref, gen_type, user, story=[]):
+    """
+    Story for model A 
+    """
+    i = datetime.datetime.now()
+    criteria = {
+        "Utilisateur": "%s %s" % (user.first_name, user.last_name),
+        "Objectif": "Relecture" if 'review' in target else 'todo',
+        "Modèle": "A",
+        "Date": "%s/%s/%s" % (i.day, i.month, i.year),
+        "Règle standard": "Avec" if standard else "Sans",
+        "Références": "Avec" if ref != "without" else "Sans"
+    }
+    models_first_page("a", criteria, trainings, story)
+
+    # story.append(Paragraph(trainings, styles['Normal']))
+    story.append(Paragraph(date, styles['Normal']))
+    story.append(Paragraph(target, styles['Normal']))
+    # story.append(Paragraph(standard, styles['Normal']))
+    story.append(Paragraph(ref, styles['Normal']))
+    story.append(Paragraph(gen_type, styles['Normal']))
+    return story
 
 
 def preview_mecctable_story(training, story=[]):

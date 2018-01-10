@@ -20,14 +20,15 @@ from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     canvas_for_gen_pdf, canvas_for_mecctable, canvas_for_preview_mecctable, \
-    degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape
+    degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape, \
+    gen_model_story
 
 from django_cas.decorators import login_required
 
 
 def dispatch_to_good_pdf(request):
     """
-    Get ajax data and dispatch to correct pdf 
+    Get ajax data and dispatch to correct pdf
     """
     # GET ALL INFORMATIONS
     trainings = request.GET.getlist('selected')
@@ -37,11 +38,20 @@ def dispatch_to_good_pdf(request):
     ref = request.GET.get('ref')
     gen_type = request.GET.get('gen_type')
     model = request.GET.get('model')
-    if not trainings:
-        return HttpResponse(status=501)
+    # if not trainings:
+    #     return HttpResponse(status=501)
 
     print('im dispatching...')
-    return preview_mecctable(request)
+    title = "Modalités d'Evaluation des Connaissances et des compétences"
+    response, doc = setting_up_pdf(title, margin=32, portrait=False)
+    if trainings:
+        story = gen_model_story(
+            Training.objects.filter(id__in=[e for e in trainings]),
+            date, target, standard, ref, gen_type, request.user)
+    else:
+        story = []
+    doc.build(story,)
+    return response
 
 
 def preview_mecctable(request):
@@ -308,6 +318,7 @@ def generate(request):
         for dt in degree_type:
             story += degree_type_rules(None, dt, year, custom=True)
 
-    doc.build(story, onLaterPages=canvas_for_gen_pdf, canvasmaker=NumberedCanvas)
+    doc.build(story, onLaterPages=canvas_for_gen_pdf,
+              canvasmaker=NumberedCanvas)
 
     return response
