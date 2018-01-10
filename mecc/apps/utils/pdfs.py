@@ -416,52 +416,74 @@ def models_first_page(model, criteria, trainings, story):
     story.append(Paragraph("<para align=center fontSize=16 spaceBefore=24 textColor=\
         steelblue>%s</para>" % "-" * 125, styles['Normal']))
 
-    story.append(Spacer(0, 24))
+    story.append(Spacer(0, 36))
+
     # ### TABLE STYLES
     style_criteria_table = [
-        ('GRID', (0, 0), (-1, -1), 1, colors.orange),
-
-        # ('BOX', (0, 0), (-1, -1), 1, colors.steelblue),
-        # ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
-        # ('SIZE', (0, 0), (-1, -1), 16),
+        # ('GRID', (0, 0), (-1, -1), 1, colors.orange),
+        ('BOX', (0, 0), (-1, -1), 2, colors.steelblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        ('SIZE', (0, 0), (-1, 0), 16),
+        ('LEFTPADDING', (0, 0), (-1, -1), 16),
+        ('TOPPADDING', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, -1), (-1, -1), 16),
     ]
     style_training_list = [
-        ('GRID', (0, 0), (-1, -1), 1, colors.pink),
+        # ('GRID', (0, 0), (-1, -1), 1, colors.pink),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('SIZE', (0, 0), (-1, -1), 8),
+
+
+
     ]
     style_table = [
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        # ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
-        # ('SIZE', (0, 0), (-1, -1), 16),
-        # ('SPAN', (0, 0), (0, -1),),
-        # ('SIZE', (-1, 0), (-1, 0), 10),
+        # ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        # ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        # ('LINEABOVE', (-1, -1), (-1, -1), 1, colors.steelblue),
     ]
     style_trainings = [
-        ('GRID', (0, 0), (-1, -1), 1, colors.violet),
-
+        # ('GRID', (0, 0), (-1, -1), 1, colors.green),
+        ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        ('LINEBELOW', (-1, 0), (-1, 0), 1, colors.steelblue),
+        ('ALIGN', (-1, 0), (-1, 0), 'CENTER'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+        ('TOPPADDING', (0, 1), (-1, 1), 15),
+        ('SIZE', (0, 0), (-1, -1), 9),
+        ('SIZE', (0, 0), (0, 0), 16),
+        ('SIZE', (-1, 0), (-1, 0), 12),
     ]
-    # ### MAIN PART
-    print(type(criteria))
 
-    criteria_list = [["Critère d'édition"]] + [["%s: %s" % (k, criteria[k])] for k in criteria]
-    print(criteria_list)
-    criteria_table = Table(criteria_list, style=style_criteria_table)
+    # ### MAIN PART
+    criteria_list = [["Critères d'édition"]] + \
+        [["%s: %s" % (k, criteria[k])] for k in criteria]
+    criteria_table = Table(
+        criteria_list, style=style_criteria_table, colWidths=[6 * cm])
     training_list = [
-        [e.label, Table([[e.date_val_cmp, e.date_val_cfvu]],
-                        style=style_training_list)] for e in trainings
+        [e.label, Table([
+            ["Conseil de composante : %s" %
+                (e.date_val_cmp.strftime(
+                    "%d/%m/%Y") if e.date_val_cmp else "Non"), "CFVU : %s " % (e.date_val_cfvu.strftime(
+                        "%d/%m/%Y") if e.date_val_cfvu else "Non")]
+        ],
+            style=style_training_list, colWidths=[5 * cm, 3 * cm])] for e in trainings
     ]
 
     trainings_table = [["Formation", "Date de validation"]]
     trainings_table.extend(training_list)
 
-    trainings_table = Table(trainings_table, style=style_trainings)
+    trainings_table = Table(
+        trainings_table, style=style_trainings, colWidths=[6.5 * cm, 8 * cm])
     # ### BUILDING TABLE
     table = [[criteria_table, trainings_table]]
 
     story.append(Table(table, style=style_table,
-                       colWidths=[8 * cm, 13 * cm]))
+                       colWidths=[8.5 * cm, 15.5 * cm]))
     return story
 
 
@@ -478,14 +500,8 @@ def gen_model_story(trainings, date, target, standard, ref, gen_type, user, stor
         "Règle standard": "Avec" if standard else "Sans",
         "Références": "Avec" if ref != "without" else "Sans"
     }
-    models_first_page("a", criteria, trainings, story)
+    models_first_page("a", criteria, trainings.order_by('degree_type'), story)
 
-    # story.append(Paragraph(trainings, styles['Normal']))
-    story.append(Paragraph(date, styles['Normal']))
-    story.append(Paragraph(target, styles['Normal']))
-    # story.append(Paragraph(standard, styles['Normal']))
-    story.append(Paragraph(ref, styles['Normal']))
-    story.append(Paragraph(gen_type, styles['Normal']))
     return story
 
 
