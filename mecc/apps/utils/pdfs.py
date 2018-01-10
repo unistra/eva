@@ -492,14 +492,17 @@ def gen_model_story(trainings, date, target, standard, ref, gen_type, user, stor
     Story for model A 
     """
     i = datetime.datetime.now()
-    criteria = {
-        "Utilisateur": "%s %s" % (user.first_name, user.last_name),
-        "Objectif": "Relecture" if 'review' in target else 'todo',
-        "Modèle": "A",
-        "Date": "%s/%s/%s" % (i.day, i.month, i.year),
-        "Règle standard": "Avec" if standard else "Sans",
-        "Références": "Avec" if ref != "without" else "Sans"
-    }
+    import collections
+
+    criteria = [
+        ("Utilisateur", "%s %s" % (user.first_name, user.last_name)),
+        ("Objectif", "Relecture" if 'review' in target else 'todo'),
+        ("Modèle", "A"),
+        ("Date", "%s/%s/%s" % (i.day, i.month, i.year)),
+        ("Règle standard", "Avec" if standard else "Sans"),
+        ("Références", "Avec" if ref != "without" else "Sans")
+    ]
+    criteria = collections.OrderedDict(criteria)
     models_first_page("a", criteria, trainings.order_by('degree_type'), story)
 
     return story
