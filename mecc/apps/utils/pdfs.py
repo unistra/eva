@@ -101,6 +101,12 @@ def canvas_for_mecctable(canvas, doc):
     custom_watermark(canvas, "Document intermédiaire")
 
 
+def canvas_for_gen_pdf(canvas, doc):
+    """
+    canvas for generated pdfs: set to landscape with watermark
+    """
+    custom_watermark(canvas, "Document intermédiaire", position_x=600, position_y=-75)
+
 def canvas_for_preview_mecctable(canvas, doc):
     """
     canvas for preview mecctable
@@ -288,8 +294,8 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
-                  ID %s</para>" % e.pk, styles['Normal']) if styled else ' ']) \
-                    if not custom else []
+                  ID %s</para>" % e.pk, styles['Normal']) \
+                    if styled and not custom else ' ']) 
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
     for p in paragraphs:
