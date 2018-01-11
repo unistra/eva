@@ -705,10 +705,11 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both"):
                  ]))
             return inner_table
 
-        ref_data = Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
-            struct.ref_si_scol, styles['CenterSmall']) if ref == 'both' else Paragraph(
+        ref_data = (Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
+            struct.ref_si_scol, styles['CenterSmall'])) if ref == 'both' else Paragraph(
                 struct.ROF_ref, styles['CenterSmall']) if ref == 'with_rof' else Paragraph(
-            struct.ref_si_scol, styles['CenterSmall']) if ref == 'with_si' else ''
+            struct.ref_si_scol, styles['CenterSmall']) if ref == 'with_si' else Paragraph(
+            '', styles['CenterSmall'])
         big_table.append([
             "%s%s " % ("    " * what.get('rank'), struct.label),
             Paragraph(
