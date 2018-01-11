@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views import home, trainings_for_target, available_target, \
-    preview_mecctable, dispatch_to_good_pdf, generate
+    preview_mecctable, dispatch_to_good_pdf
 
 urlpatterns = [
     url(r'^start/$', home, name='home'),
@@ -13,6 +13,4 @@ urlpatterns = [
         name='preview_mecctable'),
     url(r'^dispatch/$', dispatch_to_good_pdf,
         name='dispatch'),
-    url(r'^generate/$', generate,
-        name='generate'),
 ]

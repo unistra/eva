@@ -38,6 +38,7 @@ def dispatch_to_good_pdf(request):
     ref = request.GET.get('ref')
     gen_type = request.GET.get('gen_type')
     model = request.GET.get('model')
+
     # if not trainings:
     #     return HttpResponse(status=501)
 
@@ -50,7 +51,9 @@ def dispatch_to_good_pdf(request):
             date, target, standard, ref, gen_type, request.user)
     else:
         story = []
-    doc.build(story,)
+
+    doc.build(story, onLaterPages=canvas_for_gen_pdf,
+              canvasmaker=NumberedCanvas)
     return response
 
 
@@ -294,31 +297,3 @@ def trainings_for_target(request):
 
     trains = process[target]()
     return JsonResponse(trains, safe=False) if json else trains
-
-
-@login_required
-def generate(request):
-    """
-        Generate document
-    """
-
-    # should we print rules (from ajax call) POC for now
-    show_rules = True
-
-    year = currentyear().code_year
-    degree_type = DegreeType.objects.all()
-    title = "MECC - %s" % (year)
-    response, doc = setting_up_pdf(title, margin=42, portrait=False)
-    story = []
-
-    # TODO: Add header page
-
-    # print or not rules part ?
-    if show_rules:
-        for dt in degree_type:
-            story += degree_type_rules(None, dt, year, custom=True)
-
-    doc.build(story, onLaterPages=canvas_for_gen_pdf,
-              canvasmaker=NumberedCanvas)
-
-    return response

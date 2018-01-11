@@ -1,5 +1,6 @@
-import re
+import collections
 import datetime
+import re
 from itertools import groupby
 
 from django.db.models import Count, Q
@@ -7,7 +8,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, TableStyle
+    Table, TableStyle, PageBreak
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
@@ -489,10 +490,10 @@ def models_first_page(model, criteria, trainings, story):
 
 def gen_model_story(trainings, date, target, standard, ref, gen_type, user, story=[]):
     """
-    Story for model A 
+    Story for model A
     """
     i = datetime.datetime.now()
-    import collections
+    year = currentyear().code_year
 
     criteria = [
         ("Utilisateur", "%s %s" % (user.first_name, user.last_name)),
@@ -504,6 +505,11 @@ def gen_model_story(trainings, date, target, standard, ref, gen_type, user, stor
     ]
     criteria = collections.OrderedDict(criteria)
     models_first_page("a", criteria, trainings.order_by('degree_type'), story)
+    story.append(PageBreak())
+
+    if standard:
+            for d in trainings:
+                story += degree_type_rules(None, d.degree_type, year, custom=True)
 
     return story
 
