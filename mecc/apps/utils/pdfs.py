@@ -402,11 +402,10 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
 def models_first_page(model, criteria, trainings, story):
     current_year = currentyear().code_year
     # ### UPPER PART
-
     title = [
         "<font size=22>M</font size=22>odalités d'<font size=22>E</font size=22>valuation des <font size=22>C</font size=22>onnaissances et des <font size=22>C</font size=22>ompétences",
         "Année universitaire %s/%s" % (current_year, current_year + 1),
-        trainings.first().institutes.first().label
+        trainings.first().institutes.filter(code=trainings.first().supply_cmp).first().label
     ]
 
     for e in title:
@@ -422,7 +421,7 @@ def models_first_page(model, criteria, trainings, story):
     # ### TABLE STYLES
     style_criteria_table = [
         # ('GRID', (0, 0), (-1, -1), 1, colors.orange),
-        ('BOX', (0, 0), (-1, -1), 2, colors.steelblue),
+        ('BOX', (0, 0), (-1, -1), 1.5, colors.steelblue),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
         ('SIZE', (0, 0), (-1, 0), 16),
         ('LEFTPADDING', (0, 0), (-1, -1), 16),
@@ -475,7 +474,7 @@ def models_first_page(model, criteria, trainings, story):
             style=style_training_list, colWidths=[5 * cm, 3 * cm])] for e in trainings
     ]
 
-    trainings_table = [["Formation", "Date de validation"]]
+    trainings_table = [["Formation", "Dates de validation"]]
     trainings_table.extend(training_list)
 
     trainings_table = Table(
@@ -500,8 +499,8 @@ def gen_model_story(trainings, date, target, standard, ref, gen_type, user, stor
         ("Objectif", "Relecture" if 'review' in target else 'todo'),
         ("Modèle", "A"),
         ("Date", "%s/%s/%s" % (i.day, i.month, i.year)),
-        ("Règle standard", "Avec" if standard else "Sans"),
-        ("Références", "Avec" if ref != "without" else "Sans")
+        ("Règles standards", "Avec" if standard else "Sans"),
+        ("Références", "Sans" if ref == "without" else "ROF" if ref == "with_rof" else "SI Scolarité")
     ]
     criteria = collections.OrderedDict(criteria)
     models_first_page("a", criteria, trainings.order_by('degree_type'), story)
