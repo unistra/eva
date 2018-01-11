@@ -20,7 +20,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
-from mecc.apps.training.models import Training, SpecificParagraph
+from mecc.apps.training.models import Training, SpecificParagraph, \
+    AdditionalParagraph, SpecificParagraph
 from mecc.apps.utils.queries import rules_degree_for_year, currentyear, \
     get_mecc_table_order
 from mecc.apps.years.models import UniversityYear
@@ -207,7 +208,7 @@ def block_rules(title, rules, story, styled=True, custom=False):
     return story
 
 
-def list_of_parag_with_bullet(text):
+def list_of_parag_with_bullet(text, style=''):
     """
     Return correct string in order to be displayed as list
     """
@@ -217,13 +218,42 @@ def list_of_parag_with_bullet(text):
     for t, v in r:
         if v == 'li':
             _list.append(Paragraph(
-                "<para leftIndent=40>%s</para>" % (
-                    t), styles['Bullet_1']))
+                "<para %s leftIndent=40>%s</para>" % (
+                    style, t), styles['Bullet_1']))
         else:
             _list.append(Paragraph(
-                "<para >%s</para>" % (
-                    t), styles['Justify']))
+                "<para %s >%s</para>" % (
+                    style, t), styles['Justify']))
     return _list
+
+
+def append_text(story, text, style, special=False, spacer=6):
+    """
+    print content of paragraph or list with bullet
+    """
+    # REGEX ME !
+    reg = re.compile(r'>(.*?)</(p|li)>')
+    # r_p = re.compile(r'<p>(.*?)</p>')
+    # r_ul = re.compile(r'<ul>(.*?)</ul>')
+    # r_ol = re.compile(r'<ol>(.*?)</ol>')
+    # r_li = re.compile(r'<li>(.*?)</li>')
+
+    r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
+    if special == 'motiv':
+        story.append(
+            Paragraph(
+                "<para textColor=red leftIndent=20><u>Motifs de la dérogation</u> :\
+                </para>", styles["Justify"]))
+    for t, v in r:
+        if v == 'li':
+            story.append(Paragraph(
+                "<para %s leftIndent=40>%s</para>" % (
+                    style, t), styles['Bullet_1']))
+        else:
+            story.append(Paragraph(
+                "<para %s leftIndent=20>%s</para>" % (
+                    style, t), styles['Justify']))
+    story.append(Spacer(0, spacer))
 
 
 def add_simple_paragraph(story, rule, sp, ap):
@@ -231,35 +261,6 @@ def add_simple_paragraph(story, rule, sp, ap):
     print content of paragraph with Specific and additionnel values in state of
     standard values
     """
-
-    def append_text(story, text, style, special=False, spacer=6):
-        """
-        print content of paragraph or list with bullet
-        """
-        # REGEX ME !
-        reg = re.compile(r'>(.*?)</(p|li)>')
-        # r_p = re.compile(r'<p>(.*?)</p>')
-        # r_ul = re.compile(r'<ul>(.*?)</ul>')
-        # r_ol = re.compile(r'<ol>(.*?)</ol>')
-        # r_li = re.compile(r'<li>(.*?)</li>')
-
-        r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
-
-        if special == 'motiv':
-            story.append(
-                Paragraph(
-                    "<para textColor=red leftIndent=20><u>Motifs de la dérogation</u> :\
-                    </para>", styles["Justify"]))
-        for t, v in r:
-            if v == 'li':
-                story.append(Paragraph(
-                    "<para %s leftIndent=40>%s</para>" % (
-                        style, t), styles['Bullet_1']))
-            else:
-                story.append(Paragraph(
-                    "<para %s leftIndent=20>%s</para>" % (
-                        style, t), styles['Justify']))
-        story.append(Spacer(0, spacer))
 
     story.append(Spacer(0, 6))
     story.append(Paragraph("<para fontSize=11><strong>%s</strong></para>\
@@ -504,6 +505,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     """
     Story for model
     """
+    ordered_trainings = trainings.order_by('degree_type')
     i = datetime.datetime.now()
     year = currentyear().code_year
 
@@ -533,21 +535,95 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
 
     criteria = collections.OrderedDict(criteria)
     models_first_page(
-        model, criteria, trainings.order_by('degree_type'), story)
+        model, criteria, ordered_trainings, story)
 
     if standard:
         story.append(PageBreak())
-        for d in trainings:
+        for d in ordered_trainings:
             story += degree_type_rules(None, d.degree_type,
                                        year, custom=True)
 
-    for e in trainings:
-        preview_mecctable_story(e, story, False, ref=ref)
+    additionals = AdditionalParagraph.objects.filter(
+        training__in=ordered_trainings)
+    specifics = SpecificParagraph.objects.filter(
+        training__in=ordered_trainings)
+
+    derog_gen_id = [e.rule_gen_id for e in specifics]
+    addit_gen_id = [e.rule_gen_id for e in additionals]
+    rules = Rule.objects.filter(id__in=derog_gen_id + addit_gen_id)
+    for e in ordered_trainings:
+        preview_mecctable_story(
+            e, story, False, ref=ref, model=model, additionals=additionals,
+            specifics=specifics, edited_rules=rules)
 
     return story
 
 
-def preview_mecctable_story(training, story=[], preview=True, ref="both"):
+def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
+    """
+    Adding derog and additional for specific training
+    """
+    # #### STYLES
+    main_table_style = [
+        ('VALIGN', (1, 0), (-1, -1), "TOP"),
+        ('VALIGN', (0, 0), (0, -1), "MIDDLE"),
+        ('LEFTPADDING', (-1, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (1, 0), (1, -1), 0),
+    ]
+    main_table_size = [1 * cm, 12.5 * cm, 10.5 * cm]
+    additional_style = [
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        ('FACE', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('SIZE', (0, 0), (-1, 0), 12),
+        # ('GRID', (0, 0), (-1, -1), 0.5, colors.red),
+    ]
+    derog_style = additional_style + [
+        ('LINEAFTER', (-1, -1), (-1, -1), 0.5, colors.red),
+    ]
+    motiv_style = [
+
+    ]
+    # #### TABLES
+    table = []
+    if additionals:
+        for e in additionals:
+            table.append([
+                Paragraph("<para textColor=green>(A)</para>",
+                          styles['Normal']),
+                Table([
+                    [edited_rules.filter(id=e.rule_gen_id).first().label],
+                    [list_of_parag_with_bullet(e.text_additional_paragraph)]
+                ], style=additional_style, ),
+                ""
+            ])
+    if derogs:
+        for e in derogs:
+            table.append([
+                Paragraph("<para textColor=blue>(D)</para>", styles['Normal']),
+                Table([
+                    [edited_rules.filter(id=e.rule_gen_id).first().label],
+                    [list_of_parag_with_bullet(e.text_specific_paragraph)]
+                ], style=derog_style),
+                Table([
+                    [' '],
+                    [Paragraph("<para textColor=red><u>%s</u> : %s </para>" % (
+                        _('Motif de la dérogation'), e.text_motiv), styles['Normal'])]
+                ], style=motiv_style)
+            ])
+
+    if table:
+        story.append(Table(table, style=main_table_style,
+                           colWidths=main_table_size))
+
+    return story
+
+# derog_and_additional(training, specifics.filter(
+#             training=training), additionals.filter(training=training),
+#             edited_rules, story)
+
+
+def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
+                            additionals=None, specifics=None, edited_rules=None):
     """
     Story for previewing mecctable
     """
@@ -580,6 +656,13 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both"):
     title_training_table = table_title_trainings_info(training)
 
     story.append(title_training_table)
+    if model == 'a':
+        story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 \
+        spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" % _(
+            "Dérogation et alinéas additionnels"), styles['Normal']))
+        derog_and_additional(training, specifics.filter(
+            training=training), additionals.filter(training=training),
+            edited_rules, story)
 
     story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
         darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal']))
