@@ -284,8 +284,9 @@ def add_simple_paragraph(story, rule, sp, ap):
                 style = ''
                 append_text(story, text, style)
 
+
     if ap:
-        text = ap.get(rule_gen_id=rule.n_rule).text_additional_paragraph
+        text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
         style = "textColor=green"
         append_text(story, text, style)
 
@@ -405,7 +406,8 @@ def models_first_page(model, criteria, trainings, story):
     title = [
         "<font size=22>M</font size=22>odalités d'<font size=22>E</font size=22>valuation des <font size=22>C</font size=22>onnaissances et des <font size=22>C</font size=22>ompétences",
         "Année universitaire %s/%s" % (current_year, current_year + 1),
-        trainings.first().institutes.filter(code=trainings.first().supply_cmp).first().label
+        trainings.first().institutes.filter(
+            code=trainings.first().supply_cmp).first().label
     ]
 
     for e in title:
@@ -500,20 +502,24 @@ def gen_model_story(trainings, date, target, standard, ref, gen_type, user, stor
         ("Modèle", "A"),
         ("Date", "%s/%s/%s" % (i.day, i.month, i.year)),
         ("Règles standards", "Avec" if standard else "Sans"),
-        ("Références", "Sans" if ref == "without" else "ROF" if ref == "with_rof" else "SI Scolarité")
+        ("Références", "Sans" if ref == "without" else "ROF" if ref ==
+         "with_rof" else "SI Scolarité")
     ]
     criteria = collections.OrderedDict(criteria)
     models_first_page("a", criteria, trainings.order_by('degree_type'), story)
-    story.append(PageBreak())
 
     if standard:
-            for d in trainings:
-                story += degree_type_rules(None, d.degree_type, year, custom=True)
+        story.append(PageBreak())
+        for d in trainings:
+            story += degree_type_rules(None, d.degree_type, year, custom=True)
+
+    for e in trainings:
+        preview_mecctable_story(e, story, False)
 
     return story
 
 
-def preview_mecctable_story(training, story=[]):
+def preview_mecctable_story(training, story=[], preview=True):
     """
     Story for previewing mecctable
     """
@@ -534,9 +540,11 @@ def preview_mecctable_story(training, story=[]):
                                  current_exams, all_exam=True)
 
     # ############ TITLE STUFF ################################
-
-    story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
-        red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
+    if preview:
+        story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
+            red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
+    else:
+        story.append(PageBreak())
 
     title_training_table = table_title_trainings_info(training)
 
@@ -633,8 +641,7 @@ def preview_mecctable_story(training, story=[]):
                                                    styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
-                    ex_1.convocation if not training_is_ccct else ex_1.get_type_ccct_display(
-                    ) if ex_1 is not None else '',
+                    '' if ex_1 is None else ex_1.convocation if not training_is_ccct else ex_1.get_type_ccct_display(),
                     ex_1.eliminatory_grade if ex_1 is not None else '',
                     ex_1.threshold_session_2 if ex_1 is not None else '',
                 ]
@@ -754,7 +761,6 @@ def complete_rule(year, title, training, rules, specific, add):
     # ############ define usefull stuff ################################
     story = []
     id_ap = [e.rule_gen_id for e in add]
-
     # ############ TITLE ################################
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
@@ -779,7 +785,7 @@ def complete_rule(year, title, training, rules, specific, add):
 
     # ############ add rules one by one ################################
     for e in rules:
-        a = add if e.n_rule in id_ap else None
+        a = add if e.id in id_ap else None
         add_simple_paragraph(story, e, specific, a)
 
     return story
