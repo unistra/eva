@@ -42,13 +42,13 @@ def dispatch_to_good_pdf(request):
     # if not trainings:
     #     return HttpResponse(status=501)
 
-    print('im dispatching...')
+    print('im dispatching...', model)
     title = "Modalités d'Evaluation des Connaissances et des compétences"
     response, doc = setting_up_pdf(title, margin=32, portrait=False)
     if trainings:
         story = gen_model_story(
             Training.objects.filter(id__in=[e for e in trainings]),
-            date, target, standard, ref, gen_type, request.user)
+            model, date, target, standard, ref, gen_type, request.user)
     else:
         story = []
 

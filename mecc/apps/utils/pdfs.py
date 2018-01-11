@@ -402,6 +402,7 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
 
 def models_first_page(model, criteria, trainings, story):
     current_year = currentyear().code_year
+    criteria_table = None
     # ### UPPER PART
     title = [
         "<font size=22>M</font size=22>odalités d'<font size=22>E</font size=22>valuation des <font size=22>C</font size=22>onnaissances et des <font size=22>C</font size=22>ompétences",
@@ -462,10 +463,14 @@ def models_first_page(model, criteria, trainings, story):
     ]
 
     # ### MAIN PART
-    criteria_list = [["Critères d'édition"]] + \
-        [["%s: %s" % (k, criteria[k])] for k in criteria]
-    criteria_table = Table(
-        criteria_list, style=style_criteria_table, colWidths=[6 * cm])
+
+    # ### Edition criteria published or not
+    if criteria[_("Objectif")] != _('Publication'):
+        criteria_list = [["Critères d'édition"]] + \
+            [["%s: %s" % (k, criteria[k])] for k in criteria]
+        criteria_table = Table(
+            criteria_list, style=style_criteria_table, colWidths=[6 * cm])
+
     training_list = [
         [e.label, Table([
             ["Conseil de composante : %s" %
@@ -482,39 +487,60 @@ def models_first_page(model, criteria, trainings, story):
     trainings_table = Table(
         trainings_table, style=style_trainings, colWidths=[6.5 * cm, 8 * cm])
     # ### BUILDING TABLE
-    table = [[criteria_table, trainings_table]]
 
-    story.append(Table(table, style=style_table,
-                       colWidths=[8.5 * cm, 15.5 * cm]))
+    if criteria_table:
+        table = [[criteria_table, trainings_table]]
+
+        story.append(Table(table, style=style_table,
+                           colWidths=[8.5 * cm, 15.5 * cm]))
+    else:
+        table = [[trainings_table]]
+        story.append(Table(table, style=style_table,
+                           colWidths=[15.5 * cm]))
+
     return story
 
 
-def gen_model_story(trainings, date, target, standard, ref, gen_type, user, story=[]):
+def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user, story=[]):
     """
-    Story for model A
+    Story for model
     """
     i = datetime.datetime.now()
     year = currentyear().code_year
 
+    if 'review' in target:
+        goal = _("Relecture")
+    elif 'publish' in target:
+        goal = _("Publication")
+    elif target == 'prepare_cfvu':
+        goal = _('CFVU')
+    elif 'prepare_cc' in target:
+        goal = _('Conseil de composante')
+    else:
+        # TODO: should not be raised debug for now
+        goal = target
+
     criteria = [
-        ("Utilisateur", "%s %s" % (user.first_name, user.last_name)),
-        ("Objectif", "Relecture" if 'review' in target else 'todo'),
-        ("Modèle", "A"),
-        ("Date", "%s/%s/%s" % (i.day, i.month, i.year)),
-        ("Règles standards", "Avec" if standard else "Sans"),
-        ("Références", "Sans" if ref == "without" else "ROF" if ref ==
-         "with_rof" else "SI Scolarité")
+
+        (_("Utilisateur"), "%s %s" % (user.first_name, user.last_name)),
+        (_("Objectif"), goal),
+        (_("Modèle"), model.upper()),
+        (_("Date"), "%s/%s/%s" % (i.day, i.month, i.year)),
+        (_("Règle standard"), _("Avec") if standard else _("Sans")),
+        (_("Références"), _("Sans") if ref == "without" else _(
+            "ROF") if ref == "with_rof" else _("SI Scolarité"))
+
     ]
+
     criteria = collections.OrderedDict(criteria)
-    models_first_page("a", criteria, trainings.order_by('degree_type'), story)
+    models_first_page(
+        model, criteria, trainings.order_by('degree_type'), story)
+    story.append(PageBreak())
 
     if standard:
-        story.append(PageBreak())
         for d in trainings:
-            story += degree_type_rules(None, d.degree_type, year, custom=True)
-
-    for e in trainings:
-        preview_mecctable_story(e, story, False)
+            story += degree_type_rules(None, d.degree_type,
+                                       year, custom=True)
 
     return story
 
