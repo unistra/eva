@@ -284,7 +284,6 @@ def add_simple_paragraph(story, rule, sp, ap):
                 style = ''
                 append_text(story, text, style)
 
-
     if ap:
         text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
         style = "textColor=green"
@@ -535,17 +534,20 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     criteria = collections.OrderedDict(criteria)
     models_first_page(
         model, criteria, trainings.order_by('degree_type'), story)
-    story.append(PageBreak())
 
     if standard:
+        story.append(PageBreak())
         for d in trainings:
             story += degree_type_rules(None, d.degree_type,
                                        year, custom=True)
 
+    for e in trainings:
+        preview_mecctable_story(e, story, False, ref=ref)
+
     return story
 
 
-def preview_mecctable_story(training, story=[], preview=True):
+def preview_mecctable_story(training, story=[], preview=True, ref="both"):
     """
     Story for previewing mecctable
     """
@@ -564,6 +566,9 @@ def preview_mecctable_story(training, story=[], preview=True):
     links = get_mecc_table_order([e for e in root_link], [],
                                  current_structures, current_links,
                                  current_exams, all_exam=True)
+    references = '<para textColor=steelblue><strong>%s</strong></para>' % ("Référence ROF \
+<br></br><br></br> Référence APOGEE" if ref == "both" else "Référence\
+ ROF" if "with_rof" == ref else 'Référence APOGEE' if "with_si" == ref else '')
 
     # ############ TITLE STUFF ################################
     if preview:
@@ -593,8 +598,7 @@ def preview_mecctable_story(training, story=[], preview=True):
     # - Ugly but tables are almost always ugly
     big_table = [['OBJETS', '', '', '', '', '', 'EPREUVES'],
                  ['Intitulé', 'Responsable', Paragraph(
-                     '<para textColor=steelblue><strong>Référence ROF \
-                     <br></br><br></br> Référence APOGEE</strong></para>',
+                     references,
                      styles['CenterSmall']),
                   verticalText('Crédit ECTS'), verticalText('Coefficient'),
                   verticalText('Note seuil'), 'Session principale',
@@ -701,13 +705,16 @@ def preview_mecctable_story(training, story=[], preview=True):
                  ]))
             return inner_table
 
+        ref_data = Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
+            struct.ref_si_scol, styles['CenterSmall']) if ref == 'both' else Paragraph(
+                struct.ROF_ref, styles['CenterSmall']) if ref == 'with_rof' else Paragraph(
+            struct.ref_si_scol, styles['CenterSmall']) if ref == 'with_si' else ''
         big_table.append([
             "%s%s " % ("    " * what.get('rank'), struct.label),
             Paragraph(
                 struct.get_respens_name_small,
                 styles['CenterSmall'] if not struct.external_name else styles['CenterSmallItalic']),
-            [Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
-                struct.ref_si_scol, styles['CenterSmall'])],
+            [ref_data],
             struct.ECTS_credit if struct.ECTS_credit else '-',
             '{0:.0f}'.format(link.coefficient) if link.coefficient else '',
             link.eliminatory_grade,
