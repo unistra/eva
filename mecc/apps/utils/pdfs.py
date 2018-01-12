@@ -37,6 +37,7 @@ styles.add(ParagraphStyle(name='CenterSmallItalic',
                           alignment=TA_CENTER, fontSize=8, fontName="Times-Italic"))
 styles.add(ParagraphStyle(name='SmallNormal', fontSize=8))
 logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
+logo_uds_small = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
 
 class verticalText(Flowable):
@@ -286,7 +287,7 @@ def add_simple_paragraph(story, rule, sp, ap):
                 append_text(story, text, style)
 
     if ap:
-        text = ap.get(rule_gen_id=rule.id).text_additional_paragraph
+        text = ap.filter(rule_gen_id=rule.id).first().text_additional_paragraph
         style = "textColor=green"
         append_text(story, text, style)
 
@@ -501,6 +502,47 @@ def models_first_page(model, criteria, trainings, story):
     return story
 
 
+def doc_gen_title(year, cmp_label, date, goal, title="Modalités d'évaluation des connaissances et des compétences", story=[]):
+    """
+    Nice blue title with logo and stuff
+    """
+    style_table = [
+        ('VALIGN', (0, 0), (-1, -1), "MIDDLE"),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
+        ('SIZE', (0, 0), (-1, -1), 13),
+        ('FACE', (0, 0), (-1, 0), 'Helvetica-Bold'),
+
+    ]
+    style_middle = [
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
+        ('SIZE', (0, 0), (-1, -1), 12),
+        ('LINEBEFORE', (0, 0), (-1, -1), 1, colors.steelblue),
+
+    ]
+    style_last = [
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
+        ('ALIGN', (0, 0), (-1, -1), "RIGHT"),
+        ('LINEBEFORE', (0, 0), (-1, -1), 1, colors.steelblue),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('SIZE', (0, 0), (-1, -1), 9),
+    
+    ]
+    table = [
+        [logo_uds_small, title, Table([
+            ["%s %s/%s" % (_("Année universitaire"), year, year + 1)],
+            [cmp_label]
+        ], style=style_middle), Table([
+            ["%s %s" % (_("Edition du "), date)], [
+                Paragraph("<para fontsize=9 textColor=steelblue align=right><u><strong>%s\
+                </strong></u></para> " % goal.upper(), styles['Normal'])]
+        ], style=style_last)]
+    ]
+    story.append(Table(table, style=style_table, colWidths=[
+                 3.5 * cm, 15 * cm, 6.5 * cm, 4 * cm]))
+    return story
+
+
 def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user, story=[]):
     """
     Story for model
@@ -534,27 +576,33 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     ]
 
     criteria = collections.OrderedDict(criteria)
-    models_first_page(
-        model, criteria, ordered_trainings, story)
-
-    if standard:
-        story.append(PageBreak())
-        for d in ordered_trainings:
-            story += degree_type_rules(None, d.degree_type,
-                                       year, custom=True)
-
     additionals = AdditionalParagraph.objects.filter(
         training__in=ordered_trainings)
     specifics = SpecificParagraph.objects.filter(
         training__in=ordered_trainings)
-
     derog_gen_id = [e.rule_gen_id for e in specifics]
     addit_gen_id = [e.rule_gen_id for e in additionals]
     rules = Rule.objects.filter(id__in=derog_gen_id + addit_gen_id)
-    for e in ordered_trainings:
-        preview_mecctable_story(
-            e, story, False, ref=ref, model=model, additionals=additionals,
-            specifics=specifics, edited_rules=rules)
+    models_first_page(
+        model, criteria, ordered_trainings, story)
+    train = trainings.first()
+    story.append(PageBreak())
+    doc_gen_title(
+        train.code_year,
+        train.institutes.filter(code=train.supply_cmp).first().label,
+        "%s/%s/%s" % (i.day, i.month, i.year),
+        goal,
+        story=story
+    )
+
+    if standard and model == 'a':
+        for d in ordered_trainings:
+            story += degree_type_rules(None, d.degree_type,
+                                       year, custom=True)
+            preview_mecctable_story(
+                d, story, False, ref=ref, model=model, additionals=additionals,
+                specifics=specifics, edited_rules=rules)
+            story.append(PageBreak())
 
     return story
 
@@ -650,8 +698,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     if preview:
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
-    else:
-        story.append(PageBreak())
+    # else:
+        # story.append(PageBreak())
 
     title_training_table = table_title_trainings_info(training)
 
@@ -660,9 +708,13 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 \
         spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" % _(
             "Dérogation et alinéas additionnels"), styles['Normal']))
-        derog_and_additional(training, specifics.filter(
-            training=training), additionals.filter(training=training),
-            edited_rules, story)
+        if specifics.filter(training=training) or additionals.filter(training=training):
+            derog_and_additional(training, specifics.filter(
+                training=training), additionals.filter(training=training),
+                edited_rules, story)
+        else:
+            story.append(Paragraph("<para>%s</para>" %
+                                   _("Aucun"), styles['Normal']))
 
     story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
         darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal']))
