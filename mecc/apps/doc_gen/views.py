@@ -21,9 +21,13 @@ from mecc.apps.degree.models import DegreeType
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     canvas_for_gen_pdf, canvas_for_mecctable, canvas_for_preview_mecctable, \
     degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape, \
-    gen_model_story
+    gen_model_story,  DocGenerator
 
 from django_cas.decorators import login_required
+
+from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
+    Table, TableStyle, PageBreak
+from reportlab.lib.units import mm, cm
 
 
 def dispatch_to_good_pdf(request):
@@ -32,28 +36,10 @@ def dispatch_to_good_pdf(request):
     """
     # GET ALL INFORMATIONS
     trainings = request.GET.getlist('selected')
-    date = request.GET.get('date')
-    target = request.GET.get('target')
-    standard = True if request.GET.get('standard') == "yes" else False
-    ref = request.GET.get('ref')
-    gen_type = request.GET.get('gen_type')
-    model = request.GET.get('model')
 
-    # if not trainings:
-    #     return HttpResponse(status=501)
+    generator = DocGenerator()
+    doc, response = generator.run(request, trainings)
 
-    print('im dispatching...', model)
-    title = "Modalités d'Evaluation des Connaissances et des compétences"
-    response, doc = setting_up_pdf(title, margin=32, portrait=False)
-    if trainings:
-        story = gen_model_story(
-            Training.objects.filter(id__in=[e for e in trainings]),
-            model, date, target, standard, ref, gen_type, request.user)
-    else:
-        story = []
-
-    doc.build(story, onLaterPages=canvas_for_gen_pdf,
-              canvasmaker=NumberedCanvas)
     return response
 
 
@@ -229,7 +215,7 @@ def trainings_for_target(request):
     institute = request.GET.get('institute')
     json = True if request.GET.get('json') else False
     trainings = Training.objects.filter(
-        code_year=current_year, institutes__code=institute).order_by('degree_type', 'label')
+        code_year=current_year, supply_cmp=institute).order_by('degree_type', 'label')
 
     profiles = user.meccuser.profile.all()
 

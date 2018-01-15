@@ -40,6 +40,104 @@ logo_uds = Image('mecc/static/img/signature_uds_02.png', 160, 60)
 logo_uds_small = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
 
+class DocGenerator(object):
+    """"""
+
+    # ----------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        self.width, self.height = landscape(A4)
+        self.styles = getSampleStyleSheet()
+
+    # ----------------------------------------------------------------------
+    def run(self, request, trainings):
+        """
+        Run the report
+        """
+        # BLOAT STUFF ---------------------
+        trainings = request.GET.getlist('selected')
+        date = request.GET.get('date')
+        target = request.GET.get('target')
+        standard = True if request.GET.get('standard') == "yes" else False
+        ref = request.GET.get('ref')
+        gen_type = request.GET.get('gen_type')
+        model = request.GET.get('model')
+        if 'review' in target:
+            goal = _("Relecture")
+        elif 'publish' in target:
+            goal = _("Publication")
+        elif target == 'prepare_cfvu':
+            goal = "%s %s" % (_('CFVU du '), date)
+        elif 'prepare_cc' in target:
+            goal = "%s %s" % (_('Conseil de composante du '), date)
+        else:
+            goal = target
+
+        # response ---------------------
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = ('filename="%s .pdf"' % goal)
+
+        # writing in document ---------------------
+        if trainings:
+            i = datetime.datetime.now()
+            today = "%s/%s/%s" % (i.day, i.month, i.year)
+            concerned_trainings = Training.objects.filter(
+                id__in=[e for e in trainings])
+
+            self.left_footer = "%s - %s - %s - %s - %s" % (
+                _("MECC"),
+                "%s/%s" % (concerned_trainings.first().code_year,
+                           concerned_trainings.first().code_year + 1),
+                concerned_trainings.first().institutes.filter(
+                    code=concerned_trainings.first().supply_cmp).first().label,
+                "%s %s" % (_("Edition du "), today),
+                goal
+            )
+            self.story = gen_model_story(
+                concerned_trainings,
+                model, date, target, standard, ref,
+                gen_type, request.user)
+        else:
+            self.story = []
+
+        self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                                     topMargin=72, bottomMargin=18)
+
+        # building doc according to target -----------------------
+
+        if 'publish' in target:
+            self.left_footer = _(
+                "Ces MECC sont définitives et ne peuvent pas être modifiées en cours d'année universitaire")
+
+            self.doc.build(self.story, onFirstPage=self.publish_mecc,
+                           onLaterPages=self.mecc_canvas,
+                           canvasmaker=NumberedCanvas_landscape)
+        else:
+            self.doc.build(self.story, onLaterPages=self.mecc_canvas,
+                           canvasmaker=NumberedCanvas_landscape)
+
+        return self.doc, response
+
+    # ----------------------------------------------------------------------
+    def mecc_canvas(self, canvas, doc):
+        """
+        Create the document
+        """
+        canvas.saveState()
+        canvas.setFont("Helvetica", 10)
+        canvas.setFillGray(0.3)
+        canvas.drawString(20, 10, self.left_footer)
+        canvas.restoreState()
+
+    # ----------------------------------------------------------------------
+    def publish_mecc(self, canvas, doc):
+        canvas.saveState()
+        canvas.setFont("Helvetica", 12)
+        canvas.setFillColor(colors.steelblue)
+        canvas.drawCentredString(425, 50, self.left_footer)
+        canvas.restoreState()
+
+
 class verticalText(Flowable):
     '''
     Rotates a text in a table cell.
@@ -119,6 +217,7 @@ def canvas_for_preview_mecctable(canvas, doc):
     """
     custom_watermark(canvas, "Prévisualisation", rotation=40,
                      font_size=40, position_x=500, position_y=-75)
+    NumberedCanvas_landscape(canvas)
 
 
 class NumberedCanvas_landscape(canvas.Canvas):
@@ -502,7 +601,7 @@ def models_first_page(model, criteria, trainings, story):
     return story
 
 
-def doc_gen_title(year, cmp_label, date, goal, title="Modalités d'évaluation des connaissances et des compétences", story=[]):
+def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalités d'évaluation des connaissances et des compétences", story=[]):
     """
     Nice blue title with logo and stuff
     """
@@ -525,21 +624,28 @@ def doc_gen_title(year, cmp_label, date, goal, title="Modalités d'évaluation d
         ('LINEBEFORE', (0, 0), (-1, -1), 1, colors.steelblue),
         ('LEFTPADDING', (0, 0), (-1, -1), 0),
         ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ('SIZE', (0, 0), (-1, -1), 9),
-    
+
     ]
+    if goal in ['Relecture', 'Publication']:
+        goal_text = goal.upper()
+    else:
+        goal_text = "<u>%s</u><br></br>Du %s" % (goal, custom_date)
     table = [
         [logo_uds_small, title, Table([
             ["%s %s/%s" % (_("Année universitaire"), year, year + 1)],
-            [cmp_label]
+            [Paragraph("<para textColor=steelblue fontSize=12 >%s</para> \
+            " % cmp_label, styles['Normal'])]
         ], style=style_middle), Table([
             ["%s %s" % (_("Edition du "), date)], [
-                Paragraph("<para fontsize=9 textColor=steelblue align=right><u><strong>%s\
-                </strong></u></para> " % goal.upper(), styles['Normal'])]
+                Paragraph("<para fontsize=9 textColor=steelblue align=right><strong>%s\
+                </strong></para> " % goal_text, styles['Normal'])]
         ], style=style_last)]
     ]
     story.append(Table(table, style=style_table, colWidths=[
-                 3.5 * cm, 15 * cm, 6.5 * cm, 4 * cm]))
+                 3.25 * cm, 15 * cm, 6.5 * cm, 4.5 * cm]))
     return story
 
 
@@ -585,24 +691,25 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     rules = Rule.objects.filter(id__in=derog_gen_id + addit_gen_id)
     models_first_page(
         model, criteria, ordered_trainings, story)
-    train = trainings.first()
+    train = trainings.last()
     story.append(PageBreak())
     doc_gen_title(
         train.code_year,
         train.institutes.filter(code=train.supply_cmp).first().label,
         "%s/%s/%s" % (i.day, i.month, i.year),
         goal,
-        story=story
+        story=story,
+        custom_date=date
     )
 
     if standard and model == 'a':
         for d in ordered_trainings:
             story += degree_type_rules(None, d.degree_type,
                                        year, custom=True)
+            story.append(PageBreak())
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
-            story.append(PageBreak())
 
     return story
 
