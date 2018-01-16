@@ -702,16 +702,30 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         custom_date=date
     )
 
-    if standard and model == 'a':
+    if model == 'a':
+        degree_type = []
         for d in ordered_trainings:
-            story += degree_type_rules(None, d.degree_type,
-                                       year, custom=True)
+            if d.degree_type not in degree_type and standard:
+                if degree_type:
+                    story.append(PageBreak())
+                title_degree_type(d.degree_type, story)
+                trainings = {e.MECC_type for e in ordered_trainings.filter(
+                    degree_type=d.degree_type)}
+                story += degree_type_rules(None, d.degree_type,
+                                           year, filter_type=trainings)
+            degree_type.append(d.degree_type)
+            # if len(degree_type) > 1:
             story.append(PageBreak())
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
 
+    if model == 'b':
+        # for d in ordered_trainings:
+        #     complete_rule(i.year, None, d,)
+        pass 
     return story
+
 
 
 def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
@@ -805,8 +819,6 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     if preview:
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
-    # else:
-        # story.append(PageBreak())
 
     title_training_table = table_title_trainings_info(training)
 
@@ -1107,7 +1119,17 @@ def one_rule(title, rule):
     return story
 
 
-def degree_type_rules(title, degreetype, year, custom=False):
+def title_degree_type(degree_type, story):
+    story.append(Table([[degree_type]], style=[
+        ('BACKGROUND', (0, 0), (-1, -1), colors.steelblue),
+        ('SIZE', (0, 0), (-1, -1), 12),
+        ('FACE', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+    ], colWidths=[27 * cm]))
+    return story
+
+
+def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
     degree_type = degreetype.short_label.upper()
 
     cr = rules_degree_for_year(degreetype.id, year)
@@ -1157,22 +1179,25 @@ def degree_type_rules(title, degreetype, year, custom=False):
 
 # ############ ECI ################################
 
-    block_rules(
-        _("RÈGLES APPLICABLES aux diplômes de type %s en  \
-         évaluation continue intégrale" % degree_type),
-        cr.filter(Q(is_eci=True, is_ccct=False)),
-        story,
-        custom=custom
-    )
+
+    if not filter_type or 'E' in filter_type:
+        block_rules(
+            _("RÈGLES APPLICABLES aux diplômes de type %s en  \
+            évaluation continue intégrale" % degree_type),
+            cr.filter(Q(is_eci=True, is_ccct=False)),
+            story,
+            custom=custom
+        )
 
 # ############ CCCT ################################
-    block_rules(
-        _("RÈGLES APPLICABLES aux diplômes de type %s en contrôle terminal, \
-        combiné ou non avec un contrôle continu" % degree_type),
-        cr.filter(Q(is_eci=False, is_ccct=True)),
-        story,
-        custom=custom
-    )
+    if not filter_type or 'C' in filter_type:
+        block_rules(
+            _("RÈGLES APPLICABLES aux diplômes de type %s en contrôle terminal, \
+            combiné ou non avec un contrôle continu" % degree_type),
+            cr.filter(Q(is_eci=False, is_ccct=True)),
+            story,
+            custom=custom
+        )
     return story
 
 
