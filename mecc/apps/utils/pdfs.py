@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, TableStyle, PageBreak
+    Table, TableStyle, PageBreak, CondPageBreak
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
@@ -714,18 +714,27 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     if model == 'a':
         degree_type = []
         for d in ordered_trainings:
+            if d != ordered_trainings.first():  # I'M SO SMART :)
+                story.append(PageBreak())
             if d.degree_type not in degree_type and standard:
-                if degree_type:
-                    story.append(PageBreak())
+                # if degree_type:
+                #     story.append(PageBreak())
                 title_degree_type(d.degree_type, story)
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
                 story += degree_type_rules(None, d.degree_type,
                                            year, filter_type=trainings,
                                            custom=True)
+            # if not standard:
+            #     story.append(
+            #         Paragraph(_("Edition sans règle standard."),
+            #                   styles['Normal']))
+
+            # else:
+            #     story.append(Spacer(0, 12))
             degree_type.append(d.degree_type)
             # if len(degree_type) > 1:
-            story.append(PageBreak())
+            # story.append(PageBreak())
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
@@ -751,7 +760,7 @@ def write_rule_with_derog(training, rules, specific, additional, story=[]):
 
     # ############ add rules one by one ################################
     id_ap = [e.rule_gen_id for e in additional]
-    if not rules: 
+    if not rules:
         return story
     for e in rules:
         a = additional if e.id in id_ap else None
@@ -868,11 +877,11 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
             story.append(Paragraph("<para>%s</para>" %
                                    _("Néant"), styles['Normal']))
 
+    story.append(CondPageBreak(250))
     title = Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
         darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal'])
-    title.keepWithNext = True
     space = Spacer(0, 12)
-    space.keepWithNext = True
+
     story.append(title)
     story.append(space)
 
