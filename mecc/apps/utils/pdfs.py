@@ -57,7 +57,7 @@ class DocGenerator(object):
         # BLOAT STUFF ---------------------
         trainings = request.GET.getlist('selected')
         date = request.GET.get('date')
-        target = request.GET.get('target')
+        self.target = target = request.GET.get('target')
         standard = True if request.GET.get('standard') == "yes" else False
         ref = request.GET.get('ref')
         gen_type = request.GET.get('gen_type')
@@ -78,6 +78,7 @@ class DocGenerator(object):
         response['Content-Disposition'] = ('filename="%s .pdf"' % goal)
 
         # writing in document ---------------------
+        self.watermark = _('Document')
         if trainings:
             i = datetime.datetime.now()
             today = "%s/%s/%s" % (i.day, i.month, i.year)
@@ -123,6 +124,10 @@ class DocGenerator(object):
         """
         Create the document
         """
+        print(self.target)
+        if self.target != 'publish':
+            custom_watermark(canvas, "Document intermédiaire", rotation=40,
+                             font_size=40, position_x=550, position_y=-70)
         canvas.saveState()
         canvas.setFont("Helvetica", 10)
         canvas.setFillGray(0.3)
@@ -728,8 +733,6 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         pass
     
     return story
-
-
 
 
 def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
