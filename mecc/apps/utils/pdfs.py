@@ -124,7 +124,6 @@ class DocGenerator(object):
         """
         Create the document
         """
-        print(self.target)
         if self.target != 'publish':
             custom_watermark(canvas, "Document intermédiaire", rotation=40,
                              font_size=40, position_x=550, position_y=-70)
@@ -443,6 +442,8 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
     """
     # ############ USEFULL STUFF ################################
     # STYLES :
+    print(training)
+    print('789789798798798798798')
     main_style = [
         ('BOX', (0, 0), (-2, -1), 0.5, colors.black),
         ('SPAN', (-1, 0), (-1, -1)),
@@ -696,7 +697,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     train = trainings.last()
     all_rules = Rule.objects.filter(
         degree_type__in=[e.degree_type for e in trainings],
-        code_year=train.code_year)
+        code_year=train.code_year).distinct()
     rules = all_rules.filter(id__in=derog_gen_id + addit_gen_id)
     models_first_page(
         model, criteria, ordered_trainings, story)
@@ -730,9 +731,37 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 specifics=specifics, edited_rules=rules)
 
     if model == 'b':
-        pass
-    
+        for d in ordered_trainings:
+            if d != ordered_trainings.first():  # I'M SO SMART :)
+                story.append(PageBreak())
+            write_rule_with_derog(
+                d,
+                all_rules.filter(
+                    degree_type=d.degree_type),
+                specifics.filter(training=d),
+                additionals.filter(training=d), story=story)
     return story
+
+
+def write_rule_with_derog(training, rules, specific, additional, story=[]):
+    """
+    Write rule for model B
+    """
+    story.append(table_title_trainings_info(training, in_two_part=True))
+
+    # ############ add rules one by one ################################
+    id_ap = [e.rule_gen_id for e in additional]
+    if not rules: 
+        return story
+    for e in rules:
+        print(e)
+        print('--')
+        a = additional if e.id in id_ap else None
+        add_simple_paragraph(story, e, specific, a)
+    print('*****************************************')
+
+    return story
+    # create_title_for_model_B(training)
 
 
 def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
