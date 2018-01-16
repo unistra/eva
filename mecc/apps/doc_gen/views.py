@@ -13,9 +13,6 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    canvas_for_preview_mecctable,  degree_type_rules, \
-    preview_mecctable_story, NumberedCanvas_landscape
 from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
