@@ -101,7 +101,7 @@ class DocGenerator(object):
             self.story = []
 
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
-                                     topMargin=72, bottomMargin=18)
+                                     topMargin=24, bottomMargin=24)
 
         # building doc according to target -----------------------
 
@@ -688,10 +688,13 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         training__in=ordered_trainings)
     derog_gen_id = [e.rule_gen_id for e in specifics]
     addit_gen_id = [e.rule_gen_id for e in additionals]
-    rules = Rule.objects.filter(id__in=derog_gen_id + addit_gen_id)
+    train = trainings.last()
+    all_rules = Rule.objects.filter(
+        degree_type__in=[e.degree_type for e in trainings],
+        code_year=train.code_year)
+    rules = all_rules.filter(id__in=derog_gen_id + addit_gen_id)
     models_first_page(
         model, criteria, ordered_trainings, story)
-    train = trainings.last()
     story.append(PageBreak())
     doc_gen_title(
         train.code_year,
@@ -712,7 +715,8 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
                 story += degree_type_rules(None, d.degree_type,
-                                           year, filter_type=trainings)
+                                           year, filter_type=trainings,
+                                           custom=True)
             degree_type.append(d.degree_type)
             # if len(degree_type) > 1:
             story.append(PageBreak())
@@ -721,10 +725,10 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 specifics=specifics, edited_rules=rules)
 
     if model == 'b':
-        # for d in ordered_trainings:
-        #     complete_rule(i.year, None, d,)
-        pass 
+        pass
+    
     return story
+
 
 
 
@@ -1046,6 +1050,7 @@ def complete_rule(year, title, training, rules, specific, add):
     """
     Story to get all rule for a selected training
     """
+
     # ############ define usefull stuff ################################
     story = []
     id_ap = [e.rule_gen_id for e in add]
@@ -1178,7 +1183,6 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
     )
 
 # ############ ECI ################################
-
 
     if not filter_type or 'E' in filter_type:
         block_rules(
