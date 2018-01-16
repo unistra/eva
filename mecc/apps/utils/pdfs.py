@@ -416,6 +416,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 if not custom:
                     txt = derog
                 else:
+                    print(p.specific_involved)
                     txt = 'derogation(s) : %s ' % p.specific_involved.count()
 
             t.append(
@@ -754,11 +755,8 @@ def write_rule_with_derog(training, rules, specific, additional, story=[]):
     if not rules: 
         return story
     for e in rules:
-        print(e)
-        print('--')
         a = additional if e.id in id_ap else None
         add_simple_paragraph(story, e, specific, a)
-    print('*****************************************')
 
     return story
     # create_title_for_model_B(training)
@@ -869,11 +867,15 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                 edited_rules, story)
         else:
             story.append(Paragraph("<para>%s</para>" %
-                                   _("Aucun"), styles['Normal']))
+                                   _("Néant"), styles['Normal']))
 
-    story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
-        darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal']))
-    story.append(Spacer(0, 12))
+    title = Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
+        darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal'])
+    title.keepWithNext = True
+    space = Spacer(0, 12)
+    space.keepWithNext = True
+    story.append(title)
+    story.append(space)
 
     # ############ TABLE STRUCUTURE ################################
     col_width = [6 * cm, 2.25 * cm, 1.8 * cm, .6 * cm, .6 * cm, .6 * cm]
