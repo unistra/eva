@@ -124,7 +124,7 @@ class DocGenerator(object):
         """
         Create the document
         """
-        if self.target != 'publish':
+        if 'publish' not in self.target:
             custom_watermark(canvas, "Document intermédiaire", rotation=40,
                              font_size=40, position_x=550, position_y=-70)
         canvas.saveState()
@@ -416,7 +416,6 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 if not custom:
                     txt = derog
                 else:
-                    print(p.specific_involved)
                     txt = 'derogation(s) : %s ' % p.specific_involved.count()
 
             t.append(
