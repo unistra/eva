@@ -408,7 +408,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                   ID %s</para>" % e.pk, styles['Normal'])
         if styled and not custom else ' ',
         Paragraph("<para align=right textColor=green fontSize=8>\
-                  additionels : %s</para>" % len(additionals), styles['Normal'])
+                  additionnels : %s</para>" % len(additionals), styles['Normal'])
         if custom and len(additionals) > 0 else ' ',
     ])
 
@@ -500,13 +500,13 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
     # Create here other secondary table display if needed
     # 1/REFERENCE STUFF:
     ref_label = "" if "without" in reference else _(
-        'Référence ROF') if "with_rof" in reference else _('Référence APOGEE')
+        'Référence ROF :') if "with_rof" in reference else _('Référence APOGEE :')
     ref = "" if "without" in reference else training.ref_cpa_rof if "with_rof" in reference else training.ref_si_scol
 
     table = [
         [training.label, "%s - %s" % (training.get_MECC_type_display(),
                                       training.get_session_type_display()),
-         "%s : %s" % (ref_label, ref),
+         "%s %s" % (ref_label, ref),
          secondary_table
          ],
         [Paragraph(line_2, styles['Normal']),
