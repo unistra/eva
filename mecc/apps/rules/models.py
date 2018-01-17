@@ -63,6 +63,7 @@ class Rule(models.Model):
         return True if True in [e.is_interaction for e in Paragraph.objects.filter(
             rule=self)] else False
 
+    
     @property
     def has_current_exceptions(self):
         """
@@ -74,11 +75,11 @@ class Rule(models.Model):
         additional_paragraph = apps.get_model('training', 'AdditionalParagraph')
         additionals = [e for e in additional_paragraph.objects.filter(
             code_year=self.code_year,
-            rule_gen_id=self.n_rule)]
+            rule_gen_id=self.id)]
         specific_paragraph = apps.get_model('training', 'SpecificParagraph')
         s_p = [e for e in specific_paragraph.objects.filter(
             code_year=self.code_year,
-            rule_gen_id=self.n_rule)]
+            rule_gen_id=self.id)]
         give = {
             'additionals': additionals,
             'specifics': s_p}
