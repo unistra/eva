@@ -875,7 +875,6 @@ def copy_old_mecctable(request, id_training):
                         owner_training_id=current_other_training.id)
                 except ObjectDoesNotExist:
                     new_struct_child = old_struct_child
-                print('old!')
         # 2.0 Get old parent structure, beware that it can
         # be root if id_parent == 0
 
