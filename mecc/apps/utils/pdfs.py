@@ -130,7 +130,7 @@ class DocGenerator(object):
         canvas.saveState()
         canvas.setFont("Helvetica", 10)
         canvas.setFillGray(0.3)
-        canvas.drawString(20, 10, self.left_footer)
+        canvas.drawString(20, 15, self.left_footer)
         canvas.restoreState()
 
     # ----------------------------------------------------------------------
