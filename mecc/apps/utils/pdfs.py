@@ -398,7 +398,7 @@ def add_simple_paragraph(story, rule, sp, ap):
 def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
 
     t = [["", ""]]
-
+    print(ap)
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
@@ -416,8 +416,8 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 if not custom:
                     txt = derog
                 else:
-                    
-                    txt = 'derogation(s) : %s ' % [p.specific_involved.count()]
+                    txt = 'derogation(s) : %s ' % len([
+                        e for e in p.specific_involved if e.training in custom])
 
             t.append(
                 [
@@ -723,7 +723,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                     degree_type=d.degree_type)}
                 story += degree_type_rules(None, d.degree_type,
                                            year, filter_type=trainings,
-                                           custom=True)
+                                           custom=ordered_trainings)
             # if not standard:
             #     story.append(
             #         Paragraph(_("Edition sans règle standard."),
