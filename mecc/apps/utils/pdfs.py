@@ -398,12 +398,19 @@ def add_simple_paragraph(story, rule, sp, ap):
 def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
 
     t = [["", ""]]
+    bool_as_exception, exceptions = e.has_current_exceptions
+    additionals = [e for e in exceptions.get(
+        'additionals') if e.training in custom] if custom else None
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
         Paragraph("<para align=right textColor=darkblue fontSize=8>\
                   ID %s</para>" % e.pk, styles['Normal'])
-        if styled and not custom else ' '])
+        if styled and not custom else ' ',
+        Paragraph("<para align=right textColor=green fontSize=8>\
+                  additionels : %s</para>" % len(additionals), styles['Normal'])
+        if custom and len(additionals) > 0 else ' ',
+    ])
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
     for p in paragraphs:
@@ -426,7 +433,9 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 ]
             )
 
-    table = Table(t, colWidths=(400, 125), style=[
+    colwidth = (400, 125, 125) if custom else (400, 125, 0)
+
+    table = Table(t, colWidths=colwidth, style=[
         ('VALIGN', (0, 0), (0, -1), 'TOP'),
         ('VALIGN', (1, 1), (1, -1), 'MIDDLE'),
         ('LINEBELOW', (0, 2), (-1, -1), 0.75, colors.lightgrey),
