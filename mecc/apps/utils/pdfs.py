@@ -415,7 +415,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 if not custom:
                     txt = derog
                 else:
-                    txt = 'derogation(s) : %s ' % len([
+                    txt = 'dérogation(s) : %s ' % len([
                         e for e in p.specific_involved if e.training in custom])
 
             t.append(
@@ -436,7 +436,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
     return story
 
 
-def table_title_trainings_info(training, in_two_part=True, story=[]):
+def table_title_trainings_info(training, in_two_part=True, reference=None, story=[]):
     """
     Create table title for training used in preview mecc and model A and others
     """
@@ -489,10 +489,15 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
     ], style=side_style
     )
     # Create here other secondary table display if needed
+    # 1/REFERENCE STUFF:
+    ref_label = "" if "without" in reference else _(
+        'Référence ROF') if "with_rof" in reference else _('Référence APOGEE')
+    ref = "" if "without" in reference else training.ref_cpa_rof if "with_rof" in reference else training.ref_si_scol
+
     table = [
         [training.label, "%s - %s" % (training.get_MECC_type_display(),
                                       training.get_session_type_display()),
-         "%s : %s" % (_('Référence APOGEE'), training.ref_si_scol),
+         "%s : %s" % (ref_label, ref),
          secondary_table
          ],
         [Paragraph(line_2, styles['Normal']),
@@ -719,11 +724,13 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 # if degree_type:
                 #     story.append(PageBreak())
                 title_degree_type(d.degree_type, story)
+                training_same_degreetype = ordered_trainings.filter(
+                    degree_type=d.degree_type)
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
                 to_write = degree_type_rules(None, d.degree_type,
                                              year, filter_type=trainings,
-                                             custom=ordered_trainings)
+                                             custom=training_same_degreetype)
                 story += to_write
                 if not to_write:
                     story.append(Spacer(0, 12))
@@ -747,15 +754,16 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 all_rules.filter(
                     degree_type=d.degree_type),
                 specifics.filter(training=d),
-                additionals.filter(training=d), story=story)
+                additionals.filter(training=d), story=story, reference=ref)
     return story
 
 
-def write_rule_with_derog(training, rules, specific, additional, story=[]):
+def write_rule_with_derog(training, rules, specific, additional, reference=None, story=[]):
     """
     Write rule for model B
     """
-    story.append(table_title_trainings_info(training, in_two_part=True))
+    story.append(table_title_trainings_info(
+        training, in_two_part=True, reference=reference))
 
     # ############ add rules one by one ################################
     id_ap = [e.rule_gen_id for e in additional]
@@ -861,7 +869,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
 
-    title_training_table = table_title_trainings_info(training)
+    title_training_table = table_title_trainings_info(training, reference=ref)
 
     story.append(title_training_table)
     if model == 'a':
