@@ -712,7 +712,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     if model == 'a':
         degree_type = []
         for d in ordered_trainings:
-                
+
             if d.degree_type not in degree_type and standard:
                 if d != ordered_trainings.first():  # I'M SO SMART :)
                     story.append(PageBreak())
@@ -721,18 +721,18 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 title_degree_type(d.degree_type, story)
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
-                story += degree_type_rules(None, d.degree_type,
-                                           year, filter_type=trainings,
-                                           custom=ordered_trainings)
-            # if not standard:
-            #     story.append(
-            #         Paragraph(_("Edition sans règle standard."),
-            #                   styles['Normal']))
+                to_write = degree_type_rules(None, d.degree_type,
+                                             year, filter_type=trainings,
+                                             custom=ordered_trainings)
+                story += to_write
+                if not to_write:
+                    story.append(Spacer(0, 12))
+                    story.append(
+                        Paragraph(_("Aucune sans règle standard."),
+                                  styles['Normal']))
 
-            # else:
-            #     story.append(Spacer(0, 12))
             degree_type.append(d.degree_type)
-            story.append(PageBreak())            
+            story.append(PageBreak())
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
@@ -741,7 +741,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         for d in ordered_trainings:
             if d != ordered_trainings.first():  # I'M SO SMART :)
                 story.append(PageBreak())
-                
+
             write_rule_with_derog(
                 d,
                 all_rules.filter(
