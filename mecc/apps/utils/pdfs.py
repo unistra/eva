@@ -416,7 +416,8 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
                 if not custom:
                     txt = derog
                 else:
-                    txt = 'derogation(s) : %s ' % p.specific_involved.count()
+                    
+                    txt = 'derogation(s) : %s ' % [p.specific_involved.count()]
 
             t.append(
                 [
@@ -442,8 +443,6 @@ def table_title_trainings_info(training, in_two_part=True, story=[]):
     """
     # ############ USEFULL STUFF ################################
     # STYLES :
-    print(training)
-    print('789789798798798798798')
     main_style = [
         ('BOX', (0, 0), (-2, -1), 0.5, colors.black),
         ('SPAN', (-1, 0), (-1, -1)),
