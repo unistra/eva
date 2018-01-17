@@ -398,7 +398,6 @@ def add_simple_paragraph(story, rule, sp, ap):
 def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
 
     t = [["", ""]]
-    print(ap)
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
@@ -713,9 +712,10 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     if model == 'a':
         degree_type = []
         for d in ordered_trainings:
-            if d != ordered_trainings.first():  # I'M SO SMART :)
-                story.append(PageBreak())
+                
             if d.degree_type not in degree_type and standard:
+                if d != ordered_trainings.first():  # I'M SO SMART :)
+                    story.append(PageBreak())
                 # if degree_type:
                 #     story.append(PageBreak())
                 title_degree_type(d.degree_type, story)
@@ -732,8 +732,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
             # else:
             #     story.append(Spacer(0, 12))
             degree_type.append(d.degree_type)
-            # if len(degree_type) > 1:
-            # story.append(PageBreak())
+            story.append(PageBreak())            
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
@@ -742,6 +741,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         for d in ordered_trainings:
             if d != ordered_trainings.first():  # I'M SO SMART :)
                 story.append(PageBreak())
+                
             write_rule_with_derog(
                 d,
                 all_rules.filter(
