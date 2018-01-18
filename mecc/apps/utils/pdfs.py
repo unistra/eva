@@ -730,7 +730,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         degree_type = []
         for d in ordered_trainings:
 
-            if d.degree_type not in degree_type and standard:
+            if d.degree_type not in degree_type:
                 if d != ordered_trainings.first():  # I'M SO SMART :)
                     story.append(PageBreak())
                 # if degree_type:
@@ -740,23 +740,29 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                     degree_type=d.degree_type)
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
-                to_write = degree_type_rules(None, d.degree_type,
-                                             year, filter_type=trainings,
-                                             custom=training_same_degreetype)
-                story += to_write
-                if not to_write:
-                    story.append(Spacer(0, 12))
-                    story.append(
-                        Paragraph(_("Aucune règle standard."),
-                                  styles['Normal']))
-            if not standard:
-                story.append(Spacer(0, 12))
-                story.append(
-                    Paragraph(_("Edition sans règles standards."),
-                              styles['Normal']))
+                if standard:
+                    to_write = degree_type_rules(None, d.degree_type,
+                                                 year, filter_type=trainings,
+                                                 custom=training_same_degreetype)
+                    story += to_write
+                # else:
+                    if not to_write:
+                        story.append(Spacer(0, 12))
+                        story.append(
+                            Paragraph(_("Aucune règle standard."),
+                                      styles['Normal']))
+                # else:
+                # # if not standard:
+                #     story.append(Spacer(0, 12))
+                #     story.append(
+                #         Paragraph(_("Edition sans règles standards."),
+                #                 styles['Normal']))
 
             degree_type.append(d.degree_type)
-            story.append(PageBreak())
+            if standard:
+                story.append(PageBreak())
+            else:
+                story.append(Spacer(0, 12))
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
@@ -1001,7 +1007,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                     [Paragraph(ex_1.label if ex_1 else '', styles[
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info if ex_1 and ex_1.additionnal_info else "" + "</para\>",
-                            styles['SmallNormal'])],
+                                                   styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     '' if ex_1 is None else ex_1.convocation if not training_is_ccct else ex_1.get_type_ccct_display(),
@@ -1202,7 +1208,7 @@ def title_degree_type(degree_type, story):
         ('SIZE', (0, 0), (-1, -1), 12),
         ('FACE', (0, 0), (-1, -1), 'Helvetica-Bold'),
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
-    ], colWidths=[27 * cm]))
+    ], colWidths=[27.5 * cm]))
     return story
 
 
