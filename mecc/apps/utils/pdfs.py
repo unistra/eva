@@ -6,7 +6,7 @@ from itertools import groupby
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
-
+from math import modf
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
     Table, TableStyle, PageBreak, CondPageBreak
 from reportlab.pdfgen import canvas
@@ -983,12 +983,18 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         exams_2 = what.get('exams_2')
         exams_empty = [['', '', '', '', '', '', '', '', '', '', '', '']]
 
+        def formated(number):
+            frac, whole = modf(number)
+            if frac == 0:
+                return int(whole)
+            else:
+                return str(number).rstrip('0')
+
         def write_exams(list_1, list_2):
             exam_table = []
             for ex_1, ex_2 in itertools.zip_longest(list_1, list_2):
                 ex_1_table = [
-                    str('{0:.2f}'.format(ex_1.coefficient)
-                        ) if ex_1 is not None else '',
+                    formated(ex_1.coefficient) if ex_1 is not None else '',
                     [Paragraph(ex_1.label if ex_1 else '', styles[
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info if ex_1 and ex_1.additionnal_info else "" + "</para\>",
@@ -1001,8 +1007,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                 ]
 
                 ex_2_table = [
-                    str('{0:.2f}'.format(ex_2.coefficient)
-                        ) if ex_2 is not None else '',
+                    formated(ex_2.coefficient) if ex_2 is not None else '',
                     [Paragraph(ex_2.label if ex_2 is not None else '', styles[
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_2.additionnal_info + "</para\
@@ -1041,10 +1046,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                 styles['CenterSmall'] if not struct.external_name else styles['CenterSmallItalic']),
             [ref_data],
             struct.ECTS_credit if struct.ECTS_credit else '-',
-            '{0:.0f}'.format(link.coefficient) if link.coefficient else '',
+            formated(link.coefficient) if link.coefficient else '',
             link.eliminatory_grade,
-            # table_exam(exams_1), '', '', '', '', '', '',
-            # table_exam(exams_2, exam1=False),
             write_exams(exams_1, exams_2)
 
         ])
