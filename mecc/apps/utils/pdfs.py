@@ -463,7 +463,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
 
         ('TEXTCOLOR', (0, 0), (-2, 0), colors.white),
         ('BOX', (0, 0), (-2, 0), 0.5, colors.black),
-        # ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+        # ('GRID', (0, 0), (-1, -1), 0.5, colors.yellow)
 
     ]
     side_style = [
@@ -504,8 +504,10 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
     ref = "" if "without" in reference else training.ref_cpa_rof if "with_rof" in reference else training.ref_si_scol
 
     table = [
-        [training.label, "%s - %s" % (training.get_MECC_type_display(),
-                                      training.get_session_type_display()),
+        [Paragraph(
+            "<para fontSize=11 textColor=white><strong>%s</strong></para>" % training.label,
+            styles['Normal']), "%s - %s" % (training.get_MECC_type_display(),
+                                            training.get_session_type_display()),
          "%s %s" % (ref_label, ref),
          secondary_table
          ],
@@ -567,6 +569,7 @@ def models_first_page(model, criteria, trainings, story):
     ]
     style_trainings = [
         # ('GRID', (0, 0), (-1, -1), 1, colors.green),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
         ('LINEBELOW', (-1, 0), (-1, 0), 1, colors.steelblue),
@@ -590,7 +593,7 @@ def models_first_page(model, criteria, trainings, story):
             criteria_list, style=style_criteria_table, colWidths=[6 * cm])
 
     training_list = [
-        [e.label, Table([
+        [Paragraph("<para fontSize=9>%s</para>" % e.label, styles['Normal']), Table([
             ["Conseil de composante : %s" %
                 (e.date_val_cmp.strftime(
                     "%d/%m/%Y") if e.date_val_cmp else "Non"), "CFVU : %s " % (e.date_val_cfvu.strftime(
@@ -744,8 +747,13 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 if not to_write:
                     story.append(Spacer(0, 12))
                     story.append(
-                        Paragraph(_("Aucune sans règle standard."),
+                        Paragraph(_("Aucune règle standard."),
                                   styles['Normal']))
+            if not standard:
+                story.append(Spacer(0, 12))
+                story.append(
+                    Paragraph(_("Edition sans règles standards."),
+                              styles['Normal']))
 
             degree_type.append(d.degree_type)
             story.append(PageBreak())
