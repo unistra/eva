@@ -379,8 +379,9 @@ def add_simple_paragraph(story, rule, sp, ap, model=None):
                 text = sp.filter(paragraph_gen_id=p.id).first(
                 ).text_specific_paragraph
                 append_text(
-                    story, text,
-                    "textColor=blue", spacer=0)
+                    story, "%s %s" % (
+                        "<textcolor=blue>(D)</textcolor>%" if model == 'b' else '', text),
+                    "rightIndent=250" if model == 'b' else "textColor=blue", spacer=0)
                 text = sp.filter(paragraph_gen_id=p.id).first().text_motiv
                 style = 'textColor=red' + " rightIndent=250" if model == 'b' else ''
                 append_text(story, text, style, special="motiv", )
@@ -728,11 +729,12 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
 
     if model == 'a':
         degree_type = []
+        count = 0
         for d in ordered_trainings:
-
+            count += 1
             if d.degree_type not in degree_type:
-                if d != ordered_trainings.first():  # I'M SO SMART :)
-                    story.append(PageBreak())
+                # if d != ordered_trainings.first():  # I'M SO SMART :)
+                #     story.append(PageBreak())
                 # if degree_type:
                 #     story.append(PageBreak())
                 title_degree_type(d.degree_type, story)
@@ -745,27 +747,21 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                                                  year, filter_type=trainings,
                                                  custom=training_same_degreetype)
                     story += to_write
-                # else:
                     if not to_write:
                         story.append(Spacer(0, 12))
                         story.append(
                             Paragraph(_("Aucune règle standard."),
                                       styles['Normal']))
-                # else:
-                # # if not standard:
-                #     story.append(Spacer(0, 12))
-                #     story.append(
-                #         Paragraph(_("Edition sans règles standards."),
-                #                 styles['Normal']))
+                    story.append(PageBreak())
 
             degree_type.append(d.degree_type)
-            if standard:
-                story.append(PageBreak())
-            else:
-                story.append(Spacer(0, 12))
+            story.append(Spacer(0, 12))
+
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
                 specifics=specifics, edited_rules=rules)
+            if not count == ordered_trainings.count():
+                story.append(PageBreak())
 
     if model == 'b':
         for d in ordered_trainings:
