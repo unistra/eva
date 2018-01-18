@@ -13,20 +13,17 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
-from mecc.apps.degree.models import DegreeType
 
-from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
-    canvas_for_gen_pdf, canvas_for_mecctable, canvas_for_preview_mecctable, \
-    degree_type_rules, preview_mecctable_story, NumberedCanvas_landscape, \
-    gen_model_story,  DocGenerator
+from mecc.apps.utils.pdfs import setting_up_pdf,  \
+    canvas_for_preview_mecctable, \
+    preview_mecctable_story, NumberedCanvas_landscape, \
+    DocGenerator
 
 from django_cas.decorators import login_required
 
-from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, TableStyle, PageBreak
-from reportlab.lib.units import mm, cm
 
 
+@login_required
 def dispatch_to_good_pdf(request):
     """
     Get ajax data and dispatch to correct pdf
@@ -40,6 +37,7 @@ def dispatch_to_good_pdf(request):
     return response
 
 
+@login_required
 def preview_mecctable(request):
     """
     View getting all data to generate asked pdf
@@ -60,6 +58,7 @@ def preview_mecctable(request):
     return response
 
 
+@login_required
 def home(request, template='doc_generator/home.html'):
     """
     Home screen for generator 3000
@@ -94,6 +93,7 @@ def home(request, template='doc_generator/home.html'):
             """
             Fake request to mock request GET
             """
+            user = request.user  # To avoid error due to @login_required
             pass
 
         fake_request = FakeRequest()
@@ -115,6 +115,7 @@ def home(request, template='doc_generator/home.html'):
     return render(request, template, data)
 
 
+@login_required
 def available_target(request):
     """
     Return list of target according to user and selected institute
@@ -200,6 +201,7 @@ def available_target(request):
     return JsonResponse(sorted_target, safe=False) if json else sorted_target
 
 
+@login_required
 def trainings_for_target(request):
     """
     Return list of trainings according to target specificities, institute and
