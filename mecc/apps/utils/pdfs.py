@@ -360,7 +360,7 @@ def append_text(story, text, style, special=False, spacer=6):
     story.append(Spacer(0, spacer))
 
 
-def add_simple_paragraph(story, rule, sp, ap):
+def add_simple_paragraph(story, rule, sp, ap, model=None):
     """
     print content of paragraph with Specific and additionnel values in state of
     standard values
@@ -382,16 +382,16 @@ def add_simple_paragraph(story, rule, sp, ap):
                     story, text,
                     "textColor=blue", spacer=0)
                 text = sp.filter(paragraph_gen_id=p.id).first().text_motiv
-                style = 'textColor=red'
-                append_text(story, text, style, special="motiv")
+                style = 'textColor=red' + " rightIndent=250" if model == 'b' else ''
+                append_text(story, text, style, special="motiv", )
             else:
                 text = p.text_standard
-                style = ''
+                style = '' + " rightIndent=250" if model == 'b' else ''
                 append_text(story, text, style)
 
     if ap:
         text = ap.filter(rule_gen_id=rule.id).first().text_additional_paragraph
-        style = "textColor=green"
+        style = "textColor=green" + " rightIndent=250" if model == 'b' else ''
         append_text(story, text, style)
 
 
@@ -788,7 +788,7 @@ def write_rule_with_derog(training, rules, specific, additional, reference=None,
         return story
     for e in rules:
         a = additional if e.id in id_ap else None
-        add_simple_paragraph(story, e, specific, a)
+        add_simple_paragraph(story, e, specific, a, model="b")
 
     return story
     # create_title_for_model_B(training)
@@ -984,6 +984,9 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         exams_empty = [['', '', '', '', '', '', '', '', '', '', '', '']]
 
         def formated(number):
+            """
+            Remove trailing 0 
+            """
             frac, whole = modf(number)
             if frac == 0:
                 return int(whole)
@@ -998,7 +1001,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                     [Paragraph(ex_1.label if ex_1 else '', styles[
                         'SmallNormal']), Paragraph("<para textColor=grey\
                         >" + ex_1.additionnal_info if ex_1 and ex_1.additionnal_info else "" + "</para\>",
-                                                   styles['SmallNormal'])],
+                            styles['SmallNormal'])],
                     ex_1.type_exam if ex_1 is not None else '',
                     ex_1.text_duration if ex_1 is not None else '',
                     '' if ex_1 is None else ex_1.convocation if not training_is_ccct else ex_1.get_type_ccct_display(),
