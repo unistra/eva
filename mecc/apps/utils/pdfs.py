@@ -733,10 +733,6 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         for d in ordered_trainings:
             count += 1
             if d.degree_type not in degree_type:
-                # if d != ordered_trainings.first():  # I'M SO SMART :)
-                #     story.append(PageBreak())
-                # if degree_type:
-                #     story.append(PageBreak())
                 title_degree_type(d.degree_type, story)
                 training_same_degreetype = ordered_trainings.filter(
                     degree_type=d.degree_type)
