@@ -378,21 +378,18 @@ def add_simple_paragraph(story, rule, sp, ap, model=None):
             if p.id in [e.paragraph_gen_id for e in sp]:
                 text = sp.filter(paragraph_gen_id=p.id).first(
                 ).text_specific_paragraph
-                append_text(
-                    story, "%s %s" % (
-                        "<textcolor=blue>(D)</textcolor>%" if model == 'b' else '', text),
-                    "rightIndent=250" if model == 'b' else "textColor=blue", spacer=0)
+                append_text(story, text, "textColor=blue", spacer=0)
                 text = sp.filter(paragraph_gen_id=p.id).first().text_motiv
-                style = 'textColor=red' + " rightIndent=250" if model == 'b' else ''
+                style = 'textColor=red'
                 append_text(story, text, style, special="motiv", )
             else:
                 text = p.text_standard
-                style = '' + " rightIndent=250" if model == 'b' else ''
+                style = ''
                 append_text(story, text, style)
 
     if ap:
         text = ap.filter(rule_gen_id=rule.id).first().text_additional_paragraph
-        style = "textColor=green" + " rightIndent=250" if model == 'b' else ''
+        style = "textColor=green"
         append_text(story, text, style)
 
 
@@ -727,9 +724,9 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         custom_date=date
     )
 
+    count = 0
     if model == 'a':
         degree_type = []
-        count = 0
         for d in ordered_trainings:
             count += 1
             if d.degree_type not in degree_type:
@@ -761,15 +758,21 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
 
     if model == 'b':
         for d in ordered_trainings:
-            if d != ordered_trainings.first():  # I'M SO SMART :)
-                story.append(PageBreak())
+            count += 1
+            if standard:
+                write_rule_with_derog(
+                    d,
+                    all_rules.filter(
+                        degree_type=d.degree_type),
+                    specifics.filter(training=d),
+                    additionals.filter(training=d), story=story, reference=ref)
 
-            write_rule_with_derog(
-                d,
-                all_rules.filter(
-                    degree_type=d.degree_type),
-                specifics.filter(training=d),
-                additionals.filter(training=d), story=story, reference=ref)
+            story.append(PageBreak())
+
+            preview_mecctable_story(
+                d, story, False, ref=ref, model=model)
+            if not count == ordered_trainings.count():
+                story.append(PageBreak())
     return story
 
 
@@ -779,17 +782,92 @@ def write_rule_with_derog(training, rules, specific, additional, reference=None,
     """
     story.append(table_title_trainings_info(
         training, in_two_part=True, reference=reference))
-
+    story.append(Spacer(0, 6))
+    story.append(
+        Table([[Paragraph("<para fontSize=12><strong>%s</strong></para>" % _("Règles applicables à la formation"), styles['CenterBalek']), '']], colWidths=[
+              17 * cm, 10 * cm], style=[
+                  ('BOX', (0, 0), (-2, -1), 1, colors.black),
+        ])
+    )
     # ############ add rules one by one ################################
-    id_ap = [e.rule_gen_id for e in additional]
+
     if not rules:
+        story.append(Spacer(0, 12))
+        story.append(Paragraph(_("Aucune règle."),
+                               styles['Normal']))
         return story
-    for e in rules:
-        a = additional if e.id in id_ap else None
-        add_simple_paragraph(story, e, specific, a, model="b")
+
+    for rule in rules:
+        parag = ParagraphRules.objects.filter(rule=rule)
+        story.append(Spacer(0, 6))
+        story.append(Paragraph("<para fontSize=11 textColor=steelblue><strong>%s</strong></para>\
+            " % rule.label, styles['Normal']))
+        story.append(Spacer(0, 6))
+
+        has_exception, which = rule.has_current_exceptions
+        additionals = [e for e in which.get(
+            'additionals') if e.training_id == training.id]
+        specifics = [e for e in which.get(
+            'specifics') if e.training_id == training.id]
+        table_style = [
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+
+        ]
+        for p in parag:
+            if p.is_in_use:
+                # get first specific object according to current paragraph or
+                # None
+                speci = next(
+                    iter([e for e in specifics if e.paragraph_gen_id == p.id]), None)
+                text = []
+                table = []
+                first_col = ' '
+                style = ' '
+                if speci:
+                    # table_style = [
+                    #     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    #     ('LEFTPADDING', (0, 0), (-1, -1), 0),
+                    #     ('TOPPADDING', (0, 0), (-1, -1), 0),
+                    #     ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+                    #     # ('BACKGROUND', (0, 0), (-1, -1), colors.blueviolet),
+                    # ]
+                    append_text(text, speci.text_specific_paragraph, '')
+                    first_col = _("(D)")
+                    style = 'textColor=blue'
+                    motif = []
+                    append_text(motif, speci.text_motiv,
+                                'textColor=red', special='motiv')
+                    table = [
+                        [Paragraph("<para %s>%s</para>" % (
+                            style, first_col), styles['CenterBalek']),
+                            text, ''],
+                        ["", motif, '']
+                    ]
+                else:
+                    append_text(text, p.text_standard, '')
+
+                    table = [
+                        [Paragraph("<para %s>%s</para>" % (style, first_col), styles['CenterBalek']),
+                         text, '']
+                    ]
+                story.append(
+                    Table(table, colWidths=[.8 * cm, 15 * cm, 10 * cm], style=table_style))
+
+        if additionals:
+            addi = next(
+                iter([e for e in additionals if e.rule_gen_id == rule.id]), None)
+            text_addi = []
+            append_text(text_addi, addi.text_additional_paragraph, '')
+            tt = [
+                [Paragraph("<para textColor=green>%s</para>" % _("(A)"),
+                           styles['CenterBalek']), text_addi, '']
+            ]
+            story.append(
+                Table(tt, colWidths=[.8 * cm, 15 * cm, 10 * cm], style=table_style))
 
     return story
-    # create_title_for_model_B(training)
 
 
 def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
@@ -850,10 +928,6 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
 
     return story
 
-# derog_and_additional(training, specifics.filter(
-#             training=training), additionals.filter(training=training),
-#             edited_rules, story)
-
 
 def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
                             additionals=None, specifics=None, edited_rules=None):
@@ -900,8 +974,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                                    _("Néant"), styles['Normal']))
 
     story.append(CondPageBreak(250))
-    title = Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=\
-        darkblue><strong>%s</strong></para>" % _("Tableau MECC"), styles['Normal'])
+    title = Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" %
+                      _("Tableau MECC"), styles['Normal'])
     space = Spacer(0, 12)
 
     story.append(title)
@@ -924,7 +998,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                      styles['CenterSmall']),
                   verticalText('Crédit ECTS'), verticalText('Coefficient'),
                   verticalText('Note seuil'), 'Session principale',
-                     '', '', '', '', '', '', 'Session de rattrapage'],
+                  '', '', '', '', '', '', 'Session de rattrapage'],
                  ['Intitulé',
                   'Responsable',
                   'Référence APOGEE',
@@ -983,7 +1057,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
 
         def formated(number):
             """
-            Remove trailing 0 
+            Remove trailing 0
             """
             frac, whole = modf(number)
             if frac == 0:
