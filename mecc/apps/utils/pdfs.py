@@ -398,7 +398,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
     t = [["", ""]]
     bool_as_exception, exceptions = e.has_current_exceptions
     additionals = [e for e in exceptions.get(
-        'additionals') if e.training in custom] if custom else None
+        'additionals') if e.training in custom] if custom and 'publish' not in custom else None
     t.append([
         Paragraph("<para textColor=darkblue><b>%s</b></para>" % e.label,
                   styles['Normal']),
@@ -407,7 +407,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
         if styled and not custom else ' ',
         Paragraph("<para align=right textColor=green fontSize=8>\
                   additionnels : %s</para>" % len(additionals), styles['Normal'])
-        if custom and len(additionals) > 0 else ' ',
+        if 'publish' not in custom and custom and len(additionals) > 0 else ' ',
     ])
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
@@ -419,6 +419,8 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
             if p.is_interaction:
                 if not custom:
                     txt = derog
+                elif 'publish' in custom:
+                    txt = ''
                 else:
                     txt = 'dérogation(s) : %s ' % len([
                         e for e in p.specific_involved if e.training in custom])
@@ -736,9 +738,10 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 trainings = {e.MECC_type for e in ordered_trainings.filter(
                     degree_type=d.degree_type)}
                 if standard:
-                    to_write = degree_type_rules(None, d.degree_type,
-                                                 year, filter_type=trainings,
-                                                 custom=training_same_degreetype)
+                    to_write = degree_type_rules(
+                        None, d.degree_type,
+                        year, filter_type=trainings,
+                        custom=target if 'publish' in target else training_same_degreetype)
                     story += to_write
                     if not to_write:
                         story.append(Spacer(0, 12))
@@ -765,7 +768,8 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                     all_rules.filter(
                         degree_type=d.degree_type),
                     specifics.filter(training=d),
-                    additionals.filter(training=d), story=story, reference=ref)
+                    additionals.filter(training=d),
+                    target, story=story, reference=ref)
 
                 story.append(PageBreak())
 
@@ -775,7 +779,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
             if not standard and 'review' in target:
                 preview_mecctable_story(
                     d, story, False, ref=ref, model='a',
-                    additionals=additionals, specifics=specifics, 
+                    additionals=additionals, specifics=specifics,
                     edited_rules=rules)
 
             if not count == ordered_trainings.count():
@@ -783,7 +787,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     return story
 
 
-def write_rule_with_derog(training, rules, specific, additional, reference=None, story=[]):
+def write_rule_with_derog(training, rules, specific, additional, target, reference=None, story=[]):
     """
     Write rule for model B
     """
@@ -833,13 +837,6 @@ def write_rule_with_derog(training, rules, specific, additional, reference=None,
                 first_col = ' '
                 style = ' '
                 if speci:
-                    # table_style = [
-                    #     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                    #     ('LEFTPADDING', (0, 0), (-1, -1), 0),
-                    #     ('TOPPADDING', (0, 0), (-1, -1), 0),
-                    #     ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-                    #     # ('BACKGROUND', (0, 0), (-1, -1), colors.blueviolet),
-                    # ]
                     append_text(text, speci.text_specific_paragraph, '')
                     first_col = _("(D)")
                     style = 'textColor=blue'
@@ -851,6 +848,8 @@ def write_rule_with_derog(training, rules, specific, additional, reference=None,
                             style, first_col), styles['CenterBalek']),
                             text, ''],
                         ["", motif, '']
+                    ] if 'publish' not in target else [
+                        ["", text, ""]
                     ]
                 else:
                     append_text(text, p.text_standard, '')
@@ -868,8 +867,10 @@ def write_rule_with_derog(training, rules, specific, additional, reference=None,
             text_addi = []
             append_text(text_addi, addi.text_additional_paragraph, '')
             tt = [
-                [Paragraph("<para textColor=green>%s</para>" % _("(A)"),
-                           styles['CenterBalek']), text_addi, '']
+                [Paragraph(
+                    "<para textColor=green>%s</para>" % _("(A)"),
+                    styles['CenterBalek']) if 'publish' not in target else '',
+                 text_addi, '']
             ]
             story.append(
                 Table(tt, colWidths=[.8 * cm, 15 * cm, 10 * cm], style=table_style))
