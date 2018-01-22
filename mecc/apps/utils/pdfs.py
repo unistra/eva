@@ -755,7 +755,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
 
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
-                specifics=specifics, edited_rules=rules)
+                specifics=specifics, edited_rules=rules, target=target)
             if not count == ordered_trainings.count():
                 story.append(PageBreak())
 
@@ -878,7 +878,7 @@ def write_rule_with_derog(training, rules, specific, additional, target, referen
     return story
 
 
-def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
+def derog_and_additional(training, derogs, additionals, edited_rules, story=[], target=""):
     """
     Adding derog and additional for specific training
     """
@@ -908,7 +908,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
         for e in additionals:
             table.append([
                 Paragraph("<para textColor=green>(A)</para>",
-                          styles['Normal']),
+                          styles['Normal']) if "publish" not in target else '',
                 Table([
                     [edited_rules.filter(id=e.rule_gen_id).first().label],
                     [list_of_parag_with_bullet(e.text_additional_paragraph)]
@@ -917,18 +917,31 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
             ])
     if derogs:
         for e in derogs:
-            table.append([
-                Paragraph("<para textColor=blue>(D)</para>", styles['Normal']),
-                Table([
-                    [edited_rules.filter(id=e.rule_gen_id).first().label],
-                    [list_of_parag_with_bullet(e.text_specific_paragraph)]
-                ], style=derog_style),
-                Table([
-                    [' '],
-                    [Paragraph("<para textColor=red><u>%s</u> : %s </para>" % (
-                        _('Motif de la dérogation'), e.text_motiv), styles['Normal'])]
-                ], style=motiv_style)
-            ])
+            table_derog = []
+            if "publish" in target:
+                table_derog = [
+                    "",
+                    Table([
+                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [list_of_parag_with_bullet(e.text_specific_paragraph)]
+                    ], style=additional_style)
+                ]
+            else:
+                table_derog = [
+                    Paragraph("<para textColor=blue>(D)</para>",
+                              styles['Normal']),
+                    Table([
+                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [list_of_parag_with_bullet(e.text_specific_paragraph)]
+                    ], style=derog_style),
+                    Table([
+                        [' '],
+                        [Paragraph("<para textColor=red><u>%s</u> : %s </para>" % (
+                            _('Motif de la dérogation'), e.text_motiv), styles['Normal'])]
+                    ], style=motiv_style)
+                ]
+
+            table.append(table_derog)
 
     if table:
         story.append(Table(table, style=main_table_style,
@@ -938,7 +951,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
 
 
 def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
-                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation"):
+                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation", target=None):
     """
     Story for previewing mecctable
     """
@@ -976,7 +989,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         if specifics.filter(training=training) or additionals.filter(training=training):
             derog_and_additional(training, specifics.filter(
                 training=training), additionals.filter(training=training),
-                edited_rules, story)
+                edited_rules, story, target=target)
         else:
             story.append(Paragraph("<para>%s</para>" %
                                    _("Néant"), styles['Normal']))
