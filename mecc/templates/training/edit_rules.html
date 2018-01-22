@@ -124,13 +124,13 @@
 
         <label class="margin-left1">
          {% trans "En cours " %}<input type="radio" name="progress"  value="E"
-         {%if not can_edit %} disabled{%endif%}
+         {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
          {% if training.progress_rule == "E" %}checked="checked" {% endif %}
          style="margin-top:-1px;vertical-align:middle;">
      </label>
         <label class="margin-left1">
         {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
-        {%if not can_edit %} disabled{%endif%}
+        {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
         {% if training.progress_rule == "A" %}checked="checked" {% endif %}
         style="margin-top:-1px;vertical-align:middle;">
     </label>
