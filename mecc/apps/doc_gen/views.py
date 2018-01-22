@@ -31,9 +31,22 @@ def dispatch_to_good_pdf(request):
     """
     # GET ALL INFORMATIONS
     trainings = request.GET.getlist('selected')
-
     generator = DocGenerator()
-    doc, response = generator.run(request, trainings)
+    
+    if not trainings:
+        try:
+            current_year = currentyear().code_year
+        except AttributeError:
+            return render(request, 'msg.html',
+                          {'msg': _("Initialisation de l'année non effectuée")}
+                          )
+        institute = Institute.objects.get(id=request.GET.get('institute'))
+        trainings = Training.objects.filter(
+            code_year=current_year, supply_cmp=institute.code)
+            
+        doc, response = generator.create_eci(request, trainings)
+    else:
+        doc, response = generator.run(request, trainings)
 
     return response
 
