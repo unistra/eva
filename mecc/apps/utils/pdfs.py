@@ -767,10 +767,17 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                     specifics.filter(training=d),
                     additionals.filter(training=d), story=story, reference=ref)
 
-            story.append(PageBreak())
+                story.append(PageBreak())
 
-            preview_mecctable_story(
-                d, story, False, ref=ref, model=model)
+                preview_mecctable_story(
+                    d, story, False, ref=ref, model=model)
+
+            if not standard and 'review' in target:
+                preview_mecctable_story(
+                    d, story, False, ref=ref, model='a',
+                    additionals=additionals, specifics=specifics, 
+                    edited_rules=rules)
+
             if not count == ordered_trainings.count():
                 story.append(PageBreak())
     return story
