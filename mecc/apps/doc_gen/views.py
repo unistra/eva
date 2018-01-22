@@ -3,7 +3,7 @@ View for document generator 3000
 """
 import json
 from django.contrib.auth.models import User
-from django.http import JsonResponse, HttpResponse, Http404
+from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 
@@ -13,6 +13,8 @@ from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
 
+from mecc.apps.rules.models import Rule
+from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
 
 from mecc.apps.utils.pdfs import setting_up_pdf,  \
     canvas_for_preview_mecctable, \
@@ -20,7 +22,6 @@ from mecc.apps.utils.pdfs import setting_up_pdf,  \
     DocGenerator
 
 from django_cas.decorators import login_required
-
 
 
 @login_required
@@ -45,9 +46,26 @@ def preview_mecctable(request):
     title = "PREVISUALISATION du TABLEAU"
     training = Training.objects.filter(
         id=request.GET.get('training_id')).first()
+    full = None if not request.GET.get(
+        'full') else True if 'yes' in request.GET.get('full') else False
     response, doc = setting_up_pdf(title, margin=32, portrait=False)
     if training:
-        story = preview_mecctable_story(training)
+        if full:
+            additionals = AdditionalParagraph.objects.filter(
+                training=training)
+            specifics = SpecificParagraph.objects.filter(
+                training=training)
+            all_rules = Rule.objects.filter(
+                degree_type=training.degree_type,
+                code_year=training.code_year).distinct()
+
+            story = preview_mecctable_story(
+                training, [], True, model='a', additionals=additionals,
+                specifics=specifics, edited_rules=all_rules, title=_(
+                    'Prévisualisation des MECC'))
+        else:
+            story = preview_mecctable_story(training, title=_(
+                'Prévisualisation du tableau'))
     else:
         story = []
     doc.build(
