@@ -2,8 +2,9 @@ import collections
 import datetime
 import re
 from itertools import groupby
+from django.shortcuts import render
 
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from math import modf
@@ -20,7 +21,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
-from mecc.apps.training.models import Training, SpecificParagraph, \
+from mecc.apps.training.models import Training,  \
     AdditionalParagraph, SpecificParagraph
 from mecc.apps.utils.queries import rules_degree_for_year, currentyear, \
     get_mecc_table_order
@@ -41,18 +42,64 @@ logo_uds_small = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
 
 class DocGenerator(object):
-    """"""
-
+    """
+    Doc generator 3000 for generating pdf with own properties
+    """
     # ----------------------------------------------------------------------
+
     def __init__(self):
         """Constructor"""
         self.width, self.height = landscape(A4)
         self.styles = getSampleStyleSheet()
 
     # ----------------------------------------------------------------------
+    def create_eci(self, request, trainings):
+        """
+        Create pdf for eci pple
+        """
+        self.target = target = 'ECI'
+        date = request.GET.get('date')
+        # response ---------------------
+        response = HttpResponse(content_type='application/pdf')
+        response[
+            'Content-Disposition'] = ('filename="%s .pdf"' % _("MECC ECI"))
+        self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                                     topMargin=24, bottomMargin=24)
+
+        self.left_footer = "%s - %s - %s" % (
+            _("MECC"),
+            "%s/%s" % (trainings.first().code_year,
+                       trainings.first().code_year + 1),
+            trainings.first().institutes.filter(
+                code=trainings.first().supply_cmp).first().label,
+        )
+
+        concerned_trainings_id = [
+            e.id for e in trainings if e.is_ECI_MECC is True]
+        trainings = trainings.filter(id__in=concerned_trainings_id)
+        if trainings:
+            self.story = gen_model_story(
+                trainings,
+                "a", date, target, True, "specs",
+                "gen_type", request.user)
+
+        else:
+            # self.story = [Paragraph(_("Aucune formation affichable"), styles['Normal'])]
+            return 'error', render(request, 'msg.html',
+                                   {'msg': _("Aucune formation affichable.")}
+                                   )
+
+        self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                                     topMargin=24, bottomMargin=24)
+
+        self.doc.build(self.story, onLaterPages=self.mecc_canvas,
+                       canvasmaker=NumberedCanvas_landscape)
+        return self.doc, response
+
+    # ----------------------------------------------------------------------
     def run(self, request, trainings):
         """
-        Run the report
+        Run the reportlab power
         """
         # BLOAT STUFF ---------------------
         trainings = request.GET.getlist('selected')
@@ -608,7 +655,6 @@ def models_first_page(model, criteria, trainings, story):
     trainings_table = Table(
         trainings_table, style=style_trainings, colWidths=[6.5 * cm, 8 * cm])
     # ### BUILDING TABLE
-
     if criteria_table:
         table = [[criteria_table, trainings_table]]
 
@@ -686,12 +732,13 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         goal = _('CFVU')
     elif 'prepare_cc' in target:
         goal = _('Conseil de composante')
+    elif 'ECI' in target:
+        goal = _('Publication')
     else:
         # TODO: should not be raised debug for now
         goal = target
 
     criteria = [
-
         (_("Utilisateur"), "%s %s" % (user.first_name, user.last_name)),
         (_("Objectif"), goal),
         (_("Modèle"), model.upper()),
@@ -699,7 +746,6 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         (_("Règle standard"), _("Avec") if standard else _("Sans")),
         (_("Références"), _("Sans") if ref == "without" else _(
             "ROF") if ref == "with_rof" else _("SI Scolarité"))
-
     ]
 
     criteria = collections.OrderedDict(criteria)

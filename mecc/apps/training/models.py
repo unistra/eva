@@ -173,6 +173,22 @@ class Training(models.Model):
         return None
 
     @property
+    def is_ECI_MECC(self):
+        """
+        Bool to know if this training can be see by ECI pple in their MECC pages according to :
+            validées en conseil de composante, avec visa DES, sans date
+            de validation en CFVU
+                date_val_cmp   => True
+                date_visa_des  => True
+                date_val_cfvu  => False
+        """
+        empty = ['', ' ', None]
+        if self.date_val_cmp not in empty and self.date_visa_des not in empty and self.date_val_cfvu in empty:
+            return True
+        else:
+            return False
+
+    @property
     def has_custom_paragraph(self):
         """
         Tell us if this training has specific or additional paragraph
