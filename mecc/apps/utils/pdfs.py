@@ -938,7 +938,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[]):
 
 
 def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
-                            additionals=None, specifics=None, edited_rules=None):
+                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation"):
     """
     Story for previewing mecctable
     """
@@ -964,7 +964,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     # ############ TITLE STUFF ################################
     if preview:
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
-            red><strong>%s</strong></para>" % _("PREVISUALISATION du TABLEAU"), styles['Normal']))
+            red><strong>%s</strong></para>" % title, styles['Normal']))
 
     title_training_table = table_title_trainings_info(training, reference=ref)
 
