@@ -951,7 +951,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
 
 
 def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
-                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation", target=None):
+                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation", target=""):
     """
     Story for previewing mecctable
     """
