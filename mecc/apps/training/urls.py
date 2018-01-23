@@ -5,7 +5,7 @@ from mecc.apps.training.views import TrainingListView, TrainingCreate, \
     edit_rules, specific_paragraph, update_progress_rule_statut, \
     edit_specific_paragraph, edit_additional_paragraph, ask_delete_specific, \
     delete_specific, recover_everything, gen_pdf_all_rules, send_mail,\
-    remove_respform, my_teachings, update_struct_training
+    remove_respform, my_teachings, update_struct_training, do_consistency_check
 from mecc.decorators import is_correct_respform
 
 from django_cas.decorators import login_required
@@ -53,6 +53,8 @@ urlpatterns = [
         name='gen_pdf_all_rules'),
     url(r'^send_mail/$', send_mail,
         name='send_mail'),
+    url(r'^check_consistency/$', do_consistency_check,
+        name='check_consistency'),
     url(r'^remove_respform/$', remove_respform,
         name='remove_respform'),
     url(r'^update_struct_training/$', update_struct_training,
