@@ -1,6 +1,7 @@
 """
 Usefull stuff for trainings view
 """
+import logging
 from datetime import datetime
 
 from django.utils.translation import ugettext as _
@@ -8,9 +9,236 @@ from django.contrib.auth.models import Group
 
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.apps.mecctable.models import StructureObject, ObjectsLink
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
+
+LOGGER = logging.getLogger(__name__)
 
 ALLS = ObjectsLink.objects.all()
+
+
+def consistency_check(training):
+    """
+    Lets do some checking:
+    Pour tous les types de diplôme sauf les diplômes d’université
+    (crédits= 0), et quel que soit le régime
+        =>  Liste des UE qui ne respectent pas la règle
+            Coefficient = nombre de crédits/3
+
+    Pour les formations en ECI
+        =>  Liste des UE en ECI ayant moins de 3 épreuves en
+            session 1 (indiquer le nombre d’épreuves)
+        =>  Liste des UE en ECI ayant plus d’une épreuve en
+            session 2 (indiquer le nombre d’épreuves)
+
+    Pour les formations en CC/CT
+        =>  Liste des objets en CC/CT 2 sessions, dont les épreuves
+            et/ou les attributs d’épreuves diffèrent en session 2
+
+    Pour les Licences
+        =>  Liste des objets qui ont une note éliminatoire
+        =>  Liste des épreuves qui ont une note éliminatoire
+
+    Pour les Masters
+        =>  Liste des objets non semestre qui ont une note éliminatoire
+        =>  Liste des épreuves qui ont une note éliminatoires
+        =>  Liste des objets semestre qui n’ont pas de note éliminatoire
+            ou dont la note éliminatoire est différente de 10
+
+    Pour les Licences professionnelles
+        =>  Liste des objets non semestre dont le coefficient n’est
+            pas compris entre 1 et 3
+    """
+    structs = StructureObject.objects.filter(owner_training_id=training.id)
+    links = ObjectsLink.objects.filter(
+        id_training=training.id, id_child__in=[e.id for e in structs])
+    exams = Exam.objects.filter(id_attached__in=[e.id for e in structs])
+    try:
+        report = {
+            '0': {"title": _(
+                "• Liste des UE qui ne respectent pas la règle Coefficient \
+                = nombre de crédits/3"),
+                "objects": []},
+            '1': {"title": _(
+                "• Liste des UE en ECI ayant moins de 3 épreuves en session 1\
+                (indiquer le nombre d’épreuves)"),
+                "objects": []},
+            '2': {"title": _(
+                "• Liste des UE en ECI ayant plus d’une épreuve en session 2 (indiquer le nombre d’épreuves)"),
+                "objects": []},
+            '3': {"title": _(
+                "• Liste des objets en CC/CT 2 sessions, dont les épreuves\
+                et/ou les attributs d’épreuves diffèrent en session 2"),
+                "objects": []},
+            '4': {"title": _(
+                "• Liste des objets qui ont une note éliminatoire"),
+                "objects": []},
+            '5': {"title": _(
+                "• Liste des épreuves qui ont une note éliminatoire"),
+                "objects": []},
+            '6': {"title": _(
+                "• Liste des objets non semestre qui ont une note éliminatoire"),
+                "objects": []},
+            '7': {"title": _(
+                "• Liste des épreuves qui ont une note éliminatoires"),
+                "objects": []},
+            '8': {"title": _(
+                "•Liste des objets semestre qui n’ont pas de note éliminatoire \
+                ou dont la note éliminatoire est différente de 10"),
+                "objects": []},
+            '9': {"title": _(
+                "• Liste des objets non semestre dont le coefficient n’est \
+                pas compris entre 1 et 3"),
+                "objects": []}
+        }
+        for struc in structs:
+            proper_exam_1 = exams.filter(id_attached=struc.id, session=1)
+            proper_exam_2 = exams.filter(id_attached=struc.id, session=2)
+            link = links.get(id_child=struc.id)
+            # 0
+            if "DU" not in training.degree_type.short_label:
+                to_add = report['0']['objects']
+                if struc.nature == 'UE':
+                    if struc.ECTS_credit / 3 != link.coefficient:
+                        to_add.append({
+                            "0": struc.nature,
+                            "1": struc.label,
+                            "2": struc.ref_si_scol,
+                            "3": "%s = %s" % (_("Crédits"), struc.ECTS_credit),
+                            "4": "%s = <span class='red'>%s</span>" % (
+                                 _("Coefficient"), link.coefficient)
+                        })
+            #  1 - 2
+            if "E" in training.MECC_type:
+                # 1
+                if len(proper_exam_1) < 3:
+                    to_add = report['1']['objects']
+                    to_add.append({
+                        "0": struc.nature,
+                        "1": struc.label,
+                        "2": "%s = %s" % (_("Nombre d'épreuves en session 1"), len(proper_exam_1)),
+                    })
+                # 2
+                if len(proper_exam_2) > 1:
+                    to_add = report['2']['objects']
+                    to_add.append({
+                        "0": struc.nature,
+                        "1": struc.label,
+                        "2": "%s = %s" % (_("Nombre d'épreuves en session 2"), len(proper_exam_2)),
+                    })
+            # 3
+            if "C" in training.MECC_type:
+                to_add = report['3']['objects']
+                can_be_added = {
+                    "0": struc.nature,
+                    "1": struc.label,
+                    "2": struc.ref_si_scol,
+                    "3": _("<span class='red'>Les épreuves \
+                    de la session 2 sont différentes</span>")
+                }
+                yet_done = False
+                if len(proper_exam_1) != len(proper_exam_2):
+                    to_add.append(can_be_added)
+                    yet_done = True
+                if not yet_done and proper_exam_1:
+                    for e in proper_exam_1:
+                        e2 = proper_exam_2.filter(_id=e._id).first()
+                        if not yet_done and (e.type_exam != e2.type_exam or
+                                             e.exam_duration_h != e2.exam_duration_h or
+                                             e.exam_duration_m != e2.exam_duration_m or
+                                             e.coefficient != e2.coefficient or
+                                             e.eliminatory_grade != e2.eliminatory_grade):
+                            to_add.append(can_be_added)
+                            yet_done = True
+            # 4 -5
+            if "licence" in training.degree_type.short_label.lower():
+                # 4
+                if link.eliminatory_grade not in ['', ' ', None]:
+                    to_add = report['4']['objects']
+                    to_add.append({
+                        "0": struc.nature,
+                        "1": struc.label,
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("<span class='red'>Note éliminatoire</span>"),
+                            link.eliminatory_grade)
+                    })
+                # 5
+                e1_with_elim = proper_exam_1.exclude(
+                    eliminatory_grade=None)
+                e2_with_elim = proper_exam_2.exclude(
+                    eliminatory_grade=None)
+                to_add = report['5']['objects']
+
+                for e in e1_with_elim | e2_with_elim:  # merge queryset !
+                    to_add.append({
+                        "0": "%s : %s" % (_("Epreuve"), e.label),
+                        "1": "%s : %s de l'objet : %s - %s" % (
+                            _("Session"), e.session,
+                            struc.nature, struc.label
+                        ),
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("<span class='red'>Note éliminatoire</span>"),
+                            e.eliminatory_grade)
+                    })
+            # 6 - 7 - 8
+            if "master" in training.degree_type.short_label.lower():
+                # 6
+                if link.eliminatory_grade not in ['', ' ', None] and struc.nature != "SE":
+
+                    to_add = report['6']['objects']
+                    to_add.append({
+                        "0": struc.nature,
+                        "1": struc.label,
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("<span class='red'>Note éliminatoire</span>"),
+                            link.eliminatory_grade)
+                    })
+                # 7
+                e1_with_elim = proper_exam_1.exclude(
+                    eliminatory_grade=None)
+                e2_with_elim = proper_exam_2.exclude(
+                    eliminatory_grade=None)
+                to_add = report['7']['objects']
+
+                for e in e1_with_elim | e2_with_elim:  # merge queryset !
+                    to_add.append({
+                        "0": "%s : %s" % (_("Epreuve"), e.label),
+                        "1": "%s : %s de l'objet : %s - %s" % (
+                            _("Session"), e.session,
+                            struc.nature, struc.label
+                        ),
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("<span class='red'>Note éliminatoire</span>"),
+                            e.eliminatory_grade)
+                    })
+
+                # 8
+                if struc.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
+                    to_add = report['8']['objects']
+                    to_add.append({
+                        "0": struc.get_nature_display(),
+                        "1": struc.label,
+                        "2": struc.ref_si_scol,
+                        "3": _("Pas de note eliminatoire") if link.eliminatory_grade in ['', ' ', None] else "%s = %s" % (
+                            _("Note eliminatoire"), link.eliminatory_grade)
+                    })
+            # 9
+            if 'licence pro' in training.degree_type.short_label.lower() and struc.nature != 'SE':
+                if not link.coefficient or not (0 < link.coefficient < 4):
+                    to_add = report['9']['objects']
+                    to_add.append({
+                        "0": struc.nature,
+                        "1": struc.label,
+                        "2": struc.ref_si_scol,
+                        "3": _("Pas de coefficient") if not link.coefficient else "<span class='red'>%s = %s</span>" % (_("Coefficient"), link.coefficient)
+
+                    })
+    except Exception as e:
+        LOGGER.error('Consistency check error __: \n{error}'.format(error=e))
+    return report
 
 
 def training_has_consumed(training, current_year):
@@ -112,11 +340,11 @@ def remove_training(request, training_id):
                              (mecc_validated, date_cmp))
                 message += _("Êtes vous sûr de vouloir supprimer ?</br>")
                 return {"removable": removable, "message": message,
-                    'confirmed': confirmed}
+                        'confirmed': confirmed}
 
         removable, message = has_consumed(removable, message)
         return {"removable": removable, "message": message}
-        
+
     if Group.objects.get(name='DES1') in request.user.groups.all(
     ) or request.user.is_superuser:
         if date_cmp and not confirmed:
