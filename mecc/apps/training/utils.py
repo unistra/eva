@@ -66,8 +66,7 @@ def consistency_check(training):
                 "• Liste des UE en ECI ayant plus d’une épreuve en session 2 (indiquer le nombre d’épreuves)"),
                 "objects": []},
             '3': {"title": _(
-                "• Liste des objets en CC/CT 2 sessions, dont les épreuves\
-                et/ou les attributs d’épreuves diffèrent en session 2"),
+                "• Liste des objets en CC/CT 2 sessions, dont les épreuves et/ou les attributs d’épreuves diffèrent en session 2"),
                 "objects": []},
             '4': {"title": _(
                 "• Liste des objets qui ont une note éliminatoire"),
@@ -82,12 +81,10 @@ def consistency_check(training):
                 "• Liste des épreuves qui ont une note éliminatoires"),
                 "objects": []},
             '8': {"title": _(
-                "•Liste des objets semestre qui n’ont pas de note éliminatoire \
-                ou dont la note éliminatoire est différente de 10"),
+                "•Liste des objets semestre qui n’ont pas de note éliminatoire ou dont la note éliminatoire est différente de 10"),
                 "objects": []},
             '9': {"title": _(
-                "• Liste des objets non semestre dont le coefficient n’est \
-                pas compris entre 1 et 3"),
+                "• Liste des objets non semestre dont le coefficient n’est pas compris entre 1 et 3"),
                 "objects": []}
         }
         for struc in structs:

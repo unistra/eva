@@ -28,10 +28,32 @@ from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
-from mecc.apps.training.utils import remove_training
+from mecc.apps.training.utils import remove_training, consistency_check
 from mecc.apps.years.models import UniversityYear
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
+
+
+@is_ajax_request
+def do_consistency_check(request):
+    """
+    call consistency check for a specified training
+    """
+    training = Training.objects.get(id=request.GET.get('training_id'))
+    report = consistency_check(training)
+    to_remove = []
+    for e in report:
+        print(e)
+        if not report.get(e).get('objects'):
+            print(report.get(e).get('objects'))
+            print('*-*-*-*')
+            to_remove.append(e)
+        
+    for e in to_remove:
+        report.pop(e)
+
+    print(report)
+    return JsonResponse(report)
 
 
 @is_ajax_request
