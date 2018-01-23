@@ -128,8 +128,8 @@
             <div class="flex-item">
                 <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste or not can_edit%}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
-            <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} ">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
+            <div class="flex-item">                    
+                <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} " onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
             </div>
             <div class="flex-item">
                 <a href="{%url 'doc_gen:preview_mecctable'%}?training_id={{training.id}}" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
@@ -147,6 +147,8 @@
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
         {% include "training/send_mail.html"%}
+        {% include "training/modal_consistency.html" %}
+        
         
 
     </div>
