@@ -84,10 +84,10 @@ class DocGenerator(object):
                 "gen_type", request.user)
 
         else:
-            # self.story = [Paragraph(_("Aucune formation affichable"), styles['Normal'])]
-            return 'error', render(request, 'msg.html',
-                                   {'msg': _("Aucune formation affichable.")}
-                                   )
+            back_url = "/training/list_all_meccs/"
+            message = _("Aucune formation affichable.")
+            return "error", render(request, "generic/back_to_past.html", {
+                "back_url": back_url, "message": message})
 
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
                                      topMargin=24, bottomMargin=24)
@@ -563,7 +563,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
     ]
 
     final_table = Table(table, style=main_style, colWidths=[
-                        9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
+        9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
     return final_table
 
 
@@ -696,7 +696,7 @@ def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalit√
         ('SIZE', (0, 0), (-1, -1), 9),
 
     ]
-    if goal in ['Relecture', 'Publication']:
+    if goal in ['Relecture', 'Publication', 'Relecture Elu']:
         goal_text = goal.upper()
     else:
         goal_text = "<u>%s</u><br></br>Du %s" % (goal, custom_date)
@@ -706,7 +706,7 @@ def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalit√
             [Paragraph("<para textColor=steelblue fontSize=12 >%s</para> \
             " % cmp_label, styles['Normal'])]
         ], style=style_middle), Table([
-            ["%s %s" % (_("Edition du "), date)], [
+            ["%s %s" % (_("Edition du "), date)] if goal != 'Relecture Elu' else '', [
                 Paragraph("<para fontsize=9 textColor=steelblue align=right><strong>%s\
                 </strong></para> " % goal_text, styles['Normal'])]
         ], style=style_last)]
@@ -733,7 +733,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     elif 'prepare_cc' in target:
         goal = _('Conseil de composante')
     elif 'ECI' in target:
-        goal = _('Publication')
+        goal = _('Relecture √©lu')
     else:
         # TODO: should not be raised debug for now
         goal = target
@@ -763,11 +763,12 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     models_first_page(
         model, criteria, ordered_trainings, story)
     story.append(PageBreak())
+    print(target)
     doc_gen_title(
         train.code_year,
         train.institutes.filter(code=train.supply_cmp).first().label,
         "%s/%s/%s" % (i.day, i.month, i.year),
-        goal,
+        goal if target != 'ECI' else _("Relecture Elu"),
         story=story,
         custom_date=date
     )
