@@ -7,7 +7,9 @@ function check_consistency(id_training) {
         },
         success: function (data) {
             $("#report-list").empty()
+            let empty = true;
             $.each(data.report, function (key, value) {
+                empty = false;
                 let table = document.createElement("table");
                 table.className = "listed";
                 let tr_title = document.createElement("tr");
@@ -33,8 +35,13 @@ function check_consistency(id_training) {
                     })
                 });
             });
+            if (empty){
+                let para = document.createElement('p');
+                para.innerHTML = "---";
+                $("#report-list").empty();
+                $("#report-list").append(para);
+            }
             $('#consistency_report').modal('show');
-            
         }
     });
 }
