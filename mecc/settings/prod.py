@@ -44,6 +44,22 @@ SECRET_KEY = '{{ secret_key }}'
 DIPSTRAP_VERSION = '{{ dipstrap_version }}'
 DIPSTRAP_STATIC_URL += '%s/' % DIPSTRAP_VERSION
 
+####################
+# Camelot settings #
+####################
+
+CAMELOT_SPORE = 'http://rest-api.u-strasbg.fr/camelot/description.json'
+CAMELOT_BASE_URL = 'https://camelot-ws.u-strasbg.fr'
+CAMELOT_TOKEN = '{{camelot_token}}'
+
+####################
+# LDAP Settings    #
+####################
+
+LDAP_SPORE = 'http://rest-api.u-strasbg.fr/ldapws/description.json'
+LDAP_BASE_URL = 'http://ldap-ws.u-strasbg.fr'
+LDAP_TOKEN = '{{ldap_token}}'
+
 #########
 # STAGE #
 #########
