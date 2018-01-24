@@ -35,14 +35,14 @@ def consistency_check(training):
             et/ou les attributs d’épreuves diffèrent en session 2
 
     Pour les Licences
-        =>  Liste des objets qui ont une note éliminatoire
-        =>  Liste des épreuves qui ont une note éliminatoire
+        =>  Liste des objets qui ont une note seuil
+        =>  Liste des épreuves qui ont une note seuil
 
     Pour les Masters
-        =>  Liste des objets non semestre qui ont une note éliminatoire
-        =>  Liste des épreuves qui ont une note éliminatoires
-        =>  Liste des objets semestre qui n’ont pas de note éliminatoire
-            ou dont la note éliminatoire est différente de 10
+        =>  Liste des objets non semestre qui ont une note seuil
+        =>  Liste des épreuves qui ont une note seuils
+        =>  Liste des objets semestre qui n’ont pas de note seuil
+            ou dont la note seuil est différente de 10
 
     Pour les Licences professionnelles
         =>  Liste des objets non semestre dont le coefficient n’est
@@ -71,20 +71,20 @@ def consistency_check(training):
 et/ou les attributs d’épreuves diffèrent en session 2"),
                 "objects": []},
             '4': {"title": _(
-                "Liste des objets qui ont une note éliminatoire"),
+                "Liste des objets qui ont une note seuil"),
                 "objects": []},
             '5': {"title": _(
-                "Liste des épreuves qui ont une note éliminatoire"),
+                "Liste des épreuves qui ont une note seuil"),
                 "objects": []},
             '6': {"title": _(
-                "Liste des objets non semestre qui ont une note éliminatoire"),
+                "Liste des objets non semestre qui ont une note seuil"),
                 "objects": []},
             '7': {"title": _(
-                "Liste des épreuves qui ont une note éliminatoires"),
+                "Liste des épreuves qui ont une note seuils"),
                 "objects": []},
             '8': {"title": _(
-                "Liste des objets semestre qui n’ont pas de note éliminatoire \
-ou dont la note éliminatoire est différente de 10"),
+                "Liste des objets semestre qui n’ont pas de note seuil \
+ou dont la note seuil est différente de 10"),
                 "objects": []},
             '9': {"title": _(
                 "Liste des objets non semestre dont le coefficient n’est pas \
@@ -108,8 +108,8 @@ compris entre 1 et 3"),
                             "4": "%s = <span class='red'>%s</span>" % (
                                  _("Coefficient"), link.coefficient)
                         })
-            #  1 - 2
-            if "E" in training.MECC_type:
+            #  1 - 2 
+            if "E" in training.MECC_type and struc == 'UE':
                 # 1
                 if len(proper_exam_1) < 3:
                     to_add = report['1']['objects']
@@ -150,10 +150,11 @@ compris entre 1 et 3"),
                     for e in proper_exam_1:
                         e2 = proper_exam_2.filter(_id=e._id).first()
                         if not yet_done and (e.type_exam != e2.type_exam or
+                                             e.label != e2.label or
                                              e.exam_duration_h != e2.exam_duration_h or
                                              e.exam_duration_m != e2.exam_duration_m or
                                              e.coefficient != e2.coefficient or
-                                             e.eliminatory_grade != e2.eliminatory_grade):
+                                             e.eliminatory_grade != e2.eliminatory_grade): # TODO
                             to_add.append(can_be_added)
                             yet_done = True
             # 4 -5
@@ -166,7 +167,7 @@ compris entre 1 et 3"),
                         "1": struc.label,
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire"),
+                            _("<span class='red'>Note seuil"),
                             "%s </span>" % link.eliminatory_grade)
                     })
                 # 5
@@ -185,7 +186,7 @@ compris entre 1 et 3"),
                         ),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire"),
+                            _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
                     })
             # 6 - 7 - 8
@@ -199,7 +200,7 @@ compris entre 1 et 3"),
                         "1": struc.label,
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire"),
+                            _("<span class='red'>Note seuil"),
                             "%s</span>" % link.eliminatory_grade)
                     })
                 # 7
@@ -218,7 +219,7 @@ compris entre 1 et 3"),
                         ),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire"),
+                            _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
                     })
 
