@@ -763,7 +763,6 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     models_first_page(
         model, criteria, ordered_trainings, story)
     story.append(PageBreak())
-    print(target)
     doc_gen_title(
         train.code_year,
         train.institutes.filter(code=train.supply_cmp).first().label,

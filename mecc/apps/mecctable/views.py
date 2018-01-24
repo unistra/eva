@@ -93,7 +93,7 @@ def add_exam(request):
             coefficient=obj.get('coefficient')
         )
     except Exception as e:
-        print(e)
+        LOGGER.error('ADD EXAM ERROR__: \n{error}'.format(error=e))
     return JsonResponse({"status": 200})
 
 
@@ -132,7 +132,8 @@ def update_exam(request, id_structure):
     try:
         Exam.objects.create(**obj)
     except Exception as e:
-        print(e)
+        LOGGER.error(
+            'CANNOT Create exam in update_exam : \n{error}'.format(error=e))
     return JsonResponse({"status": 200})
 
 
@@ -627,7 +628,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
         'order_in_child').distinct()
 
-    struc_o = set(e.cmp_supply_id for e in current_structures.filter(mutual=True))
+    struc_o = set(
+        e.cmp_supply_id for e in current_structures.filter(mutual=True))
 
     data['all_cmp'] = Institute.objects.filter(code__in=struc_o)
     data['training'] = training = Training.objects.get(id=id)
@@ -902,7 +904,6 @@ def copy_old_mecctable(request, id_training):
                     current_other_training = Training.objects.get(
                         n_train=old_other_training.n_train,
                         code_year=old_year)
-                    # print(old_training_link.__dict__)
                     try:
                         new_struct_parent = current_structures.get(
                             auto_id=old_struct_parent.auto_id,
