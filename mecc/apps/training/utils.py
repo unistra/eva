@@ -229,8 +229,8 @@ compris entre 1 et 3"),
                     to_add.append({
                         "0": "%s : %s" % (struc.get_nature_display(), struc.label),
                         "1": struc.ref_si_scol,
-                        "2": "<span class='red'>%s</span>" % _("Pas de note eliminatoire") if link.eliminatory_grade in ['', ' ', None] else "<span class='red' %s = %s</span>" % (
-                            _("Note eliminatoire"), link.eliminatory_grade)
+                        "2": "<span class='red'>%s</span>" % _("Pas de note seuil") if link.eliminatory_grade in ['', ' ', None] else "<span class='red' %s = %s</span>" % (
+                            _("Note seuil"), link.eliminatory_grade)
                     })
             # 9
             if 'licence pro' in training.degree_type.short_label.lower() and struc.nature != 'SE':
