@@ -54,6 +54,6 @@ STAGE = '{{ goal }}'
 ##########
 
 # url for logos upload
-MEDIA_ROOT = '/nfs/mecc/uploads'
+MEDIA_ROOT = '/nfs/eva/uploads'
 # path for pdf files
 FILES_UPLOAD_PATH = 'docs/%Y'
