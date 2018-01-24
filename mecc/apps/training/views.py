@@ -42,18 +42,16 @@ def do_consistency_check(request):
     training = Training.objects.get(id=request.GET.get('training_id'))
     report = consistency_check(training)
     to_remove = []
+
     for e in report:
-        print(e)
         if not report.get(e).get('objects'):
-            print(report.get(e).get('objects'))
-            print('*-*-*-*')
             to_remove.append(e)
         
     for e in to_remove:
         report.pop(e)
 
-    print(report)
-    return JsonResponse(report)
+    json_response = {"report": report, 'training': training.small_dict}
+    return JsonResponse(json_response)
 
 
 @is_ajax_request
