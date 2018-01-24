@@ -55,39 +55,39 @@ def consistency_check(training):
     try:
         report = {
             '0': {"title": _(
-                "• Liste des UE qui ne respectent pas la règle Coefficient \
+                "Liste des UE qui ne respectent pas la règle Coefficient \
 = nombre de crédits/3"),
                 "objects": []},
             '1': {"title": _(
-                "• Liste des UE en ECI ayant moins de 3 épreuves en session 1 \
+                "Liste des UE en ECI ayant moins de 3 épreuves en session 1 \
 (indiquer le nombre d’épreuves)"),
                 "objects": []},
             '2': {"title": _(
-                "• Liste des UE en ECI ayant plus d’une épreuve en session 2 \
+                "Liste des UE en ECI ayant plus d’une épreuve en session 2 \
 (indiquer le nombre d’épreuves)"),
                 "objects": []},
             '3': {"title": _(
-                "• Liste des objets en CC/CT 2 sessions, dont les épreuves \
+                "Liste des objets en CC/CT 2 sessions, dont les épreuves \
 et/ou les attributs d’épreuves diffèrent en session 2"),
                 "objects": []},
             '4': {"title": _(
-                "• Liste des objets qui ont une note éliminatoire"),
+                "Liste des objets qui ont une note éliminatoire"),
                 "objects": []},
             '5': {"title": _(
-                "• Liste des épreuves qui ont une note éliminatoire"),
+                "Liste des épreuves qui ont une note éliminatoire"),
                 "objects": []},
             '6': {"title": _(
-                "• Liste des objets non semestre qui ont une note éliminatoire"),
+                "Liste des objets non semestre qui ont une note éliminatoire"),
                 "objects": []},
             '7': {"title": _(
-                "• Liste des épreuves qui ont une note éliminatoires"),
+                "Liste des épreuves qui ont une note éliminatoires"),
                 "objects": []},
             '8': {"title": _(
-                "•Liste des objets semestre qui n’ont pas de note éliminatoire \
+                "Liste des objets semestre qui n’ont pas de note éliminatoire \
 ou dont la note éliminatoire est différente de 10"),
                 "objects": []},
             '9': {"title": _(
-                "• Liste des objets non semestre dont le coefficient n’est pas \
+                "Liste des objets non semestre dont le coefficient n’est pas \
 compris entre 1 et 3"),
                 "objects": []}
         }

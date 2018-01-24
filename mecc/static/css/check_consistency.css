@@ -1,0 +1,13 @@
+.listed{
+    margin: 0 1.5em 2em 1.5em;
+    width: 90%;
+    display: table;
+}
+.listed th{
+    background-color: lightsteelblue;
+    padding: 0.25em;
+    padding-left: 0.5em;
+}
+#constit_title h1{
+    font-size: 1.25em;
+}
