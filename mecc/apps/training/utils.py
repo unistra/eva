@@ -56,17 +56,19 @@ def consistency_check(training):
         report = {
             '0': {"title": _(
                 "• Liste des UE qui ne respectent pas la règle Coefficient \
-                = nombre de crédits/3"),
+= nombre de crédits/3"),
                 "objects": []},
             '1': {"title": _(
-                "• Liste des UE en ECI ayant moins de 3 épreuves en session 1\
-                (indiquer le nombre d’épreuves)"),
+                "• Liste des UE en ECI ayant moins de 3 épreuves en session 1 \
+(indiquer le nombre d’épreuves)"),
                 "objects": []},
             '2': {"title": _(
-                "• Liste des UE en ECI ayant plus d’une épreuve en session 2 (indiquer le nombre d’épreuves)"),
+                "• Liste des UE en ECI ayant plus d’une épreuve en session 2 \
+(indiquer le nombre d’épreuves)"),
                 "objects": []},
             '3': {"title": _(
-                "• Liste des objets en CC/CT 2 sessions, dont les épreuves et/ou les attributs d’épreuves diffèrent en session 2"),
+                "• Liste des objets en CC/CT 2 sessions, dont les épreuves \
+et/ou les attributs d’épreuves diffèrent en session 2"),
                 "objects": []},
             '4': {"title": _(
                 "• Liste des objets qui ont une note éliminatoire"),
@@ -81,10 +83,12 @@ def consistency_check(training):
                 "• Liste des épreuves qui ont une note éliminatoires"),
                 "objects": []},
             '8': {"title": _(
-                "•Liste des objets semestre qui n’ont pas de note éliminatoire ou dont la note éliminatoire est différente de 10"),
+                "•Liste des objets semestre qui n’ont pas de note éliminatoire \
+ou dont la note éliminatoire est différente de 10"),
                 "objects": []},
             '9': {"title": _(
-                "• Liste des objets non semestre dont le coefficient n’est pas compris entre 1 et 3"),
+                "• Liste des objets non semestre dont le coefficient n’est pas \
+compris entre 1 et 3"),
                 "objects": []}
         }
         for struc in structs:
@@ -112,7 +116,10 @@ def consistency_check(training):
                     to_add.append({
                         "0": struc.nature,
                         "1": struc.label,
-                        "2": "%s = %s" % (_("Nombre d'épreuves en session 1"), len(proper_exam_1)),
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("Nombre d'épreuves en session 1"),
+                            "<span class='red'>%s</span>" % len(proper_exam_1)),
                     })
                 # 2
                 if len(proper_exam_2) > 1:
@@ -120,7 +127,10 @@ def consistency_check(training):
                     to_add.append({
                         "0": struc.nature,
                         "1": struc.label,
-                        "2": "%s = %s" % (_("Nombre d'épreuves en session 2"), len(proper_exam_2)),
+                        "2": struc.ref_si_scol,
+                        "3": "%s = %s" % (
+                            _("Nombre d'épreuves en session 2"),
+                            "<span class='red'>%s</span>" % len(proper_exam_2)),
                     })
             # 3
             if "C" in training.MECC_type:
@@ -156,8 +166,8 @@ def consistency_check(training):
                         "1": struc.label,
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire</span>"),
-                            link.eliminatory_grade)
+                            _("<span class='red'>Note éliminatoire"),
+                            "%s </span>" % link.eliminatory_grade)
                     })
                 # 5
                 e1_with_elim = proper_exam_1.exclude(
@@ -175,8 +185,8 @@ def consistency_check(training):
                         ),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire</span>"),
-                            e.eliminatory_grade)
+                            _("<span class='red'>Note éliminatoire"),
+                            "%s</span>" % e.eliminatory_grade)
                     })
             # 6 - 7 - 8
             if "master" in training.degree_type.short_label.lower():
@@ -189,8 +199,8 @@ def consistency_check(training):
                         "1": struc.label,
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire</span>"),
-                            link.eliminatory_grade)
+                            _("<span class='red'>Note éliminatoire"),
+                            "%s</span>" % link.eliminatory_grade)
                     })
                 # 7
                 e1_with_elim = proper_exam_1.exclude(
@@ -208,18 +218,17 @@ def consistency_check(training):
                         ),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
-                            _("<span class='red'>Note éliminatoire</span>"),
-                            e.eliminatory_grade)
+                            _("<span class='red'>Note éliminatoire"),
+                            "%s</span>" % e.eliminatory_grade)
                     })
 
                 # 8
                 if struc.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
                     to_add = report['8']['objects']
                     to_add.append({
-                        "0": struc.get_nature_display(),
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
-                        "3": _("Pas de note eliminatoire") if link.eliminatory_grade in ['', ' ', None] else "%s = %s" % (
+                        "0": "%s : %s" % (struc.get_nature_display(), struc.label),
+                        "1": struc.ref_si_scol,
+                        "2": "<span class='red'>%s</span>" % _("Pas de note eliminatoire") if link.eliminatory_grade in ['', ' ', None] else "<span class='red' %s = %s</span>" % (
                             _("Note eliminatoire"), link.eliminatory_grade)
                     })
             # 9
@@ -230,7 +239,7 @@ def consistency_check(training):
                         "0": struc.nature,
                         "1": struc.label,
                         "2": struc.ref_si_scol,
-                        "3": _("Pas de coefficient") if not link.coefficient else "<span class='red'>%s = %s</span>" % (_("Coefficient"), link.coefficient)
+                        "3": "<span class='red'>%s</span>" % _("Pas de coefficient") if not link.coefficient else "<span class='red'>%s = %s</span>" % (_("Coefficient"), link.coefficient)
 
                     })
     except Exception as e:
