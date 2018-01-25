@@ -57,3 +57,20 @@ STAGE = '{{ goal }}'
 MEDIA_ROOT = '/nfs/mecc/uploads'
 # path for pdf files
 FILES_UPLOAD_PATH = 'docs/%Y'
+
+
+####################
+# Camelot settings #
+####################
+
+CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
+CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
+CAMELOT_TOKEN = '{{camelot_token}}'
+
+####################
+# LDAP Settings    #
+####################
+
+LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
+LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
+LDAP_TOKEN = '{{ldap_token}}'
