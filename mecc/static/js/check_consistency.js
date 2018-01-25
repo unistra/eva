@@ -24,7 +24,6 @@ function check_consistency(id_training) {
                     if (len === 0) {
                         len = Object.keys(v).length;
                         title_element.colSpan = len;
-                        console.log(len)
                     }
                     let tr = document.createElement("tr");
                     table.append(tr)

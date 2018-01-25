@@ -533,7 +533,6 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
         "%d/%m/%Y") if training.date_visa_des not in [None, ''] else _("Non")
     date_cfvu = training.date_val_cfvu.strftime(
         "%d/%m/%Y") if training.date_val_cfvu not in [None, ''] else _("Non")
-    print(in_two_part)
     secondary_table = Table([
         [_("Etat de saisie :")],
         ["%s : %s  %s : %s" % (
@@ -1025,9 +1024,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     if preview:
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % title, styles['Normal']))
-    print(target)
-    title_training_table = table_title_trainings_info(training, reference=ref, in_two_part=False if "publish" in target else True)
 
+    title_training_table = table_title_trainings_info(training, reference=ref, in_two_part=False if "publish" in target else True)
 
     story.append(title_training_table)
     if model == 'a':
