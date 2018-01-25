@@ -145,9 +145,11 @@ compris entre 1 et 3"),
                 yet_done = False
                 if len(proper_exam_1) != len(proper_exam_2):
                     to_add.append(can_be_added)
+                    print('la')
                     yet_done = True
                 if not yet_done and proper_exam_1:
                     for e in proper_exam_1:
+                        print('im checkin')
                         e2 = proper_exam_2.filter(_id=e._id).first()
                         if not yet_done and (e.type_exam != e2.type_exam or
                                              e.label != e2.label or
