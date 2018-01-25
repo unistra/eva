@@ -42,7 +42,7 @@ def dispatch_to_good_pdf(request):
                           )
         institute = Institute.objects.get(id=request.GET.get('institute'))
         trainings = Training.objects.filter(
-            code_year=current_year, supply_cmp=institute.code)
+            code_year=current_year, supply_cmp=institute.code, is_used=True)
             
         doc, response = generator.create_eci(request, trainings)
     else:
@@ -102,7 +102,7 @@ def home(request, template='doc_generator/home.html'):
         return render(request, 'msg.html',
                       {'msg': _("Initialisation de l'année non effectuée")})
 
-    trainings = Training.objects.filter(code_year=current_year)
+    trainings = Training.objects.filter(code_year=current_year, is_used=True)
     all_institutes = Institute.objects.filter(
         code__in=[e.supply_cmp for e in trainings]).order_by('label')
     profiles = request.user.meccuser.profile.all()
@@ -245,7 +245,7 @@ def trainings_for_target(request):
     institute = request.GET.get('institute')
     json = True if request.GET.get('json') else False
     trainings = Training.objects.filter(
-        code_year=current_year, supply_cmp=institute).order_by('degree_type', 'label')
+        code_year=current_year, supply_cmp=institute, is_used=True).order_by('degree_type', 'label')
 
     profiles = user.meccuser.profile.all()
 
