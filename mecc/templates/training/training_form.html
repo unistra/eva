@@ -128,7 +128,9 @@
 {%if not is_respform%}
 <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
 {%endif%}
+{% if  can_edit and object.input_opening.0 != "4" %}
 <a class="btn-primary btn btn-sm" onclick="check_consistency({{training.id}})">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
+{% endif %}
 <a name="preview" class="btn-primary btn btn-sm" id="previewMECC" href="{% url 'doc_gen:preview_mecctable'%}?training_id={{object.id}}&full=yes">{% trans "Pré-visualiser les MECC" %}</a>
 </div>
 

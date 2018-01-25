@@ -128,9 +128,11 @@
             <div class="flex-item">
                 <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste or not can_edit%}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
+            {% if  can_edit and object.input_opening.0 != "4" %}
             <div class="flex-item">                    
                 <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} " onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
             </div>
+            {% endif %}
             <div class="flex-item">
                 <a href="{%url 'doc_gen:preview_mecctable'%}?training_id={{training.id}}" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
             </div>
