@@ -110,17 +110,12 @@ def send_mail(request):
     Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
     Merci.
     """)
-    # TODO: A decommenter pour envoyer aux bonnes personnes
-    # nobody = ['', ' ', None]
-    # to = [e.replace(' ', '') for e in request.POST.get('to').split(
-    #     ',')] if request.POST.get('to') not in nobody else None
-    # cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
-    #     ',')] if request.POST.get('cc') not in nobody else None
-    # TODO: remove the following lines in production
-    to = [
-        'weible@unistra.fr'
-        ]
-    cc = ['ibis.ismail@unistra.fr']
+    nobody = ['', ' ', None]
+    to = [e.replace(' ', '') for e in request.POST.get('to').split(
+        ',')] if request.POST.get('to') not in nobody else None
+    cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
+        ',')] if request.POST.get('cc') not in nobody else None
+
 
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
