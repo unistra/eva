@@ -45,7 +45,6 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         else:
             return render(request, 'msg.html', {'msg': _("Paramétrage de la date validation cadre en CFVU non effectuée")})
 
-
         for year in iy:
             inst = institutes.filter(pk=year.id_cmp).first()
             if inst:
@@ -180,8 +179,14 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
     # objects needed
     try:
         uy = UniversityYear.objects.get(is_target_year=True)
-        iy = InstituteYear.objects.filter(
-            code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+        if not uy.date_validation:
+            iy = []
+            # If we want a message instead of all
+            # return render(request, 'msg.html', {
+            #     'msg': _("Paramétrage de la date validation cadre en CFVU non effectuée")})
+        else:
+            iy = InstituteYear.objects.filter(
+                code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
 
         institute = Institute.objects.get(code=code)
         iycmp = InstituteYear.objects.get(
@@ -270,7 +275,7 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         data['university_year'] = uy
         data['university_year_cmp'] = iycmp
         data['cfvu_entries'] = cfvu_entries
-        data['institute_cfvu_counter'] = iy.count()
+        data['institute_cfvu_counter'] = iy.count() if iy else 0
         data['trainings_uncompleted_counter'] = t_uncompleted.count()
         data['trainings_completed_no_validation_counter'] = t_completed_no_validation.count()
         data['trainings_validated_des_waiting_counter'] = t_validated_des_waiting.count()
