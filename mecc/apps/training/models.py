@@ -110,7 +110,7 @@ class Training(models.Model):
 
         ol = ObjectsLink.objects.filter(
             code_year=self.code_year, id_training=self.id)
-        self.save()
+
         if ol and not self.MECC_tab:
             self.MECC_tab = True
             raise ValidationError({
@@ -118,6 +118,12 @@ class Training(models.Model):
             })
         if self.MECC_tab:
             self.progress_table = 'E'
+
+        if self.has_custom_paragraph and self.degree_type != self.__original_degree_type:
+            raise ValidationError({
+                "degree_type": [_("Cette formation possède des alinéas spécifiques et/ou additionnels")]
+            })
+        self.save()
 
     def __str__(self):
         return self.label
@@ -214,16 +220,20 @@ class Training(models.Model):
             need_to_edit_struct = True
         if self.MECC_type != self.__original_MECC_type:
             self.__original_MECC_type = self.MECC_type
-            need_to_edit_struct = True 
+            need_to_edit_struct = True
         if need_to_edit_struct:
             update_regime_session(self, self.MECC_type, self.session_type)
-        
+
         super(Training, self).save(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
         super(Training, self).__init__(*args, **kwargs)
         self.__original_session_type = self.session_type
         self.__original_MECC_type = self.MECC_type
+        try:
+            self.__original_degree_type = self.degree_type
+        except DegreeType.DoesNotExist:
+            pass
 
 
 class SpecificParagraph(models.Model):
