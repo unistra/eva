@@ -59,12 +59,10 @@ def consistency_check(training):
 = nombre de crédits/3"),
                 "objects": []},
             '1': {"title": _(
-                "Liste des UE en ECI ayant moins de 3 épreuves en session 1 \
-(indiquer le nombre d’épreuves)"),
+                "Liste des UE en ECI ayant moins de 3 épreuves en session 1"),
                 "objects": []},
             '2': {"title": _(
-                "Liste des UE en ECI ayant plus d’une épreuve en session 2 \
-(indiquer le nombre d’épreuves)"),
+                "Liste des UE en ECI ayant plus d’une épreuve en session 2"),
                 "objects": []},
             '3': {"title": _(
                 "Liste des objets en CC/CT 2 sessions, dont les épreuves \
@@ -80,7 +78,7 @@ et/ou les attributs d’épreuves diffèrent en session 2"),
                 "Liste des objets non semestre qui ont une note seuil"),
                 "objects": []},
             '7': {"title": _(
-                "Liste des épreuves qui ont une note seuils"),
+                "Liste des épreuves qui ont une note seuil"),
                 "objects": []},
             '8': {"title": _(
                 "Liste des objets semestre qui n’ont pas de note seuil \
@@ -109,7 +107,7 @@ compris entre 1 et 3"),
                                  _("Coefficient"), link.coefficient)
                         })
             #  1 - 2 
-            if "E" in training.MECC_type and struc == 'UE':
+            if "E" in training.MECC_type and struc.nature == 'UE':
                 # 1
                 if len(proper_exam_1) < 3:
                     to_add = report['1']['objects']

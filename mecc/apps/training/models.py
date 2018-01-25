@@ -121,7 +121,10 @@ class Training(models.Model):
 
         if self.has_custom_paragraph and self.degree_type != self.__original_degree_type:
             raise ValidationError({
-                "degree_type": [_("Cette formation possède des alinéas spécifiques et/ou additionnels")]
+                "degree_type": [
+                    "%s %s" % (
+                        _("Cette formation possède des alinéas spécifiques et/ou additionnels en"),
+                        self.degree_type.short_label)]
             })
         self.save()
 
