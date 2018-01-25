@@ -59,12 +59,10 @@ def consistency_check(training):
 = nombre de crédits/3"),
                 "objects": []},
             '1': {"title": _(
-                "Liste des UE en ECI ayant moins de 3 épreuves en session 1 \
-(indiquer le nombre d’épreuves)"),
+                "Liste des UE en ECI ayant moins de 3 épreuves en session 1"),
                 "objects": []},
             '2': {"title": _(
-                "Liste des UE en ECI ayant plus d’une épreuve en session 2 \
-(indiquer le nombre d’épreuves)"),
+                "Liste des UE en ECI ayant plus d’une épreuve en session 2"),
                 "objects": []},
             '3': {"title": _(
                 "Liste des objets en CC/CT 2 sessions, dont les épreuves \
