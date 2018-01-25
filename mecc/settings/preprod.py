@@ -64,7 +64,7 @@ FILES_UPLOAD_PATH = 'docs/%Y'
 ####################
 
 CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
-CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
+CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-ws.u-strasbg.fr')
 CAMELOT_TOKEN = '{{camelot_token}}'
 
 ####################
@@ -72,5 +72,5 @@ CAMELOT_TOKEN = '{{camelot_token}}'
 ####################
 
 LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
-LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldapws-test.u-strasbg.fr")
+LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldap-ws.u-strasbg.fr")
 LDAP_TOKEN = '{{ldap_token}}'
