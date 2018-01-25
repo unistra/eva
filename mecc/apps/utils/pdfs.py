@@ -533,6 +533,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
         "%d/%m/%Y") if training.date_visa_des not in [None, ''] else _("Non")
     date_cfvu = training.date_val_cfvu.strftime(
         "%d/%m/%Y") if training.date_val_cfvu not in [None, ''] else _("Non")
+    print(in_two_part)
     secondary_table = Table([
         [_("Etat de saisie :")],
         ["%s : %s  %s : %s" % (
@@ -556,7 +557,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
             styles['Normal']), "%s - %s" % (training.get_MECC_type_display(),
                                             training.get_session_type_display()),
          "%s %s" % (ref_label, ref),
-         secondary_table
+         secondary_table if in_two_part else ''
          ],
         [Paragraph(line_2, styles['Normal']),
          "empty", "empty", ],
@@ -820,7 +821,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
                 story.append(PageBreak())
 
                 preview_mecctable_story(
-                    d, story, False, ref=ref, model=model)
+                    d, story, False, ref=ref, model=model, target=target)
 
             if not standard and 'review' in target:
                 preview_mecctable_story(
@@ -838,7 +839,7 @@ def write_rule_with_derog(training, rules, specific, additional, target, referen
     Write rule for model B
     """
     story.append(table_title_trainings_info(
-        training, in_two_part=True, reference=reference))
+        training, in_two_part=False if "publish" in target else True, reference=reference))
     story.append(Spacer(0, 6))
     story.append(
         Table([[Paragraph("<para fontSize=12><strong>%s</strong></para>" % _("Règles applicables à la formation"), styles['CenterBalek']), '']], colWidths=[
@@ -1024,8 +1025,9 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     if preview:
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % title, styles['Normal']))
+    print(target)
+    title_training_table = table_title_trainings_info(training, reference=ref, in_two_part=False if "publish" in target else True)
 
-    title_training_table = table_title_trainings_info(training, reference=ref)
 
     story.append(title_training_table)
     if model == 'a':
