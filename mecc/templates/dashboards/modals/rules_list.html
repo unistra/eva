@@ -1,0 +1,105 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<div class="modal fade" id="rules_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{% trans "Liste des règles générales modifiées ou nouvelles" %}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                    <div>
+                        <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
+                        <table class="table">
+                            {% if rules %} {% for rule in rules %}
+                            <tr>
+                                <td><a class="select " onclick="detail_rule({{rule.id}},'standard')">{{ rule }}</a></td>
+                                <td class="align-right"><span class="red">{% if rule.is_edited == "O" %}{% trans "Modifiée" %}{% elif rule.is_edited == "X" %}{% trans "Nouvelle" %}{% endif %}</span></td>
+                                <td class="align-right">{% if rule.is_eci %}ECI{% endif %}</td>
+                                <td class="align-right">{% if rule.is_cctt %}CC/CT{% endif %}</td>
+                            </tr>
+                            {% endfor %} {% else %}
+                            <tr>
+                                <td>
+                                    {% trans 'Aucune règles'%}
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function detail_rule(id, type) {
+        $.ajax({
+            url: "{% url 'rules:details_rules'%}",
+            type: "POST",
+            data: {
+                val: id,
+                type: type,
+                training: 0,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data) {
+                document.getElementById('year').innerHTML = data.year
+                document.getElementById('title-preview').innerHTML = data.title
+                document.getElementById('preview-rules').getElementsByTagName('tbody')[0].innerHTML = ''
+                document.getElementById('big-title-preview').innerHTML = "";
+                document.getElementById('subtitle-preview').innerHTML = "";
+                document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
+                for (i = 0; i < data.paragraphs.length + 1; i++) {
+                    var tableRef = document.getElementById('preview-rules').getElementsByTagName('tbody')[0];
+                    var newRow = tableRef.insertRow(tableRef.rows.length);
+                    newRow.style.marginTop = '1em';
+                    newRow.style.marginBottom = '1em';
+                    var cell0 = newRow.insertCell(0);
+                    var cell1 = newRow.insertCell(1);
+                    var cell2 = newRow.insertCell(2);
+                    cell0.style.width = '10%';
+                    cell0.style.textAlign = "center"
+                    cell1.style.width = '70%';
+                    cell2.style.width = '20%';
+                    if (i === data.paragraphs.length) {
+                        if (data.additional != null) {
+                            newRow.className += 'green'
+                            cell0.innerHTML = data.additional.alinea;
+                            cell1.innerHTML = data.additional.text;
+                            cell2.style.padding = '0 0 0 2em';
+                            cell1.style.padding = '1em 0 0 0';
+                            cell2.innerHTML = '({% trans "Alinéa additionnel"%})'
+
+                        }
+                        break;
+                    }
+                    cell0.innerHTML = data.paragraphs[i].alinea;
+                    cell1.innerHTML = data.paragraphs[i].text;
+                    if (data.is_specific) {
+                        cell2.style.padding = '0 0 0 2em';
+                        if (data.paragraphs[i].is_derog === true) {
+                            cell1.className += 'blue ';
+                            cell2.className += 'blue ';
+                            cell2.innerHTML = '({% trans "Dérogation" %})';
+                        } else {
+                            cell2.innerHTML = '({% trans "Standard" %})';
+                        }
+
+                    } else {
+                        if (data.paragraphs[i].can_be_derog === true) {
+                            cell2.className += ' border-left disabled italic td-centered';
+                            cell2.innerHTML = '{% trans "Dérogation possible"%}'
+                        }
+                    }
+                }
+            }
+        });
+        $('#preview').modal('show');
+    }
+</script>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block app_content %}
+<p><a class="btn btn-default" href="{% url 'mecctable:mecctable_exam_list' %}">Exam Listing</a></p>
+<table class="table">
+<tr>
+<td>ID</td><td>Link</td>
+    <td>code_year</td>
+    <td>id_attached</td>
+    <td>session</td>
+    <td>regime</td>
+    <td>label</td>
+    <td>additionnal_info</td>
+    <td>exam_duration_m</td>
+    <td>convocation</td>
+    <td>is_session_2</td>
+    <td>threshold_session_2</td>
+</tr>
+{% for object in object_list %}
+<tr>
+    <td>{{object.id}}</td>
+    <td><a href="{{object.get_absolute_url}}">{{object}}</a></td>
+    <td>{{ object.code_year }}</td>
+    <td>{{ object.id_attached }}</td>
+    <td>{{ object.session }}</td>
+    <td>{{ object.regime }}</td>
+    <td>{{ object.label }}</td>
+    <td>{{ object.additionnal_info }}</td>
+    <td>{{ object.exam_duration_m }}</td>
+    <td>{{ object.convocation }}</td>
+    <td>{{ object.is_session_2 }}</td>
+    <td>{{ object.threshold_session_2 }}</td>
+</tr>
+{% endfor %}
+</table><a class="btn btn-primary" href="{% url 'mecctable:mecctable_exam_create' %}">Create new Exam</a>
+{% endblock %}

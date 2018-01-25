@@ -5,13 +5,13 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="searchMember" role="dialog" style="z-index: 1400;">
+<div class="modal fade" id="searchMember" role="dialog" style="z-index: 1800;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content select-pple">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="title-modal">{% trans "Rechercher un membre" %}</h4>
+                <h4 class="title-modal">{% trans "Rechercher " %}{% if style %}{{style}}{% else %}{% trans "un membre" %}{% endif %}</h4>
             </div>
             <div class="modal-body">
                 <div id='error'></div>
@@ -22,11 +22,13 @@
                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                     </span>
+
                 </div>
+                <span class="help-block">
+                        {% trans "Veuillez entrer le nom complet si possible. <br>L'utilisation du caractère générique astérisque * est possible (associé à trois lettres au minimum). Le temps de réponse peut être plus long." %}</span>
                 <table>
                 </table>
-                <!-- /input-group -->
-
+                <!-- input-group -->
                 <div class="table-responsive" style="display:none" id="table-resp">
                 <br>
                     <table class="table results order-table sortable" id="sortabletable">
@@ -34,6 +36,7 @@
                             <tr class='table-head'>
                                 <th> {% trans 'Nom' %}</th>
                                 <th> {% trans 'Prénom' %}</th>
+                                <th> {% trans 'Nom patronymique' %}</th>
                                 <th> {% trans 'Statut' %}</th>
                                 <th> {% trans 'Composante' %}</th>
                                 <th> {% trans 'Mail' %}</th>
@@ -78,9 +81,11 @@
 </div>
 
 <script type="text/javascript">
-
+$('#searchMember').on('shown.bs.modal', function () {
+    $('#to-search').focus();
+});
 function searchMember() {
-    var new_tbody = document.createElement('tbody');
+    let new_tbody = document.createElement('tbody');
     old_tbody = document.getElementById('table')
     new_tbody.setAttribute("id", "table");
     old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
@@ -91,7 +96,7 @@ function searchMember() {
         type: "GET",
         data: {
             member: search,
-            research_type : 'ECI',
+            research_type : '{{type}}',
         },
         success: function(data) {
             document.getElementById('load-wrap').style.display = 'none';
@@ -105,8 +110,9 @@ function searchMember() {
             } else {
                 document.getElementById('table-resp').style.display = '';
                 parent_table = document.getElementById('table');
-                for (var i = 0; i < data.pple.length; i++) {
-                    var tr = document.createElement('tr');
+                for (let i = 0; i < data.pple.length; i++) {
+                    let tr = document.createElement('tr');
+                    tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
                     tr.appendChild(document.createElement('td'))
@@ -115,10 +121,11 @@ function searchMember() {
                     tr.appendChild(document.createElement('td'))
                     tr.cells[0].appendChild(document.createTextNode(data.pple[i].last_name));
                     tr.cells[1].appendChild(document.createTextNode(data.pple[i].first_name));
-                    tr.cells[2].appendChild(document.createTextNode(data.pple[i].status));
-                    tr.cells[3].appendChild(document.createTextNode(data.pple[i].institute));
-                    tr.cells[4].appendChild(document.createTextNode(data.pple[i].mail));
-                    tr.cells[5].appendChild(document.createTextNode(data.pple[i].username));
+                    tr.cells[2].appendChild(document.createTextNode(data.pple[i].birth_name));
+                    tr.cells[3].appendChild(document.createTextNode(data.pple[i].status));
+                    tr.cells[4].appendChild(document.createTextNode(data.pple[i].institute));
+                    tr.cells[5].appendChild(document.createTextNode(data.pple[i].mail));
+                    tr.cells[6].appendChild(document.createTextNode(data.pple[i].username));
                     tr.className += 'hover-row hit select gen-table'
                     parent_table.appendChild(tr)
                 };
@@ -129,20 +136,8 @@ function searchMember() {
                 });
 
                 $(".hit").click(function() {
-                    $('#selectedMember').modal('show');
-                    $('#searchMember').modal('hide');
-                    var last_name = $(this).closest('tr').children('td:first');
-                    var first_name = $(last_name).next('td');
-                    var status = $(first_name).next('td');
-                    var institute = $(first_name).next('td').next('td');
-                    var mail = $(institute).next('td');
-                    var id = $(mail).next('td');
-                    document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
-                    document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
-                    document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
-                    document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
-                    document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
-                    document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+                    let clicked = $(this);
+                    fill_form(clicked);
                 });
             }
         }

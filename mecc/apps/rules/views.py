@@ -1,22 +1,23 @@
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView
-from .models import Rule, Paragraph
-from .forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect, get_object_or_404
-from mecc.apps.degree.models import DegreeType
-from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
-from django.utils.translation import ugettext as _
-from django_cas.decorators import login_required
-from mecc.decorators import is_post_request, is_ajax_request
 from django.db import transaction
-from mecc.apps.utils.querries import currentyear
-from mecc.apps.utils.pdfs import degree_type_rules, \
-    setting_up_pdf, NumberedCanvas, one_rule
+from django.db.models import Q
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.translation import ugettext as _
+from django.views.generic.edit import CreateView, DeleteView
+from django.views.generic.list import ListView
+from django_cas.decorators import login_required
+
+from mecc.decorators import is_post_request, is_ajax_request
+from mecc.apps.degree.models import DegreeType
+from mecc.apps.rules.models import Rule, Paragraph
+from mecc.apps.rules.forms import RuleForm, AddDegreeTypeToRule, ParagraphForm
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
     Training
+from mecc.apps.utils.pdfs import degree_type_rules, \
+    setting_up_pdf, NumberedCanvas, one_rule
+from mecc.apps.utils.queries import currentyear
 
 
 class RulesListView(ListView):
@@ -30,12 +31,14 @@ class RulesListView(ListView):
         return query rules only for current year
         """
         qs = super(RulesListView, self).get_queryset()
-        return qs.filter(code_year=currentyear().code_year if currentyear() is not None else None)
+        return qs.filter(code_year=currentyear().code_year if currentyear(
+        ) is not None else None)
 
     def get_context_data(self, **kwargs):
         context = super(RulesListView, self).get_context_data(**kwargs)
         context['degree_types'] = DegreeType.objects.all()
-        context['asked_year'] = currentyear().code_year if currentyear() is not None else None
+        context['asked_year'] = currentyear().code_year if currentyear(
+        ) is not None else None
         return context
 
 
@@ -141,21 +144,26 @@ def manage_degreetype(request):
             return JsonResponse(data)
 
         elif todo == 'del':
+            # FIXED : verifie que le customized correspond au type de regle :)
             has_current, customized = rule.has_current_exceptions
             if has_current:
-                specifics = [e.training.label for e in customized.get(
-                             'specifics')]
-                additionals = [e.training.label for e in customized.get(
-                              'additionals')]
-                return JsonResponse({
-                    'customized': len(customized),
-                    'text': ", ".join(specifics + additionals),
-                    'specifics': specifics,
-                    'additionals': additionals
+                if degree_type.id in [
+                    e.training.degree_type_id for e in customized.get(
+                        'specifics') + customized.get('additionals')]:
+                    specifics = [e.training.label for e in customized.get(
+                        'specifics')]
+
+                    additionals = [e.training.label for e in customized.get(
+                        'additionals')]
+                    return JsonResponse({
+                        'customized': len(customized),
+                        'text': ", ".join(specifics + additionals),
+                        'specifics': specifics,
+                        'additionals': additionals
                     })
-            else:
-                rule.degree_type.remove(degree_type)
-                return JsonResponse(data)
+
+            rule.degree_type.remove(degree_type)
+            return JsonResponse(data)
 
 
 @login_required
@@ -234,7 +242,6 @@ def edit_rule(request, id=None, template='rules/create/base.html'):
         #      e.long_label.upper().startswith('CATALOGUE'))
     ]
 
-
     return render(request, template, data)
 
 
@@ -248,7 +255,7 @@ class ParagraphDelete(DeleteView):
 
     def get_success_url(self):
         rule = self.request.session['visited_rule'] if \
-         self.request.session['visited_rule'] else self.object.rule.all()[0].id
+            self.request.session['visited_rule'] else self.object.rule.all()[0].id
         return reverse('rules:rule_edit', kwargs={'id': rule})
 
     def get_context_data(self, **kwargs):
@@ -273,14 +280,29 @@ class RuleDelete(DeleteView):
         rule = kwargs['object']
         context = super(RuleDelete, self).get_context_data(**kwargs)
         context['derog'] = SpecificParagraph.objects.filter(
-            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+            rule_gen_id=rule.id, code_year=rule.code_year)
         context['additional'] = AdditionalParagraph.objects.filter(
-            rule_gen_id=rule.n_rule, code_year=rule.code_year)
+            rule_gen_id=rule.id, code_year=rule.code_year)
         return context
+
 
 @login_required
 def gen_pdf(request, id_degreetype, year=None):
     year = currentyear().code_year if year is None else int(year)
+    degree_type = get_object_or_404(DegreeType, id=id_degreetype)
+    title = "MECC - %s - %s" % (
+        degree_type.short_label, year)
+    response, doc = setting_up_pdf(title, margin=42)
+    story = degree_type_rules(title, degree_type, year)
+
+    doc.build(story, canvasmaker=NumberedCanvas)
+
+    return response
+
+
+@login_required
+def gen_all_pdf(request):
+    year = currentyear().code_year
     degree_type = get_object_or_404(DegreeType, id=id_degreetype)
     title = "MECC - %s - %s" % (
         degree_type.short_label, year)
@@ -313,7 +335,7 @@ def history_home(request, year=None, template='rules/history.html'):
         e.code_year, e.code_year + 1)) for e in all_rules}, reverse=True)
     # display current year for selecting year if this year doesn't contain rule
     disp_curr_y = (currentyear().code_year, "%s/%s" % (
-        currentyear().code_year, int(currentyear().code_year)+1))
+        currentyear().code_year, int(currentyear().code_year) + 1))
     if disp_curr_y not in availables_years:
         availables_years.append(disp_curr_y)
 
@@ -356,38 +378,46 @@ def duplicate_home(request, year=None, template='rules/duplicate.html'):
 @is_ajax_request
 @is_post_request
 def duplicate_add(request):
-    current_year = currentyear()
+    """
+    Duplicate year -x rule for a selected training
+    """
+
     x = request.POST.getlist('list_id[]')
 
     dic = [{'year': e.split('_')[0], 'n_rule': e.split('_')[-1]} for e in x]
     labels = []
-    for e in dic:
-
-        r = Rule.objects.filter(
-            code_year=e.get('year')).filter(n_rule=e.get('n_rule')).first()
+    rules = Rule.objects.filter(code_year__in={e.get('year') for e in dic})
+    old_rules = rules.filter(n_rule__in=[e.get('n_rule') for e in dic])
+    paragraphs = Paragraph.objects.filter(
+        rule__id__in={e.id for e in old_rules})
+    for old_rule in old_rules:
         rule = Rule.objects.create(
-            display_order=r.display_order,
-            code_year=current_year.code_year,
-            label=r.label,
-            is_in_use=r.is_in_use,
+            display_order=old_rule.display_order,
+            code_year=currentyear().code_year,
+            label=old_rule.label,
+            is_in_use=old_rule.is_in_use,
             is_edited='N',
-            is_eci=r.is_eci,
-            is_ccct=r.is_ccct,
-            n_rule=r.n_rule
+            is_eci=old_rule.is_eci,
+            is_ccct=old_rule.is_ccct,
+            n_rule=old_rule.n_rule
         )
-        for a in r.degree_type.all():
-            degree_type = DegreeType.objects.get(id=a.id)
-            rule.degree_type.add(degree_type)
+
+        for old_degree_type in old_rule.degree_type.all():
+            rule.degree_type.add(old_degree_type)
+
         rule.save()
 
-        paragraphs = Paragraph.objects.filter(
-            code_year=e.get('year')).filter(rule__id=r.id)
-
-        for p in paragraphs:
+        for p in paragraphs.filter(rule__id=old_rule.id):
+            p.origin_parag = p.id
+            p.pk = None
+            p.code_year = currentyear().code_year
+            p.save()
+            p.rule.clear()
             p.rule.add(rule)
             p.save()
 
-        labels.append(r.label)
+        labels.append(old_rule.label)
+
     return JsonResponse({'status': 'added', 'n_rule': [
         e.get('n_rule') for e in dic], 'labels': labels})
 
@@ -400,7 +430,8 @@ def duplicate_remove(request):
     rule = Rule.objects.get(id=x)
     if rule.has_current_exceptions[0]:
         return JsonResponse({
-            "error": "%s comporte des dérogations et/ou alinéas addditionnels" % rule.label
+            "error": "%s comporte des dérogations et/ou \
+            alinéas addditionnels" % rule.label
         })
     rule.delete()
     return JsonResponse({"status": "removed", "label": rule.label})
@@ -410,9 +441,14 @@ def duplicate_remove(request):
 @is_ajax_request
 def update_progress(request):
     training = Training.objects.get(id=request.POST.get('training_id'))
-    training.progress_rule = request.POST.get('val')
+    _type = request.POST.get('type')
+    if _type == "TABLE":
+        training.progress_table = request.POST.get('val')
+    if _type == "RULE":
+        training.progress_rule = request.POST.get('val')
     training.save()
-    return JsonResponse({'status': 'UPDATED'})
+    val = _('en cours') if request.POST.get('val') == 'E' else _('achevée')
+    return JsonResponse({'status': 200, 'val': val})
 
 
 @login_required
@@ -423,12 +459,12 @@ def details_rule(request):
     def gimme_txt(paraid, rulid):
         try:
             o = SpecificParagraph.objects.get(
-                    paragraph_gen_id=paraid,
-                    rule_gen_id=rulid,
-                    code_year=currentyear().code_year,
-                    training=Training.objects.get(
-                        id=request.POST.get('training_id')),
-                )
+                paragraph_gen_id=paraid,
+                rule_gen_id=rulid,
+                code_year=currentyear().code_year,
+                training=Training.objects.get(
+                    id=request.POST.get('training_id')),
+            )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
 
@@ -444,7 +480,6 @@ def details_rule(request):
         additional = AdditionalParagraph.objects.get(
             training=Training.objects.get(id=request.POST.get('training_id')),
             rule_gen_id=x, code_year=currentyear().code_year
-
         )
     except AdditionalParagraph.DoesNotExist:
         additional = None
@@ -459,7 +494,64 @@ def details_rule(request):
         'paragraphs': [
             {'alinea': e.id,
              'text': e.text_standard if not (
-                e.is_interaction and specific) else gimme_txt(e.id, x)[0],
+                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
+             'is_derog': gimme_txt(e.id, x)[1],
+             'can_be_derog': e.is_interaction,
+             'info': _('Dérogation')}
+            for e in paragraphs],
+
+    }
+    if specific:
+        json_response["additional"] = {
+            "alinea": "",
+            "text": additional.text_additional_paragraph
+        } if additional is not None else None
+
+    return JsonResponse(json_response)
+
+
+@login_required
+@is_ajax_request
+def details_rules(request):
+    derog = []
+
+    def gimme_txt(paraid, rulid):
+        try:
+            o = SpecificParagraph.objects.get(
+                paragraph_gen_id=paraid,
+                rule_gen_id=rulid,
+                code_year=currentyear().code_year,
+            )
+        except SpecificParagraph.DoesNotExist:
+            return Paragraph.objects.get(id=paraid).text_standard, False
+
+        derog.append(paraid)
+        return o.text_specific_paragraph, True
+
+    x = request.POST.get('val')
+    rule = Rule.objects.get(id=x)
+    paragraphs = Paragraph.objects.filter(Q(rule=rule))
+
+    # # Give required additional paragraph or None
+    # try:
+    #     additional = AdditionalParagraph.objects.get(
+    #         training=Training.objects.get(id=request.POST.get('training_id')),
+    #         rule_gen_id=x, code_year=currentyear().code_year
+    #     )
+    # except AdditionalParagraph.DoesNotExist:
+    additional = None
+
+    specific = True if request.POST.get('type') == 'specific' else False
+    json_response = {
+        'id': x,
+        'year': "%s/%s" % (
+            currentyear().code_year, currentyear().code_year + 1),
+        'title': rule.label,
+        'is_specific': specific,
+        'paragraphs': [
+            {'alinea': e.id,
+             'text': e.text_standard if not (
+                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
              'is_derog': gimme_txt(e.id, x)[1],
              'can_be_derog': e.is_interaction,
              'info': _('Dérogation')}

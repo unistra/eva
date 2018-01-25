@@ -37,7 +37,7 @@
   {%for e in object_list%}
 
   <tr class="hover-row">
-     <td class='disabled td-centered' width="5%">{{e.n_rule | stringformat:"05d"}}</td>
+     <td class='disabled td-centered' width="5%">{{e.id | stringformat:"05d"}}</td>
      <td><a href="{% url 'rules:rule_edit' id=e.id %}" width="33%">{{e.label}}</a></td>
      <td width="6%" class="td-centered"> <strong> <input  value='{{e.display_order}}' id='display-{{e.id}}' class="display-order"> <span hidden id='hidden-display-{{e.id}}'> {{e.display_order}}</span></input></strong></td>
      <td width="10%" class="td-centered "> <span class='red'>{% if e.is_empty%}(vide) {%endif%}</span></td>

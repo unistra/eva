@@ -1,9 +1,14 @@
+"""
+Testing years
+"""
+
 from django.test import TestCase
-from .forms import DisabledInstituteYearForm, DircompInstituteYearForm, \
+from mecc.apps.years.forms import DisabledInstituteYearForm, DircompInstituteYearForm, \
     DircompUniversityYearForm, UniversityYearFormCreate, InstituteYearForm
 
 
 class YearFormsTest(TestCase):
+
     def test_disabled_institute_year(self):
         form_data = {
             'date_expected_MECC': '12-05-2015',
@@ -35,8 +40,8 @@ class YearFormsTest(TestCase):
             'is_target_year': False,
             'date_validation': '12-05-2015',
             'date_expected': '07-05-2015',
-            'is_year_init': True,
-            'pdf_doc': '',
+            'is_year_init': True
+
         }
         form = UniversityYearFormCreate(data=form_data)
         self.assertTrue(form.is_valid)

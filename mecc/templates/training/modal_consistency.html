@@ -1,0 +1,52 @@
+{% load i18n %}
+{% load staticfiles %}
+<script src="{% static 'js/check_consistency.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/check_consistency.css' %}" type="text/css" title="no title" charset="utf-8" />
+
+<div class=" modal fade" id="consistency_report" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="title-modal" id='constit_title' >
+                    <h1 >{% trans "Traitement de contrôle de cohérence" %}</h1>
+                </div>
+                <div class="disp-flex ">
+                        <div class="parent padding-1-left disp-flex">
+                            <div class="item-80 dir-col  padding-1">
+                                <div>{% trans "Année universitaire :" %}{{training.code_year}}/{{training.code_year}}</div> 
+                                <div class="">
+                                    {% trans "Intitulé de la formation : "%}
+                                    <strong>{{training.label}}</strong>
+                                </div>
+
+                            </div>
+                            <div class="item-20  dir-col">
+                                <div class="">
+                                    {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
+                                </div>
+                                <div class="">
+                                    {% trans "Régime:"%} {{training.get_MECC_type_display}}
+                                </div>
+                                <div class="">
+                                    {{training.get_session_type_display}}
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-body" id="report-list">
+               
+            </div>
+            
+            <div class="modal-footer"  style="padding-bottom:1em">
+                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

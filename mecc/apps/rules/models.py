@@ -2,14 +2,14 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from mecc.apps.years.models import UniversityYear
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
+from mecc.apps.years.models import UniversityYear
 
 
 class Rule(models.Model):
-    """
+    """ 
     Rule model
     """
     EDITED_CHOICES = (
@@ -20,7 +20,7 @@ class Rule(models.Model):
     display_order = models.IntegerField(
         _('Numéro ordre affichage'), unique=False, default=0)
     code_year = models.IntegerField(_("Code année"))
-    label = models.CharField(_("Libellé"), max_length=75)
+    label = models.CharField(_("Libellé"), max_length=255)
     is_in_use = models.BooleanField(_('En service'), default=True)
     is_edited = models.CharField(_('Modifiée'), max_length=4,
                                  choices=EDITED_CHOICES, default='X')
@@ -28,6 +28,24 @@ class Rule(models.Model):
     is_ccct = models.BooleanField(_('CC/CT'), default=False)
     degree_type = models.ManyToManyField('degree.DegreeType')
     n_rule = models.IntegerField(_('Numéro de règle'), unique=False)
+
+    # @property
+    # def as_json(self):
+    #     """
+    #     Give custom dict 
+    #     """
+    #     dict(
+    #         id=self.id,
+    #         display_order=self.display_order,
+    #         code_year=self.code_year,
+    #         label=self.label,
+    #         is_in_use=self.is_in_use,
+    #         is_edited=self.is_edited,
+    #         is_eci=self.is_eci,
+    #         is_ccct=self.is_ccct,
+    #         degree_type=[e.__dict__ for e in self.degree_type.all()],
+    #         n_rule=self.n_rule,
+    #     )
 
     @property
     def is_empty(self):
@@ -42,10 +60,10 @@ class Rule(models.Model):
         Return true if there is at least one derogation in paragraphs concerned
         by the rule
         """
-        return True if True in [e.is_interaction for e in
-                                Paragraph.objects.filter(
-                                    rule=self)] else False
+        return True if True in [e.is_interaction for e in Paragraph.objects.filter(
+            rule=self)] else False
 
+    
     @property
     def has_current_exceptions(self):
         """
@@ -53,23 +71,27 @@ class Rule(models.Model):
             - bool if there is additionals and/or derogations
             - list of additionals and derogations
         """
-        AdditionalParagraph = apps.get_model('training', 'AdditionalParagraph')
-        additionals = [e for e in AdditionalParagraph.objects.filter(
+        # get_model in order to avoid cyclic import
+        additional_paragraph = apps.get_model('training', 'AdditionalParagraph')
+        additionals = [e for e in additional_paragraph.objects.filter(
             code_year=self.code_year,
-            rule_gen_id=self.n_rule)]
-        SpecificParagraph = apps.get_model('training', 'SpecificParagraph')
-        sp = [e for e in SpecificParagraph.objects.filter(
+            rule_gen_id=self.id)]
+        specific_paragraph = apps.get_model('training', 'SpecificParagraph')
+        s_p = [e for e in specific_paragraph.objects.filter(
             code_year=self.code_year,
-            rule_gen_id=self.n_rule)]
+            rule_gen_id=self.id)]
         give = {
             'additionals': additionals,
-            'specifics': sp}
-        return True if len(sp + additionals) > 0 else False, give
+            'specifics': s_p}
+        return True if len(s_p + additionals) > 0 else False, give
 
     def __str__(self):
         return self.label
 
     def get_absolute_url(self):
+        """
+        Return absolute url
+        """
         return reverse('rules:list')
 
     def clean_fields(self, exclude=None):
@@ -106,7 +128,8 @@ class Paragraph(models.Model):
         l'alinéa dérogatoire"), blank=True)
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"), blank=True)
-
+    origin_parag = models.IntegerField(_("Num. de paragraph d'orgin"), null=True)
+    
     def __str__(self):
         return "Alinéa n° %s" % self.pk
 

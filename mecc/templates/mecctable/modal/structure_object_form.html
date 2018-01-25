@@ -1,13 +1,10 @@
 {% load i18n %} {% load crispy_forms_tags %}
 
-<div class=" modal fade " id="form-obj" role="dialog" style="z-index: 1400;">
+<div class=" fade modal" id="form-obj" role="dialog" style="z-index: 1200;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    &times;
-                </button>
                 <h4 class="title-modal">
                     {% trans "Objet de la structure d'enseignement" %}
                 </h4>
@@ -24,11 +21,9 @@
                     <div class="">
                         {% trans "Composante porteuse : " %} {{training.supply_cmp_label}}
                     </div>
-
                 </div>
             </div>
-            <form class="">
-
+            <form class="formstruct">
                 <div class="modal-body">
                     <div class="flex-container ">
                         {% crispy form %}
@@ -36,32 +31,330 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="updateStructure(0, 0)" id="submit-obj">{% trans "Valider" %}</button>
-                    <button type="button" class="btn " id="button-id-cancel" data-dismiss="modal">{% trans "Annuler" %}</button>
-
+                    <button type="button" class="btn " id="button-id-cancel" onclick="check_if_closed()" >{% trans "Annuler" %}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<div class="modal fade" id="confirm-quit" role="dialog" style="z-index:3000; margin-top:5em;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{% trans "Attention" %}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "Les données ont été modifiées, voulez vous les enregistrer ?" %}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="save-with" >{% trans "Oui" %}</button>
+        <button type="button" class="btn" onclick="$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;">{% trans "Non" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
-function fillForm(_id) {
-    console.log(_id);
-};
-// remove stuff easyly
-Element.prototype.remove = function() {
-    this.parentElement.removeChild(this);
-}
-NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-    for(var i = this.length - 1; i >= 0; i--) {
-        if(this[i] && this[i].parentElement) {
-            this[i].parentElement.removeChild(this[i]);
-        }
+let _isEdited = false;
+$('#form-obj :input').change(function () {
+    _isEdited = true;
+    if(this.id === 'submit-obj'){_isEdited = false;}
+});
+function check_if_closed(){
+    if (_isEdited === true) {
+        $('#confirm-quit').modal("show")
+    } else {
+        $('#form-obj').modal("hide")
     }
 }
+
+$('#form-obj').modal({backdrop: 'static', keyboard: false, show:false})
+$('#form-obj').on('shown.bs.modal', function () {
+    $('#id_nature').focus();
+});
+
+$("#go-respens, #name_respens, #id_external_name").focusout(function(){
+    let respens = document.getElementById('name_respens');
+    let ext = document.getElementById('id_external_name');
+    let el = document.getElementById('go-respens');
+    let toggle = document.getElementById('go-respens');
+
+    let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+    let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
+    if (respens_is_empty){
+        respens.dataset.toggle = "modal";
+        respens.dataset.target = "#searchMember";
+        el.dataset.target = "#searchMember";
+        el.className = "select glyphicon glyphicon-search";
+        ext.disabled = false;
+    } else {
+        el.dataset.target = "";
+        respens.dataset.target = "";
+        el.className = "select glyphicon glyphicon-remove";
+        ext.style.readOnly = true;
+    }
+    if (ext_is_empty) {
+        toggle.disabled = false;
+        respens.disabled = false;
+    } else {
+        toggle.disabled = true;
+        respens.disabled = true;
+    }
+
+});
+$("#go-respens, #name_respens").mouseup(function(e){
+    let toggle = document.getElementById('go-respens');
+    let respens = document.getElementById('name_respens');
+    let ext = document.getElementById('id_external_name');
+    let addon = document.getElementById('basic-addon2');
+    let id_respens = document.getElementById('id_RESPENS_id');
+
+    let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+    let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
+
+    if (this.className.indexOf('remove') != -1 ) {
+        respens.value = "";2
+        id_respens.value = "";
+        toggle.className = "select glyphicon glyphicon-search";
+        respens.dataset.target = "#searchMember";
+        respens.dataset.toggle = "modal";
+        ext.disabled = false;
+        _isEdited = true;
+        setTimeout(function() {
+            toggle.dataset.target = "#searchMember";
+        }, 1); // mouseup doesn't work the same way in chrome as in
+               // firefox, waiting 1ms befor setting data target attribute in
+               // order to not open it with chrome
+    }
+})
+
+
+function fill_form(clicked) {
+    let last_name = clicked.closest('tr').children('td:first');
+    let first_name = $(last_name).next('td');
+    let patronymic = $(first_name).next('td');
+    let status = $(patronymic).next('td');
+    let institute = $(status).next('td');
+    let mail = $(institute).next('td');
+    let id = $(mail).next('td');
+    let id_respens = document.getElementById('id_RESPENS_id');
+    id_respens.value = id.text().replace(/\s+/g, '');
+
+    let respens = document.getElementById('name_respens');
+    respens.value = last_name.text().toUpperCase() + " " + first_name.text();
+    $('#searchMember').modal('hide');
+    let el = document.getElementById('go-respens');
+    let ext = document.getElementById('id_external_name');
+    ext.disabled = true;
+    el.dataset.target = "";
+    respens.dataset.target = "";
+    el.className = "select glyphicon glyphicon-remove";
+    _isEdited = true;
+}
+
+
+// Copy select-option
+let select = document.getElementById('id_nature');
+let options = select.innerHTML;
+let typedegree = '{{training.degree_type}}';
+let is_catalogue = typedegree.indexOf('CATALOGUE') != -1;
+let session = '{{training.session_type}}'
+let regime = '{{training.MECC_type}}'
+document.getElementById('id_regime_1').tabIndex="-1";
+document.getElementById('id_regime_2').tabIndex="-1";
+document.getElementById('id_session_1').tabIndex="-1";
+document.getElementById('id_session_2').tabIndex="-1";
+$("input[name=regime][value=" + regime + "]").attr('checked', 'checked');
+if (!is_catalogue) {
+    let a = document.getElementById('id_session_1');
+    let b = document.getElementById('id_session_2');
+    if (a.value === session){
+        a.checked = true;
+    } else {
+        b.checked = true;
+    }
+    document.getElementById('div_id_regime').className = "disabled disabled-event";
+    document.getElementById('div_id_session').className = "disabled disabled-event";
+} else {
+    let a = document.getElementById('id_mutual');
+    a.tabIndex="-1";
+    a.disabled = true;
+    a.checked = true;
+    document.getElementById('div_id_mutual').className = "disabled disabled-event";
+};
+
+    function hide_ifnot_checked(checkbox, to_hide){
+        if (checkbox.checked){
+            to_hide.className = ""
+        } else {
+            to_hide.className = "hidden "
+        }
+    }
+    hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+
+    $("#id_mutual").on('change', function(){
+        hide_ifnot_checked(this, document.getElementById('preview-consumer'))
+    });
+
+    function check_d(id_obj){
+        if (!document.getElementById('id_mutual').checked) {
+            $.ajax({
+                url: "{%url 'mecctable:get_consom'%}",
+                type: "GET",
+                data: {
+                    id_obj: id_obj,
+                },
+                success: function(data) {
+                    if (data.status === "ERROR") {
+                        alert(data.error);
+                    } else {
+                        if (data.trainings != 0) {
+                            document.getElementById('id_mutual').checked = true;
+                            hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+                            document.getElementById('para-used-1').innerHTML = "La mutualisation ne peut être annulée. L'objet est présent dans d'autres formations."
+                            document.getElementById('showme-used').innerHTML = "Voir les consommateurs.";
+                            document.getElementById("showme-used").className += " hand "
+                            let onclick = "get_consom("+ id_obj + ");$('#is_consumed').modal('toggle');"
+                            $("#showme-used").attr("onclick", onclick);
+                            $("#is_consumed").modal('toggle');
+                        }
+                    }
+              }
+          })
+        }
+    }
+
+
+    function get_struct_details(_id, id_parent, nature) {
+        select.innerHTML = "";
+        select.innerHTML = options;
+        if (nature === 'SE' || nature === 'UE' || nature === 'EC'){
+            $("#id_nature option[value='SE']").remove();
+        }
+        if (nature === 'UE' || nature === 'EC'){
+            $("#id_nature option[value='UE']").remove();
+        }
+        if(nature === 'PT' || nature === 'ST'){
+            $("#id_nature").find('option').remove();
+
+        }
+        document.getElementById('id_ROF_code_year').tabIndex="-1";
+        document.getElementById('id_ROF_nature').tabIndex="-1";
+        document.getElementById('id_ROF_supply_program').tabIndex="-1";
+
+        document.getElementById('div_id_period').className = "";
+        document.getElementById('id_period_1').tabIndex="auto";
+        document.getElementById('id_period_2').tabIndex="auto";
+        document.getElementById('id_period_3').tabIndex="auto";
+
+
+        $.ajax({
+            url: "{% url 'mecctable:get_stuct_obj_details' %}",
+            type: "GET",
+            data: {
+                _id: _id,
+                id_parent: id_parent,
+                id_training: {{training.id}}
+            },
+            success: function(data) {
+                for (let prop in data) {
+                    if (data.hasOwnProperty(prop)) {
+                        if (prop == 'period_fix') {
+                            if (data[prop] && !is_catalogue) {
+                                document.getElementById('div_id_period').className = "disabled disabled-event";
+                                document.getElementById('id_period_1').tabIndex="-1";
+                                document.getElementById('id_period_2').tabIndex="-1";
+                                document.getElementById('id_period_3').tabIndex="-1";
+                            }
+                        } else if (prop == 'nature') {
+                            $("#id_" + prop).val(data[prop])
+                        } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
+                            $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
+                        } else {
+                            if (prop == 'is_in_use' || prop == 'mutual') {
+                                document.getElementById('id_' + prop).checked = data[prop];
+                            }
+                            $("input[name=" + prop + "]").val(data[prop]);
+                        }
+                    }
+                }
+                if (is_catalogue){
+                    document.getElementById('id_mutual').checked = true;
+                }
+
+                let update = "updateStructure("+id_parent+","+_id+")";
+                let save = "$('#form-obj, #confirm-quit').modal('hide');_isEdited=false;" + update;
+                let consumers = "get_consom("+ _id + ")";
+                let mutual = "check_d("+ _id +")"
+                $("#submit-obj").attr("onclick", update);
+                $("#save-with").attr("onclick", save);
+                $("#preview-consumer").attr("onclick", consumers);
+                $("#id_mutual").attr("onclick", mutual);
+                display_UE(document.getElementById('id_nature'));
+                hide_ifnot_checked(document.getElementById('id_mutual'), document.getElementById('preview-consumer'))
+
+                let respens = document.getElementById('name_respens');
+                let ext = document.getElementById('id_external_name');
+                let el = document.getElementById('go-respens');
+                let toggle = document.getElementById('go-respens');
+
+                let ext_is_empty = ext.value==null || ext.value=="" || ext.value == " ";
+                let respens_is_empty = respens.value==null || respens.value=="" || respens.value == " ";
+                if (respens_is_empty){
+                    respens.dataset.toggle = "modal"
+                    respens.dataset.target = "#searchMember";
+                    el.dataset.target = "#searchMember";
+                    el.className = "select glyphicon glyphicon-search";
+                    ext.disabled = false;
+                } else {
+                    el.dataset.target = "";
+                    respens.dataset.target = "";
+                    el.className = "select glyphicon glyphicon-remove";
+                    ext.disabled = true;
+                }
+                if (ext_is_empty) {
+                    toggle.disabled = false;
+                    respens.disabled = false;
+                } else {
+                    toggle.disabled = true;
+                    respens.disabled = true;
+                }
+
+            }
+        });
+    };
+
+
+
+    function display_UE(here) {
+        let option = $(here).find('option:selected').val();
+        if (option === "UE" || option === "ST" || option =="PT") {
+            document.getElementById("div_id_ECTS_credit").className = "form-group"
+            if (option === "UE") {
+                document.getElementById("id_ECTS_credit").required = true;
+            }
+        } else {
+            document.getElementById("div_id_ECTS_credit").className = "form-group hidden"
+        }
+    };
+    $('#id_nature').change(function() {
+        display_UE(this)
+    });
+    // remove stuff easyly
+    Element.prototype.remove = function() {
+        this.parentElement.removeChild(this);
+    };
+    NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+        for (let i = this.length - 1; i >= 0; i--) {
+            if (this[i] && this[i].parentElement) {
+                this[i].parentElement.removeChild(this[i]);
+            }
+        }
+    };
     // function in order to serialize
     $.fn.serializeObject = function() {
-        var o = {};
-        var a = this.serializeArray();
+        let o = {};
+        let a = this.serializeArray();
         $.each(a, function() {
             if (o[this.name] !== undefined) {
                 if (!o[this.name].push) {
@@ -76,8 +369,33 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
     };
 
     function updateStructure(id_parent, id_child) {
-        var data = JSON.stringify($("form").serializeObject()); //
 
+        let data_form = JSON.stringify($(".formstruct").serializeObject());
+        let is_mutual = document.getElementById('id_mutual').checked;
+        let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
+        let label = document.getElementById('id_label').value;
+        let ects = document.getElementById('id_ECTS_credit').value;
+        if (type_val == '' || label == '' || (type_val == "UE" && ects == '')) {
+            document.getElementById('div_id_nature').className = ' form-group '
+            document.getElementById('div_id_ECTS_credit').className = ' form-group  '
+            document.getElementById('div_id_label').className = 'form-group '
+            document.getElementById('id_nature').style.borderColor = 'rgb(204, 204, 204)'
+            document.getElementById('id_label').style.borderColor = 'rgb(204, 204, 204)'
+            document.getElementById('id_ECTS_credit').style.borderColor = 'rgb(204, 204, 204)'
+            if (type_val == '') {
+                document.getElementById('div_id_nature').className = ' form-group red '
+                document.getElementById('id_nature').style.borderColor = 'red'
+            }
+            if (label == '') {
+                document.getElementById('div_id_label').className = 'form-group red '
+                document.getElementById('id_label').style.borderColor = 'red'
+            }
+            if (type_val == "UE" && ects == ''){
+                document.getElementById('div_id_ECTS_credit').className = ' form-group red '
+                document.getElementById('id_ECTS_credit').style.borderColor = 'red'
+            }
+            return;
+        }
         $.ajax({
             url: "{% url 'mecctable:mecctable_update' %}",
             type: "POST",
@@ -86,8 +404,8 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
                 training_id: '{{ training.id }}',
                 id_child: id_child,
                 id_parent: id_parent,
-                formdata: data,
-
+                formdata: data_form,
+                is_mutual: is_mutual,
             },
             success: function(data) {
                 // Next three lines are used to dismiss modal
@@ -99,99 +417,7 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 
             }
         });
-    }
-    
+    };
+
+
 </script>
-
-<style media="screen">
-    .boxed {
-        border: 1px solid #004A87;
-        margin: 1em 0 1em 0;
-    }
-
-    .centerme {
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-direction: column/* works with row or column */
-        flex-direction: column;
-        ;
-        -webkit-justify-content: space-around;
-        justify-content: space-around;
-        align-items: baseline!important;
-        -webkit-align-items: baseline!important;
-    }
-
-    .centerme * {
-        flex: 1 0 0;
-    }
-
-    .structure-form-left .x .form-group {
-        display: flex;
-    }
-
-    .structure-form-left .x .form-group>:first-child,
-    #div_id_label>:first-child {
-        flex-grow: 2;
-        min-width: 10em;
-        max-width: 10em;
-        width: 10em;
-    }
-
-    .structure-form-left .x .form-group>:not(:first-child),
-    #div_id_label>:not(:first-child) {
-        flex-grow: 2;
-        margin-right: 2em;
-    }
-
-    .structure-form-left .x>:first-child {
-        flex-grow: 6
-    }
-
-    .structure-form-left .x>:not(:first-child) {
-        flex-grow: 1
-    }
-
-    .structure-form-left>* {
-        display: flex;
-        align-self: center;
-        -webkit-align-items: center;
-    }
-
-    .y {
-        align-items: baseline!important;
-    }
-
-    .y>:first-child {
-        display: flex;
-        flex-grow: 6;
-    }
-
-    .y>:not(:first-child) {
-        display: flex;
-        flex-grow: 1;
-    }
-
-    .y>.form-group>:first-child {
-        flex-grow: 2;
-        min-width: 10em;
-        max-width: 10em;
-        width: 10em;
-    }
-
-    .y>.form-group>:not(:first-child) {
-        flex-grow: 2;
-        margin-right: 2em;
-    }
-
-    #div_id_ECTS_credit>:not(:first-child) {
-        flex-grow: 2;
-    }
-
-    #div_id_RESPENS_id {
-        flex-grow: 3;
-    }
-
-    .mutual>:first-child {
-        max-width: 10em;
-    }
-</style>

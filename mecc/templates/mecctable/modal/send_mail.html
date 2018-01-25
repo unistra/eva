@@ -1,42 +1,44 @@
 {% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
 
 
-<div class="modal fade" id="send_mail" role="dialog" style="z-index: 1400;">
+<div class="modal" id="send_mail_respform" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
         <div class="modal-content ">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h1 class="title-modal">{% trans "Envoyer une notification" %}</h1>
+                <h1 class="title-modal">{% trans "Envoyer un mail" %}</h1>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'institute:send_mail'%}">
+                <form method="post" action="{% url 'mecctable:send_mail_respform'%}">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="subject" class="control-label col-lg-2">{% trans "Sujet :" %}</label>
                         <div class="controls col-lg-10">
-                            <input name="subject" class="form-control" value='[MECC] {{notification_object}}' placeholder="Sujet du mail" readonly></input>
+                            <input name="subject" class="form-control" id="subject_mail_respform" placeholder="Sujet du mail"></input>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="text" class="control-label col-lg-2">{% trans "À :" %}</label>
                         <div class="controls col-lg-10">
-                            <input id='send-to' type="email" name="to" class="form-control" value="{{notification_to}}" placeholder="Destinataire" readonly></input>
+                            <input id='send-to_respform' type="email" multiple required name="to" class="form-control" value="" placeholder="Destinataire"></input>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="cc" class="control-label col-lg-2">{% trans "CC :" %}</label>
                         <div class="controls col-lg-10">
-                            <input type="text" name="cc" class="form-control" placeholder="Copie à" value="{{request.user.email}}"></input>
+                            <input type="email" multiple  name="cc" value="{{request.user.email}}" class="form-control" placeholder="Copie à"></input>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="body" class="control-label col-lg-2">{% trans "Message :" %}</label>
                         <div class="controls col-lg-10">
-                            <textarea name="body" rows="8" class="form-control" required placeholder="Message de notification" >{% if test_mail %}{{test_mail}}{% endif %}</textarea>
+                            <textarea name="body" rows="8" class="form-control" placeholder="Message de notification"></textarea>
                         </div>
                     </div>
                           <div class="modal-footer">
+                              <input name="id_training"class="hidden" value="{{training.id}}" ></input>
+
                         <button class="btn btn-primary has-1em-margin-top">{% trans "Envoyer" %}</button>
                     </div>
                 </form>
@@ -58,3 +60,10 @@
 
 
 </style>
+<script type="text/javascript">
+function contact_respform_mail(respens_mail, label){
+    $('#send-to_respform').val(respens_mail);
+    $('#subject_mail_respform').val("[MECC] " + label);
+
+}
+</script>

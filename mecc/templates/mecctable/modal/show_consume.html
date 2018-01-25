@@ -1,0 +1,133 @@
+{% load i18n %}
+
+<div class="modal fade" id="show_consume" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="title-modal"  >
+                    <div class="grey">
+                        {% trans "Année universitaire : " %} {{request.display.current_year}}
+                    </div>
+                </div>
+                <div class="title-block flex-container space-between" id="-struct">
+                    <span>
+                        {% trans "Objet : " %} <span id="object-struct" class="bold">UE TP Chimie organique pratique</span>
+                    </span>
+                    <span>
+                        {% trans "Type : " %} <span id="type-struct" class="bold">UE</span>
+                    </span>
+                    <span>
+                        {% trans "Si scolarité : " %} <span id="siscol-struct" class="bold">CHCGUB1</span>
+                    </span>
+                    <span>
+                        {% trans "ROF : " %} <span id="rof-struct" class="bold"> </span>
+                    </span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <span class="blue">{% trans "Liste des consommateurs :" %}</span>
+                <div class=" flex-container">
+                    <div class="flex-container space-around dir-col"
+                    style="width:75%"id="-train">
+                    </div>
+                    <span style="margin-top:auto;margin-bottom:auto;margin-left:auto">
+                        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#send_mail_respform" id="contact_respform">{% trans "Contacter les <br> responsables de formation" %}</button>
+                    </span>
+                </div>
+                <div  class="flex-container space-between"  id="nobodyhere">
+                    <span>{% trans "Aucun consomateur" %}</span>
+                </div>
+            </div>
+            <div class="modal-footer" id="confirm" style="padding-bottom:1em">
+                <button type="button" class="btn btn-primary " id="button-id-cancel" data-dismiss="modal">{% trans "Fermer" %}</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "mecctable/modal/send_mail.html" %}
+<script type="text/javascript">
+
+function get_consom(id_obj){
+    $('#show_consume').modal('show');
+    $.ajax({
+        url: "{%url 'mecctable:get_consom'%}",
+        type: "GET",
+        data: {
+            id_obj: id_obj,
+        },
+        success: function(data) {
+            if (data.status === "ERROR") {
+                alert(data.error);
+            } else {
+                if (data.trainings === 0) {
+                    // manual toggle
+                    $("#-train").hide()
+                    $("#nobodyhere").show()
+                } else {
+                    // manual toggle
+                    $("#-train").show()
+                    $("#nobodyhere").hide()
+                    // initialize array of respform_mail
+                    let respform_mail = [];
+                    // Populate information about structure
+                    document.getElementById("object-struct").innerHTML = data.structure.label;
+                    document.getElementById("type-struct").innerHTML = data.structure.nature;
+                    document.getElementById("siscol-struct").innerHTML = data.structure.si_scol;
+                    document.getElementById("rof-struct").innerHTML = data.structure.rof;
+
+                    // populate info about trainings
+                    let div_train = document.getElementById('-train');
+                    div_train.innerHTML = ""
+                    $.each(data.trainings, function(k, v){
+                        let div = document.createElement('div');
+                        div.className += " flex-container space-around "
+                        div.style.padding = "0.5em"
+
+                        let span_code = document.createElement('span');
+                        span_code.innerHTML = v.code;
+                        span_code.style.fontWeight = "900";
+                        span_code.style.width = "5%";
+                        div.appendChild(span_code);
+
+                        let span_label = document.createElement('span');
+                        span_label.innerHTML = v.label + " - " + v.used;
+                        span_label.style.width = "50%";
+                        div.appendChild(span_label);
+
+                        let div_resp = document.createElement('div');
+                        div_resp.className += " flex-container space-around dir-col"
+                        $.each(v.respens, function(x, y){
+                            respform_mail.push(y.mail);
+                            let span_resp = document.createElement('span');
+                            span_resp.innerHTML = y.first_name + " " + y.last_name;
+                            div_resp.appendChild(span_resp);
+                        });
+                        div_resp.style.width = "40%";
+                        div.appendChild(div_resp);
+                        mails = remove_duplicate_and_keep_order(respform_mail);
+                        div_train.appendChild(div);
+                        let contact = "contact_respform_mail('"+ mails +"','"+data.structure.label+"')"
+                        $('#contact_respform').attr('onclick',contact);
+                    })
+                }
+            }
+      }
+  })
+}
+function remove_duplicate_and_keep_order(arr) {
+    var seen = {};
+    var new_arr = [];
+    for (var i = 0; i < arr.length; i++) {
+        if (!(arr[i] in seen)) {
+            new_arr.push(arr[i]);
+            seen[arr[i]] = true;
+        }
+    }
+    return new_arr;
+
+}
+
+</script>

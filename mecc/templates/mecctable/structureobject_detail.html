@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block app_content %}
+<p><a class="btn btn-default" href="{% url 'mecctable:mecctable_structureobject_list' %}">StructureObject Listing</a></p>
+<table class="table">
+<tr><td>label</td><td>{{ object.label }}</td></tr>
+<tr><td>is_in_use</td><td>{{ object.is_in_use }}</td></tr>
+<tr><td>period</td><td>{{ object.period }}</td></tr>
+<tr><td>RESPENS_id</td><td>{{ object.RESPENS_id }}</td></tr>
+<tr><td>ROF_ref</td><td>{{ object.ROF_ref }}</td></tr>
+<tr><td>ROF_code_year</td><td>{{ object.ROF_code_year }}</td></tr>
+<tr><td>ROF_nature</td><td>{{ object.ROF_nature }}</td></tr>
+<tr><td>ref_si_scol</td><td>{{ object.ref_si_scol }}</td></tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit StructureObject</a>
+
+{% endblock %}

@@ -1,20 +1,22 @@
-from django.conf import settings
+"""
+Webservices stuff here
+"""
+import json
+import urllib
+import britney_utils
 
 from britney.middleware import auth, format
 from britney.errors import SporeMethodCallError, SporeMethodStatusError
-
-import britney_utils
-import urllib
-import json
-
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
-TEACHER_GRADES = ["ENSEIGNANT",
-                  "MAITRE",
-                  "MCUPH",
-                  "PROF",
-                  "PUPH",
-                  ]
+TEACHER_GRADES = [
+    "ENSEIGNANT",
+    "MAITRE",
+    "MCUPH",
+    "PROF",
+    "PUPH",
+]
 
 
 def create_client(name, token, spore, base_url):
@@ -66,7 +68,20 @@ def get_list_from_cmp_by_ldap(cmp):
     return result
 
 
+def get_user_from_ldap(username):
+    """
+    return data from user
+    """
+    client = create_client('ldap_client', settings.LDAP_TOKEN,
+                           settings.LDAP_SPORE, settings.LDAP_BASE_URL)
+    ask = client.get_user(format='json', username=username)
+    return json.loads(ask.text)
+
+
 def get_from_ldap(val):
+    """
+    return list of user with data from ldap
+    """
     def process_stuff(ask):
         result = []
         r = json.loads(ask.text)
@@ -74,21 +89,28 @@ def get_from_ldap(val):
             if e['is_active']:
                 if e['primary_affiliation'] == 'student':
                     affiliation = _('Étudiant')
-                    cmp = e['main_registration_code'] if e['main_registration_code'] is not None else _('Non renseigné')
+                    cmp = e['main_registration_code'] if e[
+                        'main_registration_code'] is not None else _(
+                            'Non renseigné')
                 else:
-                    cmp = e['main_affectation_code'] if e['main_affectation_code'] is not None else _('Non renseigné')
+                    cmp = e['main_affectation_code'] if e[
+                        'main_affectation_code'] is not None else _(
+                            'Non renseigné')
                     if e['primary_affiliation'] == 'employee':
                         affiliation = _('Administratif')
                     else:
                         affiliation = _('Enseignant')
                 person = {
-                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize()) if val.capitalize() != e['last_name'] and '*' not in val else e['last_name'],
-                    "first_name": e['first_name'].title(),
+                    "last_name": "%s (%s)" % (e['last_name'], val.capitalize(
+                        )) if val.capitalize() != e['last_name'].capitalize(
+                            ) and '*' not in val else e['last_name'],
+                    "first_name": e.get('first_name').title(),
                     "status": affiliation,
                     "institute": cmp,
-                    "birth_date": e['birth_date'],
-                    "username": e['username'],
-                    "mail": e['mail'],
+                    "birth_date": e.get('birth_date'),
+                    "username": e.get('username'),
+                    "mail": e.get('mail'),
+                    "birth_name": e.get('birth_name').title()
                     }
                 result.append(person)
         return result

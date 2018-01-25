@@ -1,0 +1,288 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
+{% block page-header %}
+{% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+<ol class="breadcrumb">
+        {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+        {% if request.session.visited_cmp == "RESPFORM" %}
+        <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+        {% else %}
+        <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+        {% endif %}
+    {%else%}
+        <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{%url 'training:list_all'%}
+            {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+            {%endif%}">{% trans "Offre de formation" %}</a></li>
+            <li> <a href="{%url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+        {% if request.session.training_list %}
+        {% endif %}
+    {%endif%}
+        <li class="active"> {{training.label}}</li>
+</ol>
+{% endblock %} {% block app_content %}
+
+
+<link rel="stylesheet" href="{% static 'css/mecctable/tree.css' %}" type="text/css" title="no title" charset="utf-8" />
+
+<script src="{% static 'js/notif.js' %}"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<span class="top-right"></span>
+<ul class="nav nav-tabs" style="margin-bottom:1em">
+    <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+    <li><a href={%if training and not "CATALOGUE" in training.degree_type.long_label%}"{% url 'training:edit_rules' training.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
+    <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
+</ul>
+<div class="disp-flex dir-col has-bottom-border">
+    <div class=" parent disp-flex ">
+        <div class="item-80 dir-col">
+            <div class="">
+                {% trans "Intitulé de la formation: "%}
+            </div>
+            <div class="">
+                <strong>{{training.label}}</strong>
+            </div>
+        </div>
+        <div class="item-20 disabled dir-col">
+            <div>
+                {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
+            </div>
+            <div>
+                {% trans "Régime:"%} {{training.get_MECC_type_display}}
+            </div>
+            <div>
+                {{training.get_session_type_display}}
+            </div>
+        </div>
+    </div>
+    <div>
+
+        {% if can_edit %}
+        <div class="blue">
+            {% trans "Racine" %}<br>
+            
+                <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal"
+                title="{% trans 'Créer un objet à la racine'%}"
+                class="hand glyphicon glyphicon-plus blue no-border"
+                aria-hidden="true" data-target="#form-obj" ></a>
+                <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
+                title="{%trans 'Importer un objet mutualisé à la racine'%}"
+                aria-hidden="true" data-toggle="modal" data-target="#shared-object"
+                onclick="asking_inclusion=0;" ></span>
+            </div>
+            {% endif %}
+        {% if la_liste|length > 0 %}
+        <div class="mecctable-container">
+                <div class="meccRow header">
+                    <span class="mecc-label no-border-top"></span>
+                    <span class="mecc-actionsButtons no-border-top centered"></span>
+                    <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
+                    <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
+                    <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
+                    <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
+                    <span class="mecc-details border-left-5"></span>
+                    <span class="mecc-semesters border-left">
+                        <span class="mecc-s1 ">
+                            <span>
+                                {% trans "Session principale" %}
+                            </span>
+                        </span>
+                        <span class="mecc-s2 border-left-3">
+                            <span>
+                                {% trans "Session de rattrapage" %}
+                            </span>
+                        </span>
+                    </span>
+                </div>
+
+            <div class="">
+                {%for a in la_liste %}
+                    {%include "mecctable/tree_view.html" %}
+                {%endfor%}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    <div class="footer">
+        <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
+            <label>
+            {% trans 'Etat de saisie du tableau MECC : '%}
+        </label>
+            <label class="margin-left1">
+         {% trans "En cours " %}<input type="radio" name="progress" value="E"
+         {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
+         {% if training.progress_table == "E" %}checked="checked" {% endif %}>
+     </label>
+            <label class="margin-left1">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
+        {%if not can_edit or training.input_opening.0 == '2'%} disabled{%endif%} 
+        {% if training.progress_table == "A" %}checked="checked" {% endif %}>
+    </label>
+        </div>
+        <div class="button_container dir-row">
+            <div class="dir-col">
+
+            </div>
+            <div class="flex-item">
+                <a href="{%if la_liste%}#{%else%}{%url 'mecctable:copy_old_mecctable' training.id %}{%endif%}"class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+            </div>
+            <div class="flex-item">
+                <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste or not can_edit%}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+            </div>
+            <div class="flex-item">                    
+                <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} " onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
+            </div>
+            <div class="flex-item">
+                <a href="{%url 'doc_gen:preview_mecctable'%}?training_id={{training.id}}" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
+            </div>
+            <div class="flex-item dir-row">
+                <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
+                <span class="small-blue-txt">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
+            </div>
+        </div>
+        {% include "mecctable/modal/structure_object_form.html" %}
+        {% include "mecctable/modal/exams.html" %}
+        {% include "mecctable/modal/show_consume.html" %}
+        {% include "mecctable/modal/include_shared_object.html" %}
+        {% include "mecctable/modal/object_is_used.html" %}
+        {% include "generic/modal_confirm_delete.html" %}
+        {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
+        {% include "training/send_mail.html"%}
+        {% include "training/modal_consistency.html" %}
+        
+        
+
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+$('.editme').on('keydown', function(e) {
+    let that = this;
+    if (e.which == 13 && e.shiftKey == false) {
+        let value = this.innerHTML;
+        $.ajax({
+            url: "{%url 'mecctable:update_grade_coeff'%}",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                to_update: this.id,
+                value : value
+            },
+            success: function(data) {
+                if (data.status === "ERROR") {
+                    alert(data.error);
+                }
+              that.innerHTML = data.val;
+          }
+      })
+    return false;
+  }
+});
+
+let asking_inclusion = 0;
+
+function check_delete(id_obj, label){
+    $.ajax({
+        url: "{%url 'mecctable:get_consom'%}",
+        type: "GET",
+        data: {
+            id_obj: id_obj,
+        },
+        success: function(data) {
+            if (data.has_consom){
+                $('#is_consumed').modal('toggle');
+                document.getElementById("para-used-1").innerHTML = "L'objet ne peut pas être supprimé car il est présent dans d'autres formations."
+                document.getElementById("showme-used").innerHTML = "Mut."
+                document.getElementById("showme-used").className += " hand "
+                let onclick = "get_consom("+ id_obj + ");$('#is_consumed').modal('toggle');"
+                $("#showme-used").attr("onclick", onclick);
+
+            } else {
+                ask_delete(id_obj, label);
+                $('#preview').modal('toggle');
+            }
+        }
+    })
+}
+function ask_delete(id_obj, label){
+    document.getElementById('type').innerHTML = "cet objet";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
+}
+
+function ask_delete_imported(id_link, label){
+    document.getElementById('type').innerHTML = "cet objet importé";
+    document.getElementById('to_del').innerHTML = label;
+    document.gen_form.action = "/mecctable/imported/remove/" + id_link;
+}
+
+
+$(".sortme").sortable({
+    cancel: ':input,button,.contenteditable, .editme',
+    update: function(e, ui) {
+        let newPositions = $.map($(this).find('.updatable'), function(el) {
+            return $(el).attr('id') + ':' + $(el).index();
+        });
+        $.ajax({
+            url: "{%url 'mecctable:update_mecc_position'%}",
+            type: "POST",
+            data: {
+                new_positions: newPositions.toString(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data){
+                if (data.status === 200) {
+                    $('.top-right').notify({
+                        message: { text: 'Tableau mis à jour.' },
+                        type:'info'
+                    }).show();
+                }else {
+                    $('.top-right').notify({
+                        message: { text: 'Error lors de la mise à jour du tableau.'},
+                        type:'warning'
+                    }).show();
+                }
+            }
+        })
+    }
+});
+    $(document).on('change', 'input[name="progress"]:radio', function(){
+        $.ajax({
+            url: "{% url 'rules:update_progress'%}",
+            type: "POST",
+            data: {
+                val: $(this).val(),
+                training_id : {{training.id}},
+                type : "TABLE",
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data){
+                if (data.status = 200) {
+                    $('.top-right').notify({
+                        message: { text: 'Etat de saisie mis à jour : ' + data.val},
+                        type:'info'
+                    }).show();
+                }else {
+                    $('.top-right').notify({
+                        message: { text: 'Error lors de la mise à jour de la saisie'},
+                        type:'warning'
+                    }).show();
+                }
+            }
+
+        })
+    });
+</script>
+<style media="screen">
+    .top-right{
+        position: absolute;
+        z-index: 1200;
+        right: 2em;;
+    }
+    #form-obj{
+        overflow-y: scroll;
+    }
+</style>
+{%endblock%}

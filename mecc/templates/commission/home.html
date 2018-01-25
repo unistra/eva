@@ -19,35 +19,34 @@
                     <option value='all' selected>{% trans "Tous" %}</option>
                     <option value='commission'>{% trans "Commission ECI" %}</option>
                     <option value='supply'>{% trans "Étudiant CFVU suppléant" %}</option>
-                    <option value='tenured'>{% trans "Étudiant CFVU titulaire" %}</option
+                    <option value='tenured'>{% trans "Étudiant CFVU titulaire" %}</option>
                 </select>
               </th>
               <th></th>
           </tr>
-          <thead>
-
-              <tbody>
-                  {% for e in commission_staff %}
-                  <tr class="hover-row">
-                      <td>{{e.last_name}}</td>
-                      <td>{{e.first_name}}</td>
-                      <td>{{e.username}}</td>
-                      <td>
-                          <select class='select-type' id="val">
-               <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
-               <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
-               <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
-               </select>
-                      </td>
-                      <td>
-                          <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
-                      </td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
+      </thead>
+      <tbody>
+          {% for e in commission_staff %}
+          <tr class="hover-row">
+              <td>{{e.last_name}}</td>
+              <td>{{e.first_name}}</td>
+              <td>{{e.username}}</td>
+              <td>
+                <select class='select-type' id="val">
+                    <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
+                    <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
+                    <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
+                </select>
+              </td>
+              <td>
+                  <a href="" class="glyphicon glyphicon-trash" id="{{e.username}}" onclick="fillModal(this, this.id);" data-toggle="modal" data-target="#deleteMember"></a>
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
   </table>
   {% else %} {% trans "Il n'y a aucun membre." %}
-  </br>
+  <br>
   {% endif %}
   <div style='text-align: center;margin-top:2em;'>
       <a data-toggle="modal" data-target="#searchMember" class="btn btn-primary"> {% trans 'Ajouter un membre' %}</a> {% if commission_staff %}
@@ -55,10 +54,28 @@
   </div>
 
 
-{% include "commission/search_member.html" %}
+{% include "generic/search_member.html" with type='ECI'%}
 {% include "commission/delete_member.html" %}
 {% include "commission/send_mail.html" %}
 <script>
+    function fill_form(clicked){
+
+        let last_name = clicked.closest('tr').children('td:first');
+        let first_name = $(last_name).next('td');
+        let status = $(first_name).next('td');
+        let institute = $(first_name).next('td').next('td');
+        let mail = $(institute).next('td');
+        let id = $(mail).next('td');
+        document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
+        document.getElementById('id_email').value = mail.text().replace(/\s+/g, '');
+        document.getElementById('id_first_name').value = first_name.text().replace(/\s+/g, '');
+        document.getElementById('id_last_name').value = last_name.text().replace(/\s+/g, '');
+        $('#selectedMember').modal('show');
+        $('#searchMember').modal('hide');
+        // document.getElementById('id_status').value = status.text().replace(/\s+/g, '');
+        // document.getElementById('id_cmp').value = institute.text().replace(/\s+/g, '');
+    }
+
     $('#searchMember').on('shown.bs.modal', function () {
         $('#to-search').focus();
     });
@@ -78,9 +95,9 @@
     });
 
     function filterCol(selected) {
-      var a = selected.value
+      let a = selected.value
     $('#commission-member tr').each(function() {
-        var b = $(this).find("#val");
+        let b = $(this).find("#val");
         if (a === b.val()) {
           b.parent().parent().show();
         } else {
@@ -90,7 +107,7 @@
           b.parent().parent().show();
         }
      });
-     var mails = null;
+     let mails = null;
      if (a === 'all'){
          mails = '{%for e in staff_mails%}{{e}}, {%endfor%}'
          document.getElementById('send-to').value = mails

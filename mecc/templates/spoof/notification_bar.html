@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="alert alert-danger pull-right" role="alert" id='spoof-alert'>
 <span class="glyphicon-warning-sign glyphicon" aria-hidden="true"></span>
-{% blocktrans with user=request.user%}Vous êtes en train d'usurper l'identité de '{{ user }}'.{% endblocktrans %}
+{% blocktrans with user=request.user%}Vous êtes en train d'endosser l'identité de '{{ user }}'.{% endblocktrans %}
 <a href="{% url 'spoof:release'%}" type="button" class="btn btn-danger btn-xs ">
-  {% trans "Stopper l'usurpation" %}</a>
+  {% trans "Stopper l'endossement" %}</a>
 </div>

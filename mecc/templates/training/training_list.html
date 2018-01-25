@@ -1,22 +1,36 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
-
+{% load groups %}
 {% load staticfiles %}
 
 {% block page-header %}
-{% trans 'Formations' %} {{disp_current_year}}
+{% trans 'Formations' %} {{request.display.current_year}}
 {% endblock %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-        <li class="active">{% trans "Offre de formation" %}</li>
+            {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+            {% if request.session.visited_cmp == "RESPFORM" %}
+            <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
+        {%else%}
+            <li>
+                <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
+                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
+                {%endif%}">{% trans "Offre de formation" %}</a>
+            </li>
+        {%endif%}
+        <li class="active">{{label_cmp}}</li>
     </ol>
 {% endblock %}
 
 {% block app_content %}
 <h2 class='title-block bold'>{{label_cmp}}</h2>
 <br>
+{% include "institute/modal/documents_list.html"%}
 {%if object_list%}
 <div class="table_list list-training">
   {% if object_list %}
@@ -56,19 +70,24 @@
 {% for item in field.list %}
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
-    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
+    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{%if not item.is_used%}HS - {%endif%}{{item.label}}</a></td>
     <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}}</td>
     <td class="no-padding td-centered border-bottom">{{item.get_progress_table_display}}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
+    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening.1}}</td>
     <td width="5%" class="no-padding td-centered no-border">
 
         {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user.is_superuser%}
+        
+        {% if item.supply_cmp == institute.code or institute == 'ALL' %}
+        
         <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
+
         {% endif %}
+        {% endif %} 
     </td>
 </tr>
 
@@ -88,10 +107,21 @@
         <strong>{% trans "Préparation" %}</strong>
     </span>
     <div class="" style="width:80%">
-        <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">Dupliquer les formations des années précédentes</a>
-        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">Créer une nouvelle formation</a>
+        <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">{% trans "Dupliquer les formations des années précédentes" %}</a>
+        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
     </div>
 </div>
+{% if request.user|has_group:'DES1' or request.user.is_superuser %}
+<div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
+    <span class="title-block" style="width=20%">
+        <strong>{% trans "Validation" %}</strong>
+    </span>
+    <div class="" style="width:80%;margin-top:1em;">
+        <a href="#" data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</a>
+        <a href="{% url 'institute:check_validate' code=request.session.visited_cmp %}" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CFVU" %}<br>&nbsp;</a>
+    </div>
+</div>
+{% endif %}
 <style media="screen">
 
 table {
@@ -123,6 +153,4 @@ table tbody tr {
   table-layout: fixed;
 }
 </style>
-
-
 {% endblock %}

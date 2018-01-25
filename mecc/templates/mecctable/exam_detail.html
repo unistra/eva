@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% load static %} {% block app_content %}
+<p><a class="btn btn-default" href="{% url 'mecctable:mecctable_exam_list' %}">Exam Listing</a></p>
+<table class="table">
+    <tr>
+        <td>code_year</td>
+        <td>{{ object.code_year }}</td>
+    </tr>
+    <tr>
+        <td>id_attached</td>
+        <td>{{ object.id_attached }}</td>
+    </tr>
+    <tr>
+        <td>session</td>
+        <td>{{ object.session }}</td>
+    </tr>
+    <tr>
+        <td>regime</td>
+        <td>{{ object.regime }}</td>
+    </tr>
+    <tr>
+        <td>label</td>
+        <td>{{ object.label }}</td>
+    </tr>
+    <tr>
+        <td>additionnal_info</td>
+        <td>{{ object.additionnal_info }}</td>
+    </tr>
+    <tr>
+        <td>exam_duration_m</td>
+        <td>{{ object.exam_duration_m }}</td>
+    </tr>
+    <tr>
+        <td>convocation</td>
+        <td>{{ object.convocation }}</td>
+    </tr>
+    <tr>
+        <td>is_session_2</td>
+        <td>{{ object.is_session_2 }}</td>
+    </tr>
+    <tr>
+        <td>threshold_session_2</td>
+        <td>{{ object.threshold_session_2 }}</td>
+    </tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit Exam</a> {% endblock %}

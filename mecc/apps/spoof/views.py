@@ -1,10 +1,11 @@
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
+from django_cas.decorators import login_required
+
 from mecc.apps.utils.switch_users import request_with_other_user, \
     check_generic_password
-from django.contrib.auth.models import User
-from django_cas.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
 from mecc.decorators import is_post_request, user_can_spoof
 
 
@@ -23,7 +24,7 @@ def spoof_user(request, template='spoof/form.html'):
         été trouvé." % asked_user)
         return render(request, template, data)
     if new_user.is_superuser or new_user.has_perm('cannot_be_spoofed'):
-        data['error'] = _("Vous ne pouvez pas usurper \
+        data['error'] = _("Vous ne pouvez pas endosser \
         l'identité de %s." % asked_user)
         return render(request, template, data)
 

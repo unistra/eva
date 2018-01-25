@@ -1,5 +1,7 @@
+import json
+
 from django.utils.translation import ugettext as _
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -10,20 +12,24 @@ from django.contrib import messages
 from django_cas.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.utils import formats
 
 from mecc.apps.institute.forms import InstituteForm,  \
     DircompInstituteForm
+from mecc.apps.institute.models import Institute
 from mecc.apps.years.forms import DircompInstituteYearForm, \
     DircompUniversityYearForm, DisabledInstituteYearForm
-from mecc.apps.institute.models import Institute
+
 from mecc.apps.years.models import InstituteYear, UniversityYear
 from mecc.apps.utils.ws import get_list_from_cmp_by_ldap
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.manage_pple import manage_dircomp_rac
+from mecc.apps.utils.queries import institute_staff
 from datetime import datetime
-from mecc.apps.utils.querries import currentyear
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.decorators import is_post_request
+from mecc.decorators import is_post_request, group_required, is_ajax_request
+from mecc.apps.files.models import FileUpload
 
 
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
@@ -32,18 +38,37 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     Dispatch forms according to user profile
     """
     data = {}
-    current_year = list(UniversityYear.objects.filter(
-        Q(is_target_year=True))).pop(0)
-    data['university_year'] = current_year
+    try:
+        current_year = currentyear().code_year
+    except AttributeError:
+        return render(request, 'msg.html', {'msg': "Initialisation de l'année non effectuée"})
     institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year)
+    if request.POST:
+        date_to_pass = request.POST.get('date_expected_MECC')
+        request.POST = {}
+        try:
+            expected_mecc = datetime.strptime(
+                date_to_pass, '%d/%m/%Y')
+            institute_year.date_expected_MECC = datetime.strftime(
+                expected_mecc, '%Y-%m-%d')
+            institute_year.save()
+        except ValueError:
+            granted_edit_institute(
+                request, code, template='institute/granted.html')
+        return granted_edit_institute(
+            request, code, template='institute/granted.html')  # Redirect after POST
+    data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
-    institute_year = InstituteYear.objects.get(
-        id_cmp=institute.id, code_year=current_year.code_year)
+
     profiles = Profile.objects.filter(
-        cmp=code).filter(Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP"))
+        cmp=code).filter(
+            Q(code="DIRCOMP") | Q(code="RAC") | Q(code="REFAPP")
+    )
     if any(True for x in profiles if x in request.user.meccuser.profile.all()):
         data['can_edit_diretu'] = True
     else:
@@ -54,23 +79,19 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     except TypeError:
         institute_year.date_expected_MECC = ''
     data['form_university_year'] = DircompUniversityYearForm(
-        instance=current_year)
+        instance=currentyear())
     data['form_institute_year'] = DircompInstituteYearForm(
         instance=institute_year)
     data['disabled_institute_year'] = DisabledInstituteYearForm(
         instance=institute_year)
-    data['cadre_gen'] = UniversityYear.objects.get(is_target_year=True).pdf_doc
-    if request.POST:
-        try:
-            expected_mecc = datetime.strptime(
-                request.POST.get('date_expected_MECC', ''), '%d/%m/%Y')
-            institute_year.date_expected_MECC = datetime.strftime(
-                expected_mecc, '%Y-%m-%d')
-            institute_year.save()
-        except ValueError:
-            granted_edit_institute(
-                request, code, template='institute/dircomp.html')
-        return redirect('/')  # Redirect after POST
+    data['cadre_gen'] = FileUpload.objects.filter(
+        object_id=currentyear().id).first()
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (
+            current_year, current_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (
+            current_year, current_year + 1))
 
     return render(request, template, data)
 
@@ -78,7 +99,7 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def add_pple(request):
     """
-    Process add diretu / gescol ajax querries
+    Process add diretu / gescol ajax queries
     """
     label_profile = {
         'DIRETU': "Directeurs d'études",
@@ -159,8 +180,9 @@ def add_pple(request):
 @user_passes_test(lambda u: True if 'DIRCOMP' or 'RAC' in [e.code for e in u.meccuser.profile.all()] else False)
 def remove_pple(request):
     """
-    Process remove diretu/gescol ajax querriessc
+    Process remove diretu/gescol ajax queriessc
     """
+
     if request.is_ajax() and request.method == 'POST':
         username = request.POST.get('username')
         institute = Institute.objects.get(code=request.POST.get('code_cmp'))
@@ -169,8 +191,7 @@ def remove_pple(request):
             'type') == 'GESCOL' and meccuser.is_ref_app else request.POST.get('type')
         prof = [e for e in meccuser.profile.all() if
                 e.code == code and
-                e.cmp == request.POST.get('code_cmp') and
-                e.year == currentyear().code_year][0]
+                e.cmp == request.POST.get('code_cmp')][0]
 
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             institute.diretu.remove(meccuser)
@@ -199,7 +220,8 @@ def get_list(request, employee_type, pk):
     """
     status = {'prof': 'Enseignant', 'adm': 'Administratif'}
     t = get_list_from_cmp_by_ldap(cmp=pk)
-    result = [e for e in t if e.get('status') == status.get(employee_type)]
+    result = [e for e in t if e.get('status') == status.get(
+        employee_type)] if employee_type != "all" else t
     return JsonResponse(result, safe=False)
 
 
@@ -235,7 +257,8 @@ class InstituteCreate(CreateView):
         try:
             uy = UniversityYear.objects.get(is_target_year=True)
             current_year = uy.code_year
-            context['cadre_gen'] = uy.pdf_doc
+            context['cadre_gen'] = FileUpload.objects.filter(
+                object_id=uy.id).first()
             context['institute_year'] = InstituteYear.objects.filter(
                 code_year=current_year)
         except UniversityYear.DoesNotExist:
@@ -302,12 +325,16 @@ class InstituteUpdate(UpdateView):
         try:
             uy = UniversityYear.objects.get(is_target_year=True)
             current_year = uy.code_year
-            context['cadre_gen'] = uy.pdf_doc
+            context['cadre_gen'] = FileUpload.objects.filter(
+                object_id=uy.id).first()
             context['institute_year'] = InstituteYear.objects.get(
                 code_year=current_year, id_cmp=self.object.id)
             context['university_year'] = uy
             context['institute'] = self.object
-
+            context['letter_file'] = FileUpload.objects.filter(
+                object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
+            context['misc_file'] = FileUpload.objects.filter(
+                object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
@@ -371,13 +398,16 @@ def validate_institute(request, code, template='institute/validate.html'):
     """
     Validate MECC in institute
     """
-
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['university_year'] = current_year
     data['institute'] = institute
     data['latest_instit_id'] = institute.id
@@ -386,13 +416,13 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['date_last_notif'] = institute_year.date_last_notif
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
-        institutes__code=code).order_by('degree_type')
+        institutes__code=code, is_used=True).order_by('degree_type')
     data['notification_to'] = settings.MAIL_FROM
     data['notification_object'] = "%s - %s %s" % (
         institute.label, request.user.first_name, request.user.last_name)
 
     if hasattr(settings, 'EMAIL_TEST'):
-        data['test_mail'] =  _("""
+        data['test_mail'] = _("""
 Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
 Merci.
         """)
@@ -424,13 +454,16 @@ Merci.
                     errors = True
                     messages.add_message(request, messages.ERROR, _(
                         'La saisie des règles ou du tableau pour les élements sélectionnés n\'est pas terminée'))
+                if training.date_visa_des or training.date_val_cfvu:
+                    errors = True
+                    messages.add_message(request, messages.ERROR, _(
+                        'Vous ne pouvez pas modifier la date de validation : une date de visa DES ou de validation CFVU a été enregistrée'))
 
             if not errors:
                 # TODO tz needed (???)
                 date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
                 data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
                     date_val_cmp=date_mecc)
-                messages.success(request, _('Opération effectuée.'))
 
     except (ValueError, TypeError):
         messages.add_message(request, messages.ERROR, _(
@@ -438,11 +471,122 @@ Merci.
     return render(request, template, data)
 
 
+@group_required('DES1', 'DES2', 'DES3')
+def check_validate_institute(request, code, template='institute/check_validate.html'):
+    """
+    Check institutes' Mecc validation
+    """
+    data = {}
+    try:
+        current_year = list(UniversityYear.objects.filter(
+            Q(is_target_year=True))).pop(0)
+    except:
+        return render(request, 'msg.html', {'msg' : "Initialisation de l'année non effectuée"})
+
+    institute = Institute.objects.get(code=code)
+    institute_year = InstituteYear.objects.get(
+        id_cmp=institute.id, code_year=current_year.code_year)
+    staff = institute_staff("CHM")
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['university_year'] = current_year
+    data['institute'] = institute
+    data['latest_instit_id'] = institute.id
+    data['label_cmp'] = institute.label
+    data['form_institute'] = DircompInstituteForm(instance=institute)
+    data['date_last_notif'] = institute_year.date_last_notif
+    data['trainings'] = Training.objects.filter(
+        code_year=currentyear().code_year if currentyear() is not None else None,
+        institutes__code=code, is_used=True).order_by('degree_type')
+    data['notification_to'] = [user.email for user in staff.filter(
+        meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
+    data['notification_cc'] = [user.email for user in staff.filter(
+        meccuser__profile__code="REFAPP").distinct()]
+    data['notification_full'] = data[
+        'notification_to'] + data['notification_cc']
+    data['notification_object'] = "%s" % institute.label
+    data['mail_prefix'] = settings.EMAIL_SUBJECT_PREFIX
+
+    if hasattr(settings, 'EMAIL_TEST'):
+        data['test_mail'] = _("""
+Il s'agit d'un mail de test, Veuillez ne pas le prendre en considération.
+Merci. """)
+
+    try:
+        errors = False
+
+        if request.POST:
+            data['date_mecc'] = request.POST.get('date_mecc')
+            datetime_mecc = datetime.strptime(data['date_mecc'], '%d/%m/%Y')
+            # datetime.strptime(
+            #    data['date_mecc'], '%d/%m/%Y')
+            if datetime_mecc > datetime.today():
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'La date ne peut être ulterieure à la date du jour !'))
+
+            data['selected_trainings'] = Training.objects.filter(
+                pk__in=request.POST.getlist('chkbox[]'))
+
+            if not data['selected_trainings']:
+                errors = True
+                messages.add_message(request, messages.ERROR, _(
+                    'Veuillez selectionner au moins un diplôme !'))
+
+            for training in data['selected_trainings']:
+                if datetime_mecc.date() < training.date_visa_des:
+                    errors = True
+                    messages.add_message(request, messages.ERROR, _(
+                        'La date de CFVU (%s) ne peut être antérieure à la date du visa DES (%s)'
+                    ) % (formats.date_format(datetime_mecc.date(), "SHORT_DATE_FORMAT"), formats.date_format(training.date_visa_des, "SHORT_DATE_FORMAT")))
+
+            if not errors:
+                # TODO tz needed (???)
+                date_mecc = datetime.strftime(datetime_mecc, '%Y-%m-%d')
+
+                # Should not happen but for now control if one of the fields is != 'A'
+                for d in data['selected_trainings']:
+                    if d.progress_rule != 'A' or d.progress_table != 'A':
+                        messages.add_message(request, messages.ERROR, _(
+                            "Attention état d'avancement de la saisie des règles ou saisie tableau MECC non achevé pour : ") + d.label)
+
+                data['selected_trainings'].filter(progress_rule="A", progress_table="A").update(
+                    date_val_cfvu=date_mecc)
+
+    except (ValueError, TypeError):
+        messages.add_message(request, messages.ERROR, _(
+            'Veuillez renseigner une date de validation valide'))
+    return render(request, template, data)
+
+
+@user_passes_test(lambda u: True if 'DIRETU' or 'GESCOL' or 'RESPFORM' in [e.code for e in u.meccuser.profile.all()] else False)
+def documents_institute(request, code, template='institute/documents.html'):
+    """
+    Show documents relative to Institute
+    """
+
+    data = {}
+    current_year = list(UniversityYear.objects.filter(
+        Q(is_target_year=True))).pop(0)
+    institute = Institute.objects.get(code=code)
+    # institute_year = InstituteYear.objects.get(
+    #    id_cmp=institute.id, code_year=current_year.code_year)
+    data['label_cmp'] = institute.label
+    data['letter_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    data['misc_file'] = FileUpload.objects.filter(
+        object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+
+    return render(request, template, data)
+
+
 @is_post_request
 @login_required
 def send_mail(request):
     """
-    Send mail
+    Send mail (TO DES)
     """
 
     meccuser = MeccUser.objects.get(user__username=request.user.username)
@@ -468,7 +612,9 @@ def send_mail(request):
         subject=subject,
         body=body,
         from_email="%s %s <%s> " % (
-            request.user.first_name, request.user.last_name, request.user.email),
+            request.user.first_name,
+            request.user.last_name,
+            request.user.email),
         to=[settings.MAIL_FROM],
         cc=cc,
         bcc=to
@@ -477,3 +623,146 @@ def send_mail(request):
     mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def send_mail_des(request):
+    """
+    Send mail (from DES)
+    """
+
+    to = settings.EMAIL_TEST if hasattr(
+        settings, 'EMAIL_TEST') else ['']
+    cc = [request.POST.get('cc')] if request.POST.get('cc') else ''
+    subject = request.POST.get('subject')
+
+    body = request.POST.get('body')
+    mail = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        from_email="%s %s <%s> " % (
+            request.user.first_name,
+            request.user.last_name,
+            request.user.email),
+        to=[request.POST.get('to')],
+        cc=cc,
+        bcc=to,
+        reply_to=[settings.MAIL_FROM]
+    )
+
+    mail.send()
+    messages.success(request, _('Notification envoyée.'))
+    return redirect('/institute/checkvalidate/%s' % request.session['visited_cmp'])
+
+
+@is_post_request
+@login_required
+def process_upload_letter(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_upload_misc(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    return redirect('/institute/validate/%s' % code)
+
+
+@is_post_request
+@login_required
+def process_delete_file(request):
+    """
+        TODO: use a meccuser instance not to duplicate code !!!!
+    """
+    meccuser = MeccUser.objects.get(user__username=request.user.username)
+    code = meccuser.cmp
+    return redirect('/institute/validate/%s' % code)
+
+
+@group_required('DES1', 'DES2', 'DES3')
+@is_post_request
+@login_required
+def process_check_validate(request):
+    tobject = Training.objects.get(id=request.POST.get('code'))
+    type = request.POST.get('type')
+
+    if type == 'remove_cfvu':
+        tobject.date_val_cfvu = None
+    if type == 'remove_visa':
+        tobject.date_visa_des = None
+    if type == 'remove_reserve':
+        tobject.date_res_des = None
+    if type == 'remove_validation':
+        tobject.date_val_cmp = None
+    if type == 'add_visa':
+        tobject.date_visa_des = datetime.now()
+        tobject.date_res_des = None
+    if type == 'add_reserve':
+        tobject.date_res_des = datetime.now()
+        tobject.date_visa_des = None
+
+    if tobject:
+        tobject.save()
+        response = {'status': 1, 'message': _(
+            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp']}
+    else:
+        response = {'status': 0, 'message': _("Error")}
+
+    return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+@is_post_request
+@login_required
+def process_training_notify(request):
+    tobject = Training.objects.get(id=request.POST.get('code'))
+
+    if tobject:
+        respform = User.objects.filter(
+            meccuser__id__in=tobject.resp_formations.values('id'))
+        response = {'status': 1, 'message': _(
+            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp'], 'form': tobject.label, 'resp': list(respform.values('email'))}
+    else:
+        response = {'status': 0, 'message': _("Error")}
+
+    return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+@login_required
+@is_ajax_request
+def details_files(request):
+
+    current_year = currentyear().code_year
+    cmp = request.POST.get('val')
+    institute = Institute.objects.get(id=cmp)
+    files = FileUpload.objects.filter(
+        object_id=cmp,
+        additional_type='misc_%s/%s' % (current_year, current_year + 1)
+    )
+
+    f_data = []
+    for f in files:
+        a = {
+            'url': f.file.url,
+            'name': f.filename(),
+            'comment': f.comment,
+            'creator': f.creator.get_full_name(),
+            'uploaded_at': formats.date_format(f.uploaded_at.date(), "SHORT_DATE_FORMAT")
+        }
+        f_data.append(a)
+    # list(files.values('file', 'creator', 'uploaded_at')),
+    json_response = {
+        'files': f_data if len(f_data) > 0 else 0,
+        'institute': institute.label
+    }
+
+    return JsonResponse(json_response)

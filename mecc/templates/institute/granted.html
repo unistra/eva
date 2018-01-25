@@ -6,6 +6,7 @@
 {% load field_name %}
 
 
+
 {% block page-header %}
 {{label_cmp}}
 {% endblock %}
@@ -34,7 +35,7 @@
 </form>
 
 <div class="comp-right">
-  <h3> {% trans "Année cible" %} {{university_year.code_year}}/{{university_year.code_year|add:'1'}}</h3>
+  <h3> {% trans "Année cible" %} {{request.display.current_year}}</h3>
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
         <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
@@ -42,12 +43,46 @@
   {% crispy form_university_year%}
   {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
   <form method="post">
-{% crispy form_institute_year%}
-
-</form>
+  {% crispy form_institute_year%}
+  </form>
   {% else %}
   {% crispy disabled_institute_year%}
   {%endif%}
+
+  <div><br></div>
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Lettre de présentation" %}
+    </label>
+    <div class="controls col-lg-12">
+        <ul>
+        {% if letter_file %}
+          {% include "institute/files_list_only.html" with files=letter_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
+    </div>
+  </div>
+
+  <div>
+    <label class="control-label col-lg-12">
+      {% trans "Autres documents (PV, émargement, ...)" %}
+    </label>
+    <div class="controls col-lg-12">
+        <ul>
+        {% if misc_file %}
+          {% include "institute/files_list_only.html" with files=misc_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
+    </div>
+  </div>
 </div>
 
 </div>

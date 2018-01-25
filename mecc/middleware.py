@@ -14,7 +14,8 @@ class UsefullDisplay(object):
 
         # give current year
         y = UniversityYear.objects.filter(is_target_year=True).first()
-        c = "%s/%s" % (y.code_year, y.code_year + 1) if y is not None else ": aucune année selectionnée"
+        c = "%s/%s" % (y.code_year, y.code_year + 1) if y is not None else ":\
+            aucune année selectionnée"
         request.display.update({'current_year': c})
 
     def process_response(self, request, response):

@@ -1,30 +1,63 @@
+"""
+Signals are used on variable elements such as :
+    - DELETE on Training
+    - SAVE on User
+    - SAVE and DELETE on ECICommissionMember
+"""
 from django.db.models.signals import pre_save, post_delete, post_save
 from django.dispatch import receiver
-from mecc.apps.commission.models import ECICommissionMember
 from django.contrib.auth.models import User
-from mecc.apps.adm.models import MeccUser, Profile
 from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError as ie
-from mecc.apps.utils.querries import currentyear
+from django.core.exceptions import ObjectDoesNotExist
+
+from mecc.apps.commission.models import ECICommissionMember
+from mecc.apps.utils.queries import currentyear
+from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.training.models import Training, AdditionalParagraph, \
     SpecificParagraph
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject, \
+    Exam
 
 
 @receiver(post_delete, sender=Training)
 def Training_post_delete(sender, **kwargs):
     """
     When a Training is deleted, derogations and additional paragraphs are
-    useless and so need to be deleted
+    useless and so need to be deleted, the same for linksobjects and
+    structureobject which are not used anymore, the same stuff for exams
     """
+    # 1. get concerned training
+    training = kwargs.get('instance')
+    # 2. get additionals and specifics concerned
     additionals = AdditionalParagraph.objects.filter(
-        training=kwargs.get('instance'))
-    derog = SpecificParagraph.objects.filter(
-        training=kwargs.get('instance'))
-    for e in additionals:
-        e.delete()
-    for e in derog:
-        e.delete()
+        training=training)
+    derogs = SpecificParagraph.objects.filter(
+        training=training)
+    # 3. remove them
+    for additionnal in additionals:
+        additionnal.delete()
+    for derog in derogs:
+        derog.delete()
+    # 4. get objects link and structures objects and exams concerned
+    links = ObjectsLink.objects.filter(id_training=training.id)
+    structs = StructureObject.objects.filter(
+        id__in=[link.id_child for link in links])
+    exams = Exam.objects.filter(id_attached__in=[s.id for s in structs])
+    # 5. get all objects link using concerned structs not in this training
+    used = ObjectsLink.objects.filter(id_child__in=[struct.id for struct in structs]).exclude(
+        id_training=training.id)
+    # 6. delete struct if no training use it
+    for struct in structs:
+        if struct.id not in [link.id_child for link in used]:
+            struct.delete()
+    # 7. delete all link related to the training concerned
+    for link in links:
+        link.delete()
+    # 8. delete all exams
+    for exam in exams:
+        exam.delete()
+    # 9. dance :)
 
 
 @receiver(post_save, sender=User)
@@ -83,9 +116,9 @@ def ECI_post_delete(sender, **kwargs):
         return
     to_del = kwargs['instance'].username
     meccuser = MeccUser.objects.get(user__username=to_del)
-    eci = Profile.objects.get(code='ECI', year=currentyear().code_year)
-    meccuser.profile.remove(eci)
     profiles = meccuser.profile.all()
+    eci = profiles.get(code='ECI')
+    meccuser.profile.remove(eci)
     if len(profiles) < 1 and not meccuser.user.is_superuser:
         meccuser.user.delete()
         meccuser.delete()

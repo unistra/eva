@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block page-header %}
-{% trans "Usurpation d'identité" %}
+{% trans "Endossement d'identité" %}
 {% endblock %}
 
 {% block app_content %}
@@ -14,9 +14,9 @@
 {{error}}</div>
 {% endif %}
       {% csrf_token %}
-      <input name="asked_username" type="text" placeholder='{% trans "ID utilisateur à usurper" %}'/>
+      <input name="asked_username" type="text" placeholder='{% trans "ID utilisateur à endosser" %}'/>
       <input name="pass" type="password" placeholder= '{% trans "mot de passe générique : 123456" %}'/>
-      <button class="btn btn-primary">Usurper l'identité</button>
+      <button class="btn btn-primary">{% trans "Endosser l'identité"%}</button>
     </form>
 </div>
 {% endblock %}

@@ -1,0 +1,911 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<link type="text/css" rel="stylesheet" href="{% static 'js/jsgrid/jsgrid.min.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'js/jsgrid/jsgrid-theme.min.css' %}" />
+
+<script type="text/javascript" src="{% static 'js/jsgrid/jsgrid.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jsgrid/i18n/jsgrid-fr.js' %}"></script>
+
+<div class="modal fade" id="exams_tab" role="dialog" style="z-index: 1200">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <div class="disp-flex space-between">
+                    <div>
+                        <h1 class="title-modal">{% trans "Définition des épreuves" %}</h1>
+                        {% trans "Année universitaire : " %} {{request.display.current_year}}
+                    </div>
+                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_old_exams">{% trans "Récupérer les ÉPREUVES <br>de l'année précédente pour cet objet" %}</button>
+                </div>
+                <div class="disp-flex space-between paddin-top">
+                    <div>
+                        <span>{% trans "Object : " %} </span>
+                        <strong>
+                            <span id="struct_object"></span>
+                        </strong>
+                    </div>
+                    <div class="margin-left05">
+                        <span>{% trans "Type : " %} </span>
+                        <strong>
+                            <span id="struct_type" class></span>
+                        </strong>
+                    </div>
+                    <div class="margin-left05">
+                        <span>{% trans "Régime : " %} </span>
+                        <strong>
+                            <span id="struct_regime"></span>
+                        </strong>
+                    </div>
+                    <div class="margin-left05">
+                        <span>{% trans "SI Scol : " %} </span>
+                        <strong>
+                            <span id="struct_siscol"></span>
+                        </strong>
+                    </div>
+                    <div class="margin-left05">
+                        <span>{% trans "ROF : " %} </span>
+                        <strong>
+                            <span id="struct_rof">  </span>
+                        </strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+
+                <h4 class="blue">
+                    {% trans "Épreuves de la session principale"%}
+                </h4>
+                <div id="principal_exam"></div>
+
+                <br>
+                <div class="session2_exams">
+                    
+                    <div class="disp-flex space-between padding-top">
+                        <h4 class="blue">
+                            {% trans "Épreuves de la session de rattrapage"%}
+                        </h4>
+                        <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
+                    </div>
+                    <br>               
+                    
+                    <div id="second_exam"></div>            
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+
+                <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="complete" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h1 class="title-modal"><span id="title_complete"></span></h1>
+            </div>
+            <div class="modal-footer">
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="additional_info" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h1 class="title-modal">{% trans "Complément" %}</h1>
+            </div>
+            <div class="modal-body">
+                <textarea name="additional" id="additional" style="width:75%;" rows="10"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary btn" aria-hidden="true" id="confirm_additional">{% trans "Confirmer" %}</button>
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    var type_dict = {
+        "A": "Autre",
+        "O": "Oral",
+        "E": "Ecrit"
+    }
+
+    $('#get_principal_exam').on('click', function (e) {
+        let id_structure = $("#get_principal_exam").data("id_structure");
+        let st_label = $("#get_principal_exam").data("st_label");
+        let st_nature = $("#get_principal_exam").data("st_nature");
+        let st_regime = $("#get_principal_exam").data("st_regime");
+        let st_session = $("#get_principal_exam").data("st_session");
+        let st_ref_scol = $("#get_principal_exam").data("st_ref_scol");
+        let st_rof_ref = $("#get_principal_exam").data("st_rof_ref");
+        let url_copy = "/mecctable/copy_exam_1_to_2/" + id_structure;
+        $.ajax({
+            url: url_copy,
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function (data) {
+                $("#second_exam").jsGrid("loadData");
+                update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol,
+                    st_rof_ref)
+                $(".jsgrid-insert-row").hide()
+                $('#title_complete').text(
+                    '{% trans " Copie des épreuves principales terminée."%}');
+                $('#complete').modal('show');
+
+            }
+        })
+
+    })
+
+    function _checkall(what, label, args) {
+
+        _is_nan(what, label);
+        _is_grade(what, label);
+
+        function _is_nan(what, label) {
+            if (isNaN(what) && (what != "" || what !== null)) {
+                args.cancel = true;
+                alert(label + " doit être un nombre.");
+                return false
+            }
+        }
+
+        function _is_grade(what, label) {
+            if (!_is_nan(what, label)) {
+                if (what > 20 || what < 0) {
+                    args.cancel = true;
+                    let text = what > 20 ? " ne peut pas être supérieur à 20." : " ne peut pas être négatif."
+                    alert(label + text);
+                }
+            }
+        }
+    }
+
+    function update_mini_table(session, id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
+        st_rof_ref) {
+        // called afer each insertion, update or copy
+        let url_list = "/mecctable/list_exams/" + id_structure;
+
+        if (session === "2") {
+            $.ajax({
+                url: url_list,
+                data: 'session2=True',
+                dataType: "json",
+                success: function (data) {
+                    complete_table(data)
+                }
+            })
+        } else {
+            $.ajax({
+                url: url_list,
+                dataType: "json",
+                success: function (data) {
+                    complete_table(data)
+                }
+            })
+        }
+
+        function complete_table(items) {
+            let to_catch = session === "1" ? ".mecc-s1-" + id_structure : ".mecc-s2-" + id_structure;
+            // Remove all td in the tr
+            $(to_catch + " td").remove()
+            // Update it with current items
+            let see_more = '<td class="border-left" ><a class="hand" onclick="struct_select(' +
+                id_structure +'\', \'' + st_nature + '\',  \'' + st_regime + '\', \'' + st_session + '\', \'' +
+                st_ref_scol + '\', \'' +
+                st_rof_ref + '\');">Voir +</a></td>'
+
+
+            for (i = 0; i < items.length; i++) {
+                if (i === 3) {
+                    $(to_catch).append(see_more);
+                    break
+                } else {
+                    let type = type_dict[items[i].type_exam];
+                    let coef = items[i].coefficient;
+                    let text = items[i].regime === "E" ?
+                        items[i].convocation == true ?
+                        "<span class='green'><strong> !</strong></span>" : "" :
+                        items[i].type_ccct === "T" ?
+                        "<span class='green'><strong> !</strong></span>" : "";
+
+                    $(to_catch).append('<td class="border-left">' + type + '(' + coef + ')' +
+                        text + '</td>')
+                }
+
+            }
+
+
+        }
+    }
+
+    function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol,
+        st_rof_ref) {
+        let st_label =  $(".struct-" + id_structure).text()
+        $("#get_principal_exam").attr({
+            "data-id_structure": id_structure,
+            "data-st_nature": st_nature,
+            "data-st_label": st_label,
+            "data-st_regime": st_regime,
+            "data-st_session": st_session,
+            "data-st_ref_scol": st_ref_scol,
+            "data-st_rof_ref": st_rof_ref,
+        });
+    // No second session if unique
+    
+        let is_2_session = st_session.indexOf("2") !== -1
+
+        if (!is_2_session){
+            $('.session2_exams').hide()
+        } else {
+            $('.session2_exams').show()            
+        }
+
+
+        // update title
+        document.getElementById('struct_object').innerHTML = st_label;
+        document.getElementById('struct_type').innerHTML = st_nature;
+        document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
+        document.getElementById('struct_siscol').innerHTML = st_ref_scol;
+        document.getElementById('struct_rof').innerHTML = st_rof_ref;
+        // Show the modal
+        $('#exams_tab').modal('show');
+
+        jsGrid.locale("fr");
+
+        let url_list = "/mecctable/list_exams/" + id_structure;
+        let url_add = "/mecctable/add_exam/";
+        let url_update = "/mecctable/update_exam/" + id_structure;
+        let url_delete = "/mecctable/delete_exam/" + id_structure;
+
+
+        $("#principal_exam").jsGrid({
+            height: "auto",
+            width: "100%",
+
+            editing: true,
+            sorting: false,
+            paging: true,
+            autoload: true,
+            inserting: true,
+
+            pageSize: 15,
+            pageButtonCount: 5,
+
+            // Hide hiding field once data is loaded
+            onDataLoaded: function (args) {
+                $(".jsgrid-insert-row").hide();
+                let nb_exams = args.data.length
+                if (nb_exams === 0) {
+                    $('#get_principal_exam').addClass("disabled")
+                } else $('#get_principal_exam').removeClass("disabled")
+
+            },
+            onItemInserted: function (args) {
+                args.grid.loadData();
+                update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            onItemInserting: function (args) {
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                if (typeof args.item.threshold_session_2 !== 'undefined') {
+                    _checkall(args.item.threshold_session_2, "À partir de", args)
+                }
+                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+
+                let duration = args.item.exam_duration
+                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                    if (duration === "" || duration === " ") {
+                        args.cancel = true;
+                        alert('La durée est obligatoire');
+                    }
+                }
+                // console.log('%cBOOM!', 'color: red; font-size: 5em; font-weight: bold;');
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
+                    ':'))
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
+                    1)
+                durations_h = durations_h === '' ? '0' : durations_h
+                durations_m = durations_m === '' ? '00' : durations_m
+
+                if (isNaN(durations_h) || isNaN(durations_m)) {
+                    args.cancel = true;
+                    alert("'Durée' doit être sous le format H:mm")
+                }
+                if (args.item.coefficient === "" || args.item.coefficient === " ") {
+                    args.cancel = true;
+                    alert("'Coefficient' est obligatoire")
+                }
+                if (isNaN(args.item.coefficient)) {
+                    args.cancel = true;
+                    alert("'Coefficient' doit être un nombre")
+                }
+            },
+            onItemUpdating: function (args) {
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                if (typeof args.item.threshold_session_2 !== 'undefined') {
+                    _checkall(args.item.threshold_session_2, "À partir de", args)
+                }
+                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+
+                let duration = args.item.exam_duration
+                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                    if (duration === "" || duration === " ") {
+                        args.cancel = true;
+                        alert('La durée est obligatoire');
+                    }
+                }
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
+                    ':'))
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
+                    1)
+                durations_h = durations_h === '' ? '0' : durations_h
+                durations_m = durations_m === '' ? '00' : durations_m
+
+                if (isNaN(durations_h) || isNaN(durations_m)) {
+                    args.cancel = true;
+                    alert("'Durée' doit être sour le format H:mm")
+                }
+                if (args.item.coefficient === "" || args.item.coefficient === " ") {
+                    args.cancel = true;
+                    alert("'Coefficient' est obligatoire")
+                }
+                if (isNaN(args.item.coefficient)) {
+                    args.cancel = true;
+                    alert("'Coefficient' doit être un nombre")
+                }
+            },
+            onItemUpdated: function (args) {
+                args.grid.loadData();
+                update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            onItemDeleted: function (args) {
+                args.grid.loadData();
+                update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            onInit: function () {},
+            controller: {
+                loadData: function (filter) {
+                    return $.ajax({
+                        url: url_list,
+                        dataType: "json"
+                    })
+
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_add,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+                },
+                updateItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_update,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+
+                },
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_delete,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+                },
+            },
+
+            fields: [{
+                    name: "_id",
+                    type: "text",
+                    title: "id auto",
+                    width: 40,
+                    validate: "required",
+                    editing: false,
+                    inserting: false,
+                },
+                {
+                    css: "select_type",
+                    name: "type_exam",
+                    type: "select",
+                    title: "Type",
+                    items: [{
+                            Name: "Ecrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
+                        }
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
+                    width: 60
+                },
+                {
+                    name: "label",
+                    type: "text",
+                    title: "Intitulé épreuve (25 car.)",
+                    width: 180
+                },
+                {
+                    name: "additionnal_info",
+                    type: "text",
+                    title: "Complément",
+                    width: 75,
+                    css: "additionnal_info",
+                    cellRenderer: function (value, item) {
+                        let text = value === null ?
+                            "" :
+                            value.substr(0, 12) + "\u2026";
+                        return "<td>" + text + "</td>"
+                    }
+                },
+                {
+                    name: "type_ccct",
+                    type: "select",
+                    title: "Type CC/CT",
+                    visible: st_regime == "ECI" ? false : true,
+                    width: 45,
+                    valueField: "Id",
+                    textField: "Name",
+                    items: [{
+                            Name: "CC",
+                            Id: "C"
+                        },
+                        {
+                            Name: "CT",
+                            Id: "T"
+                        },
+                    ],
+                },
+                {
+                    css: "exam_duration",
+                    name: "exam_duration",
+                    type: "text",
+                    title: "Durée",
+                    width: 45
+                },
+                {
+                    name: "convocation",
+                    type: st_regime == "ECI" ? "checkbox" : "text",
+                    title: "Convocation",
+                    visible: st_regime == "ECI" ? true : false,
+                    width: 75
+                },
+                {
+                    name: "coefficient",
+                    css: "coefficient",
+                    type: "text",
+                    title: "Coef",
+                    width: 40
+                },
+                {
+                    name: "eliminatory_grade",
+                    css: "eliminatory_grade",
+                    type: "text",
+                    title: "Note seuil",
+                    width: 40
+                },
+                {
+                    css: "repport_session_2",
+                    name: "is_session_2",
+                    type: "checkbox",
+                    title: "Repport session 2",
+                    visible: st_session == "Session unique" ? false : true,
+                    width: 70,
+                },
+                {
+                    name: "threshold_session_2",
+                    type: "text",
+                    title: "À partir de ...",
+                    width: 70,
+                    visible: st_session == "Session unique" ? false : true,
+                    css: "thresold",
+                    editTemplate: function (value, item) {
+                        value = value === null ? "" : value;
+                        let $result = jsGrid.fields.text.prototype.editTemplate.call(this, value, item);
+                        if (item.is_session_2 === false) {
+                            $result.hide();
+                        } else $result.show();
+                        return $result
+                    },
+                },
+                {
+                    type: "control",
+                    headerTemplate: function () {
+                        // Add + button to show
+                        return $("<button>").attr("type", "button").text("+")
+                            .on("click", function () {
+                                $("#principal_exam .jsgrid-insert-row .thresold input")
+                                    .hide()
+                                $("#principal_exam .jsgrid-insert-row").show()
+                                $("#principal_exam .jsgrid-insert-row .exam_duration input").attr(
+                                    "placeholder", "2:00");
+                                $("#principal_exam .jsgrid-insert-row .coefficient input").attr(
+                                    "placeholder", "2.5");
+                            });
+                    }
+                }
+            ]
+        });
+
+        $("#second_exam").jsGrid({
+            height: "auto",
+            width: "100%",
+
+            editing: true,
+            sorting: false,
+            paging: true,
+            autoload: true,
+            inserting: true,
+
+            pageSize: 15,
+            pageButtonCount: 5,
+            // Hide adding field once data is loaded
+            onDataLoaded: function (args) {
+                $(".jsgrid-insert-row").hide();
+            },
+            onItemInserted: function (args) {
+                args.grid.loadData();
+                update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            onItemInserting: function (args) {
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                if (typeof args.item.threshold_session_2 !== 'undefined') {
+                    _checkall(args.item.threshold_session_2, "À partir de", args)
+                }
+                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+
+                let duration = args.item.exam_duration
+                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                    if (duration === "" || duration === " ") {
+                        args.cancel = true;
+                        alert('La durée est obligatoire');
+                    }
+                }
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
+                    ':'))
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
+                    1)
+                durations_h = durations_h === '' ? '0' : durations_h
+                durations_m = durations_m === '' ? '00' : durations_m
+
+                if (isNaN(durations_h) || isNaN(durations_m)) {
+                    args.cancel = true;
+                    alert("'Durée' doit être sous le format H:mm")
+                }
+                if (args.item.coefficient === "" || args.item.coefficient === " ") {
+                    args.cancel = true;
+                    alert("'Coefficient' est obligatoire")
+                }
+                if (isNaN(args.item.coefficient)) {
+                    args.cancel = true;
+                    alert("'Coefficient' doit être un nombre")
+                }
+            },
+            onItemUpdating: function (args) {
+                if (args.item.label === "") {
+                    args.cancel = true;
+                    alert("Un intitulé est obligatoire")
+                }
+                _checkall(args.item.eliminatory_grade, "Note seuil")
+
+                let duration = args.item.exam_duration;
+                let durations_h = duration.slice(0, duration.indexOf(':'));
+                let durations_m = duration.slice(duration.indexOf(':') + 1);
+                durations_h = durations_h === '' ? '0' : durations_h;
+                durations_m = durations_m === '' ? '00' : durations_m;
+
+                if (isNaN(durations_h) || isNaN(durations_m)) {
+                    args.cancel = true;
+                    alert("'Durée' doit être sour le format H:mm");
+                }
+                if (isNaN(args.item.coefficient) && args.item.coefficient != "") {
+                    args.cancel = true;
+                    alert("'Coefficient' doit être un nombre");
+                }
+            },
+            onItemUpdated: function (args) {
+                args.grid.loadData();
+                update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            onItemDeleted: function (args) {
+                args.grid.loadData();
+                update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
+                    st_ref_scol, st_rof_ref)
+            },
+            controller: {
+                loadData: function (filter) {
+
+                    return $.ajax({
+                        url: url_list,
+                        data: 'session2=True',
+                        dataType: "json"
+                    })
+
+                },
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_add,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+                    });
+
+                    return d.promise();
+
+                },
+                updateItem: function (item) {
+
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_update,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+
+
+                },
+                deleteItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        url: url_delete,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            session2: true,
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            exam: JSON.stringify(item),
+                            id_structure: id_structure
+                        },
+                    }).done(function (response) {
+                        d.resolve(response.value);
+                        $(".jsgrid-insert-row").hide();
+
+                    });
+
+                    return d.promise();
+
+
+                },
+            },
+
+            fields: [{
+                    name: "_id",
+                    type: "text",
+                    title: "id auto",
+                    width: 40,
+                    editing: false,
+                    inserting: false,
+                },
+                {
+                    name: "type_exam",
+                    type: "select",
+                    title: "Type",
+                    items: [{
+                            Name: "Ecrit",
+                            Id: "E"
+                        },
+                        {
+                            Name: "Oral",
+                            Id: "O"
+                        },
+                        {
+                            Name: "Autre",
+                            Id: "A"
+                        }
+                    ],
+                    valueField: "Id",
+                    textField: "Name",
+                    width: 60
+                },
+                {
+                    name: "label",
+                    type: "text",
+                    title: "Intitulé épreuve (25 car.)",
+                    width: 180
+                },
+                {
+                    name: "additionnal_info",
+                    type: "text",
+                    title: "Complément",
+                    width: 75,
+                    css: "additionnal_info",
+                    cellRenderer: function (value, item) {
+                        let text = value === null ?
+                            "" :
+                            value.substr(0, 12) + "\u2026";
+                        return "<td>" + text + "</td>"
+                    }
+                },
+                {
+                    name: "type_ccct",
+                    type: "select",
+                    title: "Type CC/CT",
+                    visible: st_regime == "ECI" ? false : true,
+                    width: 45,
+                    valueField: "Id",
+                    textField: "Name",
+                    items: [{
+                        Name: "CT",
+                        Id: "T"
+                    }, ],
+                },
+                {
+                    name: "exam_duration",
+                    css: "exam_duration",
+                    type: "text",
+                    title: "Durée",
+                    width: 45
+                },
+                {
+                    css: "coefficient",
+                    name: "coefficient",
+                    type: "text",
+                    title: "Coef",
+                    width: 40
+                },
+                {
+                    name: "eliminatory_grade",
+                    css: "eliminatory_grade",
+                    type: "text",
+                    title: "Note seuil",
+                    width: 40
+                },
+                {
+                    type: "control",
+
+                    headerTemplate: function () {
+                        // Add + button to show
+                        return $("<button>").attr("type", "button").text("+")
+                            .on("click", function () {
+                                $("#second_exam .jsgrid-insert-row").show()
+                                $("#second_exam .jsgrid-insert-row .exam_duration input").attr(
+                                    "placeholder", "2:00");
+                                $("#second_exam .jsgrid-insert-row .coefficient input").attr(
+                                    "placeholder", "2.5");
+                            });
+                    }
+                }
+            ]
+        });
+        $(".jsgrid-insert-row").hide()
+    }
+    // Jquery power !!
+
+    // delegate stuff 
+    $("#principal_exam").delegate('.repport_session_2 input', 'click',
+        function (e) {
+            if (this.checked) {
+                $("#principal_exam .thresold input").val('0')
+                $("#principal_exam .thresold input").show()
+            } else {
+                $("#principal_exam .thresold input").val('')
+
+                $("#principal_exam .thresold input").hide()
+            }
+        })
+    $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'click', function (e) {
+        let that = this
+        $('#additional').val(that.value);
+        $('#additional_info').modal('show');
+
+              
+        document.getElementById("additional").focus()
+
+        $('#confirm_additional').on('click', function () {
+            let val = $('#additional').val()
+            that.value = val;
+            $('#additional_info').modal('hide');
+        })
+    })
+</script>
+
+<style>
+.jsgrid-insert-button{
+    background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDM1My4wNzMgMzUzLjA3MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzUzLjA3MyAzNTMuMDczOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTM0MC45NjksMEgxMi4xMDVDNS40MjMsMCwwLDUuNDIzLDAsMTIuMTA1djMyOC44NjNjMCw2LjY4LDUuNDIzLDEyLjEwNSwxMi4xMDUsMTIuMTA1aDMyOC44NjQgICBjNi42NzksMCwxMi4xMDQtNS40MjYsMTIuMTA0LTEyLjEwNVYxMi4xMDVDMzUzLjA3Myw1LjQyMywzNDcuNjQ3LDAsMzQwLjk2OSwweiBNNjcuNTg5LDE4LjE2NGgyMTcuODk1djEwMS44ODRINjcuNTg5VjE4LjE2NHogICAgTTI5Ni4wODIsMzI3LjM1SDU3LjAwM1YxNzYuNTM3aDIzOS4wNzlWMzI3LjM1eiBNMjIzLjk1MywzMy4yOTVoMzAuMjY5djcyLjYzOGgtMzAuMjY5VjMzLjI5NXogTTI3NC4xMzUsMjEzLjg2M0g3OC45Mzh2LTEyLjEwNSAgIGgxOTUuMTk3VjIxMy44NjN6IE0yNzQuMTM1LDI1Ni4yMzFINzguOTM4di0xMi4xMDVoMTk1LjE5N1YyNTYuMjMxeiBNMjc0LjEzNSwyOTcuMDg3SDc4LjkzOHYtMTIuMTA1aDE5NS4xOTdWMjk3LjA4N3oiIGZpbGw9IiMwMDAwMDAiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K");
+}
+.jsgrid-edit-button{
+    background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDMwMy45IDMwMy45IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAzMDMuOSAzMDMuOTsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxnPgoJCTxwYXRoIGQ9Ik0xLjU2MiwyNzYuMDYzYy0zLjE1Miw3LjUxNy0xLjQ0NiwxNi4xOTMsNC4zMTgsMjEuOTU3YzUuNzY0LDUuNzY0LDE0LjQ0LDcuNDcsMjEuOTU3LDQuMzE3bDczLjQ2Ny0zMC44MDUgICAgbC02OC45MzctNjguOTM2TDEuNTYyLDI3Ni4wNjN6IiBmaWxsPSIjMDAwMDAwIi8+CgkJPHBhdGggZD0iTTI5OC4wMjEsNTUuNTU5bC00OS42ODEtNDkuNjhjLTcuODM5LTcuODM5LTIwLjU0OS03LjgzOS0yOC4zODksMEw1MC43NzMsMTc1LjA2Yy0wLjA0MywwLjA0Mi0wLjA3OSwwLjA4OS0wLjEyMSwwLjEzMiAgICBsNzguMDU3LDc4LjA1N2MwLjA0My0wLjA0MiwwLjA5LTAuMDc4LDAuMTMyLTAuMTJsMTY5LjE4LTE2OS4xOEMzMDUuODYsNzYuMTA5LDMwNS44Niw2My4zOTksMjk4LjAyMSw1NS41NTl6IiBmaWxsPSIjMDAwMDAwIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==");
+}
+.jsgrid-delete-button{
+    background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQzOC41MjkgNDM4LjUyOSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDM4LjUyOSA0MzguNTI5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPGc+CgkJPHBhdGggZD0iTTQxNy42ODksNzUuNjU0Yy0xLjcxMS0xLjcwOS0zLjkwMS0yLjU2OC02LjU2My0yLjU2OGgtODguMjI0TDMwMi45MTcsMjUuNDFjLTIuODU0LTcuMDQ0LTcuOTk0LTEzLjA0LTE1LjQxMy0xNy45ODkgICAgQzI4MC4wNzgsMi40NzMsMjcyLjU1NiwwLDI2NC45NDUsMGgtOTEuMzYzYy03LjYxMSwwLTE1LjEzMSwyLjQ3My0yMi41NTQsNy40MjFjLTcuNDI0LDQuOTQ5LTEyLjU2MywxMC45NDQtMTUuNDE5LDE3Ljk4OSAgICBsLTE5Ljk4NSw0Ny42NzZoLTg4LjIyYy0yLjY2NywwLTQuODUzLDAuODU5LTYuNTY3LDIuNTY4Yy0xLjcwOSwxLjcxMy0yLjU2OCwzLjkwMy0yLjU2OCw2LjU2N3YxOC4yNzQgICAgYzAsMi42NjQsMC44NTUsNC44NTQsMi41NjgsNi41NjRjMS43MTQsMS43MTIsMy45MDQsMi41NjgsNi41NjcsMi41NjhoMjcuNDA2djI3MS44YzAsMTUuODAzLDQuNDczLDI5LjI2NiwxMy40MTgsNDAuMzk4ICAgIGM4Ljk0NywxMS4xMzksMTkuNzAxLDE2LjcwMywzMi4yNjQsMTYuNzAzaDIzNy41NDJjMTIuNTY2LDAsMjMuMzE5LTUuNzU2LDMyLjI2NS0xNy4yNjhjOC45NDUtMTEuNTIsMTMuNDE1LTI1LjE3NCwxMy40MTUtNDAuOTcxICAgIFYxMDkuNjI3aDI3LjQxMWMyLjY2MiwwLDQuODUzLTAuODU2LDYuNTYzLTIuNTY4YzEuNzA4LTEuNzA5LDIuNTctMy45LDIuNTctNi41NjRWODIuMjIxICAgIEM0MjAuMjYsNzkuNTU3LDQxOS4zOTcsNzcuMzY3LDQxNy42ODksNzUuNjU0eiBNMTY5LjMwMSwzOS42NzhjMS4zMzEtMS43MTIsMi45NS0yLjc2Miw0Ljg1My0zLjE0aDkwLjUwNCAgICBjMS45MDMsMC4zODEsMy41MjUsMS40Myw0Ljg1NCwzLjE0bDEzLjcwOSwzMy40MDRIMTU1LjMxMUwxNjkuMzAxLDM5LjY3OHogTTM0Ny4xNzMsMzgwLjI5MWMwLDQuMTg2LTAuNjY0LDguMDQyLTEuOTk5LDExLjU2MSAgICBjLTEuMzM0LDMuNTE4LTIuNzE3LDYuMDg4LTQuMTQxLDcuNzA2Yy0xLjQzMSwxLjYyMi0yLjQyMywyLjQyNy0yLjk5OCwyLjQyN0gxMDAuNDkzYy0wLjU3MSwwLTEuNTY1LTAuODA1LTIuOTk2LTIuNDI3ICAgIGMtMS40MjktMS42MTgtMi44MS00LjE4OC00LjE0My03LjcwNmMtMS4zMzEtMy41MTktMS45OTctNy4zNzktMS45OTctMTEuNTYxVjEwOS42MjdoMjU1LjgxNVYzODAuMjkxeiIgZmlsbD0iIzAwMDAwMCIvPgoJCTxwYXRoIGQ9Ik0xMzcuMDQsMzQ3LjE3MmgxOC4yNzFjMi42NjcsMCw0Ljg1OC0wLjg1NSw2LjU2Ny0yLjU2N2MxLjcwOS0xLjcxOCwyLjU2OC0zLjkwMSwyLjU2OC02LjU3VjE3My41ODEgICAgYzAtMi42NjMtMC44NTktNC44NTMtMi41NjgtNi41NjdjLTEuNzE0LTEuNzA5LTMuODk5LTIuNTY1LTYuNTY3LTIuNTY1SDEzNy4wNGMtMi42NjcsMC00Ljg1NCwwLjg1NS02LjU2NywyLjU2NSAgICBjLTEuNzExLDEuNzE0LTIuNTY4LDMuOTA0LTIuNTY4LDYuNTY3djE2NC40NTRjMCwyLjY2OSwwLjg1NCw0Ljg1MywyLjU2OCw2LjU3QzEzMi4xODYsMzQ2LjMxNiwxMzQuMzczLDM0Ny4xNzIsMTM3LjA0LDM0Ny4xNzJ6IiBmaWxsPSIjMDAwMDAwIi8+CgkJPHBhdGggZD0iTTIxMC4xMjksMzQ3LjE3MmgxOC4yNzFjMi42NjYsMCw0Ljg1Ni0wLjg1NSw2LjU2NC0yLjU2N2MxLjcxOC0xLjcxOCwyLjU2OS0zLjkwMSwyLjU2OS02LjU3VjE3My41ODEgICAgYzAtMi42NjMtMC44NTItNC44NTMtMi41NjktNi41NjdjLTEuNzA4LTEuNzA5LTMuODk4LTIuNTY1LTYuNTY0LTIuNTY1aC0xOC4yNzFjLTIuNjY0LDAtNC44NTQsMC44NTUtNi41NjcsMi41NjUgICAgYy0xLjcxNCwxLjcxNC0yLjU2OCwzLjkwNC0yLjU2OCw2LjU2N3YxNjQuNDU0YzAsMi42NjksMC44NTQsNC44NTMsMi41NjgsNi41N0MyMDUuMjc0LDM0Ni4zMTYsMjA3LjQ2NSwzNDcuMTcyLDIxMC4xMjksMzQ3LjE3MnogICAgIiBmaWxsPSIjMDAwMDAwIi8+CgkJPHBhdGggZD0iTTI4My4yMiwzNDcuMTcyaDE4LjI2OGMyLjY2OSwwLDQuODU5LTAuODU1LDYuNTctMi41NjdjMS43MTEtMS43MTgsMi41NjItMy45MDEsMi41NjItNi41N1YxNzMuNTgxICAgIGMwLTIuNjYzLTAuODUyLTQuODUzLTIuNTYyLTYuNTY3Yy0xLjcxMS0xLjcwOS0zLjkwMS0yLjU2NS02LjU3LTIuNTY1SDI4My4yMmMtMi42NywwLTQuODUzLDAuODU1LTYuNTcxLDIuNTY1ICAgIGMtMS43MTEsMS43MTQtMi41NjYsMy45MDQtMi41NjYsNi41Njd2MTY0LjQ1NGMwLDIuNjY5LDAuODU1LDQuODUzLDIuNTY2LDYuNTdDMjc4LjM2NywzNDYuMzE2LDI4MC41NSwzNDcuMTcyLDI4My4yMiwzNDcuMTcyeiIgZmlsbD0iIzAwMDAwMCIvPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=");
+}    
+.jsgrid-update-button{
+    background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI2IDI2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNiAyNiIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCI+CiAgPHBhdGggZD0ibS4zLDE0Yy0wLjItMC4yLTAuMy0wLjUtMC4zLTAuN3MwLjEtMC41IDAuMy0wLjdsMS40LTEuNGMwLjQtMC40IDEtMC40IDEuNCwwbC4xLC4xIDUuNSw1LjljMC4yLDAuMiAwLjUsMC4yIDAuNywwbDEzLjQtMTMuOWgwLjF2LTguODgxNzhlLTE2YzAuNC0wLjQgMS0wLjQgMS40LDBsMS40LDEuNGMwLjQsMC40IDAuNCwxIDAsMS40bDAsMC0xNiwxNi42Yy0wLjIsMC4yLTAuNCwwLjMtMC43LDAuMy0wLjMsMC0wLjUtMC4xLTAuNy0wLjNsLTcuOC04LjQtLjItLjN6IiBmaWxsPSIjMmI1ZTA2Ii8+Cjwvc3ZnPgo=");    
+}
+.jsgrid-cancel-edit-button{
+    background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDIxLjkgMjEuOSIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjEuOSAyMS45IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4Ij4KICA8cGF0aCBkPSJNMTQuMSwxMS4zYy0wLjItMC4yLTAuMi0wLjUsMC0wLjdsNy41LTcuNWMwLjItMC4yLDAuMy0wLjUsMC4zLTAuN3MtMC4xLTAuNS0wLjMtMC43bC0xLjQtMS40QzIwLDAuMSwxOS43LDAsMTkuNSwwICBjLTAuMywwLTAuNSwwLjEtMC43LDAuM2wtNy41LDcuNWMtMC4yLDAuMi0wLjUsMC4yLTAuNywwTDMuMSwwLjNDMi45LDAuMSwyLjYsMCwyLjQsMFMxLjksMC4xLDEuNywwLjNMMC4zLDEuN0MwLjEsMS45LDAsMi4yLDAsMi40ICBzMC4xLDAuNSwwLjMsMC43bDcuNSw3LjVjMC4yLDAuMiwwLjIsMC41LDAsMC43bC03LjUsNy41QzAuMSwxOSwwLDE5LjMsMCwxOS41czAuMSwwLjUsMC4zLDAuN2wxLjQsMS40YzAuMiwwLjIsMC41LDAuMywwLjcsMC4zICBzMC41LTAuMSwwLjctMC4zbDcuNS03LjVjMC4yLTAuMiwwLjUtMC4yLDAuNywwbDcuNSw3LjVjMC4yLDAuMiwwLjUsMC4zLDAuNywwLjNzMC41LTAuMSwwLjctMC4zbDEuNC0xLjRjMC4yLTAuMiwwLjMtMC41LDAuMy0wLjcgIHMtMC4xLTAuNS0wLjMtMC43TDE0LjEsMTEuM3oiIGZpbGw9IiM4ZjAwMWEiLz4KPC9zdmc+Cg==");
+}    
+
+</style>

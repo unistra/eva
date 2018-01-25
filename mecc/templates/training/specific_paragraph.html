@@ -6,14 +6,20 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-        {%if request.session.visited_cmp == "RESPFORM"%}
+        {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+            {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
         {%else%}
             <li>
                 <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
                 {% else %}{%url 'training:list' request.user.meccuser.cmp%}
                 {%endif%}">{% trans "Offre de formation" %}</a>
             </li>
+            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+
         {%endif%}
             <li><a href="{% url 'training:edit_rules' id=training.id %}">
                 {{training.label}}</a>
@@ -27,7 +33,7 @@
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-    <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+    <li><a href={%if training.MECC_tab%}"{% url 'mecctable:mecctable_home' training.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
 </ul>
 <h2 class="title-modal" style="font-weight: bold;">
     {% trans 'Gestion des dérogations et alinéas de composante'%}
@@ -54,9 +60,10 @@
             </div>
         </div>
     </div>
+
     <div class="item-80 disp-flex" style="margin-bottom:1em;">
         <div class="item-20">
-            {% trans "ID règle (auto) : " %} {{rule.n_rule | stringformat:"05d"}}
+            {% trans "ID règle (auto) : " %} {{rule.id | stringformat:"05d"}}
         </div>
         <div class="item-35">
             {% trans "Année universitaire : " %} {{rule.code_year}}/{{rule.code_year|add:'1'}}
@@ -83,23 +90,27 @@
             <tbody>
                 {% for e in parag  %}
                 {% if e.is_in_use %}
-                <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
-                    <td style="width: 5%; text-align: center;">{{e.id}}</td>
-                    <td style="width: 65%;">
+
                         {% if e.id in specific_ids %}
-                            {% for sp in specific_paragraph  %}
-                                {% if sp.paragraph_gen_id == e.id  %}
+                        {% for sp in specific_paragraph  %}
+                        {% if sp.paragraph_gen_id == e.id  %}
+                        <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
+                                <td style="width: 5%; text-align: center;">{{e.id}}</td>
+                                <td style="width: 65%;">
                                     <span class="blue">
                                         {{sp.text_specific_paragraph|safe}}
                                     </span>
-                                {% endif %}
-                            </td>
-                        <td style="width: 25%;text-align:left;" class="td-centered border-left">
-                                <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
-                                <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{sp.id}})"> {% trans "Supprimer la dérogation" %}</a>
-
+                                </td>
+                                <td style="width: 25%;text-align:left;" class="td-centered border-left">
+                                    <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
+                                    <a data-toggle="modal" data-target="#preview" class="hand" onclick="ask_delete('D', {{sp.id}})"> {% trans "Supprimer la dérogation" %}</a>
+                                    
+                                    {% endif %}
                             {% endfor %}
                         {% else %}
+                        <tr style="margin-top: 1em; margin-bottom: 1em;" {% if not e.is_interaction %}class="disabled"{% endif %}>
+                                <td style="width: 5%; text-align: center;">{{e.id}}</td>
+                                <td style="width: 65%;">
                         {{e.text_standard | safe}}
 
                     </td>
@@ -107,7 +118,7 @@
                         {% if e.is_interaction %}
                         <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=0 old='N'%}">{% if e.id in specific_ids  %}{% trans "Modifier la" %} {% else %}{% trans "Saisir une " %}{%endif%}{% trans "dérogation" %}</a> <br>
                         {%endif%}
-                        {% if e.id in old_specific %}
+                        {% if e.origin_parag in old_specific %}
                             <a href="{% url 'training:edit_specific_paragraph' training_id=training.id rule_id=rule.id paragraph_id=e.id n_rule=rule.n_rule old='Y' %}">{% trans "Récupérer la dérogation n-1" %}</a>
                         {% endif %}
                     </td>

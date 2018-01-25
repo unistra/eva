@@ -1,42 +1,78 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load i18n %} {% load field_name %} {% block page-header %} {% trans 'Formations' %} {{request.display.current_year}}
+{% endblock %} {% block app_content %} <p>
 
-{% load i18n %}
-{% load field_name %}
-
-{% block page-header %}
-{% trans 'Formations' %} {{disp_current_year}}
-
-{% endblock %}
-
-
-{% block app_content %}
-<form action="" method="post" >
-  {% csrf_token %}
-    <p> {% trans "Confirmer la suppression de la formation " %}{{ object.label }} ?</p>
+<strong>
+{% trans 'Formation : ' %}{{ object.label }}
+</strong>
+<br> {{message |safe}} 
+</p>
+{% if removable%} 
 {% if specifics %}
-<p>{% trans "Cela entraînera la suppression de dérogations : " %}</p>
-    <ul>
-        {% for e in specifics  %}
-            <li>
-                {{e.text_specific_paragraph | safe}}
-            </li>
-        {% endfor %}
-    </ul>
+<p>{% trans "Les dérogations suivantes vont être supprimées : " %}</p>
+<ul>
+    {% for e in specifics %}
+    <li>
+        {{e.text_specific_paragraph | safe}}
+    </li>
+    {% endfor %}
+</ul>
+</p>
+{% endif %} {% if additionals %}
+<p>{% trans "Les alinéas additionnels suivants vont être supprimés : " %}</p>
+<ul>
+    {% for e in additionals %}
+    <li>
+        {{e.text_additional_paragraph | safe}}
+    </li>
+    {% endfor %}
+</ul>
+</p>
+{% endif %} {% if meccs %}
+<p>{% trans "Le tableau MECC va être supprimé (structures et épreuves)"%}</p>
+<ul>
+    {% for e in meccs %}
+    <li>
+        {{e.label}}
+    </li>
+    {% endfor %}
+</ul>
+{%trans "Les épreuves vont être supprimées"%}
+<ul>
+    {% for e, s in exams  %}
+    <li >{{s.label}} : {{e.label}} </li>
+    {% endfor %}
+</ul>
 </p>
 {% endif %}
 
-{% if additionals %}
-<p>{% trans "Cela entraînera la suppression d'alinéas additionnels :" %}</p>
-    <ul>
-        {% for e in additionals  %}
-            <li>
-                {{e.text_additional_paragraph | safe}}
-            </li>
-        {% endfor %}
-    </ul>
-</p>
+<p><strong>{% trans "Confirmez vous la suppression de la formation ?"%}</strong></p>
+<form action="" method="post">
+{% csrf_token %}
+    <input type="submit" value="Oui" class="btn btn-primary" />
+{% if request.session.from_duplicated %}
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+    {% else %} 
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
 {% endif %}
-<input type="submit" value="Confirmer" class="btn btn-primary"/>
-<a href="{% url 'training:list' %}" type="button"  class="btn btn-default">{% trans "Retour" %}</a>
-</form>
+    </form>
+{% else %}
+{%if confirmed == "TODO"%}
+<form action="" method="get">
+    <input type="hidden" name="confirm" value="true">
+    <input type="submit" value="Oui" class="btn btn-primary" />
+{% if request.session.from_duplicated %}
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+    {% else %} 
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Non" %}</a>
+{% endif %}
+    </form>
+{%else%}
+{% if request.session.from_duplicated %}
+
+<a href="{% url 'training:duplicate' %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>
+    {% else %}
+<a href="{% url 'training:list' cmp=object.supply_cmp %}" type="button" class="btn btn-default">{% trans "Retour" %}</a>{% endif %} 
+{% endif %}
+{% endif %}
+
 {% endblock %}

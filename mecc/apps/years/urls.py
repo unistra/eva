@@ -1,8 +1,11 @@
+"""
+URL for year
+"""
 from django.conf.urls import url
-from .views import UniversityYearUpdate, UniversityYearListView, \
-    UniversityYearCreate, UniversityYearDelete, initialize_year, \
-    update_is_in_use
 from django_cas.decorators import login_required
+from mecc.apps.years.views import UniversityYearUpdate, initialize_year, \
+    UniversityYearCreate, UniversityYearDelete, UniversityYearListView, \
+    update_is_in_use
 
 
 urlpatterns = [

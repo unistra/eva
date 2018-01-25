@@ -46,7 +46,7 @@
                         <input type="checkbox" id="{{e.code_year}}_{{e.n_rule}}" name="rule_{{e.id}}" class="checkbox_rule">
                     </td>
                     <td width=10% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.code_year}}</td>
-                    <td width=15% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.n_rule | stringformat:"05d"}}</td>
+                    <td width=15% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.id | stringformat:"05d"}}</td>
                     <td width=60% class="{% if not e.is_in_use%} grey{%endif%}">{{e.label}}</td>
                     <td width=10% class="td-centered {% if not e.is_in_use%} grey{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
                 </tr>
@@ -72,7 +72,7 @@
                 {%for e in existing_rules%}
                 <tr class="{% if not e.is_in_use%} grey{%endif%}" id="current_{{e.id}}">
                     <td width=10% class="td-centered">{{e.code_year}}</td>
-                    <td width=15% class="td-centered">{{e.n_rule | stringformat:"05d"}}</td>
+                    <td width=15% class="td-centered">{{e.id | stringformat:"05d"}}</td>
                     <td width=60%>{{e.label}}</td>
                     <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
                     <td width=5% class="td-centered">

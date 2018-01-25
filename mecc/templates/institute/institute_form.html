@@ -29,7 +29,7 @@
 </div>
   {% crispy form %}
   <div style="display:none">
-   <input id="input_dircomp_username_member" name="dircomp_username"  />
+    <input id="input_dircomp_username_member" name="dircomp_username"  />
    <input id="input_dircomp_last_name" name="dircomp_last_name" />
    <input id="input_dircomp_first_name" name="dircomp_first_name" />
    <input id="input_dircomp_mail" name="dircomp_mail" >
@@ -57,7 +57,7 @@
 
   <div id="div_cadre_gen">
     <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href ="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
+        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename %} <a href ="{{ cadre_gen.file.url }}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
   </div>
 
   <div>
@@ -79,7 +79,7 @@
   </div>
 </div>
 
-<div></br></div>
+<div><br></div>
 
 <div>
   <label class="control-label col-lg-8">
@@ -98,23 +98,39 @@
     </div>
   </div>
 
-  <div></br></div>
+  <div><br></div>
 
   <div>
     <label class="control-label col-lg-12">
       {% trans "Lettre de présentation" %}
     </label>
     <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+        <ul>
+        {% if letter_file %}
+          {% include "institute/files_list_only.html" with files=letter_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
     </div>
   </div>
 
   <div>
     <label class="control-label col-lg-12">
-      {% trans "Autres documents" %}
+      {% trans "Autres documents (PV, émargement, ...)" %}
     </label>
     <div class="controls col-lg-12">
-      <input class=" form-control" value="{{current_year.pdf_doc}}" readonly="True">
+        <ul>
+        {% if misc_file %}
+          {% include "institute/files_list_only.html" with files=misc_file %}
+        {% else %}
+           <li>
+                {% trans 'Aucun fichier envoyé'%}
+           </li>
+        {% endif %}
+        </ul>
     </div>
   </div>
 
@@ -138,6 +154,8 @@ document.getElementById('id_id_rac').parentNode.appendChild(clone);
 code_cmp = document.getElementById("id_code").value
 var url_prof = "/ressources/prof/" + code_cmp + ".json"
 var url_adm = "/ressources/adm/" + code_cmp + ".json"
+let url_all = "/ressources/all/" + code_cmp + ".json"
+
    var _isEdited = false;
    $(':input').change(function () {
      _isEdited = true;
@@ -163,7 +181,7 @@ var url_adm = "/ressources/adm/" + code_cmp + ".json"
 var prof_fill = document.getElementById('id_id_dircomp').value;
 var rac_fill = document.getElementById('id_id_rac').value;
 {% if object %}
-$.getJSON(url_prof, function (data) {
+$.getJSON(url_all, function (data) {
  var options = {
    data: data,
    getValue: function (element) {
@@ -210,13 +228,8 @@ $.getJSON(url_prof, function (data) {
           // remove hidden input value if somehow doesnt match
           var a = document.getElementById('id_id_dircomp').value;
           var b = document.getElementById('input_dircomp_last_name').value;
-          if (a != prof_fill) {
-              document.getElementById('id_id_dircomp').className +=' input-red';
-            document.getElementById('id_id_dircomp').disabled = true;
-        } else {
             document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
             document.getElementById('id_id_dircomp').disabled = false;
-        }
 
           if (a.indexOf(b) == -1){
               $("#input_dircomp_username_member").val("");
@@ -289,13 +302,8 @@ $.getJSON(url_prof, function (data) {
              // remove hidden input value if somehow doesnt match
              var a = document.getElementById('id_id_rac').value;
              var b = document.getElementById('input_rac_last_name').value;
-             if (a != rac_fill) {
-               document.getElementById('id_id_rac').className +=' input-red'
-               document.getElementById('id_id_dircomp').disabled = true;
-           } else {
                document.getElementById('id_id_rac').className ='input_prof textinput textInput form-control'
                document.getElementById('id_id_dircomp').disabled = false;
-           }
              if (a.indexOf(b) == -1){
                  $("#input_rac_username_member").val("");
                  $("#input_rac_last_name").val("");

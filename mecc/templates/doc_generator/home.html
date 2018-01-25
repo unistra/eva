@@ -1,0 +1,361 @@
+{% extends "base.html" %} {% load i18n %} {% load staticfiles %} {% block page-header %}
+{%trans 'Moteur de génération de documents MECC' %} {% endblock %} {% block app_content %}
+<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8"
+/>
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script src="{% static 'js/datatable.min.js' %}"></script>
+
+<div class="disp-flex">
+    <div class="disp-flex dir-col">
+        <div id="div_year" class="form-group">
+            <label for="year" class="control-label col-lg-4">
+                {% trans 'Année universitaire'%}
+            </label>
+            <div class="controls col-lg-4">
+                <input class="input_prof textinput textInput form-control" id="year" name="year" type="text" value="{{ request.display.current_year }}"
+                    readonly=""> </div>
+        </div>
+        <div id="div_institute" class="form-group">
+            <label for="institute" class="control-label col-lg-4">
+                {% trans 'Composante'%}
+            </label>
+            <div class="controls col-lg-8">
+                <select class="select form-control" id="institute" name="institute">
+                    {% for institute in institutes%}
+                    <option value="{{institute.0.code}}" data-date-expected="{{institute.1.date_expected_MECC|date:'d/m/Y'}}">{{institute.0.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div id="div_target" class="form-group">
+            <label for="target" class="control-label col-lg-4">
+                {% trans 'Objectif'%}
+            </label>
+            <div class="controls col-lg-8">
+                <select class="select form-control" id="target" name="target">
+                    {% for targ in target%}
+                    <option value="{{targ.code}}">{{targ.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="disp-flex">
+        <div id="div_date" class="form-group" style="align-self:flex-end">
+            <label for="date" class="control-label col-lg-5" style="padding-top:0px">
+                {% trans 'Date Conseil/Commission'%}
+            </label>
+            <div class="controls col-lg-6">
+                <input class="input_prof textinput textInput form-control" id="date" name="date" type="text" value="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="disp-flex has-top-border has-bottom-border">
+    <div class="w-65 has-right-border">
+        <div class="table">
+            <table class="table " id="trainings">
+                <thead>
+                    <tr>
+                        <th class="noarrow sorting">
+                            <input type="checkbox" id="checkbox_all" />
+                        </th>
+                        <th>{% trans "Type de diplôme" %}</th>
+                        <th>{% trans "Intitulé Formation" %}</th>
+                        <th>{% trans "Régime" %}</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <!-- is populate with select option for each column-->
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                    </tr>
+                </tfoot>
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="disp-flex dir-row space-between">
+            <div>
+                <div class="disp-flex dir-col"> 
+                    <span>
+                        <input type="radio" id="without" name="ref" checked="checked" value="without">
+                        <label for="without">{% trans 'Sans références' %}</label>
+                    </span>
+                    <span>
+                        <input type="radio" id="with_si_scol" name="ref"  value="with_si">
+                        <label for="with_si_scol">{% trans "Avec références SI Scolarité" %}</label>
+                    </span>
+                    <span>
+                        <input type="radio" id="with_rof" name="ref" value="with_rof" >
+                        <label for="with_rof">{%trans "Avec références ROF"%}</label>
+                    </span>
+                </div>
+            </div>
+            <div class="disp-flex"> 
+                    <div style="align-self:center;">
+                        <span class="blue margin-right1"><strong>{% trans 'Inclure les règles standards'%}</strong></span>
+                        <label for="yes">{%trans "Yes"%}</label>
+                        <input type="radio" id="yes" name="standard" value="yes" checked="checked">
+                        <label for="no">{%trans "Non"%}</label>
+                        <input type="radio" id="no" name="standard" value="no">
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-35 disp-flex dir-col">
+        <div class="choice_model disp-flex dir-row space-around buttons_list centerme-flex">
+            <div class="model_a">
+                <input type="radio" id="A" name="model" value="a" checked="checked">
+                <label for="A">
+                    <figure>
+                        <figcaption> {% trans 'Modèle A'%}</figcaption>
+                        <img src="{% static 'img/modela.png' %}" alt="Model A" width="50%" height="50%">
+                    </figure>
+                </label>
+            </div>
+            <div class="model_b">
+                <input type="radio" id="B" name="model" value="b" >
+                <label for="B">
+                    <figure>
+                        <figcaption> {% trans 'Modèle B'%}</figcaption>
+                        <img src="{% static 'img/modelb.png' %}" alt="Model B" width="50%" height="50%">
+                    </figure>
+                </label>
+            </div>            
+        </div>
+
+        <div class="disp-flex dir-col" >
+            <div class="disp-flex centerme-flex">
+                <span ><strong>{% trans "Format :" %}</strong></span>
+                <ul class="small-list no-list-style">
+                    <li>
+                        <input type="radio" id="pdf" name="gen_type" value="pdf" checked="checked">
+                        <label for="pdf">{%trans "pdf"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="html" name="gen_type" value="html">
+                        <label for="html">{%trans "html"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="doc" name="gen_type" value="doc">
+                        <label for="doc">{%trans "doc (règles)"%}</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="excel" name="gen_type" value="excel">
+                        <label for="excel">{%trans "excel (tableaux)"%}</label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="disp-flex dir-col space-around item-center " style="height:5em;"  >
+                <a href="#" class="btn-primary btn btn-sm btn-1 width-15" id="generate">{% trans 'Générer'%}</a>  
+                <a href="/" class="btn-primary btn btn-sm btn-1 width-15" >{% trans 'Quitter'%}</a>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // In order to get all trainings concerned and specific values of radio buttons
+    get_trainings($("#target").val(), $('#institute').val())
+
+
+    // set datatable
+    $('#checkbox_all').on('click', function () {
+        $('input[type="checkbox"].select_id').prop('checked', this.checked);
+    });
+    $('#generate').on('click', function(){
+        let selected_list = [];
+        $('input[type="checkbox"].select_id:checked').each(function() {
+            selected_list.push(this.value)
+        });
+        let ref = $('input:radio[name=ref]:checked').serialize().split('=')[1];
+        let standard = $('input:radio[name=standard]:checked').serialize().split('=')[1];
+        let gen_type = $('input:radio[name=gen_type]:checked').serialize().split('=')[1];
+        let model = $('input:radio[name=model]:checked').serialize().split('=')[1];
+
+    })
+    var table_suggest = $('#trainings').DataTable({
+        "paging": false,
+        // "ordering": false,
+        "info": false,
+        "searching": false,
+        'data': {{trainings|safe}},
+        "order": [
+            [1, "asc"]
+        ],
+        'language': {
+            url: '{% static 'js/i18n/' %}{{LANGUAGE_CODE}}.json'
+        },
+        "columns": [{
+            'targets': 0,
+            "orderable": false,            
+            'searchable': false,
+            'className': 'dt-body-center noarrow',
+            'render': function (data, type, full, meta) {
+                return '<input type="checkbox" class="select_id" aria-labelledby="select-all"  name="selected" value="' +
+                    full.id + '">';
+            }
+        }, {
+            'className': "degree_type",
+            "data": "degree_type"
+        }, {
+            'className': "institute",
+            "data": "label"
+        }, {
+            'className': "MECC_type",
+            "data": "get_MECC_type_display"
+        }]
+    });
+
+    function get_trainings(target, institute) {
+        $.ajax({
+            url: "{% url 'doc_gen:trainings_for_target' %}",
+            type: 'GET',
+            data: {
+                target: target,
+                institute: institute,
+                user: '{{user}}',
+                json: true,
+            },
+
+            success: function (data) {
+                $('#trainings').dataTable().fnClearTable();
+                if (data.length > 0) {
+                    $('#trainings').dataTable().fnAddData(data);
+                }
+                let $radios_gen = $('input:radio[name=gen_type]');
+                $radios_gen.prop('checked', false);
+                $radios_gen.first().prop('checked', true);
+
+                let $radios_model = $('input:radio[name=model]');
+                $radios_model.prop('checked', false);
+                $radios_model.first().prop('checked', true);
+
+                let $radios_standard = $('input:radio[name=standard]');
+                $radios_standard.prop('checked', false)
+                $radios_standard.first().prop('checked', true)
+                
+                if(target == 'review_all'|| target==='review_before'||target==='review_after'||target==='review_my'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    $radios_gen.not('[value=pdf]').attr('disabled', true);
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.attr('disabled', false);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', false)              
+                }
+                if(target == 'prepare_cc'|| target==='prepare_cc_my'||target==='prepare_cfvu'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true)
+                    $radios_gen.not('[value=pdf]').attr('disabled', true)
+
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.not('[value=a]').attr('disabled', true);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', false)
+                    
+                }
+                if(target == 'publish_all'|| target==='publish_my'){
+                    $radios_gen.filter('[value=pdf]').prop('checked', true)
+                    $radios_gen.not('[value=pdf]').attr('disabled', false)
+                    $radios_gen.not('[value=pdf]').parent('li').removeClass( "hidden" );     
+
+                    $radios_model.filter('[value=a]').prop('checked', true);
+                    $radios_model.attr('disabled', false);
+
+                    $radios_standard.filter('[value=no]').attr('disabled', true)
+                }
+            }
+        })
+    }
+
+    function get_target(institute) {
+        $.ajax({
+            url: "{% url 'doc_gen:available_target' %}",
+            type: 'GET',
+            data: {
+                user: "{{user}}",
+                institute: institute,
+                json: true,
+            },
+            success: function (data) {
+                let select = $("#target");
+                select.empty()
+                $.each(data, function () {
+                    select.append($("<option></option>")
+                        .attr("value", this.code).text(this.label));
+                })
+
+                get_trainings(data[0].code, institute)
+
+            }
+        })
+    }
+    $('#generate').on('click', function(e){
+        e.preventDefault()
+        let url = "/doc_gen/dispatch/?date=" + $('#date').val() + "&target=" + $('#target').val()
+        let not_selected = true
+        $("input:checked").each(function() {
+
+            if ($(this).attr("name") != null){
+                url += '&' + $(this).attr("name") + '=' +  $(this).val() 
+            }
+            if ($(this).attr('name') === 'selected'){
+                not_selected = false
+            }
+        });
+        if (not_selected){
+            $("#trainings").addClass("all-in-red");
+        } else{
+            $("#trainings").removeClass("all-in-red");
+            window.open(url)
+        }
+
+    })
+    $('#target').on('change', function () {
+
+        let institute = $('#institute')
+        if (this.value === 'prepare_cc' || this.value === 'prepare_cc_my' || this.value === 'prepare_cfvu') {
+            if (this.value === 'prepare_cfvu') {
+                $('#date').datepicker('update', "{{university_year.date_expected|date:'d/m/Y'}}");
+            } else {
+                let date = institute.find(':selected').data('date-expected')
+                $('#date').datepicker('update', date);
+
+            }
+        } else {
+            $('#date').datepicker('update', null);
+        }
+        get_trainings(this.value, institute.val())
+
+    })
+    $('#institute').on('change', function () {
+        get_target(this.value)
+        let target = $('#target').val()
+        if (target === 'prepare_cc' || target === 'prepare_cc_my') {
+            let date = $(this).find(':selected').data('date-expected')
+            $('#date').datepicker('update', date);
+        } else {
+            if (target != 'prepare_cfvu') {
+                $('#date').datepicker('update', null);
+            }
+        }
+    })
+    $('#date').datepicker({
+        orientation: "bottom auto",
+        todayHighlight: true,
+        autoclose: true,
+        language: "fr",
+    });
+</script>
+{% endblock %}

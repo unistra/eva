@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+<div>
+    <table class="table" style="order:1">
+        <tr>
+            <td>{% trans "Document cadre général" %}</td>
+            <td></td>
+            {% if doc_cadre %}
+            <td class="align-right"><a href="{{ doc_cadre.file.url }}">{% trans "Accéder" %}</a></td>
+            {% else%}
+            <td class="align-right">{% trans "Aucun document cadre pour le moment" %}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>{% trans "Règles modifiées ou nouvelles" %}</td>
+            <td class="stat-result">{{ rules_counter }}</td>
+            <td class="align-right"><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#rules_list">{% trans "Voir la liste" %}</a></td>
+        </tr>
+        <tr>
+            <td>{% trans "Date 1ère séance CFVU MECC" %}</td>
+            <td></td>
+            <td class="align-right blue">{{ university_year.date_expected|default:"" }}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Composantes tenant leur Conseil de composante ultérieurement" %}</td>
+            <td class="stat-result">{{ institutes_cfvu_counter }}</td>
+            <td class="align-right"><a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_list_cfvu">{% trans "Voir la liste" %}</a></td>
+        </tr>
+    </table>
+</div>

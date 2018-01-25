@@ -1,10 +1,9 @@
 {% load i18n %}
 {% load groups%}
 
-
-
 <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
+        <li></li>
         {% if request.user.is_active and request.user.is_staff %}
         <li>
             <a href="/admin"
@@ -14,23 +13,23 @@
 
         </li>
         {% endif %}
-        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+        {% if request.user|has_group:'DES1' or request.user|has_group:'VP' or request.user.is_superuser %}
 
           <li>
-              <a href="/"
-              {% if 'board' in request.path %}
+              <a href="/dashboards/"
+              {% if request.path == '/dashboards/' %}
                  class="item-selected"
               {% endif %}>{% trans 'Tableau de bord général' %}</a>
 
           </li>
           {% endif %}
         {% for e in profiles%}
-            {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP'%}
+            {%if e.code == 'DIRCOMP' or e.code == 'RAC' or e.code == 'REFAPP' %}
                 <li class="dropdown">
                    <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse"
                    aria-expanded="false" aria-controls="collapse{{e.pk}}">
                    {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
-                   <ul class="collapse {% if e.cmp in request.path and 'institute' in request.path%} in {% endif %} slump"id="collapse{{e.pk}}">
+                   <ul class="collapse {% if e.cmp in request.path and 'institute' in request.path%} in {% endif %} slump" id="collapse{{e.pk}}">
                      <li><a href="/institute/granted/{{e.cmp}}"
                       {% if e.cmp in request.path and 'institute' in request.path%}
                         class="item-selected"
@@ -39,7 +38,7 @@
                        {% if 'institute/---' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Validations' %}</a></li>
-                     <li><a href="/"
+                     <li><a href="/dashboards/institute/{{e.cmp}}"
                        {% if 'valid' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Tableau de bord' %}</a></li>
@@ -55,7 +54,7 @@
                       {% if e.cmp in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Général' %}</a></li>
-                     <li><a href="#"
+                     <li><a href="/institute/documents/{{e.cmp}}"
                        {% if 'valid' in request.path %}
                         class="item-selected"
                      {% endif %}>{% trans 'Documents' %}</a></li>
@@ -68,25 +67,29 @@
                {% endif %}
               {%endif%}
 
-          {% if e.code == "RESPFORM"%}
-          {% if not dircomp %}
+          {% if e.code == "RESPFORM" or e.code == 'RESPENS'%}
 
           <li class="dropdown">
              <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree">
                   {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
                   <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
                       <li><a href="/institute/granted/{{e.cmp}}"
-                          {% if e.cmp in request.path %}
+                          {% if "granted" in request.path %}
                           class="item-selected"
                           {% endif %}>{% trans 'Général' %}</a></li>
-                          <li><a href="#"
-                              {% if 'doc' in request.path %}
+                          <li><a href="/institute/documents/{{e.cmp}}"
+                              {% if 'institute/documents' in request.path %}
                               class="item-selected"
                               {% endif %}>{% trans 'Documents' %}</a></li>
 
-                          </ul>
-              {%endif%}
+                          </ul></li>
           {%endif%}
+
+          {% if e.code == "RESPENS"  %}
+            <li>
+                <a href="{% url 'training:my_teachings'%}" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
+            </li>
+          {% endif %}
       {% endfor %}
 
       {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
@@ -94,7 +97,7 @@
           <a href="/spoof"
           {% if 'spoof' in request.path %}
              class="item-selected"
-          {% endif %}>{% trans "Usurpation d'identité" %}</a>
+          {% endif %}>{% trans "Endossement d'identité" %}</a>
       </li>
       {% endif %}
 
@@ -114,14 +117,14 @@
 
         <li>
             <a href="{% url 'institute:home'%}"
-            {% if 'institute' in request.path %}
+            {% if 'institute' in request.path and not 'dashboards' in request.path %}
                class="item-selected"
             {% endif %}>{% trans 'Composantes' %}</a>
 
         </li>
         {% endif %}
 
-        {% if request.user|has_group:'DES1' or request.user.is_superuser%}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
 
         <li>
             <a href="{% url 'years:home' %}"
@@ -152,32 +155,53 @@
         {% if request.user.meccuser|is_profile:'RESPFORM' or request.user.is_superuser%}
         <li>
             <a href="{% url 'training:list_resp' %}"
-            {%if request.session.visited_cmp == "RESPFORM"%}
+            {%if request.session.visited_cmp == "RESPFORM" and 'list_resp' in request.path%}
                class="item-selected"
             {% endif %}>{% trans 'MES FORMATIONS' %}</a>
         </li>
         {% endif %}
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
+        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,DIRCOMP,GESCOL,REFAPP,DIRETU' %}
 
-        <li style="margin-top:3em">
+        <li style>
             <a href=
             {% if request.user|has_group:'DES1' or request.user.is_superuser %}"{% url 'training:list_all'%}"
             {% else %}"{%url 'training:list' request.user.meccuser.cmp%}"
             {%endif%}
-            {% if 'training/list_all/' in request.path or 'training/list/' in request.path%}
+            {% if 'training/list_all/' in request.path or 'training/list/' in request.path %}
+               class="item-selected"
+            {% elif 'dashboards/institute/' in request.path and request.user|has_group:'DES1' %}
+               class="item-selected"
+            {% elif 'dashboards/institute/' in request.path and request.user.is_superuser %}
                class="item-selected"
             {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
         </li>
         {% endif %}
-
-        {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
-        <li class="bottom" id='hideme'>
-            <a href="#"
-            {% if 'gen' in request.path %}
+        {% if request.user.meccuser|is_profile:'ECI' %}
+        <li>
+            <a href="{% url 'training:list_all_meccs'%}"
+            {%if 'trainins/list_all_meccs/' in request.path%}
                class="item-selected"
-            {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
+            {% endif %}>{% trans "MECC " %} {{request.display.current_year}}</a>
         </li>
         {% endif %}
 
+        <div class="bottom">
+            {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC, DIRCOMP, GESCOL, REFAPP, DIRETU, RESPENS, RESPFORM'%}
+            <li id="genmecc">
+                <a href="{% url 'doc_gen:home'%}"
+                {% if 'start/' in request.path %}
+                class="item-selected"
+                {% endif %}>{% trans 'Moteur de génération de documents MECC' %}</a>
+            </li>
+            {% endif %}
+
+            <li id="historic">
+                <a href="#"
+                {% if 'historic' in request.path %}
+                class="item-selected"
+                {% endif %}>{% trans 'Historique MECC validées' %}</a>
+
+            </li>
+        </div>
     </ul>
 </div>

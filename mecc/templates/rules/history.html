@@ -56,7 +56,6 @@
      <td width="11%" class="td-centered">{% if e.is_ccct%} CC/CT {%else%}{%endif%}</td>
       <td width="5%" class="td-centered">
         <a href="{% url 'rules:gen_one' rule_id=e.id %}" target="_blank" >{% trans "voir" %}</a>
-        {# TODO: faire un preview comme dans edit rule avec para pour paragraphs et e.degree_type.all pour rule_degreetype #}
       </td>
 
   </tr>

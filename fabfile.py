@@ -37,6 +37,7 @@ env.verbose_output = True  # True for verbose output
 # env.dest_path = '' # if not set using env_local_tmp_dir
 # env.excluded_files = ['pron.jpg'] # file(s) that rsync should exclude when deploying app
 # env.extra_ppa_to_install = ['ppa:vincent-c/ponysay'] # extra ppa source(s) to use
+env.extra_pkg_to_install = ['libjpeg-dev']
 # env.extra_pkg_to_install = ['ponysay'] # extra debian/ubuntu package(s) to install on remote
 # env.cfg_shared_files = ['config','/app/path/to/config/config_file'] # config files to be placed in shared config dir
 # env.extra_symlink_dirs = ['mydir','/app/mydir'] # dirs to be symlinked in shared directory
@@ -112,6 +113,7 @@ def test():
         'ldap_token': "LDAP_TOKEN",
         'camelot_token': "CAMELOT_TOKEN"
     }
+    env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
 
 
@@ -119,27 +121,29 @@ def test():
 def preprod():
     """Define preprod stage"""
     env.roledefs = {
-        'web': ['mecc-pprd.net'],
-        'lb': ['lb.mecc-pprd.net'],
+        'web': ['django-pprd-w1.u-strasbg.fr', 'django-pprd-w2.u-strasbg.fr'],
+        'lb': ['rp3.u-strasbg.fr'],
     }
-    # env.user = 'root'  # user for ssh
+    env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
-    env.server_name = 'mecc-pprd.net'
-    env.short_server_name = 'mecc-pprd'
+    env.server_name = 'eva-pprd.unistra.fr'
+    env.short_server_name = 'eva-pprd'
     env.static_folder = '/site_media/'
-    env.server_ip = ''
-    env.no_shared_sessions = False
+    env.server_ip = '130.79.254.28'
+    env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/mecc.net.pem'
-    env.path_to_cert_key = '/etc/ssl/private/mecc.net.key'
+    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr.pem'
+    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr.key'
     env.goal = 'preprod'
-    env.socket_port = ''
+    env.socket_port = '8012'
     env.map_settings = {
         'default_db_host': "DATABASES['default']['HOST']",
         'default_db_user': "DATABASES['default']['USER']",
         'default_db_password': "DATABASES['default']['PASSWORD']",
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
@@ -148,19 +152,19 @@ def preprod():
 def prod():
     """Define prod stage"""
     env.roledefs = {
-        'web': ['mecc.net'],
-        'lb': ['lb.mecc.net']
+        'web': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
+        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr']
     }
-    # env.user = 'root'  # user for ssh
+    env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
-    env.server_name = 'mecc.net'
-    env.short_server_name = 'mecc'
+    env.server_name = 'eva.unistra.fr'
+    env.short_server_name = 'eva'
     env.static_folder = '/site_media/'
-    env.server_ip = ''
-    env.no_shared_sessions = False
+    env.server_ip = '130.79.254.18'
+    env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/mecc.net.pem'
-    env.path_to_cert_key = '/etc/ssl/private/mecc.net.key'
+    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr.pem'
+    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr.key'
     env.goal = 'prod'
     env.socket_port = ''
     env.map_settings = {
@@ -169,6 +173,8 @@ def prod():
         'default_db_password': "DATABASES['default']['PASSWORD']",
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 

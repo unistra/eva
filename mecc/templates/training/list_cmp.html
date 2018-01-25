@@ -1,14 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
-
+{% load groups %}
 {% load staticfiles %}
 
 {% block page-header %}
-{% trans 'Formations' %} {{disp_current_year}}
+{% trans 'Formations' %} {{request.display.current_year}}
 
 {% endblock %}
-
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        {%if request.session.visited_cmp == "RESPFORM"%}
+            <li class="active">{% trans "Mes formations" %}</li>
+        {%else%}
+            <li class="active">{% trans "Offre de formation" %}</li>
+        {%endif%}
+    </ol>
+{% endblock %}
 {% block app_content %}
 
 <h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
@@ -25,15 +33,23 @@
         <br>
         <a class='comp-right' id='{{item.code}}' href="{% url 'training:list' item.code %}">{{item.label}}
         </a>
+        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+        <a class='comp-left' href="{% url 'dashboards:institute' item.code %}">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </a>
+        {% endif %}
         {% endfor %}
     </ul>
-
-    </li>
+</li>
 {% endfor %}
-
-{% else %}
-
 
 {% endif %}
 
+<style media="screen">
+
+ul, li{
+list-style-type: none;
+}
+
+</style>
 {%endblock%}

@@ -1,12 +1,15 @@
 from django.conf.urls import url
-from .views import TrainingListView, TrainingCreate, TrainingDelete, \
-    TrainingEdit, process_respform, list_training, respform_list, \
-    duplicate_home, duplicate_add, duplicate_remove, edit_rules, \
-    specific_paragraph, update_progress_rule_statut, edit_specific_paragraph, \
-    edit_additional_paragraph, ask_delete_specific, delete_specific, \
-    recover_everything, gen_pdf_all_rules, send_mail
-from django_cas.decorators import login_required
+from mecc.apps.training.views import TrainingListView, TrainingCreate, \
+    TrainingDelete, TrainingEdit, process_respform, list_training, \
+    list_training_mecc, respform_list, duplicate_home, duplicate_add, \
+    edit_rules, specific_paragraph, update_progress_rule_statut, \
+    edit_specific_paragraph, edit_additional_paragraph, ask_delete_specific, \
+    delete_specific, recover_everything, gen_pdf_all_rules, send_mail,\
+    remove_respform, my_teachings, update_struct_training, do_consistency_check
 from mecc.decorators import is_correct_respform
+
+from django_cas.decorators import login_required
+
 
 urlpatterns = [
     url(r'^list(?:/(?P<cmp>\w+))?/$',
@@ -26,6 +29,8 @@ urlpatterns = [
         name='process_resp'),
     url(r'^list_all/$', list_training,
         name='list_all'),
+    url(r'^list_all_meccs/$', list_training_mecc,
+        name='list_all_meccs'),
     url(r'^list_resp/$', respform_list,
         name='list_resp'),
     url(r'^duplicate(?:/(?P<year>\d+))?/$', duplicate_home,
@@ -34,13 +39,11 @@ urlpatterns = [
         name='duplicate_add'),
     url(r'^update_progress_rule_statut/$', update_progress_rule_statut,
         name='update_progress_rule_statut'),
-    url(r'^duplicate_remove/$', duplicate_remove,
-        name='duplicate_remove'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/$',
         specific_paragraph, name='specific_paragraph'),
     url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/additional/(?P<n_rule>\d+)/(?P<old>\w+)/$',
         edit_additional_paragraph, name='edit_additional_paragraph'),
-    url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/edit/(?P<paragraph_id>\d+)/(?P<n_rule>\d+)//(?P<old>\w+)/$',
+    url(r'^edit_rules/(?P<training_id>\d+)/specific_paragraph/(?P<rule_id>\d+)/edit/(?P<paragraph_id>\d+)/(?P<n_rule>\d+)/(?P<old>\w+)/$',
         edit_specific_paragraph, name='edit_specific_paragraph'),
     url(r'^ask_delete_specific/$', ask_delete_specific,
         name='ask_delete_specific'),
@@ -50,4 +53,12 @@ urlpatterns = [
         name='gen_pdf_all_rules'),
     url(r'^send_mail/$', send_mail,
         name='send_mail'),
+    url(r'^check_consistency/$', do_consistency_check,
+        name='check_consistency'),
+    url(r'^remove_respform/$', remove_respform,
+        name='remove_respform'),
+    url(r'^update_struct_training/$', update_struct_training,
+        name='update_struct_training'),
+    url(r'^my_teachings/$', my_teachings,
+        name='my_teachings'),
 ]

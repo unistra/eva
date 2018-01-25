@@ -10,14 +10,12 @@ from .base import *
 
 DEBUG = True
 
-
 ##########################
 # Database configuration #
 ##########################
 
 DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 DATABASES['default']['NAME'] = environ.get('DEFAULT_DB_NAME', 'mecc.db')
-
 
 #####################
 # Log configuration #
@@ -31,3 +29,5 @@ for logger in LOGGING['loggers']:
     LOGGING['loggers'][logger]['level'] = 'DEBUG'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+MEDIA_ROOT = "/tmp/mecc_unittests/media"

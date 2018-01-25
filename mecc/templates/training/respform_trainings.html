@@ -5,15 +5,20 @@
 {% load staticfiles %}
 
 {% block page-header %}
+{%if request.session.visited_cmp == "RESPFORM"%}
 {% trans "Mes formations" %}
-{% endblock %}
+{%endif%}
+{%if request.session.visited_cmp == "RESPENS"%}
+{% trans "Mes enseignements" %}
+{%endif%}{% endblock %}
 {% block breadcrumb %}
     <ol class="breadcrumb">
         <li class="active">
         {%if request.session.visited_cmp == "RESPFORM"%}
             {% trans "Mes formations" %}
-        {%else%}
-            {% trans "ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" %}
+        {%endif%}
+        {%if request.session.visited_cmp == "RESPENS"%}
+          {% trans "Mes enseignements" %}
         {%endif%}
         </li>
     </ol>
@@ -42,7 +47,6 @@
             <th class="td-centered border-right-left no-padding ">{% trans "Visa DES" %}</th>
             <th class="td-centered border-right-left no-padding ">{% trans "Validation en CFVU" %}</th>
             <th width="10%" class=" no-padding td-centered no-border-top"></th>
-            <th width="5%" class=" no-padding td-centered no-border-top"></th>
          </tr>
        </thead>
    <tbody class="overflow" >
@@ -57,17 +61,14 @@
 {% for item in field.list %}
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
-    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{{item.label}}</a></td>
+    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{%if not item.is_used%}HS - {%endif%}{{item.label}}</a></td>
     <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}}</td>
     <td class="no-padding td-centered border-bottom">{{item.get_progress_table_display}}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
     <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening}}</td>
-    <td width="5%" class="no-padding td-centered no-border">
-        <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
-    </td>
+    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening.1}}</td>
 </tr>
 
 {%endfor%}

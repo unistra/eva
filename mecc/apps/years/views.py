@@ -1,20 +1,20 @@
-from .models import UniversityYear, InstituteYear
-from ..institute.models import Institute
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from .forms import UniversityYearFormUpdate, UniversityYearFormCreate
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
-from django.shortcuts import render
 from django_cas.decorators import login_required
-from mecc.apps.utils.querries import rules_for_year
-from mecc.decorators import is_ajax_request, is_post_request
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from mecc.apps.files.models import FileUpload
+from mecc.apps.files.utils import create_file
+from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
-from mecc.decorators import is_post_request, is_ajax_request
+from mecc.apps.utils.queries import rules_for_year
+from mecc.apps.years.forms import UniversityYearFormUpdate, UniversityYearFormCreate
+from mecc.apps.years.models import UniversityYear, InstituteYear
+from mecc.decorators import is_ajax_request, is_post_request
 
-from django.http import JsonResponse
 
 
 @is_ajax_request
@@ -80,15 +80,22 @@ class UniversityYearUpdate(UpdateView):
     slug_field = 'code_year'
     slug_url_kwarg = 'code_year'
 
+    def get_context_data(self, **kwargs):
+        context = super(
+            UniversityYearUpdate, self).get_context_data(**kwargs)
+
+
+        return context
+
+
     def get_success_url(self):
         if self.request.method == 'POST' and 'add_pdf' in self.request.POST:
             code_year = self.request.POST.get('code_year')
+
             return reverse('years:edit', kwargs={'code_year': code_year})
         if self.request.method == 'POST' and 'delete_pdf' in self.request.POST:
             code_year = int(self.request.POST.get('code_year'))
-            uy = UniversityYear.objects.get(code_year=code_year)
-            uy.pdf_doc.delete(save=False)
-            uy.save()
+
             return reverse('years:edit', kwargs={'code_year': code_year})
         return reverse('years:home')
 
@@ -100,8 +107,10 @@ class UniversityYearListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(
             UniversityYearListView, self).get_context_data(**kwargs)
+
         try:
             a = UniversityYear.objects.get(is_target_year=True)
+
         except ObjectDoesNotExist:
             a = str(_('Aucune année cible sélectionnée'))
         try:
@@ -127,7 +136,7 @@ class UniversityYearListView(ListView):
 def initialize_year(request, code_year, template='years/initialize.html'):
     """
     Initialize requested year : create institute year according to
-    university year and instiute
+    university year and institute
     """
     data = {}
     try:

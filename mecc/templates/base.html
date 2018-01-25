@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 {% load staticfiles %}
 {% load dipstrapfiles %}
+{% load mecc_tags %}
 {% load i18n %}
 
 
 <html>
 <head>
-    <title>{% block title %}MECC{% endblock %}</title>
+    <title>{% block title %}{% trans 'ÉVA' %}{% settings_get "STAGE" as stage %}{% if stage %} - {{ stage|upper }}{% endif %}{% endblock %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content= 'Direction Informatique - Université de Strasbourg' />
-    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.png' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-unistra.min.css' %}">
-    <link rel="stylesheet" href="{% dipstrap 'css/bootstrap-theme-unistra.min.css' %}">
     <link rel="stylesheet" href="{% dipstrap 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signature.css' %}">
     <link rel="stylesheet" href="{% static 'css/mecc.css' %}" type="text/css" title="no title" charset="utf-8" />
 
     <script src="{% dipstrap 'js/vendor/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
@@ -28,12 +29,20 @@
 <body>
 
   <div id="wrapper">
-    <div class="navbar navbar-default navbar-fixed-top">
-        <a href="#menu-toggle" id="menu-toggle">
-            <img class="pull-left" src="{% dipstrap 'img/unistra-white.png' %}" alt="unistra" />
-        </a>
+    <div class="navbar navbar-default navbar-fixed-top flex-container" style="z-index:1000;align-items:center">
+        <div class="uds white hand" href="#menu-toggle" id="menu-toggle" title="{% trans 'Cliquer pour dérouler le menu'%}">
+            <span class="w2"></span>
+            <span class="w1"></span>
+            <div class="">
+                <span class="bold">Université </span>
+                <span>de Strasbourg</span>
+            </div>
+            <span class="w3"></span>
+            <span class="w2"></span>
+            <span class="last"></span>
+        </div>
         <div class="container">
-                <a class="navbar-brand" href="/">{% trans 'MECC' %}</a>
+                <a class="navbar-brand" href="/">{% trans 'ÉVA' %}{% settings_get "STAGE" as stage %}{% if not stage == "prod" %} - <span class="{{ stage }}">[{{ stage|upper }}]</span>{% endif %}</a>
                 <span class="nav-bar-txt" style="font-size:1em;">{{request.display.user.last_name}} {{request.display.user.first_name}}</span>
                 <span class='nav-bar-txt pull-right'>{% trans "Année universitaire " %}{{request.display.current_year}}</span>
 
@@ -68,10 +77,6 @@
              </div>
          </div>
          <!-- /#page-content-wrapper -->
-
-     </div>
-
-   </div>
 
 
     {% block foot-javascript %}{% endblock %}

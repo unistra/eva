@@ -9,13 +9,18 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-
-        {%if request.session.visited_cmp == "RESPFORM"%}
+            {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+            {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
         {%else%}
             <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
                 {% else %}{%url 'training:list' request.user.meccuser.cmp%}
                 {%endif%}">{% trans "Offre de formation" %}</a></li>
+            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+
         {%endif%}
             <li class="active"> {{training.label}}</li>
     </ol>
@@ -34,7 +39,7 @@
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-    <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+    <li><a href={%if training.MECC_tab%}"{% url 'mecctable:mecctable_home' training.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
 </ul>
 <div class="disp-flex ">
     <div class="has-bottom-border parent disp-flex">
@@ -72,7 +77,7 @@
           <thead >
               <tr>
                 <th width="62%" class="td-centered no-padding" >{% trans "Règle standard" %}</th>
-                <th width="38%" class="td-centered no-padding"  >{% trans 'Spécificités pour cette formation </br>(dérogations et alinéas de composante)' %}</th>
+                <th width="38%" class="td-centered no-padding"  >{% trans 'Spécificités pour cette formation <br>(dérogations et alinéas de composante)' %}</th>
               </tr>
           </thead>
 
@@ -83,15 +88,15 @@
          <td width="52%" class="no-padding border-right border-bottom"><a class="select " onclick="detail_rule({{e.id}},'standard')">{{e.label}}</a></td>
          <td width="10%" class="no-padding td-centered border-bottom italic text-muted">{% if e.has_parag_with_derog  %}{% trans "(D)" %}{% endif %}</td>
          <td width="14%" class="no-padding td-centered border-bottom underlined">
-             {% if can_edit %}
+             {% if can_edit and training.input_opening.0 != "4" %}
             <a class="select customize" style='color:#333333' href="{% url 'training:specific_paragraph' training.id e.id%}">
-                {% if e.n_rule in custom %}
+                {% if e.id in custom %}
 {% trans "Modifier" %}{% else %}{% trans "Saisir" %}{%endif%}</a>
              {% endif %}
         </td>
         <td width="14%" class="no-padding border-bottom">
-               {% if e.n_rule in custom %}
-               <a class="select " onclick="detail_rule({{e.n_rule}}, 'specific')">{% trans "Voir" %}</a>
+               {% if e.id in custom %}
+               <a class="select " onclick="detail_rule({{e.id}}, 'specific')">{% trans "Voir" %}</a>
                {% endif %}
        </td>
       </tr>
@@ -100,7 +105,7 @@
     </table>
     {% endif %}
     </div>
-    {% if can_edit %}
+    {% if can_edit  and training.input_opening.0 != "4"%}
     <div class="item-20 flex-center dir-col">
         <a href="{% url 'training:recover_everything' training.id %}"class=" select break-line btn-primary btn " style="white-space: normal;margin:0.5em">{% trans "Récupérer TOUTES les spécificités de l'année précédente" %}</a>
         {% if rec %}
@@ -116,32 +121,48 @@
         <label>
             {% trans 'Etat de saisie des règles : '%}
         </label>
+
         <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E" {% if training.progress_rule == "E" %}checked="checked" {% endif %} style="margin-top:-1px;vertical-align:middle;">
+         {% trans "En cours " %}<input type="radio" name="progress"  value="E"
+         {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
+         {% if training.progress_rule == "E" %}checked="checked" {% endif %}
+         style="margin-top:-1px;vertical-align:middle;">
      </label>
         <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"  {% if training.progress_rule == "A" %}checked="checked" {% endif %}style="margin-top:-1px;vertical-align:middle;">
+        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
+        {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
+        {% if training.progress_rule == "A" %}checked="checked" {% endif %}
+        style="margin-top:-1px;vertical-align:middle;">
     </label>
 
     </div>
     <div class="buttons_list" >
 <br>
-    <a href=
+<a href=
     {% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
-    {%elif request.session.visited_cmp %}"{% url 'training:list' request.session.visited_cmp %}"
+    {%elif request.session.visited_cmp %}
+        {% if request.session.visited_cmp in 'RESPENS' %}
+        "{% url 'training:my_teachings'  %}"
+        {% else %}
+        "{% url 'training:list' request.session.visited_cmp %}"
+        {% endif %}
     {% else %}"{%url 'training:list_all' %}"
-    {% endif %} class="btn-primary btn btn-sm btn-1 ">{% trans "Fermer la fiche" %}</a>
-    <a href="{% url 'training:gen_pdf_all_rules' training.id%}" target="_blank" class="btn-primary btn btn-sm btn-1 ">{% trans "Récapitulatif des règles de la formation (avec spécificités)" %}</a>
+    {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
+    <a href="{% url 'training:gen_pdf_all_rules' training.id%}" target="_blank" class="btn-primary btn btn-sm btn-1 ">{% trans "Récapitulatif des règles de la formation" %}</a>
     {% if can_edit %}
-    <a href="#" class="btn-primary btn btn-sm">{% trans "Effectuer les CONTRÔLES DE COHERENCE" %}</a>
+    <a class="btn-primary btn btn-sm" onclick="check_consistency({{training.id}})">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
     <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un message à la DES" %}</a>
     {% endif %}
     </div>
 
+
+
+    
 </div>
+    {% include "training/modal_consistency.html" %}
     {% include "training/send_mail.html"%}
     {% include "training/rule_preview.html"%}
-
+    
     <style media="screen">
       table {
         display: flex;
@@ -175,7 +196,7 @@
     </style>
 
     <script type="text/javascript">
-
+    {% if can_edit  %}
         $(document).on('change', 'input[name="progress"]:radio', function(){
             $.ajax({
                 url: "{% url 'rules:update_progress'%}",
@@ -183,12 +204,26 @@
                 data: {
                     val: $(this).val(),
                     training_id : {{training.id}},
+                    type: "RULE",
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
-                success: function(data){}
+                success: function(data){
+                    if (data.status === 200) {
+                        $('.top-right').notify({
+                            message: { text: 'Etat de saisie mis à jour : ' + data.val},
+                            type:'info'
+                        }).show();
+                    }else {
+                        $('.top-right').notify({
+                            message: { text: 'Error lors de la mise à jour du tableau.'},
+                            type:'warning'
+                        }).show();
+                    }
+                }
 
             })
         });
+        {%endif%}
 
         function detail_rule(id, type){
             $.ajax({

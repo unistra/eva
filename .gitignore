@@ -52,3 +52,5 @@ mecc/media/doc_cadre/
 assets
 misc
 .ropeproject
+mecc/media
+.vscode

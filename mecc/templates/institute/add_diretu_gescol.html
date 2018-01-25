@@ -55,7 +55,7 @@
 <div id="table-gescol" class="table-editable">
   <table class="table" >
     <tr>
-      <th colspan="2">{% trans "Gestionnaires de scolarité ttt" %}</th>
+      <th colspan="2">{% trans "Gestionnaires de scolarité" %}</th>
       <th><small>{% trans "référent app" %}</small></th>
       <th>
           <button type="button" class="pull-right table-add btn btn-default " id="add_gescol">
@@ -104,13 +104,14 @@
 </div>
 
 <script>
-var code_cmp = document.getElementById("id_code").value
-var url_prof = "/ressources/prof/" + code_cmp + ".json"
-var url_adm = "/ressources/adm/" + code_cmp + ".json"
+let code_cmp = document.getElementById("id_code").value
+let url_prof = "/ressources/prof/" + code_cmp + ".json"
+let url_all = "/ressources/all/" + code_cmp + ".json"
+let url_adm = "/ressources/adm/" + code_cmp + ".json"
 
 $('.table-remove').click(function () {
-  var username = $('td:first',$(this).parents('tr')).next().next();
-  var type = username.next();
+  let username = $('td:first',$(this).parents('tr')).next().next();
+  let type = username.next();
   $.ajax({
     url: "{% url 'institute:remove_pple' %}",
     type: "POST",
@@ -131,7 +132,7 @@ $('.table-remove').click(function () {
   });
   $(this).parents('tr').detach();
 });
-var mail = null;
+let mail = null;
 function do_stuff (data, add_first, add_new, type) {
 
   document.getElementById(add_first).style.display = "block";
@@ -139,14 +140,14 @@ function do_stuff (data, add_first, add_new, type) {
         if(this.className.indexOf('new_') != -1 && $('td:first', $(this).parents('tr')).find('input').val() == ""){
             return;
         };
-      var clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
-      var g_table =   $(this).parents('div').find(  $(this).parents('table'));
-      var a = clone.find('.name');
+      let clone = $(this).parents('table').find('.clone').clone(true).removeClass('hide table-line clone');
+      let g_table =   $(this).parents('div').find(  $(this).parents('table'));
+      let a = clone.find('.name');
       g_table.append(clone);
       $(this).next().removeClass('hidden');
 
-      var auto_comp = g_table.find(a);
-      var options = {
+      let auto_comp = g_table.find(a);
+      let options = {
         data: data,
         getValue: function (element) {
           return element.last_name;
@@ -162,8 +163,8 @@ function do_stuff (data, add_first, add_new, type) {
             enabled:true
           },
           onSelectItemEvent: function() {
-            var first_name = auto_comp.getSelectedItemData().first_name;
-            var id_member = auto_comp.getSelectedItemData().id_member;
+            let first_name = auto_comp.getSelectedItemData().first_name;
+            let id_member = auto_comp.getSelectedItemData().id_member;
             mail = auto_comp.getSelectedItemData().mail;
             auto_comp.parents('td').next()[0].innerHTML = first_name;
             auto_comp.parents('td').next().next()[0].innerHTML = id_member;
@@ -172,13 +173,13 @@ function do_stuff (data, add_first, add_new, type) {
       };
       auto_comp.easyAutocomplete(options);
       $(add_new).one('click', function(e){
-          var tr = $(this).parents('tr');
-          var first_cell = $('td:first', tr);
-          var input = first_cell.find('input')
-          var last_name = input.val();
-          var first_name = first_cell.next().text();
-          var username = first_cell.next().next().text();
-          var refapp = first_cell.next().next().next().next().find('input');
+          let tr = $(this).parents('tr');
+          let first_cell = $('td:first', tr);
+          let input = first_cell.find('input')
+          let last_name = input.val();
+          let first_name = first_cell.next().text();
+          let username = first_cell.next().next().text();
+          let refapp = first_cell.next().next().next().next().find('input');
           input.addClass('hidden');
           if (last_name != null) {
             first_cell[0].innerHTML = last_name;
@@ -228,7 +229,7 @@ function do_stuff (data, add_first, add_new, type) {
 }
 
 
-$.getJSON(url_adm, function(data) {
+$.getJSON(url_all, function(data) {
   document.getElementById('load-gescol').style.display = "none";
   do_stuff(data, "add_gescol", " .new_gescol", "gescol");
 });

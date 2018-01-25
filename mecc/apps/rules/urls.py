@@ -1,10 +1,10 @@
 from django.conf.urls import url
-from .views import RulesListView, RuleCreate, RuleDelete, \
+from django_cas.decorators import login_required
+from mecc.apps.rules.views import RulesListView, RuleCreate, RuleDelete, \
     edit_rule, manage_degreetype, update_display_order, pdf_one_rule, \
     manage_paragraph, ParagraphDelete, edit_paragraph, gen_pdf, \
     duplicate_home, duplicate_add, duplicate_remove, history_home, \
-    details_rule, update_progress
-from django_cas.decorators import login_required
+    details_rule, details_rules, update_progress
 
 urlpatterns = [
     url(r'^list/$', login_required(RulesListView.as_view()),
@@ -41,6 +41,8 @@ urlpatterns = [
         name='duplicate_remove'),
     url(r'^details_rule/$', details_rule,
         name='details_rule'),
+    url(r'^details_rules/$', details_rules,
+        name='details_rules'),
     url(r'^update_progress/$', update_progress,
         name='update_progress'),
 ]

@@ -4,14 +4,20 @@
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
-        {%if request.session.visited_cmp == "RESPFORM"%}
+            {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+            {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
         {%else%}
             <li>
                 <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
                 {% else %}{%url 'training:list' request.user.meccuser.cmp%}
                 {%endif%}">{% trans "Offre de formation" %}</a>
             </li>
+            <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+
         {%endif%}
             <li><a href="{% url 'training:edit_rules' id=training.id %}">
                 {{training.label}}</a>
@@ -33,7 +39,8 @@
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{% url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
     <li class="active"><a href="{%if training%}{% url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-    <li><a href="#">{% trans "Tableau MECC" %}</a></li>
+    <li><a href={%if training.MECC_tab%}"{% url 'mecctable:mecctable_home' training.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
+
 </ul>
 <h2 class="title-modal" style="font-weight: bold;">
     {{title}}
@@ -73,7 +80,7 @@
     <div class="item-100 disp-flex disabled" style="margin-bottom:1em;">
 
         <div class="item-20 disp-flex margin-left6">
-            {% trans "Alinéa n°" %} {{paragraph.display_order}} <br> {% trans "standard" %}
+            {% trans "Alinéa n°" %} {{paragraph.id}} <br> {% trans "standard" %}
         </div>
         <div id ="text_standard">
             {{paragraph.text_standard | safe}}

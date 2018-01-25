@@ -1,0 +1,43 @@
+{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+<div class="modal fade" id="documents_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{% trans 'Documents' %}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                  <div class="letter">
+                      <h3> {% trans "Lettre de présentation" %} :</h3>
+                      <ul>
+                      {% if letter_file %}
+                        {% include "institute/files_list_only.html" with files=letter_file %}
+                      {% else %}
+                         <li>
+                              {% trans 'Aucun fichier envoyé'%}
+                         </li>
+                      {% endif %}
+                      </ul>
+                  </div>
+                  <div class="misc_files">
+                      <h3> {% trans "Conseils de composante - Extraits de PV, listes d'émargements" %} :</h3>
+                      <ul>
+                      {% if misc_file %}
+                        {% include "institute/files_list_only.html" with files=misc_file %}
+                      {% else %}
+                         <li>
+                              {% trans 'Aucun fichier envoyé'%}
+                         </li>
+                      {% endif %}
+                      </ul>
+                  </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

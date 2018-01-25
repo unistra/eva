@@ -32,26 +32,26 @@
         <table class="duplicate-table duplicate-table-1">
             <thead class="thead">
                 <tr class="row-head">
-                    <th width=5% class="td-centered">
+                    <th width="5%" class="td-centered">
                         <input type="checkbox" onClick="check_all(this)" />
                     </th>
-                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
-                    <th width=15% class="td-centered">{%trans 'Type diplôme'%}</th>
-                    <th width=60%>{%trans 'Libellé Formation'%}</th>
-                    <th width=10% class="td-centered">{%trans 'Réf Année ROF'%}</th>
+                    <th width="10%" class="td-centered">{%trans 'Source'%}</th>
+                    <th width="15%" class="td-centered">{%trans 'Type diplôme'%}</th>
+                    <th width="50%">{%trans 'Libellé Formation'%}</th>
+                    <th width="20%" class="td-centered">{%trans 'Réf Année ROF'%}</th>
                 </tr>
             </thead>
             <tbody class="tbody" id="source">
                 {%if not trainings%}<tr id='empty'><td>{% trans "Aucune formation." %}</td></tr>{%endif%}
                 {%for e in trainings%}
                 <tr id="source_{{e.id}}" class="{% if not e.is_used%} grey{%endif%}">
-                    <td width=5% class="td-centered">
+                    <td width="5%" class="td-centered">
                         <input type="checkbox" id="{{e.id}}" name="train_{{e.id}}" class="checkbox_train">
                     </td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
-                    <td width=15% class=" ">{{e.degree_type}}</td>
-                    <td width=60% class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
-                    <td width=10% class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.display_order|stringformat:"03d"}}</td>
+                    <td width="10%" class="td-centered {% if not e.is_used%} grey{%endif%}  ">{{e.code_year}}</td>
+                    <td width="15%" class=" ">{{e.degree_type}}</td>
+                    <td width="50%" class="{% if not e.is_used%} grey{%endif%}">{{e.label}}</td>
+                    <td width="20%" class="td-centered {% if not e.is_used%} grey{%endif%}">{{e.ref_cpa_rof}}</td>
                 </tr>
                 {%endfor%}
             </tbody>
@@ -62,11 +62,11 @@
         <table class="duplicate-table duplicate-table-2">
             <thead class="thead">
                 <tr class="row-head">
-                    <th width=10% class="td-centered">{%trans 'Source'%}</th>
-                    <th width=15% class="td-centered">{%trans 'Type diplôme'%}</th>
-                    <th width=60%>{%trans 'Libellé Formation'%}</th>
-                    <th width=10% class="td-centered">{%trans 'Réf Année ROF'%}</th>
-                    <th width=5% ></th>
+                    <th width="10%" class="td-centered">{%trans 'Source'%}</th>
+                    <th width="20%" class="td-centered">{%trans 'Type diplôme'%}</th>
+                    <th width="50%" >{%trans 'Libellé Formation'%}</th>
+                    <th width="15%" class="td-centered">{%trans 'Réf Année ROF'%}</th>
+                    <th width="5%" ></th>
                 </tr>
             </thead>
             <tbody class="tbody" id="current">
@@ -74,12 +74,15 @@
 
                 {%for e in existing_trainings%}
                 <tr class="{% if not e.is_used%} grey{%endif%}" id="current_{{e.id}}">
-                    <td width=10% class="td-centered">{{e.code_year}}</td>
-                    <td width=15% >{{e.degree_type}}</td>
-                    <td width=60% >{{e.label}}</td>
-                    <td width=10% class="td-centered">{{e.display_order|stringformat:"03d"}}</td>
-                    <td width=5% class="td-centered">
-                        <a class="glyphicon glyphicon-trash select" id="{{e.id}}" onclick="del_train(this, this.id);"></a>
+                    <td width="10%" class="td-centered">{{e.code_year}}</td>
+                    <td width="20%" >{{e.degree_type}}</td>
+                    <td width="50%" >{{e.label}}</td>
+                    <td width="15%" class="td-centered">{{e.ref_cpa_rof}}</td>
+                    <td width="5%" class="td-centered">
+                        {% if e.supply_cmp == cmp  %}
+                        
+                        <a class="glyphicon glyphicon-trash select" id="{{e.id}}" href="{% url 'training:delete' e.id%}"></a>
+                        {% endif %}
                     </td>
                 </tr>
                 {%endfor%}
@@ -91,55 +94,6 @@
 <button class="btn-primary btn btn-sm btn-duplicate" onclick="add_training()">{% trans "Dupliquer les formations sélectionnées vers l'année cible" %}</button>
 <a href="{%if request.session.visited_cmp %}{% url 'training:list' request.session.visited_cmp %}{%else%} /training/list/{%endif%}" class="btn-primary btn btn-sm btn-duplicate" >{% trans "Retourner à la liste des formations" %}</a>
 </div><script type="text/javascript">
-    function del_train($this, value) {
-        $.ajax({
-            url: "{% url 'training:duplicate_remove'%}",
-            type: "POST",
-            data: {
-                id: value,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function(data) {
-                if (data.error) {
-                    $('.top-right').notify({
-                        message: {
-                            text: data.error
-                        },
-                        type: 'danger'
-                    }).show();
-                } else if (data.status === 'removed') {
-                    $('.top-right').notify({
-                        message: {
-                            text: data.label + ' a bien été supprimé.'
-                        },
-                        type: 'info'
-                    }).show();
-                    setTimeout(function() {
-                        window.location.reload()
-                    }, 500);
-                    var row = document.getElementById("current_" + value);
-                    var current_year = row.getElementsByTagName("td")[0].innerHTML;
-                    row.deleteCell(4);
-
-                    var e = document.getElementById("duplicate_select_year");
-                    var source_year = e.options[e.selectedIndex].value;
-                    if (current_year === source_year) {
-                        var dest = document.getElementById("source");
-                        row.id = 'source_' + value;
-                        td = row.insertCell(0);
-                        td.innerHTML = '<input type="checkbox" class="checkbox_train" name="train' + value + '" id="_+' + value + '+">';
-                        td.className += 'td-centered';
-                        dest.appendChild(row);
-                        if (document.contains(document.getElementById("empty"))) {
-                            document.getElementById("empty").remove();
-                        }
-                    } else {
-                        document.getElementById('current').removeChild(row);
-                    }
-                }
-            }
-        })
-    }
 
     function add_training() {
         checkboxes = document.getElementsByClassName("checkbox_train");

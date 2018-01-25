@@ -1,0 +1,44 @@
+<div class="fade modal " id="modal_simple" role="dialog">
+    <div class="modal-dialog modal-75">
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="title-modal">
+                    <div class="flex-container-preview">
+                        <h1 id="modal-title"></h1>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <span id="info_1"></span>
+                <span id="info_2"></span>
+            </div>
+            <div class="modal-footer" id="confirm">
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #modal_simple {
+        z-index: 1400;
+    }
+
+    #modal_simple #info_1,
+    #modal_simple #info_2 {
+        margin-bottom: 0.2em;
+    }
+
+    #modal_simple #modal-title {
+        font-size: 1em;
+    }
+
+    #modal_simple #confirm {
+        font-size: 1.2em;
+    }
+
+    #modal_simple #confirm {
+        padding-bottom: 1em;
+    }
+</style>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load groups%}
+{% load field_name %}
+{% block page-header %}
+{{label_cmp}}
+{% endblock %}
+{% block app_content %}
+<div class="flex-container">
+<div class="comp-left">
+  <div class="letter">
+      <h3> {% trans "Lettre de présentation" %} :</h3>
+      <ul>
+      {% if letter_file %}
+        {% include "institute/files_list_only.html" with files=letter_file %}
+      {% else %}
+         <li>
+              {% trans 'Aucun fichier envoyé'%}
+         </li>
+      {% endif %}
+      </ul>
+  </div>
+  <div class="misc_files">
+      <h3> {% trans "Conseils de composante - Extraits de PV, listes d'émargements" %} :</h3>
+      <ul>
+      {% if misc_file %}
+        {% include "institute/files_list_only.html" with files=misc_file %}
+      {% else %}
+         <li>
+              {% trans 'Aucun fichier envoyé'%}
+         </li>
+      {% endif %}
+      </ul>
+  </div>
+</div>
+
+{% endblock %}

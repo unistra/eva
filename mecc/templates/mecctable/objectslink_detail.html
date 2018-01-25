@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block app_content %}
+<p><a class="btn btn-default" href="{% url 'mecctable:mecctable_objectslink_list' %}">ObjectsLink Listing</a></p>
+<table class="table">
+<tr><td>code_year</td><td>{{ object.code_year }}</td></tr>
+<tr><td>id_parent</td><td>{{ object.id_parent }}</td></tr>
+<tr><td>id_child</td><td>{{ object.id_child }}</td></tr>
+<tr><td>order_in_child</td><td>{{ object.order_in_child }}</td></tr>
+</table>
+<a class="btn btn-primary" href="{{object.get_update_url}}">Edit ObjectsLink</a>
+
+{% endblock %}

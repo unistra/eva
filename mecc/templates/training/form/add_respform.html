@@ -18,24 +18,12 @@
         <td style="width: 45%" class="v-align-m">{{e.user.last_name}}</td>
         <td style="width: 45%" class="v-align-m">{{e.user.first_name}}</td>
         <td style="width: 10%" class="v-align-m">{{e.cmp}}</td>
-        <td style="width: 5%" class="v-align-m">
-            <form class="" action="{% url 'training:process_resp'%}" method="post">
-                <div class="hidden" hidden >
-                    {% csrf_token %}
-
-                        <input type="text" name="formation"  value="{{object.id}}" readonly>
-                        <input type="text" name="username"  readonly value="{{e.user.username}}">
-
-                    </div>
-                    {% if can_edit %}
-                    <button type="submit" class="btn-link" name="remove">
-                        <strong><a class="glyphicon glyphicon-trash"></a></strong></button>
-                    {% endif %}
-            </form>
-
-
+        <td style="width: 5%" class="v-align-m"> 
+            {% if can_edit %}
+                <a class="glyphicon glyphicon-trash select" onclick="delete_respform('{{e.user.username}}', {{object.id}}, this)"></a>
+            {% endif %}            
         </td>
-      </tr>
+            </tr>
       {% endfor %}
     </tbody>
     {% else %}
@@ -44,7 +32,7 @@
     </table>
 </div>
 <div class="flex-center item-30" style="margin:1em;">
-    {% if can_edit and object%}
+    {% if can_edit and object and object.input_opening.0 != "4"%}
     <a id='add_respform' data-toggle="modal" data-target="#searchMember" class="btn btn-sm btn-primary"> {% trans 'Associer un responsable' %}</a>
     {% else %}
     <span class="btn btn-sm btn-primary" disabled style="width:100%"> {% trans 'Associer un responsable' %}</span>
@@ -58,7 +46,7 @@
         <div class="modal-content select-pple">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="title-modal">{% trans "Rechercher un membre" %}</h4>
+                <h4 class="title-modal">{% trans "Rechercher un enseignant" %}</h4>
             </div>
             <div class="modal-body">
                 <div id='error'></div>
@@ -138,6 +126,25 @@
     </div>
     {% if can_edit %}
     <script type="text/javascript">
+
+        function delete_respform(resp_username, id_training, clicked){
+            let row_index = clicked.parentElement.parentElement.rowIndex;
+            
+       $.ajax({
+                url: "{% url 'training:remove_respform'%}",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    resp_username : resp_username,
+                    id_training: id_training
+                },
+                success: function(data) {
+                    document.getElementById("respformtable").deleteRow(row_index);
+                }
+            })  
+        }
+
+        
     {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 

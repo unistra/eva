@@ -62,8 +62,11 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    '.u-strasbg.fr',
+    '.unistra.fr',
+    '127.0.0.1',
+]
 
 #########################
 # General configuration #
@@ -249,6 +252,9 @@ LOCAL_APPS = (
     'mecc.apps.adm',
     'mecc.apps.rules',
     'mecc.apps.training',
+    'mecc.apps.mecctable',
+    'mecc.apps.files',
+    'mecc.apps.travail',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -294,7 +300,10 @@ LOGGING = {
             'maxBytes': 209715200,
             'backupCount': 3,
             'formatter': 'default'
-        }
+        },
+        # 'console': {
+        #     'class': 'logging.StreamHandler',
+        # },
     },
     'loggers': {
         'django': {
@@ -311,7 +320,11 @@ LOGGING = {
             'handlers': ['mail_admins', 'file'],
             'level': 'ERROR',
             'propagate': True
-        }
+        },
+        # 'django.db.backends': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # }
     }
 }
 
@@ -336,7 +349,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 CKEDITOR_CONFIGS = {
-     'default': {
+    'default': {
         # 'skin': 'minimalist',
         'skin': 'office2013',
         'toolbar_Basic': [
@@ -356,7 +369,7 @@ CKEDITOR_CONFIGS = {
         'height': '9em',
         'width': '100%',
         'entities_latin': 'false',
-        'entities':'false'
+        'entities': 'false'
     },
 }
 
@@ -391,3 +404,10 @@ APOGEEWS_TOKEN = None
 
 MAIL_FROM = 'des-admin-mecc@unistra.fr'
 MAIL_ARCHIVES = 'des-mecc-archives@unistra.fr'
+
+
+#########
+# FILES #
+#########
+
+FILES_UPLOAD_PATH = 'uploads/docs/%Y'
