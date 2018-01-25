@@ -80,7 +80,7 @@ et/ou les attributs d’épreuves diffèrent en session 2"),
                 "Liste des objets non semestre qui ont une note seuil"),
                 "objects": []},
             '7': {"title": _(
-                "Liste des épreuves qui ont une note seuils"),
+                "Liste des épreuves qui ont une note seuil"),
                 "objects": []},
             '8': {"title": _(
                 "Liste des objets semestre qui n’ont pas de note seuil \
@@ -109,7 +109,7 @@ compris entre 1 et 3"),
                                  _("Coefficient"), link.coefficient)
                         })
             #  1 - 2 
-            if "E" in training.MECC_type and struc == 'UE':
+            if "E" in training.MECC_type and struc.nature == 'UE':
                 # 1
                 if len(proper_exam_1) < 3:
                     to_add = report['1']['objects']
