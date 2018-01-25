@@ -142,6 +142,8 @@ def preprod():
         'default_db_password': "DATABASES['default']['PASSWORD']",
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
@@ -171,6 +173,8 @@ def prod():
         'default_db_password': "DATABASES['default']['PASSWORD']",
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
+        'ldap_token': "LDAP_TOKEN",
+        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
