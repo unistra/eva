@@ -153,7 +153,7 @@ def prod():
     """Define prod stage"""
     env.roledefs = {
         'web': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
-        'lb': ['rp10-m.u-strasbg.fr', 'rp10-s.u-strasbg.fr']
+        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr']
     }
     env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
