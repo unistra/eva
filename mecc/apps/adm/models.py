@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
-
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 
@@ -38,7 +38,8 @@ class MeccUser(models.Model):
         ('ADM', _('Administratif')),
         ('PROF', _('Enseignant')),
     )
-    django_user = get_user_model()
+    
+    django_user = settings.AUTH_USER_MODEL
     user = models.OneToOneField(django_user, on_delete=models.CASCADE, related_name="mecc")
     cmp = models.CharField(_('Composante'), max_length=5, blank=True)
     status = models.CharField(
