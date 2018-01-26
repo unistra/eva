@@ -163,8 +163,8 @@ def prod():
     env.server_ip = '130.79.254.18'
     env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr.pem'
-    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr.key'
+    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr-cert-chained.pem'
+    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr-key.pem'
     env.goal = 'prod'
     env.socket_port = '8032'
     env.map_settings = {
