@@ -1176,11 +1176,11 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                  ('FONTSIZE', (0, 0), (-1, -1), 8),
                  ]))
             return inner_table
-
+        ref_scol = struct.ref_si_scol if struct.ref_si_scol else "" # FIX bug with rof data
         ref_data = (Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
-            struct.ref_si_scol, styles['CenterSmall'])) if ref == 'both' else Paragraph(
+            ref_scol, styles['CenterSmall'])) if ref == 'both' else Paragraph(
                 struct.ROF_ref, styles['CenterSmall']) if ref == 'with_rof' else Paragraph(
-            struct.ref_si_scol, styles['CenterSmall']) if ref == 'with_si' else Paragraph(
+            ref_scol, styles['CenterSmall']) if ref == 'with_si' else Paragraph(
             '', styles['CenterSmall'])
         big_table.append([
             Paragraph("<para leftIndent=%s>%s</para> " % (what.get('rank') * 10,
