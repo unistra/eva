@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 
@@ -38,8 +38,8 @@ class MeccUser(models.Model):
         ('ADM', _('Administratif')),
         ('PROF', _('Enseignant')),
     )
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    django_user = get_user_model()
+    user = models.OneToOneField(django_user, on_delete=models.CASCADE, related_name="mecc")
     cmp = models.CharField(_('Composante'), max_length=5, blank=True)
     status = models.CharField(
         _('Statut'), max_length=4, choices=STATUS_CHOICES, blank=True)
