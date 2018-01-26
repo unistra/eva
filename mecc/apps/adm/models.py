@@ -40,7 +40,7 @@ class MeccUser(models.Model):
     )
     
     # django_user = settings.AUTH_USER_MODEL
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="mecc")
+    user = models.OneToOneField(User, on_delete=models.CASCADE,)
     cmp = models.CharField(_('Composante'), max_length=5, blank=True)
     status = models.CharField(
         _('Statut'), max_length=4, choices=STATUS_CHOICES, blank=True)
