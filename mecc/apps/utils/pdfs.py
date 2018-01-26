@@ -1025,7 +1025,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         story.append(Paragraph("<para align=center fontSize=14 spaceAfter=14 textColor=\
             red><strong>%s</strong></para>" % title, styles['Normal']))
 
-    title_training_table = table_title_trainings_info(training, reference=ref, in_two_part=False if "publish" in target else True)
+    title_training_table = table_title_trainings_info(
+        training, reference=ref, in_two_part=False if "publish" in target else True)
 
     story.append(title_training_table)
     if model == 'a':
@@ -1182,7 +1183,8 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
             struct.ref_si_scol, styles['CenterSmall']) if ref == 'with_si' else Paragraph(
             '', styles['CenterSmall'])
         big_table.append([
-            "%s%s " % ("    " * what.get('rank'), struct.label),
+            Paragraph("<para leftIndent=%s>%s</para> " % (what.get('rank') * 10,
+                                                          struct.label), styles['Normal']),
             Paragraph(
                 struct.get_respens_name_small,
                 styles['CenterSmall'] if not struct.external_name else styles['CenterSmallItalic']),

@@ -124,7 +124,7 @@ class Training(models.Model):
                 "degree_type": [
                     "%s %s" % (
                         _("Cette formation possède des alinéas spécifiques et/ou additionnels en"),
-                        self.degree_type.short_label)]
+                        self.__original_degree_type.short_label)]
             })
         self.save()
 
