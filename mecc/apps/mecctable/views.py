@@ -172,11 +172,10 @@ def import_objectslink(request):
         current_year = currentyear().code_year
         selected_id = [e for e in map(int, request.POST.getlist(
             'selected_id[]'))]
-        object_link_list = [
-            ObjectsLink.objects.get(
-                id_child=e, code_year=current_year,
-                is_imported=None) for e in selected_id
-        ]   # based on id_child and **not** imported objectlink in
+        object_link_list = ObjectsLink.objects.filter(
+            id_child__in=[e for e in selected_id], 
+            code_year=current_year).exclude(is_imported=True)
+        # based on id_child and **not** imported objectlink in
         # order to retrieve the original one :)
         not_imported = False
         for e in object_link_list:
@@ -201,6 +200,7 @@ def import_objectslink(request):
             else:
                 not_imported = True
     except Exception as e:  # This is bad...
+        print(e)
         return JsonResponse({"error": e})
     return JsonResponse({
         "status": 200, "not_imported": not_imported
