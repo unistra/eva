@@ -82,15 +82,16 @@
                               class="item-selected"
                               {% endif %}>{% trans 'Documents' %}</a></li>
 
-                          </ul></li>
+                          </ul>
+                        </li>
           {%endif%}
 
-          {% if e.code == "RESPENS"  %}
+          {% endfor %}
+          {% if is_respens  %}
             <li>
                 <a href="{% url 'training:my_teachings'%}" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
             </li>
           {% endif %}
-      {% endfor %}
 
       {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
       <li>
