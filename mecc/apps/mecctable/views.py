@@ -575,7 +575,7 @@ def mecctable_update(request):
         struct.mutual = is_mutual
         struct.ROF_ref = j.get('ROF_ref')
         struct.ROF_code_year = None if j.get('ROF_code_year') in [
-            0, '', ' '] else j.get()
+            0, '', ' '] else j.get('ROF_code_year')
         struct.ROF_nature = j.get('ROF_nature')
         struct.ROF_supply_program = j.get('ROF_supply_program')
         struct.ref_si_scol = j.get('ref_si_scol')
