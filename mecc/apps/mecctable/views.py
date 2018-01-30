@@ -268,6 +268,7 @@ def get_mutual_by_cmp(request):
             to_exclude = [""]
         s_list = StructureObject.objects.filter(
             cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+            code_year=currentyear().code_year,
             is_in_use=True).exclude(nature__in=to_exclude).exclude(
                 owner_training_id=int(training_id))
         if asking_period:
