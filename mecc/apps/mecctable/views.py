@@ -305,7 +305,7 @@ def update_grade_coeff(request):
     if type_to_update == "coeff":
         old_coeff = link.coefficient
         if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
-            link.eliminatory_grade = None
+            link.coefficient = None
             link.save()
             return JsonResponse({"status": 'OK', "val": ""})
         try:
