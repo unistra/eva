@@ -222,27 +222,31 @@ $(document).ready(function () {
                                     $("#suggest tbody tr:not(:contains('"+value+"'))").hide();
                                 } );
                             // reset select option in order to make sense to hide and show above
-                            /*select.mousedown(function(){
-                                selectTags = document.getElementsByTagName("select");
+                            select.mousedown(function(){
+                                selectTags = document.getElementsByTagName("select_suggest");
                                 for(let i = 0; i < selectTags.length; i++) {
                                   selectTags[i].selectedIndex =0;
                                 }
-                            });*/
+                            });
                             // add option to show all stuff
                             select.append('<option class="option_suggest" value=" ">Tous</option>');
                             // get all td from colum and make an option for each distinct one
                             column.data().unique().sort().each(function (d, j) {
                                 if (d){
-                                    let splited = d.split('- ');
                                     let done = false;
-                                    $.each(splited, function(i, val){
-                                        done = true;
-                                        if (i===0){
-                                            select.append('<option class="option_suggest" value="'+d+'" title="'+val+'">'+val+'</option>')                                            
-                                        }else{
-                                            select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;'+val+'</option>')                                            
-                                        }
-                                    })
+                                    if (typeof d === 'string'){
+                                        let splited = d.split('- ');
+                                        $.each(splited, function(i, val){
+                                            done = true;
+                                            if (i===0){
+                                                select.append('<option class="option_suggest" value="'+d+'" title="'+val+'">'+val+'</option>')                                            
+                                            }else{
+                                                select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;'+val+'</option>')                                            
+                                            }
+                                        })
+                                    } else {
+                                        done = true
+                                    }
                                     if (done == false){
                                         let re = /\b[\w]+(?:\s+[\w]+){0,2}/g;
                                         let wordList = d.match(re);
