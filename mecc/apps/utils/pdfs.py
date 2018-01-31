@@ -80,8 +80,13 @@ class DocGenerator(object):
         if trainings:
             self.story = gen_model_story(
                 trainings,
-                "a", date, target, True, "specs",
-                "gen_type", request.user)
+                "a", 
+                date, 
+                target, 
+                True, 
+                "without",
+                "gen_type", 
+                request.user)
 
         else:
             back_url = "/training/list_all_meccs/"
