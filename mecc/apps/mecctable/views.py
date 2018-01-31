@@ -173,7 +173,7 @@ def import_objectslink(request):
         selected_id = [e for e in map(int, request.POST.getlist(
             'selected_id[]'))]
         object_link_list = ObjectsLink.objects.filter(
-            id_child__in=[e for e in selected_id], 
+            id_child__in=[e for e in selected_id],
             code_year=current_year).exclude(is_imported=True)
         # based on id_child and **not** imported objectlink in
         # order to retrieve the original one :)
@@ -410,6 +410,16 @@ def get_stuct_obj_details(request):
     return JsonResponse(j)
 
 
+def update_respens_label(username, new_label, training, old_label):
+
+    profile = Profile.objects.get(
+        code="RESPENS", cmp=training.supply_cmp,
+        year=currentyear().code_year, label="RESPENS - %s" % old_label)
+
+    profile.label = "RESPENS - %s" % new_label
+    profile.save()
+
+
 def remove_respens(old_username, label, training):
     """
     Remove respens profile and delete user/meccuser if no
@@ -533,7 +543,8 @@ def mecctable_update(request):
             owner_training_id=training.id,
             cmp_supply_id=training.supply_cmp,
             regime=j.get('regime') if is_catalgue else training.MECC_type,
-            session=j.get('session') if is_catalgue else training.session_type,
+            session=j.get(
+                'session') if is_catalgue else training.session_type,
             label=j.get('label'),
             is_in_use=True if j.get('is_in_use') else False,
             period=j.get('period'),
@@ -553,7 +564,11 @@ def mecctable_update(request):
         struct = create_new_struct()
     else:
         struct = StructureObject.objects.get(id=id_child)
-        # check the respens is the same as before
+        # check the respens is the same as before and update respens label
+        # if updated
+        if struct.label != j.get('label') and struct.RESPENS_id not in ['', ' ', None]:
+            update_respens_label(
+                struct.RESPENS_id, j.get('label'), training, struct.label)
         if struct.RESPENS_id != j.get('RESPENS_id'):
             if struct.RESPENS_id not in ['', ' ', None]:
                 remove_respens(struct.RESPENS_id, j.get('label'), training)
@@ -611,6 +626,7 @@ def mecctable_update(request):
         coeff = coeff if coeff != 0 else None
     link.coefficient = coeff if struct.nature == 'UE' else None
     link.save()
+
     return JsonResponse(data)
 
 
@@ -673,7 +689,6 @@ def send_mail_respform(request):
         ',')] if request.POST.get('to') not in nobody else None
     cc = [e.replace(' ', '') for e in request.POST.get('cc').split(
         ',')] if request.POST.get('cc') not in nobody else None
-
 
     subject = request.POST.get('subject', s) if request.POST.get(
         'subject') not in ['', ' '] else s
