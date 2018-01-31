@@ -231,12 +231,16 @@ class Training(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Training, self).__init__(*args, **kwargs)
-        self.__original_session_type = self.session_type
-        self.__original_MECC_type = self.MECC_type
         try:
+            self.__original_session_type = self.session_type
+            self.__original_MECC_type = self.MECC_type
             self.__original_degree_type = self.degree_type
         except DegreeType.DoesNotExist:
             pass
+        if not self.n_train:
+            # creating n_train for ROF imported training
+            self.n_train = self.id
+            self.save()
 
 
 class SpecificParagraph(models.Model):
