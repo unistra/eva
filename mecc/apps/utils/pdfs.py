@@ -80,8 +80,13 @@ class DocGenerator(object):
         if trainings:
             self.story = gen_model_story(
                 trainings,
-                "a", date, target, True, "specs",
-                "gen_type", request.user)
+                "a", 
+                date, 
+                target, 
+                True, 
+                "without",
+                "gen_type", 
+                request.user, is_eci=True)
 
         else:
             back_url = "/training/list_all_meccs/"
@@ -716,7 +721,7 @@ def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalit�
     return story
 
 
-def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user, story=[]):
+def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user, is_eci=False, story=[]):
     """
     Story for model
     """
@@ -741,7 +746,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     criteria = [
         (_("Utilisateur"), "%s %s" % (user.first_name, user.last_name)),
         (_("Objectif"), goal),
-        (_("Modèle"), model.upper()),
+        (_("Modèle"), model.upper() if not is_eci else "C"),
         (_("Date"), "%s/%s/%s" % (i.day, i.month, i.year)),
         (_("Règle standard"), _("Avec") if standard else _("Sans")),
         (_("Références"), _("Sans") if ref == "without" else _(

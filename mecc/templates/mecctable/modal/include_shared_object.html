@@ -3,7 +3,7 @@
 <script src="{% static 'js/datatable.min.js' %}"></script>
 
 <div class=" modal fade " id="shared-object" role="dialog" style="z-index: 1200;">
-    <div class="modal-dialog modal-90">
+    <div class="modal-dialog modal-100">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -35,15 +35,15 @@
                   <thead>
                     <tr>
                       <th><input type="checkbox" onClick="selectall(this)" id="checkbox_all" /></th>
-                      <th >{% trans "Type d'objet" %}</th>
-                      <th >{% trans "Intitulé de l'objet" %}</th>
-                      <th >{% trans "Formation propriétaire de l'objet" %}</th>
-                      <th >{% trans "Régime" %}</th>
-                      <th >{% trans "Sessions" %}</th>
-                      <th >{% trans "Crédits" %}</th>
-                      <th >{% trans "Résponsable" %}</th>
-                      <th >{% trans "Si Scol" %}</th>
-                      <th >{% trans "ROF" %}</th>
+                      <th>{% trans "Type d'objet" %}</th>
+                      <th>{% trans "Intitulé de l'objet" %}</th>
+                      <th>{% trans "Formation propriétaire de l'objet" %}</th>
+                      <th>{% trans "Régime" %}</th>
+                      <th>{% trans "Sessions" %}</th>
+                      <th>{% trans "Crédits" %}</th>
+                      <th>{% trans "Résponsable" %}</th>
+                      <th>{% trans "Si Scol" %}</th>
+                      <th>{% trans "ROF" %}</th>
                     </tr>
                   </thead>
                   <tfoot>
@@ -223,7 +223,7 @@ $(document).ready(function () {
                                 } );
                             // reset select option in order to make sense to hide and show above
                             select.mousedown(function(){
-                                selectTags = document.getElementsByTagName("select");
+                                selectTags = document.getElementsByTagName("select_suggest");
                                 for(let i = 0; i < selectTags.length; i++) {
                                   selectTags[i].selectedIndex =0;
                                 }
@@ -233,7 +233,32 @@ $(document).ready(function () {
                             // get all td from colum and make an option for each distinct one
                             column.data().unique().sort().each(function (d, j) {
                                 if (d){
-                                    select.append('<option class="option_suggest" value="'+d+'">'+d+'</option>')
+                                    let done = false;
+                                    if (typeof d === 'string'){
+                                        let splited = d.split('- ');
+                                        $.each(splited, function(i, val){
+                                            done = true;
+                                            if (i===0){
+                                                select.append('<option class="option_suggest" value="'+d+'" title="'+val+'">'+val+'</option>')                                            
+                                            }else{
+                                                select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;'+val+'</option>')                                            
+                                            }
+                                        })
+                                    } else {
+                                        done = true
+                                    }
+                                    if (done == false){
+                                        let re = /\b[\w]+(?:\s+[\w]+){0,2}/g;
+                                        let wordList = d.match(re);
+                                        $.each(wordList, function(i, value){
+                                            if (i === 0){
+                                                select.append('<option class="option_suggest" value="'+d+'" title="'+value+'">'+value+'</option>')
+                                            } else {
+                                                select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;'+value+'</option>')
+                                                
+                                            }
+                                        })
+                                    }
                                 }
                             } );
                         } );

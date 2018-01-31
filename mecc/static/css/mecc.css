@@ -566,6 +566,10 @@ td.id_member {
     width: 75%!important;
     max-height: 100%;
 }
+.modal-100 {
+    width: 97%!important;
+    max-height: 100%;
+}
 .gen-table> td {
     padding: 0.5em;
 }

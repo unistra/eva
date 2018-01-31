@@ -28,7 +28,7 @@
                 <li class="dropdown">
                    <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse"
                    aria-expanded="false" aria-controls="collapse{{e.pk}}">
-                   {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                    {{e.cmp}}  - {%trans "Direction"%}<span class="caret"></span></a>
                    <ul class="collapse {% if e.cmp in request.path and 'institute' in request.path%} in {% endif %} slump" id="collapse{{e.pk}}">
                      <li><a href="/institute/granted/{{e.cmp}}"
                       {% if e.cmp in request.path and 'institute' in request.path%}
@@ -47,8 +47,8 @@
             {% elif e.code == 'DIRETU' or e.code == 'GESCOL'%}
             {% if not dircomp %}
                 <li class="dropdown">
-                   <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
-                  > {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                   <a href="#collapse{{e.pk}}" class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree"
+                  > {{e.cmp}} - {% trans "Directeur d'études" %}  <span class="caret"></span></a>
                    <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
                      <li><a href="/institute/granted/{{e.cmp}}"
                       {% if e.cmp in request.path %}
@@ -71,7 +71,7 @@
 
           <li class="dropdown">
              <a href="#collapse{{e.pk}}"   class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree">
-                  {% trans 'Composante' %} {{e.cmp}} <span class="caret"></span></a>
+                {{e.cmp}} - {% trans 'Resp. pédago.' %} <span class="caret"></span></a>
                   <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
                       <li><a href="/institute/granted/{{e.cmp}}"
                           {% if "granted" in request.path %}
@@ -82,15 +82,16 @@
                               class="item-selected"
                               {% endif %}>{% trans 'Documents' %}</a></li>
 
-                          </ul></li>
+                          </ul>
+                        </li>
           {%endif%}
 
-          {% if e.code == "RESPENS"  %}
+          {% endfor %}
+          {% if is_respens  %}
             <li>
                 <a href="{% url 'training:my_teachings'%}" {%if "teach" in request.path%}class="item-selected" {%endif%}>{% trans 'Mes enseignements'%}</a>
             </li>
           {% endif %}
-      {% endfor %}
 
       {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
       <li>
