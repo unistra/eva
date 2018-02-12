@@ -15,13 +15,13 @@
       {% for e in object.resp_formations.all %}
 
       <tr>
-        <td style="width: 45%" class="v-align-m">{{e.user.last_name}}</td>
         <td style="width: 45%" class="v-align-m">{{e.user.first_name}}</td>
+        <td style="width: 45%" class="v-align-m">{{e.user.last_name}}</td>
         <td style="width: 10%" class="v-align-m">{{e.cmp}}</td>
-        <td style="width: 5%" class="v-align-m"> 
+        <td style="width: 5%" class="v-align-m">
             {% if can_edit %}
                 <a class="glyphicon glyphicon-trash select" onclick="delete_respform('{{e.user.username}}', {{object.id}}, this)"></a>
-            {% endif %}            
+            {% endif %}
         </td>
             </tr>
       {% endfor %}
@@ -129,7 +129,7 @@
 
         function delete_respform(resp_username, id_training, clicked){
             let row_index = clicked.parentElement.parentElement.rowIndex;
-            
+
        $.ajax({
                 url: "{% url 'training:remove_respform'%}",
                 type: "POST",
@@ -141,10 +141,10 @@
                 success: function(data) {
                     document.getElementById("respformtable").deleteRow(row_index);
                 }
-            })  
+            })
         }
 
-        
+
     {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|is_profile:'RAC' or request.user.meccuser|is_profile:'DIRCOMP' or request.user.meccuser|is_profile:'GESCOL' or request.user.meccuser|is_profile:'REFAPP' or request.user.meccuser|is_profile:'DIRETU' %}
 
 
