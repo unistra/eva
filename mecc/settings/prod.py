@@ -73,3 +73,9 @@ STAGE = '{{ goal }}'
 MEDIA_ROOT = '/nfs/eva/uploads'
 # path for pdf files
 FILES_UPLOAD_PATH = 'docs/%Y'
+
+#######################
+# Email configuration #
+#######################
+# SERVER_EMAIL = 'root@localhost'
+EMAIL_SUBJECT_PREFIX = '[MECC]'

@@ -74,3 +74,9 @@ CAMELOT_TOKEN = '{{camelot_token}}'
 LDAP_SPORE = environ.get('LDAP_SPORE', 'http://rest-api.u-strasbg.fr/ldapws/description.json')
 LDAP_BASE_URL = environ.get('LDAP_BASE_URL', "http://ldap-ws.u-strasbg.fr")
 LDAP_TOKEN = '{{ldap_token}}'
+
+#######################
+# Email configuration #
+#######################
+#SERVER_EMAIL = 'root@localhost'
+EMAIL_SUBJECT_PREFIX = '[MECC]'

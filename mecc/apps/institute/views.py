@@ -420,6 +420,7 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['notification_to'] = settings.MAIL_FROM
     data['notification_object'] = "%s - %s %s" % (
         institute.label, request.user.first_name, request.user.last_name)
+    data['mail_prefix'] = settings.EMAIL_SUBJECT_PREFIX
 
     if hasattr(settings, 'EMAIL_TEST'):
         data['test_mail'] = _("""
