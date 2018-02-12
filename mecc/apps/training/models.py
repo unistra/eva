@@ -237,6 +237,11 @@ class Training(models.Model):
             self.__original_degree_type = self.degree_type
         except DegreeType.DoesNotExist:
             pass
+
+        if not self.code_year:
+            self.code_year = currentyear().code_year
+        if not self.degree_type_id:
+            self.degree_type = DegreeType.objects.first()
         if not self.n_train:
             # creating n_train for ROF imported training
             self.n_train = self.id
