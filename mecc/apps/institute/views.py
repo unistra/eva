@@ -137,10 +137,10 @@ def add_pple(request):
         if request.POST.get('type') in ['diretu', 'DIRETU']:
             if meccuser in institute.diretu.all():
                 return JsonResponse({
-                    'message': _("%(last_name)s %(first_name)s est déjà \
+                    'message': _("%(first_name)s %(last_name)s est déjà \
                     directeur d'études" % {
-                        'last_name': request.POST.get('last_name'),
-                        'first_name': request.POST.get('first_name')
+                        'first_name': request.POST.get('first_name'),
+                        'last_name': request.POST.get('last_name')
                     })
                 })
             institute.diretu.add(meccuser)
@@ -148,10 +148,10 @@ def add_pple(request):
         else:
             if meccuser in institute.scol_manager.all():
                 return JsonResponse({
-                    'message': _("%(last_name)s %(first_name)s est déjà \
+                    'message': _("%(first_name)s %(last_name)s  est déjà \
                     gestionnaire de scolarité" % {
-                        'last_name': request.POST.get('last_name'),
-                        'first_name': request.POST.get('first_name')
+                        'first_name': request.POST.get('first_name'),
+                        'last_name': request.POST.get('last_name')
                     })
                 })
             meccuser.is_ref_app = False if request.POST.get(
@@ -170,9 +170,9 @@ def add_pple(request):
         meccuser.save()
 
         return JsonResponse({
-            'success': _("%(last_name)s %(first_name)s a bien été ajouté" % {
-                'last_name': request.POST.get('last_name'),
-                'first_name': request.POST.get('first_name')
+            'success': _("%(first_name)s %(last_name)s a bien été ajouté" % {
+                'first_name': request.POST.get('first_name'),
+                'last_name': request.POST.get('last_name')
             })
         })
 
@@ -206,9 +206,9 @@ def remove_pple(request):
             meccuser.delete()
 
         return JsonResponse({
-            'success': _("%(last_name)s %(first_name)s a bien été supprimé" % {
-                'last_name': meccuser.user.last_name,
-                'first_name': meccuser.user.first_name
+            'success': _("%(first_name)s %(last_name)s a bien été supprimé" % {
+                'first_name': meccuser.user.first_name,
+                'last_name': meccuser.user.last_name
             })
         })
 
@@ -487,7 +487,7 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     institute = Institute.objects.get(code=code)
     institute_year = InstituteYear.objects.get(
         id_cmp=institute.id, code_year=current_year.code_year)
-    staff = institute_staff("CHM")
+    staff = institute_staff(code)
     data['letter_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
