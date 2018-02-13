@@ -385,7 +385,7 @@ def get_stuct_obj_details(request):
         })
     try:
         respens = User.objects.get(username=struct_obj.RESPENS_id)
-        name_respens = respens.last_name + " " + respens.first_name
+        name_respens =  respens.first_name + " " + respens.last_name
     except User.DoesNotExist:
         name_respens = None
     j = {

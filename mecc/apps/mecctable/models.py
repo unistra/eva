@@ -45,7 +45,7 @@ class StructureObject(models.Model):
         _('ID automatique de l\'objet'), blank=True)
     nature = models.CharField(
         verbose_name=_('Type d\'objet'), blank=False,
-        choices=TYPE_CHOICE, max_length=2) 
+        choices=TYPE_CHOICE, max_length=2)
     owner_training_id = models.IntegerField(
         _('ID de la formation propriétaire'))
     cmp_supply_id = models.CharField(
@@ -118,22 +118,22 @@ class StructureObject(models.Model):
     @property
     def get_respens_name(self):
         """
-        Return last_name and first_name of respens
+        Return first_name and last_name of respens
         """
         if self.RESPENS_id:
             user = User.objects.get(username=self.RESPENS_id)
-            return user.last_name + " " + user.first_name
+            return user.first_name + " " + user.last_name
         else:
             return ""
 
     @property
     def get_respens_name_small(self):
         """
-        Return last_name and first_name of respens
+        Return first_name and last_name of respens
         """
         if self.RESPENS_id:
             user = User.objects.get(username=self.RESPENS_id)
-            return user.first_name[:1] + ". " + user.last_name.title()
+            return user.first_name[:1] + ". " + user.last_name.title() 
         if self.external_name:
             return self.external_name.title()
         else:
