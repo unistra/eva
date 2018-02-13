@@ -80,12 +80,12 @@ class DocGenerator(object):
         if trainings:
             self.story = gen_model_story(
                 trainings,
-                "a", 
-                date, 
-                target, 
-                True, 
+                "a",
+                date,
+                target,
+                True,
                 "without",
-                "gen_type", 
+                "gen_type",
                 request.user, is_eci=True)
 
         else:
@@ -459,7 +459,7 @@ def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
         if styled and not custom else ' ',
         Paragraph("<para align=right textColor=green fontSize=8>\
                   additionnels : %s</para>" % len(additionals), styles['Normal'])
-        if 'publish' not in custom and custom and len(additionals) > 0 else ' ',
+        if custom and 'publish' not in custom and len(additionals) > 0 else ' ',
     ])
 
     paragraphs = ParagraphRules.objects.filter(Q(rule=e))
