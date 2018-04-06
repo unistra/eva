@@ -381,7 +381,7 @@ CKEDITOR_CONFIGS = {
 CAS_SERVER_URL = 'https://cas.unistra.fr:443/cas/login'
 CAS_LOGOUT_REQUEST_ALLOWED = ('cas-dev1.u-strasbg.fr', 'cas-dev2.u-strasbg.fr')
 CAS_USER_CREATION = True
-
+CAS_USERNAME_FORMAT = lambda username: username.lower().strip()
 
 ##########
 # Camelot #
