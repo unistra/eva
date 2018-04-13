@@ -187,7 +187,7 @@
                     parent_table = document.getElementById('table');
                     var results = 0
                     for (var i = 0; i < data.pple.length; i++) {
-                        if (data.pple[i].status === 'Enseignant'){
+                        if (data.pple[i].status === 'Enseignant' || data.pple[i].status === 'Administratif'){
                             results = 1
                             var tr = document.createElement('tr');
                             tr.appendChild(document.createElement('td'));
