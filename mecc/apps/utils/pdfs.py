@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from math import modf
 from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, TableStyle, PageBreak, CondPageBreak
+    Table, TableStyle, PageBreak, CondPageBreak, FrameBreak, Frame, PageTemplate
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
@@ -153,8 +153,10 @@ class DocGenerator(object):
         else:
             self.story = []
 
+        margin = 24
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
-                                     topMargin=24, bottomMargin=24)
+                                     topMargin=margin, bottomMargin=margin)
+        self.add_first_page_frames(margin)
 
         # building doc according to target -----------------------
 
@@ -170,6 +172,14 @@ class DocGenerator(object):
                            canvasmaker=NumberedCanvas_landscape)
 
         return self.doc, response
+
+    def add_first_page_frames(self, margin):
+        width, height = landscape(A4)
+        frame_title = Frame(margin, 140 * mm, width - margin * 2, 50 * mm, showBoundary=False)
+        frame_criteria = Frame(margin, margin, width / 4, 130 * mm, showBoundary=False)
+        frame_trainings = Frame(margin + (width / 4), margin, (width * .75 - margin * 2), 130 * mm, showBoundary=False)
+        first_page_template = PageTemplate(frames=[frame_title, frame_criteria, frame_trainings])
+        self.doc.addPageTemplates(first_page_template)
 
     # ----------------------------------------------------------------------
     def mecc_canvas(self, canvas, doc):
@@ -591,7 +601,7 @@ def models_first_page(model, criteria, trainings, story):
     story.append(Paragraph("<para align=center fontSize=16 spaceBefore=24 textColor=\
         steelblue>%s</para>" % "-" * 125, styles['Normal']))
 
-    story.append(Spacer(0, 36))
+    story.append(FrameBreak())
 
     # ### TABLE STYLES
     style_criteria_table = [
@@ -661,14 +671,13 @@ def models_first_page(model, criteria, trainings, story):
         trainings_table, style=style_trainings, colWidths=[6.5 * cm, 8 * cm])
     # ### BUILDING TABLE
     if criteria_table:
-        table = [[criteria_table, trainings_table]]
+        story.append(criteria_table)
+        story.append(FrameBreak())
+        story.append(trainings_table)
 
-        story.append(Table(table, style=style_table,
-                           colWidths=[8.5 * cm, 15.5 * cm]))
     else:
-        table = [[trainings_table]]
-        story.append(Table(table, style=style_table,
-                           colWidths=[15.5 * cm]))
+        story.append(FrameBreak())
+        story.append(trainings_table)
 
     return story
 
