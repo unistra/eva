@@ -1,5 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import User, Group
+
+from mecc.apps.years.models import UniversityYear
 from .views import home
 from django.contrib.sessions.middleware import SessionMiddleware
 
@@ -20,6 +22,9 @@ class SpoofTest(TestCase):
         self.u3 = User.objects.create_user(username="u3")
         self.des3 = Group.objects.create(name='DES3')
         self.u1.groups.add(self.des3)
+        self.year = UniversityYear.objects.create(code_year=2018, label_year='Année universitaire 2018/2019',
+                                                  is_target_year=True, date_validation=None, date_expected=None,
+                                                  is_year_init=True)
         self.factory = RequestFactory()
 
     def test_home(self):

@@ -17,7 +17,7 @@ class Profile(models.Model):
     cmp = models.CharField(_('Composante'), max_length=3)
 
     def __str__(self):
-        return self.label+" - "+str(self.year)
+        return self.label
 
     @property
     def give_user_id(self):
