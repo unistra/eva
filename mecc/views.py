@@ -24,7 +24,7 @@ def home(request):
             return redirect('dashboards:general')
         if e.name == "DES1":
             return redirect('training:list_all')
-    for e in request.user.meccuser.profile.all():
+    for e in request.user.meccuser.profiles_for_active_year():
         if e.code == "RESPFORM":
             return redirect('training:list_resp')
         if e.code == 'REFAPP':
