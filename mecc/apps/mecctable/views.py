@@ -22,7 +22,6 @@ from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from django_cas.decorators import login_required
 
-
 from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 
@@ -253,7 +252,7 @@ def get_mutual_by_cmp(request):
     try:
         asking = StructureObject.objects.get(
             id=request.GET.get('asking_id')) if request.GET.get(
-                'asking_id') is not '0' else None
+            'asking_id') is not '0' else None
         asking_period = asking.period if asking else None
         training_id = request.GET.get('training_id')
         data = {}
@@ -270,7 +269,7 @@ def get_mutual_by_cmp(request):
             cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
             code_year=currentyear().code_year,
             is_in_use=True).exclude(nature__in=to_exclude).exclude(
-                owner_training_id=int(training_id))
+            owner_training_id=int(training_id))
         if asking_period:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
         mutual_list = [[
@@ -385,7 +384,7 @@ def get_stuct_obj_details(request):
         })
     try:
         respens = User.objects.get(username=struct_obj.RESPENS_id)
-        name_respens =  respens.first_name + " " + respens.last_name
+        name_respens = respens.first_name + " " + respens.last_name
     except User.DoesNotExist:
         name_respens = None
     j = {
@@ -411,7 +410,6 @@ def get_stuct_obj_details(request):
 
 
 def update_respens_label(username, new_label, training, old_label):
-
     profile = Profile.objects.get(
         code="RESPENS", cmp=training.supply_cmp,
         year=currentyear().code_year, label="RESPENS - %s" % old_label)
@@ -469,6 +467,7 @@ def remove_object(request, id):
             children_list.append(e)
             get_children(e, children_list)
         return children_list
+
     for e in get_children(link):
         struct = StructureObject.objects.get(id=e.id_child)
 
@@ -560,6 +559,7 @@ def mecctable_update(request):
             ref_si_scol=j.get('ref_si_scol'),
             external_name=j.get('external_name')
         )
+
     if id_child == 0:
         struct = create_new_struct()
     else:
@@ -604,7 +604,7 @@ def mecctable_update(request):
         last_order_in_parent = ObjectsLink.objects.filter(
             id_training=training.id,
             id_parent=id_parent, code_year=currentyear().code_year).latest(
-                'order_in_child').order_in_child
+            'order_in_child').order_in_child
     except ObjectsLink.DoesNotExist:
         last_order_in_parent = 0
     last_order_in_parent += 1
@@ -662,12 +662,20 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         [e for e in root_link], respens_struct, current_structures,
         current_links, current_exams, all_exam=False)
 
+    def is_poweruser(training, user_profiles, current_user_username):
+        # user est membre d'un group pouvant éditer toute la formation
+        if user_profiles.filter(cmp=training.supply_cmp).filter(
+                code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']):
+            return True
+        # user est RESPFORM sur la formation
+        return True if current_user_username in [meccuser.user.username for meccuser in
+                                                 training.resp_formations.all()] else False
+
     input_is_open = training.input_opening[0] in ['1', '3']
-    is_powerfull = True if user_profiles.filter(cmp=training.supply_cmp).filter(
-        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU', 'RESPFORM']) else False
-    data['can_edit'] = (
-        is_powerfull and input_is_open) or request.user.is_superuser or 'DES1' in [
-            e.name for e in request.user.groups.all()]
+    user_is_poweruser = is_poweruser(training, user_profiles, request.user.username)
+    data['can_edit'] = (user_is_poweruser and input_is_open) \
+                       or request.user.is_superuser \
+                       or 'DES1' in [e.name for e in request.user.groups.all()]
     if training.input_opening[0] == "4":
         data['can_edit'] = False
     return render(request, template, data)
@@ -721,7 +729,7 @@ def update_mecc_position(request):
     list_obj = [{
         "id": int(e.split(':')[0]),
         "order": int(e.split(':')[1])} for e in request.POST.get(
-            'new_positions').split(',')]
+        'new_positions').split(',')]
 
     concerned_obj = ObjectsLink.objects.filter(
         id__in=[a.get('id') for a in list_obj])
