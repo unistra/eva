@@ -69,6 +69,7 @@
         </div>
     </div>
 </div>
+
 <style media="screen">
 /*put footer just under header*/
 tfoot {
@@ -89,20 +90,20 @@ function selectall(source) {
         checkboxes[i].checked = source.checked;
     }
 }
+
 function import_selected_suggestions(){
     let checkboxValues = [];
     $('input[name="suggest-id"]:checked').map(function(){
         checkboxValues.push(this.value);
-
     });
     $.ajax({
-        url: "{% url 'mecctable:import_objectslink'%}",
+        url: "{% url 'mecctable:import_objectslink' %}",
         type: "POST",
         data: {
             csrfmiddlewaretoken: '{{ csrf_token }}',
             selected_id: checkboxValues,
             asking_id: asking_inclusion,
-            id_training : {{training.id}}
+            id_training : {{ training.id }}
         },
         success: function(data) {
             $('#shared-object').modal('hide');
@@ -111,7 +112,7 @@ function import_selected_suggestions(){
                     message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
                     type:'warning'
                 }).show();
-            }else{
+            } else {
                 $('.top-right').notify({
                     message: { text: 'Tableau mis à jour.' },
                     type:'info'
@@ -123,16 +124,15 @@ function import_selected_suggestions(){
             console.log(data);
         }
     });
-
 }
 $(document).ready(function () {
     // set datatable
     let table_suggest =  $('#suggest').DataTable( {
-        "paging": false,
+        paging: false,
         // "ordering": false,
-        "info": false,
-        "searching":false,
-        "ordering":false,
+        info: false,
+        searching: false,
+        ordering: false,
         order: [[ 1, 'asc' ]],
     } );
 
@@ -147,17 +147,16 @@ $(document).ready(function () {
     // to populate datatable
     $('#select-train').on('click', function() {
         populate_table(asking_inclusion, this.value)
-
     });
     // ajax call to populate
     function populate_table(asking_inclusion, cmp_code){
         $.ajax({
-            url: "{% url 'mecctable:get_mutual_by_cmp'%}",
+            url: "{% url 'mecctable:get_mutual_by_cmp' %}",
             type: "GET",
             data: {
                 cmp_code: cmp_code,
                 asking_id: asking_inclusion,
-                training_id: {{training.id}}
+                training_id: {{ training.id }}
             },
             success: function(data) {
                 table_suggest = $('#suggest').DataTable( {
@@ -171,22 +170,22 @@ $(document).ready(function () {
                        selector: 'td:first-child'
                     },
                     order: [[ 1, 'asc' ]],
-                    "paging": false,
-                    "info": false,
-                    "searching":false,
+                    paging: false,
+                    info: false,
+//                    searching:false,
                     destroy: true, // in order to reset early data
                     data: data.suggest, // populate
                     language: {
                        processing:     "Traitement en cours...",
                        search:         "Rechercher&nbsp;:",
-                       lengthMenu:    "Afficher _MENU_ &eacute;l&eacute;ments",
+                       lengthMenu:     "Afficher _MENU_ &eacute;l&eacute;ments",
                        info:           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
                        infoEmpty:      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
                        infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
                        infoPostFix:    "",
                        loadingRecords: "Chargement en cours...",
                        zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
-                       emptyTable:     " ",
+                       emptyTablei:    " ",
                        paginate: {
                            first:      "Premier",
                            previous:   "Pr&eacute;c&eacute;dent",
@@ -198,75 +197,33 @@ $(document).ready(function () {
                            sortDescending: ": activer pour trier la colonne par ordre décroissant"
                        }
                     },
-                    // add a new column for checking object
-                    columnDefs: [ {
-                       orderable: false,
-                       className: 'select-checkbox',
-                       targets:   0
-                    } ],
-                    select: {
-                       style: 'os',
-                       selector: 'td:first-child'
-                    },
-                    order: [[ 1, 'asc' ]],
                     initComplete: function(){
-                        // generate a new line with select option for each column
-                        this.api().columns().every(function() {
+                        this.api().columns().every( function () {
                             let column = this;
-                            let select = $('<select class="select_suggest" ><option value="" disabled>---</option></select>')
+                            let select = $('<select><option value ="" disabled>---</option></select>')
                                 .appendTo( $(column.footer()).empty() )
-                                // hide and show tr according to filter
-                                .on('change', function() {
-                                    let value = $(this).val();
-                                    $("#suggest tbody tr:contains('"+value+"')").show();
-                                    $("#suggest tbody tr:not(:contains('"+value+"'))").hide();
+                                .on( 'change', function() {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+                                    console.log(column.search( val ? '^'+val+'$' : '', true, false ));
+                                    column
+                                        .search( val ? '^'+val+'$' : '', true, false )
+                                        .draw();
                                 } );
-                            // reset select option in order to make sense to hide and show above
-                            select.mousedown(function(){
-                                selectTags = document.getElementsByTagName("select_suggest");
-                                for(let i = 0; i < selectTags.length; i++) {
-                                  selectTags[i].selectedIndex =0;
-                                }
-                            });
-                            // add option to show all stuff
-                            select.append('<option class="option_suggest" value=" ">Tous</option>');
-                            // get all td from colum and make an option for each distinct one
-                            column.data().unique().sort().each(function (d, j) {
-                                if (d){
-                                    let done = false;
-                                    if (typeof d === 'string'){
-                                        let splited = d.split('- ');
-                                        $.each(splited, function(i, val){
-                                            done = true;
-                                            if (i===0){
-                                                select.append('<option class="option_suggest" value="'+d+'" title="'+val+'">'+val+'</option>')                                            
-                                            }else{
-                                                select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;'+val+'</option>')                                            
-                                            }
-                                        })
-                                    } else {
-                                        done = true
-                                    }
-                                    if (done == false){
-                                        let re = /\b[\w]+(?:\s+[\w]+){0,2}/g;
-                                        let wordList = d.match(re);
-                                        $.each(wordList, function(i, value){
-                                            if (i === 0){
-                                                select.append('<option class="option_suggest" value="'+d+'" title="'+value+'">'+value+'</option>')
-                                            } else {
-                                                select.append('<option disabled style="font-style:italic">&nbsp;&nbsp;&nbsp;'+value+'</option>')
-                                                
-                                            }
-                                        })
-                                    }
+                            select.append('<option class="option_suggest" value="">Tous</option>');
+                            column.data().unique().sort().each( function( d, j ) {
+                                if(column.search() === '^'+d+'$'){
+                                    select.append( '<option value="'+d+'" selected="selected">'+d+'</option>' )
+                                } else {
+                                    select.append( '<option value="'+d+'">'+d+'</option>' )
                                 }
                             } );
-                        } );
+                        } );    
                     },
                 } );
-
             }
-        })
+        });
     }
 });
 </script>
