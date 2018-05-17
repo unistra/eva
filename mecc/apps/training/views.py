@@ -35,6 +35,27 @@ from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
 
 
 @is_ajax_request
+def do_regime_session_check(request):
+    """
+    Check if the regime or session number of a training has changed
+    """
+    # DATA
+    current_training = Training.objects.get(id=request.GET.get('training_id'))
+    old_training = Training.objects.get(
+        n_train=current_training.n_train,
+        code_year=current_training.code_year-1
+    )
+
+    regime_session_changed = True if\
+        current_training.MECC_type is not old_training.MECC_type or\
+        current_training.session_type is not old_training.session_type\
+        else False
+
+    json_response = {'regime_session_changed': regime_session_changed}
+
+    return JsonResponse(json_response)
+
+@is_ajax_request
 def do_consistency_check(request):
     """
     call consistency check for a specified training

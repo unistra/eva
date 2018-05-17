@@ -754,7 +754,7 @@ def copy_old_mecctable2(request, id_training):
     old_year = current_year - 1
     years = [current_year, old_year]
 
-    #  * TRAINING
+    # * TRAINING
     trainings = Training.objects.filter(code_year__in=years)
     current_trainings = trainings.filter(code_year=current_year)
     old_trainings = trainings.filter(code_year=old_year)
@@ -772,23 +772,142 @@ def copy_old_mecctable2(request, id_training):
     old_links = links.filter(code_year=old_year)
     old_links_concerned = old_links.filter(id_training=old_training.id)
 
-    # ITERATE OVER ALL OLD LINK CONCERNED
+    import copy
+
+    # copy structure function
+    def copy_structure(to_copy):
+        """
+        Return a copy of a structure with brand new stuff
+        ACHTUNG : ONLY USEABLE HERE
+        """
+        new_struct = copy.copy(to_copy)
+        new_struct.id = None  # Needed to not override exisitng object !
+        new_struct.owner_training_id = training.id
+        new_struct.regime = training.MECC_type
+        new_struct.session = training.session_type
+        new_struct.code_year = training.code_year
+        new_struct.auto_id = to_copy.auto_id
+
+        new_struct.save()
+
+        return new_struct
+
+    def copy_link(link, new_parent_id, new_child_id):
+        """
+        Perform a copy of a link with brand new stuff
+        ACHTUNG : ONLY USEABLE HERE
+        """
+        new_link = copy.copy(link)
+        new_link.id = None
+        new_link.id_training = training.id
+        new_link.code_year = training.code_year
+        new_link.id_parent = new_parent_id
+        new_link.id_child = new_child_id
+        new_link.n_train_child = training.n_train if not link.is_imported\
+            else current_owner_training.n_train
+
+        new_link.save()
+
+        return new_link
+
+    # ITERATE OVER ALL OLD LINKS CONCERNED
     for ol in old_links_concerned:
 
         # récuperer les anciennes structures par rapport au lien dans la boucle
         old_struct_child = old_structures.get(id=ol.id_child)
         old_struct_parent = old_structures.get(
             id=ol.id_parent) if ol.id_parent != 0 else None
-        if not ol.is_imported:
-            # process si la structure n'est pas importée :
-            #
-            #   - copier les structures parent et enfants si elles n'existent pas
-            #   - creer un nouveau lien
 
-            # IF OL is imported
-            pass
+        # process si la structure n'est pas importée :
+        if not ol.is_imported:
+
+            #   - copier la structure fils si elle n'existe pas
+            try:
+                new_struct_child = current_structures.get(
+                    auto_id=old_struct_child.auto_id,
+                    owner_training_id=id_training
+                )
+            except ObjectDoesNotExist:
+                new_struct_child = copy_structure(old_struct_child)
+            new_child_id = new_struct_child.id
+
+            #   - copier la structure père si elle n'existe pas
+            if old_struct_parent:
+                try:
+                    new_struct_parent = current_structures.get(
+                        auto_id=old_struct_parent.auto_id,
+                        owner_training_id=id_training
+                    )
+                except ObjectDoesNotExist:
+                    new_struct_parent = copy_structure(old_struct_parent)
+                new_parent_id = new_struct_parent.id
+            else:
+                new_parent_id = 0
+
+            #   - creer un nouveau lien
+            try:
+                new_link = current_links.get(
+                    id_parent=new_parent_id,
+                    id_child=new_child_id
+                )
+            except ObjectDoesNotExist:
+                copy_link(
+                    link=ol,
+                    new_child_id=new_child_id,
+                    new_parent_id=new_parent_id
+                )
+
+            #   - Si la structure est mutualisée
+            if new_struct_child.mutual:
+                # MAJ des liens des formations consommatrices de cette structure
+                # pour que ces liens pointent vers cette structure
+                current_links.filter(
+                    id_child=old_struct_child.id
+                ).update(
+                    id_child=new_child_id
+                )
+
         else:
-            pass
+            # IF OL is imported
+            old_owner_training = old_trainings.get(
+                id=old_struct_child.owner_training_id
+            )
+            try:
+                current_owner_training = current_trainings.get(
+                    n_train=old_owner_training.n_train
+                )
+                new_struct_child = current_structures.get(
+                    auto_id=old_struct_child.auto_id,
+                    owner_training_id=current_owner_training.id
+                )
+            except ObjectDoesNotExist:
+                new_struct_child = old_struct_child
+                current_owner_training = old_owner_training
+            new_child_id = new_struct_child.id
+
+            if old_struct_parent:
+                try:
+                    new_struct_parent = current_structures.get(
+                        auto_id=old_struct_parent.auto_id,
+                        owner_training_id=id_training
+                    )
+                except ObjectDoesNotExist:
+                    new_struct_parent = copy_structure(old_struct_parent)
+                new_parent_id = new_struct_parent.id
+            else:
+                new_parent_id = 0
+
+            try:
+                new_link = current_links.get(
+                    id_parent=new_parent_id,
+                    id_child=new_child_id
+                )
+            except ObjectDoesNotExist:
+                new_link = copy_link(
+                    link=ol,
+                    new_child_id=new_child_id,
+                    new_parent_id=new_parent_id
+                )
 
     return redirect('/mecctable/training/' + str(id_training))
 

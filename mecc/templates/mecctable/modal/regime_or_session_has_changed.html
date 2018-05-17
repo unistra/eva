@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<div class="fade modal" id="regime_session_changed" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+                <div class="title-modal"  >
+                    <h1 style="font-size:1em;color:red">{% trans "ATTENTION !" %}</h1>
+                </div>
+            </div>
+            <div class="modal-body">
+                <span id="para-changed-1" style="margin-bottom:0.2em">
+                    {% trans "Le régime ou le nombre de sessions a changé pour la nouvelle année."%}
+                </span>
+                    <br>
+                <span id="para-changed-2">
+                    {% trans "La nouvelle valeur de ces attributs va être appliquée à tous les objets propres à cette formation."%}
+                </span>
+            </div>
+            <div class="modal-footer"  style="padding-bottom:1em">
+                <form method="POST" action="{%url 'mecctable:copy_old_mecctable' training.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value='{% trans "Confirmer" %}' class="btn btn-primary" />
+                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

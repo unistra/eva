@@ -123,7 +123,7 @@
 
             </div>
             <div class="flex-item">
-                <a href="{%if la_liste%}#{%else%}{%url 'mecctable:copy_old_mecctable' training.id %}{%endif%}"class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}" id="copy-old-mecctable" onclick="check_regime_session({{training.id}})">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
                 <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste or not can_edit%}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
@@ -146,6 +146,7 @@
         {% include "mecctable/modal/show_consume.html" %}
         {% include "mecctable/modal/include_shared_object.html" %}
         {% include "mecctable/modal/object_is_used.html" %}
+        {% include "mecctable/modal/regime_or_session_has_changed.html" %}
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
         {% include "training/send_mail.html"%}
@@ -184,6 +185,26 @@ $('.editme').on('keydown', function(e) {
 });
 
 let asking_inclusion = 0;
+
+function check_regime_session(id_training) {
+    $.ajax({
+        url: "{%url 'training:regime_session_check' %}",
+        type: "GET",
+        data: {
+           training_id: id_training,
+        },
+        success: function(data) {
+            if(data.regime_session_changed){
+                $('#regime_session_changed').modal('toggle');
+            } else {
+                $('#copy-old-mecctable').prop("href", "{%url 'mecctable:copy_old_mecctable' training.id %}");
+                $('#copy-old-mecctable').removeAttr("onclick");
+                $link = $('#copy-old-mecctable');
+                $link[0].click();
+            }
+        }
+    });
+}
 
 function check_delete(id_obj, label){
     $.ajax({
