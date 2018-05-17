@@ -12,7 +12,7 @@ class Profile(models.Model):
     Model for profile with year and cmp
     """
     code = models.CharField(_('Code du profil'), max_length=10)
-    label = models.CharField(_('Libellé du profil'), max_length=100)
+    label = models.TextField(_('Libellé du profil'))
     year = models.IntegerField(_('Année'), blank=True, null=True)
     cmp = models.CharField(_('Composante'), max_length=3)
 
@@ -40,7 +40,7 @@ class MeccUser(models.Model):
         ('ADM', _('Administratif')),
         ('PROF', _('Enseignant')),
     )
-    
+
     # django_user = settings.AUTH_USER_MODEL
     user = models.OneToOneField(User, on_delete=models.CASCADE,)
     cmp = models.CharField(_('Composante'), max_length=5, blank=True)
