@@ -61,17 +61,17 @@ def manage_respform(dic, t_id):
     user_profile = Profile.objects.filter(Q(code="RESPFORM", cmp=supply_cmp, year=training.code_year))
     user, user_created = User.objects.get_or_create(
         username=dic.get('username'))
-    if user_created:
-        user.username = dic.get('username')
-        user.first_name = dic.get('firstname')
-        user.last_name = dic.get('name')
-        user.email = dic.get('mail')
-        user.save()
 
     meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
     u_p = user_profile.first()
 
     if 'add_respform' in dic:
+        if user_created:
+            user.username = dic.get('username')
+        user.first_name = dic.get('firstname')
+        user.last_name = dic.get('name')
+        user.email = dic.get('mail')
+        user.save()
         if len(user_profile) < 1:
             u_p = Profile.objects.create(
                 code="RESPFORM", cmp=supply_cmp,
