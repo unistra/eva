@@ -1200,7 +1200,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
             Paragraph("<para leftIndent=%s>%s</para> " % (what.get('rank') * 10,
                                                           struct.label), styles['Normal']),
             Paragraph(
-                struct.get_respens_name,
+                struct.get_respens_name if not struct.external_name else struct.external_name,
                 styles['CenterSmall'] if not struct.external_name else styles['CenterSmallItalic']),
             [ref_data],
             struct.ECTS_credit if struct.ECTS_credit else '-',
