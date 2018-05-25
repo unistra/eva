@@ -62,8 +62,8 @@
 
         let last_name = clicked.closest('tr').children('td:first');
         let first_name = $(last_name).next('td');
-        let status = $(first_name).next('td');
-        let institute = $(first_name).next('td').next('td');
+        let status = $(first_name).next('td').next('td');
+        let institute = $(status).next('td');
         let mail = $(institute).next('td');
         let id = $(mail).next('td');
         document.getElementById('id_username').value = id.text().replace(/\s+/g, '');
