@@ -3,7 +3,7 @@ def sidebar(request):
     if request.user.is_superuser:
         pass
     else:
-        profiles = request.user.meccuser.profiles_for_active_year()
+        profiles = request.user.meccuser.profile.all()
         new_p = []
         level_1 = ['DIRCOMP', 'RAC', 'REFAPP']
         level_2 = ['DIRETU', 'GESCOL']

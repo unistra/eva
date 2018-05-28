@@ -4,8 +4,6 @@ from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from mecc.apps.years.models import UniversityYear
-
 
 class Profile(models.Model):
     """
@@ -17,7 +15,7 @@ class Profile(models.Model):
     cmp = models.CharField(_('Composante'), max_length=3)
 
     def __str__(self):
-        return self.label+" - "+str(self.year)
+        return self.label
 
     @property
     def give_user_id(self):
@@ -48,10 +46,6 @@ class MeccUser(models.Model):
         _('Statut'), max_length=4, choices=STATUS_CHOICES, blank=True)
     profile = models.ManyToManyField(Profile)
     is_ref_app = models.BooleanField(_("Référent application"), default=False)
-
-    def profiles_for_active_year(self):
-        year = UniversityYear.objects.get(is_target_year=True)
-        return self.profile.all().filter(year=year.code_year)
 
     def __str__(self):
         return self.user.username
