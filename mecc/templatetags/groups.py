@@ -15,7 +15,7 @@ def has_group(user, group_name):
 @register.filter(name='is_profile')
 def is_profile(meccuser, profile_code):
     return True if profile_code in [
-        e.code for e in meccuser.profiles_for_active_year()] else False
+        e.code for e in meccuser.profile.all()] else False
 
 
 @register.filter(name='has_profile')
