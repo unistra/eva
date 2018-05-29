@@ -1,46 +1,56 @@
-{% extends "base.html" %} {% load i18n crispy_forms_tags groups staticfiles %} {% block page-header %} {% trans "Modalités d'évaluation des connaissances et des compétences" %} {{request.display.current_year}} {% endblock %} {% block app_content %}
-<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2> {% if institutes %} {% regroup institutes by field as institute_list %} {% for field in institute_list %} <span>{{ field.grouper }}</span>
-<table>
-    {% for item in field.list %}
-    <tr>
-        <td width="50%">
-            <span class='comp-right' id='{{item.code}}'>{{item.label}}</span>
-        </td>
-        <td>
-            <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span></a>
-        </td>
-        <td>
-            <a href="/doc_gen/dispatch/?institute={{item.id}}" style="margin-left:10px;" >MECC</a>
-        </td>
-        <td>
-            {% for letter in letters %}
-                {% if letter.object_id == item.id %}
-                    <a href="{{ letter.file.url }}" style="margin-left:10px;">
-                        {% trans "Lettre de présentation" %} (1)
-                    </a>
-                {% else %}
-                    <a href="#" style="margin-left:10px;">
-                        {% trans "Lettre de présentation" %} (0)
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </td>
-        <td>
-            <a class="select " onclick="detail_files({{item.id}})" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}
-                {% for other in others %}
-                    {% if other.object_id == item.id %}
-                        <span id="files_count">({{ other.f_count }})</span>
-                    {% else %}
-                        <span id="files_count">(0)</span>
-                    {% endif %}
-                {% endfor %}
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% extends "base.html" %} {% load i18n crispy_forms_tags groups staticfiles %}
 
-{% endfor %} {% include "training/modal_preview_files.html" %}
+{% block page-header %} {% trans "Modalités d'évaluation des connaissances et des compétences" %} {{request.display.current_year}} {% endblock %}
+
+{% block app_content %}
+<h2 class='title-block bold'>{% trans "Sélectionnez une composante:" %}</h2>
+    {% if institutes %}
+        {% regroup institutes by field as institute_list %}
+        <table>
+        {% for field in institute_list %}
+            <tr>
+                <th>{{ field.grouper }}</th>
+                <th><span class="sr-only">{% trans "Tableau de bord composante" %}</span></th>
+                <th><span class="sr-only">{% trans "MECC composante" %}</span></th>
+                <th><span class="sr-only">{% trans "Lettre de présentation" %}</span></th>
+                <th><span class="sr-only">{% trans "Autres documents" %}</span></th>
+            </tr>
+
+            {% for item in field.list %}
+                <tr>
+                    <td width="50%">
+                        <span class='comp-right' id='{{item.code}}'>{{item.label}}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'dashboards:institute' item.code %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true" ></span></a>
+                    </td>
+                    <td>
+                        <a href="/doc_gen/dispatch/?institute={{item.id}}" style="margin-left:10px;" >MECC</a>
+                    </td>
+                    <td>
+                        {% for letter in letters %}
+                            {% if letter.object_id == item.id %}
+                                <a href="{{ letter.file.url }}" style="margin-left:10px;">
+                                    {% trans "Lettre de présentation" %} (1)
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for other in others %}
+                            {% if other.object_id == item.id %}
+                                <a class="select " onclick="detail_files({{item.id}})" style="margin-left:10px;">{% trans "Autres documents (PV Conseils...)" %}
+                                    <span id="files_count">({{ other.f_count }})</span>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </table>
+
+{% include "training/modal_preview_files.html" %}
 <script type="text/javascript">
     function detail_files(institute) {
         $.ajax({
@@ -66,4 +76,5 @@
         $('#preview_files').modal('show');
     }
 </script>
-{% endif %} {%endblock%}
+    {% endif %}
+{%endblock%}
