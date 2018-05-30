@@ -39,7 +39,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         uy = UniversityYear.objects.get(is_target_year=True)
         if uy.date_validation:
             iy = InstituteYear.objects.filter(
-                code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+                code_year=uy.code_year, date_expected_MECC__gt=uy.date_expected)
             institutes = Institute.objects.filter(
                 training__code_year=uy.code_year).distinct()
         else:
