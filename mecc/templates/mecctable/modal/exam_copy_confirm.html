@@ -1,0 +1,21 @@
+{% load i18n %}
+
+<div class="fade modal" id="exam_copy_confirm" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+            <div class="modal-body">
+                <span id="para-exam-copy-1" style="margin-bottom:0.2em">
+                    {% trans "Etes-vous sûr de vouloir récupérer toutes les épreuves de l'année précédente ?"%}
+                </span>
+            </div>
+            <div class="modal-footer"  style="padding-bottom:1em">
+                <button class="btn btn-primary" onclick="copy_old_exams()">{% trans "Oui" %}</button>
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Non" %}</button>
+            </div>
+        </div>
+    </div>
+</div>

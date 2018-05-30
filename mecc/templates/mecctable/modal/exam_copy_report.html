@@ -1,0 +1,23 @@
+{% load i18n %}
+
+<div class="fade modal" id="exam_copy_report" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+            <div class="modal-body">
+                <span id="para-exam-report-1" style="margin-bottom:0.2em">
+                    {% trans "La duplication a été effectuée pour "%}
+                    <span id="para-exam-report-cnt-1" style="color:red"></span>
+                    <span id="para-exam-report-cnt-2" style="color:red">{% trans " objets " %}</span>
+                    {% trans "de la structure d'enseignement."%}
+                </span>
+            </div>
+            <div class="modal-footer"  style="padding-bottom:1em">
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>

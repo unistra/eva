@@ -39,7 +39,7 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         uy = UniversityYear.objects.get(is_target_year=True)
         if uy.date_validation:
             iy = InstituteYear.objects.filter(
-                code_year=uy.code_year, date_expected_MECC__gt=uy.date_validation)
+                code_year=uy.code_year, date_expected_MECC__gt=uy.date_expected)
             institutes = Institute.objects.filter(
                 training__code_year=uy.code_year).distinct()
         else:
@@ -147,7 +147,6 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
         data['doc_cadre'] = doc_cadre
         data['university_year'] = uy
         data['cfvu_entries'] = cfvu_entries
-        data['institutes_cfvu_counter'] = iy.count()
         data['trainings_uncompleted_counter'] = t_uncompleted.count()
         data['trainings_completed_no_validation_counter'] = t_completed_no_validation.count()
         data['institutes_trainings_completed_no_validation'] = institutes_trainings_completed_no_validation

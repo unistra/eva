@@ -7,7 +7,7 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
     send_mail_respform, copy_old_mecctable2, list_exams, add_exam, update_exam, \
-    delete_exam, copy_exam_1_to_2
+    delete_exam, copy_exam_1_to_2, copy_old_exams
 
 
 urlpatterns = [
@@ -104,9 +104,11 @@ urlpatterns = [
         ExamUpdateView.as_view(),
         name='mecctable_exam_update'),
 
-    url(r'^copy_old_mecctable/(?P<id_training>\w+)$',
+    url(r'^copy_old_mecctable/$',
         copy_old_mecctable2,
         name='copy_old_mecctable'),
-
+    url(r'^copy_old_exams/$',
+        copy_old_exams,
+        name='copy_old_exams'),
 
 ]

@@ -6,13 +6,14 @@ from decimal import InvalidOperation
 
 from django.views.generic import DetailView, ListView, UpdateView, CreateView
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
@@ -562,6 +563,36 @@ def mecctable_update(request):
 
     if id_child == 0:
         struct = create_new_struct()
+        try:
+            coeff = int(struct.ECTS_credit) / int(3)
+        except TypeError:
+            coeff = None
+        try:
+            last_order_in_parent = ObjectsLink.objects.filter(
+                id_training=training.id,
+                id_parent=id_parent, code_year=currentyear().code_year).latest(
+                'order_in_child').order_in_child
+        except ObjectsLink.DoesNotExist:
+            last_order_in_parent = 0
+        last_order_in_parent += 1
+        try:
+            link = ObjectsLink.objects.get(
+                id_child=id_child, id_training=training.id,
+                id_parent=id_parent, code_year=currentyear().code_year)
+        except ObjectsLink.DoesNotExist:
+            link = ObjectsLink.objects.create(
+                id_child=struct.id, code_year=currentyear().code_year,
+                id_training=training.id, id_parent=id_parent,
+                order_in_child=last_order_in_parent,
+                coefficient=coeff if struct.nature == 'UE' else None,
+                n_train_child=training.n_train, nature_child=j.get('nature')
+            )
+        if 'DU' in str(training.degree_type.short_label) and int(struct.ECTS_credit) == 0:
+            coeff = 0
+        else:
+            coeff = coeff if coeff != 0 else None
+        link.coefficient = coeff if struct.nature == 'UE' else None
+        link.save()
     else:
         struct = StructureObject.objects.get(id=id_child)
         # check the respens is the same as before and update respens label
@@ -596,36 +627,7 @@ def mecctable_update(request):
         struct.ROF_supply_program = j.get('ROF_supply_program')
         struct.ref_si_scol = j.get('ref_si_scol')
         struct.save()
-    try:
-        coeff = int(struct.ECTS_credit) / int(3)
-    except TypeError:
-        coeff = None
-    try:
-        last_order_in_parent = ObjectsLink.objects.filter(
-            id_training=training.id,
-            id_parent=id_parent, code_year=currentyear().code_year).latest(
-            'order_in_child').order_in_child
-    except ObjectsLink.DoesNotExist:
-        last_order_in_parent = 0
-    last_order_in_parent += 1
-    try:
-        link = ObjectsLink.objects.get(
-            id_child=id_child, id_training=training.id,
-            id_parent=id_parent, code_year=currentyear().code_year)
-    except ObjectsLink.DoesNotExist:
-        link = ObjectsLink.objects.create(
-            id_child=struct.id, code_year=currentyear().code_year,
-            id_training=training.id, id_parent=id_parent,
-            order_in_child=last_order_in_parent,
-            coefficient=coeff if struct.nature == 'UE' else None,
-            n_train_child=training.n_train, nature_child=j.get('nature')
-        )
-    if 'DU' in str(training.degree_type.short_label) and coeff == 0:
-        coeff = 0
-    else:
-        coeff = coeff if coeff != 0 else None
-    link.coefficient = coeff if struct.nature == 'UE' else None
-    link.save()
+
 
     return JsonResponse(data)
 
@@ -744,7 +746,8 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
-def copy_old_mecctable2(request, id_training):
+@is_ajax_request
+def copy_old_mecctable2(request):
     """
     Rewrite of copy_old_mecctable otherwise my head will explode
     """
@@ -758,7 +761,8 @@ def copy_old_mecctable2(request, id_training):
     trainings = Training.objects.filter(code_year__in=years)
     current_trainings = trainings.filter(code_year=current_year)
     old_trainings = trainings.filter(code_year=old_year)
-    training = trainings.get(id=id_training)
+    training_id = request.GET.get('training_id')
+    training = trainings.get(id=training_id)
     old_training = old_trainings.get(n_train=training.n_train)
 
     # * STRUCTURES
@@ -771,6 +775,8 @@ def copy_old_mecctable2(request, id_training):
     current_links = links.filter(code_year=current_year)
     old_links = links.filter(code_year=old_year)
     old_links_concerned = old_links.filter(id_training=old_training.id)
+
+    mecctable_imported = False
 
     import copy
 
@@ -825,7 +831,7 @@ def copy_old_mecctable2(request, id_training):
             try:
                 new_struct_child = current_structures.get(
                     auto_id=old_struct_child.auto_id,
-                    owner_training_id=id_training
+                    owner_training_id=training_id
                 )
             except ObjectDoesNotExist:
                 new_struct_child = copy_structure(old_struct_child)
@@ -836,7 +842,7 @@ def copy_old_mecctable2(request, id_training):
                 try:
                     new_struct_parent = current_structures.get(
                         auto_id=old_struct_parent.auto_id,
-                        owner_training_id=id_training
+                        owner_training_id=training_id
                     )
                 except ObjectDoesNotExist:
                     new_struct_parent = copy_structure(old_struct_parent)
@@ -889,7 +895,7 @@ def copy_old_mecctable2(request, id_training):
                 try:
                     new_struct_parent = current_structures.get(
                         auto_id=old_struct_parent.auto_id,
-                        owner_training_id=id_training
+                        owner_training_id=training_id
                     )
                 except ObjectDoesNotExist:
                     new_struct_parent = copy_structure(old_struct_parent)
@@ -908,8 +914,11 @@ def copy_old_mecctable2(request, id_training):
                     new_child_id=new_child_id,
                     new_parent_id=new_parent_id
                 )
+ 
+    mecctable_imported = True
 
-    return redirect('/mecctable/training/' + str(id_training))
+    json_response = {"mecctable_imported": mecctable_imported}
+    return JsonResponse(json_response)
 
 
 def copy_old_mecctable(request, id_training):
@@ -1069,6 +1078,63 @@ def copy_old_mecctable(request, id_training):
             new_link.save()
 
     return redirect('/mecctable/training/' + str(id_training))
+
+
+def copy_old_exams(request):
+    """
+    Copy exams from last year
+    into unchanged structures owned by the current training
+    """
+    # Gimme all your training,
+    # all your exams and structures too
+    id_training = request.GET.get('training_id')
+    current_training = Training.objects.get(id=id_training)
+    old_training = Training.objects.get(
+        code_year=current_training.code_year-1,
+        n_train=current_training.n_train
+    )
+    current_structures = StructureObject.objects.filter(
+        owner_training_id=id_training,
+    )
+    old_structures = StructureObject.objects.filter(
+        owner_training_id=old_training.id
+    )
+    current_exams = Exam.objects.filter(
+        id_attached__in=[structure.id for structure in current_structures],
+        code_year=current_training.code_year
+    )
+    old_exams = Exam.objects.filter(
+        id_attached__in=[structure.id for structure in old_structures],
+        code_year=old_training.code_year
+    )
+    current_structures_with_exams = current_structures.filter(
+        id__in=[exam.id_attached for exam in current_exams]
+    )
+    exams_copied_cnt = 0
+    data = {}
+
+    import copy
+    # For each exam in the structures of last year training (old_exam)
+    # we check that the corresponding current structure is empty
+    # in that case, the old_exam is copied in the current_structure
+    for old_exam in old_exams:
+        old_structure = old_structures.get(id=old_exam.id_attached)
+        current_structure = current_structures.get(
+            label=old_structure.label
+        )
+        if current_structure not in current_structures_with_exams:
+            new_exam = copy.copy(old_exam)
+            new_exam.id = None
+            new_exam._id = None
+            new_exam.code_year = current_training.code_year
+            new_exam.id_attached = current_structure.id
+            new_exam.save()
+            exams_copied_cnt += 1
+
+    print(exams_copied_cnt)
+    data['copied_exams_cnt'] = exams_copied_cnt
+
+    return JsonResponse(data)
 
 
 # Using generic classview
