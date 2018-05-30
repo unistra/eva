@@ -28,7 +28,7 @@
 <span class="top-right"></span>
 <ul class="nav nav-tabs" style="margin-bottom:1em">
     <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-    <li><a href={%if training and not "CATALOGUE" in training.degree_type.long_label%}"{% url 'training:edit_rules' training.pk%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Règles" %}</a></li>
+    <li><a href="{%if training%}{%url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
 <div class="disp-flex dir-col has-bottom-border">
@@ -93,11 +93,11 @@
                     </span>
                 </div>
 
-            <div class="">
-                {%for a in la_liste %}
-                    {%include "mecctable/tree_view.html" %}
-                {%endfor%}
-            </div>
+                <div class="mecctable-content">
+                    {%for a in la_liste %}
+                        {%include "mecctable/tree_view.html" %}
+                    {%endfor%}
+                </div>
         </div>
         {% endif %}
 
@@ -123,10 +123,10 @@
 
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 {%if la_liste%}disabled {%endif%}" id="copy-old-mecctable" onclick="check_regime_session({{training.id}})">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 copy-old {%if la_liste%}disabled {%endif%}" id="copy-old-mecctable">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
             </div>
             <div class="flex-item">
-                <a href="{%if la_liste%}#####{%else%}#{%endif%}" class="btn-primary btn btn-sm btn-1 {% if not la_liste or not can_edit%}disabled {% endif %}">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+                <a href="#" class="btn-primary btn btn-sm btn-1 copy-old {% if not la_liste or not can_edit%}disabled {% endif %}" id="copy-old-exams">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
             </div>
             {% if  can_edit and object.input_opening.0 != "4" %}
             <div class="flex-item">                    
@@ -147,6 +147,9 @@
         {% include "mecctable/modal/include_shared_object.html" %}
         {% include "mecctable/modal/object_is_used.html" %}
         {% include "mecctable/modal/regime_or_session_has_changed.html" %}
+        {% include "mecctable/modal/exam_regime_session_changed.html" %}
+        {% include "mecctable/modal/exam_copy_confirm.html" %}
+        {% include "mecctable/modal/exam_copy_report.html" %}
         {% include "generic/modal_confirm_delete.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
         {% include "training/send_mail.html"%}
@@ -163,6 +166,7 @@
 <script type="text/javascript">
 $('.editme').on('keydown', function(e) {
     let that = this;
+    console.log("EDITION");
     if (e.which == 13 && e.shiftKey == false) {
         let value = this.innerHTML;
         $.ajax({
@@ -177,7 +181,8 @@ $('.editme').on('keydown', function(e) {
                 if (data.status === "ERROR") {
                     alert(data.error);
                 }
-              that.innerHTML = data.val;
+                console.log("EDIT SUCCESS");
+                that.innerHTML = data.val;
           }
       })
     return false;
@@ -186,22 +191,69 @@ $('.editme').on('keydown', function(e) {
 
 let asking_inclusion = 0;
 
-function check_regime_session(id_training) {
+$('.copy-old').click(function() {
+    check_regime_session({{training.id}}, this.id);
+});
+
+function check_regime_session(id_training, link_clicked) {
     $.ajax({
         url: "{%url 'training:regime_session_check' %}",
         type: "GET",
         data: {
-           training_id: id_training,
+            training_id: id_training,
+            link_clicked: link_clicked,
         },
         success: function(data) {
-            if(data.regime_session_changed){
-                $('#regime_session_changed').modal('toggle');
-            } else {
-                $('#copy-old-mecctable').prop("href", "{%url 'mecctable:copy_old_mecctable' training.id %}");
-                $('#copy-old-mecctable').removeAttr("onclick");
-                $link = $('#copy-old-mecctable');
-                $link[0].click();
+            switch(link_clicked) {
+                case 'copy-old-mecctable':
+                    if(data.regime_session_changed){
+                        $('#regime_session_changed').modal('toggle');
+                    } else {
+                        copy_old_mecctable();
+                    }
+                    break;
+                case 'copy-old-exams':
+                    if(data.regime_session_changed){
+                        $('#exam_regime_session_changed').modal('toggle');
+                    } else {
+                        $('#exam_copy_confirm').modal('toggle');
+                    }
+                    break;
             }
+        }
+    });
+}
+
+function copy_old_mecctable() {
+    $.ajax({
+        url: "{%url 'mecctable:copy_old_mecctable' %}",
+        type: "GET",
+        data: {
+            training_id: {{training.id}},
+        },
+        success: function() {
+            // TODO : load data dynamically instead of reload the entire page
+            window.location.reload();
+        }
+    });
+}
+
+function copy_old_exams() {
+    $.ajax({
+        url: "{%url 'mecctable:copy_old_exams' %}",
+        type: "GET",
+        data: {
+            training_id: {{training.id}},
+        },
+        success: function(data) {
+            console.log(data.copied_exams_cnt);
+            $('#exam_copy_confirm').modal('hide');
+            $('#exam_copy_report').modal('toggle');
+            $('#para-exam-report-cnt-1').text(data.copied_exams_cnt);
+            // TODO : load data dynamically instead of reload the entire page
+            $('#exam_copy_report').on('hide.bs.modal',function(e){
+                window.location.reload();
+            });
         }
     });
 }
