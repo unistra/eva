@@ -51,7 +51,10 @@ def do_regime_session_check(request):
         current_training.session_type is not old_training.session_type\
         else False
 
-    json_response = {'regime_session_changed': regime_session_changed}
+    json_response = {
+        'regime_session_changed': regime_session_changed,
+        'link_clicked': request.GET.get('link_clicked')
+    }
 
     return JsonResponse(json_response)
 

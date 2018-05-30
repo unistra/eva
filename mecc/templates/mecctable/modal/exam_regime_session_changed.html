@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<div class="fade modal" id="exam_regime_session_changed" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-75">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal"> &times;</button>
+            </div>
+            <div class="modal-body">
+                <span id="para-changed-1" style="margin-bottom:0.2em;color:red">
+                    {% trans "Les épreuves de l'année précédente ne peuvent pas être récupérées :"%}
+                </span>
+                    <br>
+                <span id="para-changed-2" style="color:red">
+                    {% trans "le régime ou les sessions de l'objet ont changé."%}
+                </span>
+            </div>
+            <div class="modal-footer"  style="padding-bottom:1em">
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>

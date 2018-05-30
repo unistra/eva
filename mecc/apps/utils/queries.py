@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.serializers import serialize
 from django.core.exceptions import ObjectDoesNotExist
 
 from mecc.apps.rules.models import Rule
@@ -89,6 +90,7 @@ def get_mecc_table_order(
             id_attached=structure.id, session="1")
         exams_2 = current_exams.filter(
             id_attached=structure.id, session="2")
+
         items = {
             "link": link,
             'structure': structure,

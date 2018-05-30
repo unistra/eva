@@ -1,4 +1,4 @@
- {% load i18n %}
+{% load i18n %}
  <div class="{% if can_edit or a.can_be_edited%}
  updatable {%endif%}meccRow id-{{a.link.id}} r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}" id="{{a.link.id}}">
 
@@ -88,7 +88,7 @@
      <span class="mecc-respens">{{a.structure.get_respens_name}}
          {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
      </span>
-     <span class="centered border-left-3  editme mecc-coef"
+     <span class="centered border-left-3 editme mecc-coef"
      {% if can_edit or a.can_be_edited%}
      {% if not a.is_imported or a.link.is_imported  %}contenteditable='true'{% endif %}
      {% endif %}

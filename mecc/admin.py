@@ -63,7 +63,7 @@ class UserAdmin(BaseUserAdmin):
 
     def get_profile(self, obj):
         return "<br>".join(
-            ["%s %s" % (e.label,  e.cmp) for e in obj.meccuser.profile.all()])
+            ["%s %s" % (e.label, e.cmp) for e in obj.meccuser.profile.all()])
     # Allow br to work
     get_profile.allow_tags = True
 

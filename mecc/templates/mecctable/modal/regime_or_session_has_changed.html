@@ -20,11 +20,8 @@
                 </span>
             </div>
             <div class="modal-footer"  style="padding-bottom:1em">
-                <form method="POST" action="{%url 'mecctable:copy_old_mecctable' training.id %}">
-                    {% csrf_token %}
-                    <input type="submit" value='{% trans "Confirmer" %}' class="btn btn-primary" />
-                    <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
-                </form>
+                <button class="btn btn-primary" onclick="copy_old_mecctable()">{% trans "Confirmer" %}</button>
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
             </div>
         </div>
     </div>
