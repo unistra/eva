@@ -63,8 +63,6 @@ class DocGenerator(object):
         response = HttpResponse(content_type='application/pdf')
         response[
             'Content-Disposition'] = ('filename="%s .pdf"' % _("MECC ECI"))
-        self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
-                                     topMargin=24, bottomMargin=24)
 
         self.left_footer = "%s - %s - %s" % (
             _("MECC"),
@@ -94,8 +92,10 @@ class DocGenerator(object):
             return "error", render(request, "generic/back_to_past.html", {
                 "back_url": back_url, "message": message})
 
+        margin = 24
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
                                      topMargin=24, bottomMargin=24)
+        self.add_first_page_frames(margin)
 
         self.doc.build(self.story, onLaterPages=self.mecc_canvas,
                        canvasmaker=NumberedCanvas_landscape)
