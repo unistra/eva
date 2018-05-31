@@ -970,7 +970,10 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                 Paragraph("<para textColor=green>(A)</para>",
                           styles['Normal']) if "publish" not in target else '',
                 Table([
-                    [edited_rules.filter(id=e.rule_gen_id).first().label],
+                    [Paragraph(
+                        '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                        % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                    )],
                     [list_of_parag_with_bullet(e.text_additional_paragraph)]
                 ], style=additional_style, ),
                 ""
@@ -982,7 +985,10 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                 table_derog = [
                     "",
                     Table([
-                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
                         [list_of_parag_with_bullet(e.text_specific_paragraph)]
                     ], style=additional_style)
                 ]
@@ -991,7 +997,10 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                     Paragraph("<para textColor=blue>(D)</para>",
                               styles['Normal']),
                     Table([
-                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
                         [list_of_parag_with_bullet(e.text_specific_paragraph)]
                     ], style=derog_style),
                     Table([
