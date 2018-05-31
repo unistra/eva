@@ -942,6 +942,9 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     """
     Adding derog and additional for specific training
     """
+    # #### DATA
+    ordered_derogs = sorted(derogs, key= lambda derog: Rule.objects.get(id=derog.rule_gen_id).display_order)
+    ordered_additionals = sorted(additionals, key= lambda additional: Rule.objects.get(id=additional.rule_gen_id).display_order)
     # #### STYLES
     main_table_style = [
         ('VALIGN', (1, 0), (-1, -1), "TOP"),
@@ -965,7 +968,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     # #### TABLES
     table = []
     if additionals:
-        for e in additionals:
+        for e in ordered_additionals:
             table.append([
                 Paragraph("<para textColor=green>(A)</para>",
                           styles['Normal']) if "publish" not in target else '',
@@ -979,7 +982,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                 ""
             ])
     if derogs:
-        for e in derogs:
+        for e in ordered_derogs:
             table_derog = []
             if "publish" in target:
                 table_derog = [
