@@ -734,7 +734,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     """
     Story for model
     """
-    ordered_trainings = trainings.order_by('degree_type')
+    ordered_trainings = trainings.order_by('degree_type', 'label')
     i = datetime.datetime.now()
     year = currentyear().code_year
 
