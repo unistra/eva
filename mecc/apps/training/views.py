@@ -18,7 +18,7 @@ from django_cas.decorators import login_required
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.files.models import FileUpload
-from mecc.apps.utils.manage_pple import manage_respform
+from mecc.apps.utils.manage_pple import manage_respform, is_poweruser
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from mecc.apps.utils.queries import currentyear, save_training_update_structs
@@ -394,8 +394,12 @@ Il s'agit d'un mail de test, veuillez ne pas le prendre en considération.
 Merci.
         """)
     input_is_open = training.input_opening[0] in ['1', '3']
-    data['can_edit'] = (request.environ['allowed'] and input_is_open) or request.user.is_superuser or 'DES1' in [
-        e.name for e in request.user.groups.all()]
+    data['can_edit'] = (is_poweruser(training,
+                                     request.user.meccuser.profile.all(),
+                                     request.user.username) \
+                        and input_is_open) \
+                        or request.user.is_superuser \
+                        or 'DES1' in [e.name for e in request.user.groups.all()]
     if training.input_opening[0] == '4':
         data['can_edit'] = False
     return render(request, template, data)

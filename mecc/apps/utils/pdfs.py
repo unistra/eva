@@ -734,7 +734,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     """
     Story for model
     """
-    ordered_trainings = trainings.order_by('degree_type')
+    ordered_trainings = trainings.order_by('degree_type', 'label')
     i = datetime.datetime.now()
     year = currentyear().code_year
 
@@ -942,6 +942,9 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     """
     Adding derog and additional for specific training
     """
+    # #### DATA
+    ordered_derogs = sorted(derogs, key= lambda derog: Rule.objects.get(id=derog.rule_gen_id).display_order)
+    ordered_additionals = sorted(additionals, key= lambda additional: Rule.objects.get(id=additional.rule_gen_id).display_order)
     # #### STYLES
     main_table_style = [
         ('VALIGN', (1, 0), (-1, -1), "TOP"),
@@ -965,24 +968,30 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     # #### TABLES
     table = []
     if additionals:
-        for e in additionals:
+        for e in ordered_additionals:
             table.append([
                 Paragraph("<para textColor=green>(A)</para>",
                           styles['Normal']) if "publish" not in target else '',
                 Table([
-                    [edited_rules.filter(id=e.rule_gen_id).first().label],
+                    [Paragraph(
+                        '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                        % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                    )],
                     [list_of_parag_with_bullet(e.text_additional_paragraph)]
                 ], style=additional_style, ),
                 ""
             ])
     if derogs:
-        for e in derogs:
+        for e in ordered_derogs:
             table_derog = []
             if "publish" in target:
                 table_derog = [
                     "",
                     Table([
-                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
                         [list_of_parag_with_bullet(e.text_specific_paragraph)]
                     ], style=additional_style)
                 ]
@@ -991,7 +1000,10 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                     Paragraph("<para textColor=blue>(D)</para>",
                               styles['Normal']),
                     Table([
-                        [edited_rules.filter(id=e.rule_gen_id).first().label],
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
                         [list_of_parag_with_bullet(e.text_specific_paragraph)]
                     ], style=derog_style),
                     Table([

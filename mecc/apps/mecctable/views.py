@@ -19,6 +19,7 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear, get_mecc_table_order
 from mecc.apps.utils.ws import get_user_from_ldap
+from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from django_cas.decorators import login_required
@@ -663,15 +664,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['la_liste'] = get_mecc_table_order(
         [e for e in root_link], respens_struct, current_structures,
         current_links, current_exams, all_exam=False)
-
-    def is_poweruser(training, user_profiles, current_user_username):
-        # user est membre d'un group pouvant éditer toute la formation
-        if user_profiles.filter(cmp=training.supply_cmp).filter(
-                code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']):
-            return True
-        # user est RESPFORM sur la formation
-        return True if current_user_username in [meccuser.user.username for meccuser in
-                                                 training.resp_formations.all()] else False
 
     input_is_open = training.input_opening[0] in ['1', '3']
     user_is_poweruser = is_poweruser(training, user_profiles, request.user.username)
