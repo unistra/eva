@@ -157,7 +157,8 @@
 
             <div class="disp-flex dir-col space-around item-center " style="height:5em;"  >
                 <a href="#" class="btn-primary btn btn-sm btn-1 width-15" id="generate">{% trans 'Générer'%}</a>  
-                <a href="/" class="btn-primary btn btn-sm btn-1 width-15" >{% trans 'Quitter'%}</a>  
+                <a href="/" class="btn-primary btn btn-sm btn-1 width-15" >{% trans 'Quitter'%}</a>
+                {% include "doc_generator/modals/generated_pdf.html" %}
             </div>
         </div>
     </div>
@@ -303,7 +304,7 @@
     }
     $('#generate').on('click', function(e){
         e.preventDefault()
-        let url = "/doc_gen/dispatch/?date=" + $('#date').val() + "&target=" + $('#target').val()
+        let url = "/doc_gen/generate_pdf/?date=" + $('#date').val() + "&target=" + $('#target').val()
         let not_selected = true
         $("input:checked").each(function() {
 

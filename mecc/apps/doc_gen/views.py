@@ -25,6 +25,12 @@ from django_cas.decorators import login_required
 
 
 @login_required
+def generate_pdf(request, template='doc_generator/generated_pdf.html'):
+    data = {'url': request.GET.urlencode()}
+    return render(request, template, data)
+
+
+@login_required
 def dispatch_to_good_pdf(request):
     """
     Get ajax data and dispatch to correct pdf
