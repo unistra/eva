@@ -666,12 +666,13 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         current_links, current_exams, all_exam=False)
 
     input_is_open = training.input_opening[0] in ['1', '3']
+    data['input_is_open'] = input_is_open
     user_is_poweruser = is_poweruser(training, user_profiles, request.user.username)
-    data['can_edit'] = (user_is_poweruser and input_is_open) \
+    data['can_edit'] = user_is_poweruser \
                        or request.user.is_superuser \
                        or 'DES1' in [e.name for e in request.user.groups.all()]
-    if training.input_opening[0] == "4":
-        data['can_edit'] = False
+    # if training.input_opening[0] in ['2', '4']:
+        # data['can_edit'] = False
     return render(request, template, data)
 
 
