@@ -13,7 +13,7 @@
         {%if a.is_imported%}
             {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ? {% endif %}
         {% else %}
-            {% if can_edit or a.can_be_edited and input_is_open %}
+            {% if can_edit or a.can_be_edited %}
             <a  data-toggle="modal" 
                 class="hand no-border struct-{{a.structure.id}}" 
                 aria-hidden="true" 
@@ -32,7 +32,7 @@
         
         <!-- add button -->
         <span class="centered mecc-add">
-            {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited and input_is_open %}
+            {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited %}
             <a  onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
                 data-toggle="modal" 
                 class="hand glyphicon glyphicon-plus blue no-border"
@@ -63,7 +63,7 @@
 
         <!-- remove/unbind button -->
         <span class="mecc-remove">
-            {% if can_edit or a.can_be_edited and input_is_open %}
+            {% if can_edit or a.can_be_edited %}
                 {% if a.link.is_imported %}
                 <span data-toggle="modal" 
                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
@@ -139,7 +139,7 @@
 
     <!-- papers definition -->
     <span class="centered border-left-5 mecc-details ">
-        {% if can_edit or a.can_be_edited and not a.is_imported and input_is_open %}
+        {% if can_edit or a.can_be_edited and not a.is_imported %}
         <a  class="hand" 
             onclick="struct_select({{a.structure.id}}, 
                                   '{{a.structure.get_nature_display}}', 
