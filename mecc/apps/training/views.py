@@ -262,8 +262,8 @@ class TrainingEdit(UpdateView):
         context['can_edit'] = (
             self.request.environ['allowed'] and
             input_is_open
-        ) or self.request.user.is_superuser or 'DES1' in [
-            e.name for e in self.request.user.groups.all()]
+        ) or self.request.user.is_superuser or ('DES1' in [
+            e.name for e in self.request.user.groups.all()] and self.object.input_opening[0] != '4')
         return context
 
 
