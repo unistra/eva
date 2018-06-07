@@ -293,9 +293,10 @@ function ask_delete_imported(id_link, label){
     document.gen_form.action = "/mecctable/imported/remove/" + id_link;
 }
 
-
+let disable_sortable = !{{can_edit|yesno:"true,false"}};
 $(".sortme").sortable({
     cancel: ':input,button,.contenteditable, .editme',
+    disabled: disable_sortable,
     update: function(e, ui) {
         let newPositions = $.map($(this).find('.updatable'), function(el) {
             return $(el).attr('id') + ':' + $(el).index();
