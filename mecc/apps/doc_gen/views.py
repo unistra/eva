@@ -58,6 +58,7 @@ def dispatch_to_good_pdf(request):
             code_year=current_year, supply_cmp=institute.code, is_used=True)
 
         if 'd' == request.GET.get('model'):
+            trainings = trainings.filter(date_val_cfvu__isnull=False)
             doc, response = generator.validated_history(request, trainings, institute, current_year)
         else:
             doc, response = generator.create_eci(request, trainings)
@@ -333,7 +334,7 @@ def trainings_for_target(request):
 
 def get_years(current_year):
     """Get years for select box"""
-    years = UniversityYear.objects\
+    years = UniversityYear.objects \
         .filter(is_year_init=True) \
         .order_by('-code_year')
     return years
@@ -362,7 +363,7 @@ def history_for_year(request, year):
 
     def get_trainings_for_institute_and_year(institute):
         trainings = Training.objects.filter(
-            code_year=year, supply_cmp=institute.code, is_used=True)
+            code_year=year, supply_cmp=institute.code, is_used=True, date_val_cfvu__isnull=False)
         if trainings.count():
             return trainings.count()
         return False
@@ -373,7 +374,6 @@ def history_for_year(request, year):
             id__in=active_institutes_for_year.values_list('id_cmp', flat=True).distinct()
         ).order_by('field', 'label')
         return institutes
-
 
     current_year = currentyear().code_year
     selected_year = year
@@ -394,8 +394,7 @@ def history_for_year(request, year):
             'year': year,
             'domaine': institute.field.name,
             'code': institute.code,
-            'labelled': "%s - %s" % (institute.label, institute.ROF_code)
-            if institute.ROF_code not in ['', ' ', None] else institute.label,
+            'labelled': institute.label,
             'mecc': get_trainings_for_institute_and_year(institute),
             'letter': FileUpload.objects.filter(
                 object_id=institute.id,
