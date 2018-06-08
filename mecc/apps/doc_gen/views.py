@@ -2,6 +2,8 @@
 View for document generator 3000
 """
 import json
+import re
+
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse
@@ -43,8 +45,10 @@ def dispatch_to_good_pdf(request):
 
     if not trainings:
         try:
-            # todo use year in GET if available, currentyear if not
-            current_year = currentyear().code_year
+            if request.GET.get('year') and re.match(r'2\d{3}', request.GET.get('year')):
+                current_year = request.GET.get('year')
+            else:
+                current_year = currentyear().code_year
         except AttributeError:
             return render(request, 'msg.html',
                           {'msg': _("Initialisation de l'année non effectuée")}
@@ -53,7 +57,10 @@ def dispatch_to_good_pdf(request):
         trainings = Training.objects.filter(
             code_year=current_year, supply_cmp=institute.code, is_used=True)
 
-        doc, response = generator.create_eci(request, trainings)
+        if 'd' == request.GET.get('model'):
+            doc, response = generator.validated_history(request, trainings, institute, current_year)
+        else:
+            doc, response = generator.create_eci(request, trainings)
     else:
         doc, response = generator.run(request, trainings)
 

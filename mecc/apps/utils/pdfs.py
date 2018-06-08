@@ -17,17 +17,15 @@ from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4, landscape
 
-
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
-from mecc.apps.training.models import Training,  \
+from mecc.apps.training.models import Training, \
     AdditionalParagraph, SpecificParagraph
 from mecc.apps.utils.queries import rules_degree_for_year, currentyear, \
     get_mecc_table_order
 from mecc.apps.years.models import UniversityYear
 from reportlab.platypus.flowables import Flowable
-
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -45,6 +43,7 @@ class DocGenerator(object):
     """
     Doc generator 3000 for generating pdf with own properties
     """
+
     # ----------------------------------------------------------------------
 
     def __init__(self):
@@ -60,9 +59,7 @@ class DocGenerator(object):
         self.target = target = 'ECI'
         date = request.GET.get('date')
         # response ---------------------
-        response = HttpResponse(content_type='application/pdf')
-        response[
-            'Content-Disposition'] = ('filename="%s .pdf"' % _("MECC ECI"))
+        response = self.create_response("%s.pdf" % _("MECC ECI"))
 
         self.left_footer = "%s - %s - %s" % (
             _("MECC"),
@@ -94,14 +91,31 @@ class DocGenerator(object):
 
         margin = 24
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
-                                     topMargin=24, bottomMargin=24)
+                                     topMargin=margin, bottomMargin=margin)
         self.add_first_page_frames(margin)
 
         self.doc.build(self.story, onLaterPages=self.mecc_canvas,
                        canvasmaker=NumberedCanvas_landscape)
         return self.doc, response
 
-    # ----------------------------------------------------------------------
+    def validated_history(self, request, trainings, institute, current_year):
+        year = UniversityYear.objects.get(code_year=current_year)
+        self.left_footer = "MECC définitives - %s/%s - %s" % (year.code_year, year.code_year + 1, institute.label)
+        date = None
+        self.target = target = 'history'
+        self.story = gen_model_story(trainings, "d", date, target, True, "both", "gen_type", request.user,
+                                     year=current_year, institute=institute)
+
+        response = self.create_response("mecc-validees-%s.pdf" % year.label_year)
+
+        margin = 24
+        self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                                     topMargin=margin, bottomMargin=margin)
+        self.doc.build(self.story, onLaterPages=self.mecc_canvas,
+                       canvasmaker=NumberedCanvas_landscape)
+
+        return self.doc, response
+
     def run(self, request, trainings):
         """
         Run the reportlab power
@@ -126,8 +140,7 @@ class DocGenerator(object):
             goal = target
 
         # response ---------------------
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = ('filename="%s .pdf"' % goal)
+        response = self.create_response("%s.pdf" % goal)
 
         # writing in document ---------------------
         self.watermark = _('Document')
@@ -173,6 +186,12 @@ class DocGenerator(object):
 
         return self.doc, response
 
+    # ----------------------------------------------------------------------
+    def create_response(self, filename):
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = ('filename=%s' % filename)
+        return response
+
     def add_first_page_frames(self, margin):
         width, height = landscape(A4)
         frame_title = Frame(margin, 140 * mm, width - margin * 2, 50 * mm, showBoundary=False)
@@ -186,7 +205,7 @@ class DocGenerator(object):
         """
         Create the document
         """
-        if 'publish' not in self.target:
+        if self.target not in ['publish', 'history']:
             custom_watermark(canvas, "Document intermédiaire", rotation=40,
                              font_size=40, position_x=550, position_y=-70)
         canvas.saveState()
@@ -250,7 +269,8 @@ def watermark_do_not_distribute(canvas, doc):
     canvas.restoreState()
 
 
-def custom_watermark(canvas, watermak_string, font='Helvetica', font_size=45, position_x=550, position_y=100, rotation=45):
+def custom_watermark(canvas, watermak_string, font='Helvetica', font_size=45, position_x=550, position_y=100,
+                     rotation=45):
     """
     Add a custom watermark
     """
@@ -456,7 +476,6 @@ def add_simple_paragraph(story, rule, sp, ap, model=None):
 
 
 def add_paragraph(e, story, sp=None, ap=None, styled=True, custom=False):
-
     t = [["", ""]]
     bool_as_exception, exceptions = e.has_current_exceptions
     additionals = [e for e in exceptions.get(
@@ -561,24 +580,34 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
     )
     # Create here other secondary table display if needed
     # 1/REFERENCE STUFF:
-    ref_label = "" if "without" in reference else _(
-        'Référence ROF :') if "with_rof" in reference else _('Référence APOGEE :')
-    ref = "" if "without" in reference else training.ref_cpa_rof if "with_rof" in reference else training.ref_si_scol
+    if reference == 'without':
+        ref_label = ''
+    elif reference == 'with_rof':
+        ref_label = "Référence ROF : %s" % training.ref_cpa_rof
+    elif reference == 'both':
+        ref_label = "Référence ROF : %s\nRéférence APOGEE : %s" % (training.ref_cpa_rof, training.ref_si_scol)
+    else:
+        ref_label = "Référence APOGEE : %s" % training.ref_si_scol
 
     table = [
         [Paragraph(
             "<para fontSize=11 textColor=white><strong>%s</strong></para>" % training.label,
-            styles['Normal']), "%s - %s" % (training.get_MECC_type_display(),
-                                            training.get_session_type_display()),
-         "%s %s" % (ref_label, ref),
-         secondary_table if in_two_part else ''
-         ],
+            styles['Normal']),
+            "%s - %s" % (training.get_MECC_type_display(), training.get_session_type_display()),
+            "%s" % ref_label,
+            secondary_table if in_two_part else ''
+        ],
         [Paragraph(line_2, styles['Normal']),
          "empty", "empty", ],
     ]
 
-    final_table = Table(table, style=main_style, colWidths=[
-        9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
+    if in_two_part:
+        final_table = Table(table, style=main_style, colWidths=[
+            9 * cm, 5 * cm, 6.5 * cm, 7 * cm])
+    else:
+        final_table = Table(table, style=main_style, colWidths=[
+            12 * cm, 7 * cm, 8.5 * cm, 0 * cm])
+
     return final_table
 
 
@@ -622,8 +651,6 @@ def models_first_page(model, criteria, trainings, story):
         ('TOPPADDING', (0, 0), (-1, -1), 0),
         ('SIZE', (0, 0), (-1, -1), 8),
 
-
-
     ]
     style_table = [
         # ('GRID', (0, 0), (-1, -1), 1, colors.black),
@@ -650,16 +677,16 @@ def models_first_page(model, criteria, trainings, story):
     # ### Edition criteria published or not
     if criteria[_("Objectif")] != _('Publication'):
         criteria_list = [["Critères d'édition"]] + \
-            [["%s: %s" % (k, criteria[k])] for k in criteria]
+                        [["%s: %s" % (k, criteria[k])] for k in criteria]
         criteria_table = Table(
             criteria_list, style=style_criteria_table, colWidths=[6 * cm])
 
     training_list = [
         [Paragraph("<para fontSize=9>%s</para>" % e.label, styles['Normal']), Table([
             ["Conseil de composante : %s" %
-                (e.date_val_cmp.strftime(
-                    "%d/%m/%Y") if e.date_val_cmp else "Non"), "CFVU : %s " % (e.date_val_cfvu.strftime(
-                        "%d/%m/%Y") if e.date_val_cfvu else "Non")]
+             (e.date_val_cmp.strftime(
+                 "%d/%m/%Y") if e.date_val_cmp else "Non"), "CFVU : %s " % (e.date_val_cfvu.strftime(
+                "%d/%m/%Y") if e.date_val_cfvu else "Non")]
         ],
             style=style_training_list, colWidths=[5 * cm, 3 * cm])] for e in trainings
     ]
@@ -674,7 +701,6 @@ def models_first_page(model, criteria, trainings, story):
         story.append(criteria_table)
         story.append(FrameBreak())
         story.append(trainings_table)
-
     else:
         story.append(FrameBreak())
         story.append(trainings_table)
@@ -682,7 +708,75 @@ def models_first_page(model, criteria, trainings, story):
     return story
 
 
-def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalités d'évaluation des connaissances et des compétences", story=[]):
+def models_d_first_page(trainings, institute, year, story):
+    current_year = int(year)
+    title = [
+        "<font size=22>M</font size=22>odalités d'<font size=22>E</font size=22>valuation des <font size=22>C</font size=22>onnaissances et des <font size=22>C</font size=22>ompétences",
+        "Année universitaire %s/%s" % (current_year, current_year + 1),
+        institute.label
+    ]
+
+    for e in title:
+        story.append(Paragraph("<para align=center fontSize=16 spaceBefore=16 textColor=\
+            steelblue>%s</para>" % e, styles['Normal']))
+    story.append(Spacer(0, 24))
+
+    story.append(Paragraph("<para align=center fontSize=16 spaceBefore=24 textColor=\
+        steelblue>%s</para>" % "-" * 125, styles['Normal']))
+
+    style_training_list = [
+        # ('GRID', (0, 0), (-1, -1), 1, colors.pink),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('SIZE', (0, 0), (-1, -1), 8),
+
+    ]
+    style_table = [
+        # ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+    ]
+    style_trainings = [
+        # ('GRID', (0, 0), (-1, -1), 1, colors.green),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.steelblue),
+        ('LINEBELOW', (-1, 0), (-1, 0), 1, colors.steelblue),
+        ('ALIGN', (-1, 0), (-1, 0), 'CENTER'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+        ('TOPPADDING', (0, 1), (-1, 1), 15),
+        ('SIZE', (0, 0), (-1, -1), 9),
+        ('SIZE', (0, 0), (0, 0), 16),
+        ('SIZE', (-1, 0), (-1, 0), 12),
+    ]
+
+    training_list = [
+        [Paragraph("<para fontSize=9>%s</para>" % e.label, styles['Normal']), Table([
+            ["Conseil de composante : %s" %
+             (e.date_val_cmp.strftime(
+                 "%d/%m/%Y") if e.date_val_cmp else "Non"), "CFVU : %s " % (e.date_val_cfvu.strftime(
+                "%d/%m/%Y") if e.date_val_cfvu else "Non")]
+        ],
+            style=style_training_list, colWidths=[5 * cm, 3 * cm])] for e in trainings
+    ]
+
+    trainings_table = [["Formation", "Dates de validation"]]
+    trainings_table.extend(training_list)
+
+    trainings_table = Table(
+        trainings_table, style=style_trainings, colWidths=[6.5 * cm, 8 * cm])
+    # ### BUILDING TABLE
+    # story.append(FrameBreak())
+    story.append(trainings_table)
+
+    return story
+
+
+def doc_gen_title(year, cmp_label, date, goal, target, custom_date=None,
+                  title="Modalités d'évaluation des connaissances et des compétences", story=[]):
     """
     Nice blue title with logo and stuff
     """
@@ -714,29 +808,43 @@ def doc_gen_title(year, cmp_label, date, goal, custom_date=None, title="Modalit�
         goal_text = goal.upper()
     else:
         goal_text = "<u>%s</u><br></br>Du %s" % (goal, custom_date)
-    table = [
-        [logo_uds_small, title, Table([
-            ["%s %s/%s" % (_("Année universitaire"), year, year + 1)],
-            [Paragraph("<para textColor=steelblue fontSize=12 >%s</para> \
+
+    table_last = Table([
+        ["%s %s" % (_("Editions du "), date)] if goal != 'Relecture Elu' else '',
+        [Paragraph("<para fontsize=9 textColor=steelblue align=right><strong>%s\
+            </strong></para> " % goal_text, styles['Normal'])]
+    ], style=style_last)
+
+    if target in 'history':
+        table_last = Table([
+            [Paragraph("<para fontsize=12 textColor=steelblue align=center><strong>%s\
+                </strong></para> " % goal, styles['Normal'])]
+        ], style=style_last)
+
+    table = [[
+        logo_uds_small,
+        title,
+        Table([["%s %s/%s" % (_("Année universitaire"), year, year + 1)],
+               [Paragraph("<para textColor=steelblue fontSize=12 >%s</para> \
             " % cmp_label, styles['Normal'])]
-        ], style=style_middle), Table([
-            ["%s %s" % (_("Edition du "), date)] if goal != 'Relecture Elu' else '', [
-                Paragraph("<para fontsize=9 textColor=steelblue align=right><strong>%s\
-                </strong></para> " % goal_text, styles['Normal'])]
-        ], style=style_last)]
-    ]
+               ], style=style_middle),
+        table_last
+    ]]
     story.append(Table(table, style=style_table, colWidths=[
-                 3.25 * cm, 15 * cm, 6.5 * cm, 4.5 * cm]))
+        3.25 * cm, 15 * cm, 6.5 * cm, 4.5 * cm]))
+
     return story
 
 
-def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user, is_eci=False, story=[]):
+def gen_model_story(trainings, model, date, target, standard, ref, gen_type, user,
+                    is_eci=False, story=[], year=None, institute=None):
     """
     Story for model
     """
     ordered_trainings = trainings.order_by('degree_type', 'label')
     i = datetime.datetime.now()
-    year = currentyear().code_year
+    if year is not None:
+        year = currentyear().code_year
 
     if 'review' in target:
         goal = _("Relecture")
@@ -748,6 +856,8 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         goal = _('Conseil de composante')
     elif 'ECI' in target:
         goal = _('Relecture élu')
+    elif 'history' in target:
+        goal = _('Historique MECC validées')
     else:
         # TODO: should not be raised debug for now
         goal = target
@@ -774,20 +884,24 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
         degree_type__in=[e.degree_type for e in trainings],
         code_year=train.code_year).distinct()
     rules = all_rules.filter(id__in=derog_gen_id + addit_gen_id)
-    models_first_page(
-        model, criteria, ordered_trainings, story)
+    if 'd' == model:
+        models_d_first_page(ordered_trainings, institute, year, story)
+    else:
+        models_first_page(
+            model, criteria, ordered_trainings, story)
     story.append(PageBreak())
     doc_gen_title(
         train.code_year,
         train.institutes.filter(code=train.supply_cmp).first().label,
         "%s/%s/%s" % (i.day, i.month, i.year),
         goal if target != 'ECI' else _("Relecture Elu"),
+        target,
         story=story,
         custom_date=date
     )
 
     count = 0
-    if model == 'a':
+    if model == 'a' or model == 'd':
         degree_type = []
         for d in ordered_trainings:
             count += 1
@@ -815,7 +929,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
 
             preview_mecctable_story(
                 d, story, False, ref=ref, model=model, additionals=additionals,
-                specifics=specifics, edited_rules=rules, target=target)
+                specifics=specifics, edited_rules=rules, target=target, year=year)
             if not count == ordered_trainings.count():
                 story.append(PageBreak())
 
@@ -855,9 +969,10 @@ def write_rule_with_derog(training, rules, specific, additional, target, referen
         training, in_two_part=False if "publish" in target else True, reference=reference))
     story.append(Spacer(0, 6))
     story.append(
-        Table([[Paragraph("<para fontSize=12><strong>%s</strong></para>" % _("Règles applicables à la formation"), styles['CenterBalek']), '']], colWidths=[
-              17 * cm, 10 * cm], style=[
-                  ('BOX', (0, 0), (-2, -1), 1, colors.black),
+        Table([[Paragraph("<para fontSize=12><strong>%s</strong></para>" % _("Règles applicables à la formation"),
+                          styles['CenterBalek']), '']], colWidths=[
+            17 * cm, 10 * cm], style=[
+            ('BOX', (0, 0), (-2, -1), 1, colors.black),
         ])
     )
     # ############ add rules one by one ################################
@@ -906,7 +1021,7 @@ def write_rule_with_derog(training, rules, specific, additional, target, referen
                     table = [
                         [Paragraph("<para %s>%s</para>" % (
                             style, first_col), styles['CenterBalek']),
-                            text, ''],
+                         text, ''],
                         ["", motif, '']
                     ] if 'publish' not in target else [
                         ["", text, ""]
@@ -938,7 +1053,7 @@ def write_rule_with_derog(training, rules, specific, additional, target, referen
     return story
 
 
-def derog_and_additional(training, derogs, additionals, edited_rules, story=[], target=""):
+def derog_and_additional(training, derogs, additionals, edited_rules, story=[], target="", model="a"):
     """
     Adding derog and additional for specific training
     """
@@ -968,9 +1083,10 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
         shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
         for e in derogs.order_by('rule_gen_id'):
             table_derog = []
-            if "publish" in target:
+            if target in ["publish", "history"]:
                 table_derog = [
-                    "",
+                    Paragraph("<para textColor=blue>(D)</para>",
+                              styles['Normal']),
                     Table([
                         [Paragraph(
                             '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
@@ -1032,15 +1148,20 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
 
 
 def preview_mecctable_story(training, story=[], preview=True, ref="both", model=None,
-                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation", target=""):
+                            additionals=None, specifics=None, edited_rules=None, title="Prévisualisation", target="",
+                            year=None):
     """
     Story for previewing mecctable
     """
     import itertools
 
     # ############ USEFULL STUFF ################################
+    if year is None:
+        current_year = currentyear().code_year
+    else:
+        current_year = year
+    in_two_parts = False if target in ['publish', 'history'] else True
     training_is_ccct = True if training.MECC_type == 'C' else False
-    current_year = currentyear().code_year
     current_structures = StructureObject.objects.filter(code_year=current_year)
     current_links = ObjectsLink.objects.filter(code_year=current_year)
     current_exams = Exam.objects.filter(code_year=current_year)
@@ -1061,24 +1182,25 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
             red><strong>%s</strong></para>" % title, styles['Normal']))
 
     title_training_table = table_title_trainings_info(
-        training, reference=ref, in_two_part=False if "publish" in target else True)
+        training, reference=ref, in_two_part=in_two_parts)
 
     story.append(title_training_table)
-    if model == 'a':
+    if model == 'a' or model == 'd':
         story.append(Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 \
         spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" % _(
             "Dérogation et alinéas additionnels"), styles['Normal']))
         if specifics.filter(training=training) or additionals.filter(training=training):
             derog_and_additional(training, specifics.filter(
                 training=training), additionals.filter(training=training),
-                edited_rules, story, target=target)
+                                 edited_rules, story, target=target)
         else:
             story.append(Paragraph("<para>%s</para>" %
                                    _("Néant"), styles['Normal']))
 
     story.append(CondPageBreak(250))
-    title = Paragraph("<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" %
-                      _("Tableau MECC"), styles['Normal'])
+    title = Paragraph(
+        "<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" %
+        _("Tableau MECC"), styles['Normal'])
     space = Spacer(0, 12)
 
     story.append(title)
@@ -1211,10 +1333,11 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                  ('FONTSIZE', (0, 0), (-1, -1), 8),
                  ]))
             return inner_table
-        ref_scol = struct.ref_si_scol if struct.ref_si_scol else "" # FIX bug with rof data
+
+        ref_scol = struct.ref_si_scol if struct.ref_si_scol else ""  # FIX bug with rof data
         ref_data = (Paragraph(struct.ROF_ref, styles['CenterSmall']), Paragraph(
             ref_scol, styles['CenterSmall'])) if ref == 'both' else Paragraph(
-                struct.ROF_ref, styles['CenterSmall']) if ref == 'with_rof' else Paragraph(
+            struct.ROF_ref, styles['CenterSmall']) if ref == 'with_rof' else Paragraph(
             ref_scol, styles['CenterSmall']) if ref == 'with_si' else Paragraph(
             '', styles['CenterSmall'])
         big_table.append([
@@ -1335,7 +1458,7 @@ def complete_rule(year, title, training, rules, specific, add):
 def one_rule(title, rule):
     story = []
     year = rule.code_year
-# ############ TITLE ################################
+    # ############ TITLE ################################
 
     header = [
         _("Modalités d'évaluation des connaissances et compétences"),
@@ -1389,7 +1512,7 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
 
     story = []
 
-# ############ TITLE ################################
+    # ############ TITLE ################################
 
     # No title means whole rules !
     if title:
@@ -1411,7 +1534,7 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
 
         story.append(Spacer(0, 12))
 
-# ############ No rules case ################################
+    # ############ No rules case ################################
 
     if cr is None:
         # No title means whole rules so no need to warn
@@ -1420,7 +1543,7 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
             story.append(Paragraph(_("Aucune règle."), styles['Normal']))
         return story
 
-# ############ ECI/CCT ################################
+    # ############ ECI/CCT ################################
 
     block_rules(
         _("RÈGLES APPLICABLES à tous les diplômes de type \
@@ -1430,7 +1553,7 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
         custom=custom
     )
 
-# ############ ECI ################################
+    # ############ ECI ################################
 
     if not filter_type or 'E' in filter_type:
         block_rules(
@@ -1441,7 +1564,7 @@ def degree_type_rules(title, degreetype, year, custom=False, filter_type=None):
             custom=custom
         )
 
-# ############ CCCT ################################
+    # ############ CCCT ################################
     if not filter_type or 'C' in filter_type:
         block_rules(
             _("RÈGLES APPLICABLES aux diplômes de type %s en contrôle terminal, \
@@ -1575,7 +1698,6 @@ def derogations(title, year):
 
 
 def block_derogations(title, derogations, story):
-
     style = [
         ('TEXTCOLOR', (0, -1), (0, -1), colors.darkblue),
     ]
