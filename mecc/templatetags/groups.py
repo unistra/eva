@@ -1,6 +1,7 @@
 from django import template
 from django.contrib.auth.models import Group
 from mecc.apps.adm.models import Profile
+from mecc.apps.years.models import UniversityYear
 
 
 register = template.Library()
@@ -16,6 +17,15 @@ def has_group(user, group_name):
 def is_profile(meccuser, profile_code):
     return True if profile_code in [
         e.code for e in meccuser.profile.all()] else False
+
+
+@register.filter(name='is_profile_this_year')
+def is_profile_this_year(meccuser, profile_code):
+    current_year = UniversityYear.objects.get(is_target_year=True).code_year
+    profiles = meccuser.profile.all()
+    return True if profile_code in [
+            e.code for e in profiles] \
+        and current_year in [e.year for e in profiles] else False
 
 
 @register.filter(name='has_profile')

@@ -1,154 +1,214 @@
 {% load i18n %}
- <div class="{% if can_edit or a.can_be_edited%}
- updatable {%endif%}meccRow id-{{a.link.id}} r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {%if not a.structure.is_in_use%}grey-all{%endif%} {%if a.is_imported%} green{%endif%}" id="{{a.link.id}}">
 
-<!-- mecc-label -->
+<div class="{% if can_edit or a.can_be_edited %}updatable{% endif %} meccRow id-{{a.link.id}} r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {% if not a.structure.is_in_use %}grey-all{% endif %} {% if a.is_imported %}green{% endif %}"
+     id="{{a.link.id}}">
+
+    <!-- mecc-label -->
     <span class="mecc-label">
         {% for i in a.loop  %}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {% endfor %}
-    <!---    id-{{a.link.id}} hover-row r-{{a.rank}}  parent-{{a.link.id_parent}} order-{{a.link.order_in_child}}
--->
+        <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
         {{a.structure.nature}} :
         {%if a.is_imported%}
-            {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ?
-            {%endif%}
+            {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ? {% endif %}
         {% else %}
-        {% if can_edit or a.can_be_edited%}
-        <a data-toggle="modal" class="hand no-border struct-{{a.structure.id}}" aria-hidden="true" data-target="#form-obj"
-        onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}
-    </a>
-    {% else %}{{a.structure.label}}
-    {% endif %}
-        {%endif%}
-    </span>
-<!--- endof mecc-label
--->
-<!--- mecc-actionButtons-
--->
-    <div class="mecc-actionsButtons">
-
-     <span class="centered  mecc-add">
-         {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited%}
-             <a onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
-             data-toggle="modal" class="hand glyphicon glyphicon-plus blue no-border"
-             title="{%trans 'Créer un objet fils dans cet objet'%}"
-             aria-hidden="true" data-target="#form-obj" ></a>
-
-     </span>
-
- <span>
- </span>
-     <span class=" mecc-import">
-             <span data-toggle="modal" data-target="#shared-object"
-             class="glyphicon glyphicon-circle-arrow-left green hand"
-             title="{% trans 'Importer un objet mutualisé dans cet objet'%}"
-             onclick="asking_inclusion={{a.structure.id}};"></span>
-         {% else %}
-     </span>
-     <span class=" mecc-import ">
-         {%endif%}
-     </span>
-     <span class="  mecc-remove">
-         {% if can_edit or a.can_be_edited%}
-
-         {% if a.link.is_imported %}
-             <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-             title="{%trans 'Décrocher cet objet mutualisé'%}"
-             onclick='ask_delete_imported({{a.link.id}}, "{{a.structure.label}}")' data-target="#preview"></span>
-         {% else %}
-            {% if not a.has_childs %}
-             {% if a.structure.mutual and not a.is_imported%}
-                 <span onclick='check_delete({{a.structure.id}}, "{{a.structure.label}}")'
-                 title="{%trans 'Supprimer cet objet'%}"
-                 class="glyphicon glyphicon glyphicon-remove-sign red hand"></span>
-             {% else %}
-                 {% if a.is_imported == False and not a.has_childs %}
-                     <span data-toggle="modal" class="glyphicon glyphicon glyphicon-remove-sign red hand"
-                     title="{%trans 'Supprimer cet objet'%}"
-                     onclick='ask_delete({{a.structure.id}}, "{{a.structure.label}}")' data-target="#preview"></span>
-                 {% endif %}
-             {% endif %}
-         {% endif %}
-         {% endif %}
-         {% endif %}
-     </span>
-     <span class=" mecc-mutual">
-         {% if a.structure.mutual and not a.link.is_imported %}
-         <a onclick="get_consom({{a.structure.id}})" class="hand"
-         title="{%trans 'Voir les consommateurs'%}">{% trans "Mut." %}</a>
-         {% endif %}
-     </span>
- </div>
-<!--- endof mecc-actionButtons-
--->
-     <span class="centered mecc-ects">
-         {% if a.structure.ECTS_credit %}{{a.structure.ECTS_credit}}{% endif %}
-     </span>
-     <span class="mecc-respens">{{a.structure.get_respens_name}}
-         {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
-     </span>
-     <span class="centered border-left-3 editme mecc-coef"
-     {% if can_edit or a.can_be_edited%}
-     {% if not a.is_imported or a.link.is_imported  %}contenteditable='true'{% endif %}
-     {% endif %}
-     id="{{a.link.id}}-coeff">
-         {% if a.link.coefficient or a.link.coefficient == 0%}{{a.link.coefficient}}{% endif %}
-     </span>
-     <span class="centered border-left-3  editme mecc-note"
-     {% if can_edit or a.can_be_edited %}
-     {% if not a.is_imported or a.link.is_imported %}contenteditable='true'{% endif %}
-     {%endif%}
-     id="{{a.link.id}}-grade">
-         {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
-     </span>
-     <span class="centered border-left-5 mecc-details ">
-        {% if not a.is_imported and can_edit or not a.is_imported and a.can_be_edited%}
-            <a class="hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">▶</a>
+            {% if can_edit or a.can_be_edited %}
+            <a  data-toggle="modal" 
+                class="hand no-border struct-{{a.structure.id}}" 
+                aria-hidden="true" 
+                data-target="#form-obj" 
+                onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}
+            </a>
+            {% else %}
+            {{a.structure.label}}
+            {% endif %}
         {% endif %}
-     </span>
-     <div class="mecc-semesters">
-         <div class="mecc-s1  border-left">
+    </span>
+    <!-- endof mecc-label -->
+
+    <!-- mecc-actionButtons -->
+    <div class="mecc-actionsButtons">
+        
+        <!-- add button -->
+        <span class="centered mecc-add">
+            {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited %}
+            <a  onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
+                data-toggle="modal" 
+                class="hand glyphicon glyphicon-plus blue no-border"
+                title="{% trans 'Créer un objet fils dans cet objet' %}"
+                aria-hidden="true" 
+                data-target="#form-obj" >
+            </a>
+        </span>
+
+        <span>
+        </span>
+
+        <!-- import button -->
+        <span class=" mecc-import">
+            <span data-toggle="modal" 
+                  data-target="#shared-object"
+                  class="glyphicon glyphicon-circle-arrow-left green hand"
+                  title="{% trans 'Importer un objet mutualisé dans cet objet' %}"
+                  onclick="asking_inclusion={{a.structure.id}};">
+            </span>
+            {% else %}
+        </span>
+
+        <!-- import button -->
+        <span class="mecc-import ">
+        {% endif %}
+        </span>
+
+        <!-- remove/unbind button -->
+        <span class="mecc-remove">
+            {% if can_edit or a.can_be_edited %}
+                {% if a.link.is_imported %}
+                <span data-toggle="modal" 
+                      class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                      title="{% trans 'Décrocher cet objet mutualisé' %}"
+                      onclick='ask_delete_imported({{a.link.id}}, "{{a.structure.label}}")' 
+                      data-target="#preview">
+                </span>
+                {% else %}
+                    {% if not a.has_childs %}
+                        {% if a.structure.mutual and not a.is_imported %}
+                        <span onclick='check_delete({{a.structure.id}}, "{{a.structure.label}}")'
+                              title="{% trans 'Supprimer cet objet' %}"
+                              class="glyphicon glyphicon glyphicon-remove-sign red hand">
+                        </span>
+                        {% else %}
+                            {% if a.is_imported == False and not a.has_childs %}
+                                <span data-toggle="modal" 
+                                      class="glyphicon glyphicon glyphicon-remove-sign red hand"
+                                      title="{% trans 'Supprimer cet objet' %}"
+                                      onclick='ask_delete({{a.structure.id}}, "{{a.structure.label}}")' 
+                                      data-target="#preview">
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </span>
+
+        <!-- see consumers button -->
+        <span class=" mecc-mutual">
+            {% if a.structure.mutual and not a.link.is_imported %}
+                <a  onclick="get_consom({{a.structure.id}})" 
+                    class="hand"
+                    title="{% trans 'Voir les consommateurs' %}">{% trans "Mut." %}
+                </a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- endof mecc-actionButtons -->
+
+    <!-- ECTS -->
+    <span class="centered mecc-ects">
+        {% if a.structure.ECTS_credit %}{{a.structure.ECTS_credit}}{% endif %}
+    </span>
+
+    <!-- supervisor -->
+    <span class="mecc-respens">{{a.structure.get_respens_name}}
+        {% if a.structure.external_name %} <i>{{a.structure.external_name}}</i>{% endif %}
+    </span>
+
+    <!-- coef -->
+    <span class="centered border-left-3 editme mecc-coef"
+        {% if can_edit or a.can_be_edited %}
+            {% if not a.is_imported or a.link.is_imported %}
+          contenteditable='true'
+            {% endif %}
+        {% endif %}
+          id="{{a.link.id}}-coeff">
+            {% if a.link.coefficient or a.link.coefficient == 0 %}{{a.link.coefficient}}{% endif %}
+    </span>
+
+    <!-- threshold mark -->
+    <span class="centered border-left-3  editme mecc-note"
+        {% if can_edit or a.can_be_edited %}
+            {% if not a.is_imported or a.link.is_imported %}
+          contenteditable='true'
+            {% endif %}
+        {%endif%}
+          id="{{a.link.id}}-grade">
+            {% if a.link.eliminatory_grade or a.link.eliminatory_grade == 0 %}{{a.link.eliminatory_grade}}{% endif %}
+    </span>
+
+    <!-- papers definition -->
+    <span class="centered border-left-5 mecc-details ">
+        {% if can_edit or a.can_be_edited and not a.is_imported %}
+        <a  class="hand" 
+            onclick="struct_select({{a.structure.id}}, 
+                                  '{{a.structure.get_nature_display}}', 
+                                  '{{a.structure.get_regime_display}}', 
+                                  '{{a.structure.get_session_display}}', 
+                                  '{{a.structure.ref_si_scol}}', 
+                                  '{{a.structure.ROF_ref}}')">▶
+        </a>
+        {% endif %}
+    </span>
+
+    <!-- sessions -->
+    <div class="mecc-semesters">
+         <!-- main session -->
+        <div class="mecc-s1  border-left">
             <table>
                 <tr class="mecc-s1-{{a.structure.id}}">
-                    {% for e in a.exams_1  %}
+                    {% for e in a.exams_1 %}
                     <td class="smaller border-left exam_id-{{e.id}}" > {{e.get_type_exam_display}} ({{e.coefficient}})
-                            {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}
+                        {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}
                     </td>
                     {% endfor %}
-                    {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %} <td class="border-left" >
-                            <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
-                            {% trans 'Voir +' %}</a>
-                        </td>
-                    {%endif%}
+                    {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %}
+                    <td class="border-left">
+                         <a class="smaller hand" 
+                            onclick="struct_select({{a.structure.id}}, 
+                                                  '{{a.structure.get_nature_display}}', 
+                                                  '{{a.structure.get_regime_display}}', 
+                                                  '{{a.structure.get_session_display}}', 
+                                                  '{{a.structure.ref_si_scol}}', 
+                                                  '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
+                        </a>
+                    </td>
+                    {% endif %}
                 </tr>
             </table>
-         </div>
-         <div class="mecc-s2  border-left-3">
-                <table>
-                        <tr class="mecc-s2-{{a.structure.id}}">
-                            {% for e in a.exams_2  %}
-                            <td class="smaller border-left exam_id-{{e.id}}"> {{e.get_type_exam_display}} ({{e.coefficient}})
-                                    {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}
-                                </td>
-                            {% endfor %}
-                            {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
-                                    <a class="smaller hand" onclick="struct_select({{a.structure.id}}, '{{a.structure.get_nature_display}}', '{{a.structure.get_regime_display}}', '{{a.structure.get_session_display}}', '{{a.structure.ref_si_scol}}', '{{a.structure.ROF_ref}}')">
-                                    {% trans 'Voir +' %}</a>
-                                </td>
-                            {%endif%}
-                        </tr>
-                    </table>
-         </div>
-     </div>
+        </div>
+        <!-- resit -->
+        <div class="mecc-s2 border-left-3">
+            <table>
+                <tr class="mecc-s2-{{a.structure.id}}">
+                    {% for e in a.exams_2  %}
+                    <td class="smaller border-left exam_id-{{e.id}}"> {{e.get_type_exam_display}} ({{e.coefficient}})
+                        {% if e.convocation == "O" or e.type_ccct == "T" %} <strong class="green">!</strong> {% endif %}
+                    </td>
+                    {% endfor %}
+                    {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
+                        <a  class="smaller hand" 
+                            onclick="struct_select({{a.structure.id}}, 
+                                                  '{{a.structure.get_nature_display}}', 
+                                                  '{{a.structure.get_regime_display}}', 
+                                                  '{{a.structure.get_session_display}}', 
+                                                  '{{a.structure.ref_si_scol}}', 
+                                                  '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>
+    </div>
 
-    {%if a.has_childs and not a.not_yet_imported%}
-        <div class="{% if not a.is_imported or not a.can_be_edited%}sortme{%endif%} wrapper meccRow" >
-         {%for ch in a.children %}
-              {%with a=ch %}
-                   {%include "mecctable/tree_view.html"%}
-              {%endwith%}
-         {%endfor%}
-     </div>
-    {%endif%}
+    {% if a.has_childs and not a.not_yet_imported %}
+    <div class="{% if not a.is_imported or not a.can_be_edited %}sortme{% endif %} wrapper meccRow" >
+        {% for ch in a.children %}
+             {% with a=ch %}
+                  {% include "mecctable/tree_view.html" %}
+             {% endwith %}
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>

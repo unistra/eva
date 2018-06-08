@@ -1,36 +1,48 @@
 {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
-{% block page-header %}
-{% trans 'Fiche Formation' %} {% endblock %} {% block breadcrumb %}
+
+{% block breadcrumb %}
 <ol class="breadcrumb">
-        {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
-        {% if request.session.visited_cmp == "RESPFORM" %}
-        <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
-        {% else %}
-        <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
-        {% endif %}
-    {%else%}
-        <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{%url 'training:list_all'%}
-            {% else %}{%url 'training:list' request.user.meccuser.cmp%}
-            {%endif%}">{% trans "Offre de formation" %}</a></li>
-            <li> <a href="{%url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
-        {% if request.session.training_list %}
-        {% endif %}
-    {%endif%}
-        <li class="active"> {{training.label}}</li>
+{% if request.session.visited_cmp in "RESPFORM, RESPENS" %}
+    {% if request.session.visited_cmp == "RESPFORM" %}
+    <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+    {% else %}
+    <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+    {% endif %}
+    {% else %}
+    <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}
+                     {%url 'training:list_all'%}
+                 {% else %}
+                     {%url 'training:list' request.user.meccuser.cmp%}
+                 {%endif%}">{% trans "Offre de formation" %}</a></li>
+    <li> <a href="{%url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+    {% if request.session.training_list %}
+    {% endif %}
+{% endif %}
+    <li class="active"> {{training.label}}</li>
 </ol>
-{% endblock %} {% block app_content %}
+{% endblock %}
+ 
+{% block page-header %}
+{% trans 'Fiche Formation' %}
+{% endblock %}
 
+{% block app_content %}
 
+<!-- static files -->
 <link rel="stylesheet" href="{% static 'css/mecctable/tree.css' %}" type="text/css" title="no title" charset="utf-8" />
-
 <script src="{% static 'js/notif.js' %}"></script>
 <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+<!-- span used to display messages -->
 <span class="top-right"></span>
+
+<!-- links to navigate through the three panels of a training record -->
 <ul class="nav nav-tabs" style="margin-bottom:1em">
-    <li><a href="{%if training%}{%url 'training:edit' training.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-    <li><a href="{%if training%}{%url 'training:edit_rules' training.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li><a href="{% if training %}{% url 'training:edit' training.pk %}{% else %}#{% endif %}">{% trans "Général" %}</a></li>
+    <li><a href="{% if training %}{% url 'training:edit_rules' training.pk %}{% else %}#{% endif %}">{% trans "Règles" %}</a></li>
     <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
 </ul>
+
 <div class="disp-flex dir-col has-bottom-border">
     <div class=" parent disp-flex ">
         <div class="item-80 dir-col">
@@ -54,93 +66,114 @@
         </div>
     </div>
     <div>
-
         {% if can_edit %}
         <div class="blue">
             {% trans "Racine" %}<br>
-            
-                <a onclick="get_struct_details(0,0, 'E')" data-toggle="modal"
+            <a onclick="get_struct_details(0,0, 'E')"
+                data-toggle="modal"
                 title="{% trans 'Créer un objet à la racine'%}"
                 class="hand glyphicon glyphicon-plus blue no-border"
-                aria-hidden="true" data-target="#form-obj" ></a>
-                <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
-                title="{%trans 'Importer un objet mutualisé à la racine'%}"
-                aria-hidden="true" data-toggle="modal" data-target="#shared-object"
-                onclick="asking_inclusion=0;" ></span>
-            </div>
-            {% endif %}
-        {% if la_liste|length > 0 %}
-        <div class="mecctable-container">
-                <div class="meccRow header">
-                    <span class="mecc-label no-border-top"></span>
-                    <span class="mecc-actionsButtons no-border-top centered"></span>
-                    <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
-                    <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
-                    <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
-                    <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
-                    <span class="mecc-details border-left-5"></span>
-                    <span class="mecc-semesters border-left">
-                        <span class="mecc-s1 ">
-                            <span>
-                                {% trans "Session principale" %}
-                            </span>
-                        </span>
-                        <span class="mecc-s2 border-left-3">
-                            <span>
-                                {% trans "Session de rattrapage" %}
-                            </span>
-                        </span>
-                    </span>
-                </div>
-
-                <div class="mecctable-content">
-                    {%for a in la_liste %}
-                        {%include "mecctable/tree_view.html" %}
-                    {%endfor%}
-                </div>
+                aria-hidden="true"
+                data-target="#form-obj">
+            </a>
+            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
+                  title="{%trans 'Importer un objet mutualisé à la racine'%}"
+                  aria-hidden="true"
+                  data-toggle="modal"
+                  data-target="#shared-object"
+                  onclick="asking_inclusion=0;">
+            </span>
         </div>
         {% endif %}
 
+        {% if la_liste|length > 0 %}
+        <div class="mecctable-container">
+            <div class="meccRow header">
+                <span class="mecc-label no-border-top"></span>
+                <span class="mecc-actionsButtons no-border-top centered"></span>
+                <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
+                <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
+                <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
+                <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
+                <span class="mecc-details border-left-5"></span>
+                <span class="mecc-semesters border-left">
+                    <span class="mecc-s1 ">
+                        <span>
+                        {% trans "Session principale" %}
+                        </span>
+                    </span>
+                    <span class="mecc-s2 border-left-3">
+                        <span>
+                        {% trans "Session de rattrapage" %}
+                        </span>
+                    </span>
+                </span>
+            </div>
+
+            <div class="mecctable-content">
+                {% for a in la_liste %}
+                    {% include "mecctable/tree_view.html" %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
+
     <div class="footer">
         <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
             <label>
-            {% trans 'Etat de saisie du tableau MECC : '%}
-        </label>
+                {% trans 'Etat de saisie du tableau MECC : '%}
+            </label>
             <label class="margin-left1">
-         {% trans "En cours " %}<input type="radio" name="progress" value="E"
-         {%if not can_edit or training.input_opening.0 == '2' %} disabled{%endif%}
-         {% if training.progress_table == "E" %}checked="checked" {% endif %}>
-     </label>
+                {% trans "En cours " %}<input type="radio" name="progress" value="E"
+                {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
+                {% if training.progress_table == "E" %}checked="checked" {% endif %}>
+            </label>
             <label class="margin-left1">
-        {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
-        {%if not can_edit or training.input_opening.0 == '2'%} disabled{%endif%} 
-        {% if training.progress_table == "A" %}checked="checked" {% endif %}>
-    </label>
+                {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
+                {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %} 
+                {% if training.progress_table == "A" %}checked="checked" {% endif %}>
+            </label>
         </div>
+
         <div class="button_container dir-row">
             <div class="dir-col">
-
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 copy-old {%if la_liste%}disabled {%endif%}" id="copy-old-mecctable">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}</a>
+                <a  href="#"
+                    class="btn-primary btn btn-sm btn-1 copy-old {% if la_liste %}disabled {% endif %}"
+                    id="copy-old-mecctable">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}
+                </a>
             </div>
             <div class="flex-item">
-                <a href="#" class="btn-primary btn btn-sm btn-1 copy-old {% if not la_liste or not can_edit%}disabled {% endif %}" id="copy-old-exams">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}</a>
+                <a  href="#" 
+                    class="btn-primary btn btn-sm btn-1 copy-old {% if not la_liste or not can_edit %}disabled {% endif %}" 
+                    id="copy-old-exams">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}
+                </a>
             </div>
-            {% if  can_edit and object.input_opening.0 != "4" %}
+            {% if can_edit and object.input_opening.0 != "4" %}
             <div class="flex-item">                    
-                <a href="#" class="btn-primary btn btn-sm btn-1 {%if not can_edit%}disabled {%endif%} " onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}</a>
+                <a  href="#"
+                    class="btn-primary btn btn-sm btn-1 {% if not can_edit %}disabled {% endif %}" 
+                    onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}
+                </a>
             </div>
             {% endif %}
             <div class="flex-item">
-                <a href="{%url 'doc_gen:preview_mecctable'%}?training_id={{training.id}}" class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}</a>
+                <a  href="{% url 'doc_gen:preview_mecctable' %}?training_id={{training.id}}" 
+                    class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}
+                </a>
             </div>
             <div class="flex-item dir-row">
-                <a data-toggle="modal" class="btn-primary btn btn-sm send_mail" data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}</a> {# {% include "training/send_mail.html"%}#}
+                <a  data-toggle="modal" 
+                    class="btn-primary btn btn-sm send_mail" 
+                    data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}
+                </a>
                 <span class="small-blue-txt">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
             </div>
         </div>
+
+        <!-- modals inclusions -->
         {% include "mecctable/modal/structure_object_form.html" %}
         {% include "mecctable/modal/exams.html" %}
         {% include "mecctable/modal/show_consume.html" %}
@@ -151,12 +184,10 @@
         {% include "mecctable/modal/exam_copy_confirm.html" %}
         {% include "mecctable/modal/exam_copy_report.html" %}
         {% include "generic/modal_confirm_delete.html" %}
+        {% include "training/modal_consistency.html" %}
         {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
         {% include "training/send_mail.html"%}
-        {% include "training/modal_consistency.html" %}
         
-        
-
     </div>
 </div>
 
@@ -293,9 +324,10 @@ function ask_delete_imported(id_link, label){
     document.gen_form.action = "/mecctable/imported/remove/" + id_link;
 }
 
-
+let disable_sortable = !{{can_edit|yesno:"true,false"}};
 $(".sortme").sortable({
     cancel: ':input,button,.contenteditable, .editme',
+    disabled: disable_sortable,
     update: function(e, ui) {
         let newPositions = $.map($(this).find('.updatable'), function(el) {
             return $(el).attr('id') + ':' + $(el).index();

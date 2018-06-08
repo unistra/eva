@@ -62,7 +62,7 @@ def institute_staff(institute_code):
 
 def get_mecc_table_order(
         link, struc_respens, current_structures,
-        current_links, current_exams, all_exam=False):
+        current_links, current_exams, input_is_open=True, all_exam=False):
     """
     Recurse until end of time
     """
@@ -77,7 +77,7 @@ def get_mecc_table_order(
         not_yet_imported = False
         try:
             structure = current_structures.get(id=link.id_child)
-            user_can_edit = True if structure.id in struc_respens else user_can_edit
+            user_can_edit = True if input_is_open and structure.id in struc_respens else user_can_edit
         except ObjectDoesNotExist:
             not_yet_imported = True
             structure = StructureObject.objects.get(id=link.id_child)

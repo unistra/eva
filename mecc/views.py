@@ -25,7 +25,7 @@ def home(request):
         if e.name == "DES1":
             return redirect('training:list_all')
     for e in request.user.meccuser.profile.all():
-        if e.code == "RESPFORM":
+        if e.code == "RESPFORM" and e.year == request.session['current_code_year']:
             return redirect('training:list_resp')
         if e.code == 'REFAPP':
             return redirect('training:list', cmp=e.cmp)
@@ -37,6 +37,7 @@ def home(request):
             return redirect('dashboards:institute', code=e.cmp)
         if e.code == "ECI":
             return redirect('training:list_all_meccs')
-        if e.code == "RESPENS":
+        if e.code == "RESPENS" and e.year == request.session['current_code_year']:
             return redirect('training:my_teachings')
+
     return render(request, 'base.html')
