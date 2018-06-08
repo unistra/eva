@@ -1115,7 +1115,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
 
             table.append(table_derog)
 
-            if shared_additionals:
+            if shared_additionals and e.rule_gen_id in [a.rule_gen_id for a in shared_additionals]:
                 additional = shared_additionals.get(rule_gen_id=e.rule_gen_id)
                 table.append([
                     Paragraph("<para textColor=green>(A)</para>",
