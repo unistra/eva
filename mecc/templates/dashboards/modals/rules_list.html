@@ -21,7 +21,7 @@
                             {% endfor %} {% else %}
                             <tr>
                                 <td>
-                                    {% trans 'Aucune règles'%}
+                                    {% trans 'Aucune règle'%}
                                 </td>
                             </tr>
                             {% endif %}
@@ -55,6 +55,16 @@
                 document.getElementById('big-title-preview').innerHTML = "";
                 document.getElementById('subtitle-preview').innerHTML = "";
                 document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
+
+                var degreeTypesList = '';
+                for (i = 0; i < data.degree_types.length; i++) {
+                    degreeTypesList += '<li>'+data.degree_types[i]+'</li>';
+                }
+                document.getElementById('preview-degree-types')
+                    .getElementsByTagName('tbody')[0]
+                    .innerHTML = '<tr><td><ul>'+degreeTypesList+'</ul></td></tr>';
+
+
                 for (i = 0; i < data.paragraphs.length + 1; i++) {
                     var tableRef = document.getElementById('preview-rules').getElementsByTagName('tbody')[0];
                     var newRow = tableRef.insertRow(tableRef.rows.length);
@@ -64,7 +74,6 @@
                     var cell1 = newRow.insertCell(1);
                     var cell2 = newRow.insertCell(2);
                     cell0.style.width = '10%';
-                    cell0.style.textAlign = "center"
                     cell1.style.width = '70%';
                     cell2.style.width = '20%';
                     if (i === data.paragraphs.length) {
@@ -98,6 +107,20 @@
                         }
                     }
                 }
+            },
+            error: function () {
+                document.getElementById('year').innerHTML = '';
+                document.getElementById('title-preview').innerHTML = '';
+                document.getElementById('preview-rules').getElementsByTagName('tbody')[0].innerHTML = '';
+                document.getElementById('big-title-preview').innerHTML = "";
+                document.getElementById('subtitle-preview').innerHTML = "";
+                document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
+                document.getElementById('preview-degree-types')
+                    .getElementsByTagName('tbody')[0]
+                    .innerHTML = '';
+                document.getElementById('preview-rules')
+                    .getElementsByTagName('tbody')[0]
+                    .innerHTML = '<tr><td class="bg-danger" colspan="3">Une erreur est survenue. L\'information ne peut pas être affichée.</td></tr>';
             }
         });
         $('#preview').modal('show');
