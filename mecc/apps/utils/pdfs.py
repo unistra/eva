@@ -942,9 +942,6 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     """
     Adding derog and additional for specific training
     """
-    # #### DATA
-    ordered_derogs = sorted(derogs, key= lambda derog: Rule.objects.get(id=derog.rule_gen_id).display_order)
-    ordered_additionals = sorted(additionals, key= lambda additional: Rule.objects.get(id=additional.rule_gen_id).display_order)
     # #### STYLES
     main_table_style = [
         ('VALIGN', (1, 0), (-1, -1), "TOP"),
@@ -967,22 +964,9 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     ]
     # #### TABLES
     table = []
-    if additionals:
-        for e in ordered_additionals:
-            table.append([
-                Paragraph("<para textColor=green>(A)</para>",
-                          styles['Normal']) if "publish" not in target else '',
-                Table([
-                    [Paragraph(
-                        '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
-                        % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
-                    )],
-                    [list_of_parag_with_bullet(e.text_additional_paragraph)]
-                ], style=additional_style, ),
-                ""
-            ])
     if derogs:
-        for e in ordered_derogs:
+        shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
+        for e in derogs.order_by('rule_gen_id'):
             table_derog = []
             if "publish" in target:
                 table_derog = [
@@ -1015,6 +999,31 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
 
             table.append(table_derog)
 
+            if shared_additionals:
+                additional = shared_additionals.get(rule_gen_id=e.rule_gen_id)
+                table.append([
+                    Paragraph("<para textColor=green>(A)</para>",
+                              styles['Normal']) if "publish" not in target else '',
+                    Table([
+                        [list_of_parag_with_bullet(additional.text_additional_paragraph)]
+                    ], style=additional_style, ),
+                    ""
+                ])
+    if additionals:
+        if shared_additionals:
+            additionals = additionals.exclude(id__in=[a.id for a in shared_additionals])
+        for e in additionals.order_by('rule_gen_id'):
+            table.append([
+                Paragraph("<para textColor=green>(A)</para>",
+                          styles['Normal']) if "publish" not in target else '',
+                Table([
+                    [Paragraph('<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                               % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                               )],
+                    [list_of_parag_with_bullet(e.text_additional_paragraph)]
+                ], style=additional_style, ),
+                ""
+            ]) 
     if table:
         story.append(Table(table, style=main_table_style,
                            colWidths=main_table_size))
