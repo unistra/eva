@@ -461,9 +461,8 @@ def details_rule(request):
             o = SpecificParagraph.objects.get(
                 paragraph_gen_id=paraid,
                 rule_gen_id=rulid,
-                code_year=currentyear().code_year,
-                training=Training.objects.get(
-                    id=request.POST.get('training_id')),
+                code_year=current_year,
+                training=training,
             )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
@@ -471,31 +470,33 @@ def details_rule(request):
         derog.append(paraid)
         return o.text_specific_paragraph, True
 
-    x = request.POST.get('val')
-    rule = Rule.objects.get(id=x)
+    current_year = currentyear().code_year
+    rule_id = request.POST.get('val')
+    rule = Rule.objects.get(id=rule_id)
     paragraphs = Paragraph.objects.filter(Q(rule=rule))
+    training = Training.objects.get(id=request.POST.get('training_id'))
 
     # Give required additional paragraph or None
     try:
         additional = AdditionalParagraph.objects.get(
-            training=Training.objects.get(id=request.POST.get('training_id')),
-            rule_gen_id=x, code_year=currentyear().code_year
+            training=training,
+            rule_gen_id=rule_id, code_year=current_year
         )
     except AdditionalParagraph.DoesNotExist:
         additional = None
 
     specific = True if request.POST.get('type') == 'specific' else False
     json_response = {
-        'id': x,
+        'id': rule_id,
         'year': "%s/%s" % (
-            currentyear().code_year, currentyear().code_year + 1),
+            current_year, current_year + 1),
         'title': rule.label,
         'is_specific': specific,
         'paragraphs': [
             {'alinea': e.id,
              'text': e.text_standard if not (
-                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
-             'is_derog': gimme_txt(e.id, x)[1],
+                 e.is_interaction and specific) else gimme_txt(e.id, rule_id)[0],
+             'is_derog': gimme_txt(e.id, rule_id)[1],
              'can_be_derog': e.is_interaction,
              'info': _('Dérogation')}
             for e in paragraphs],
@@ -520,7 +521,7 @@ def details_rules(request):
             o = SpecificParagraph.objects.get(
                 paragraph_gen_id=paraid,
                 rule_gen_id=rulid,
-                code_year=currentyear().code_year,
+                code_year=current_year,
             )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
@@ -528,36 +529,39 @@ def details_rules(request):
         derog.append(paraid)
         return o.text_specific_paragraph, True
 
-    x = request.POST.get('val')
-    rule = Rule.objects.get(id=x)
+    current_year = currentyear().code_year
+    rule_id = request.POST.get('val')
+    rule = Rule.objects.get(id=rule_id)
     paragraphs = Paragraph.objects.filter(Q(rule=rule))
+    types = rule.degree_type.all()
 
     # # Give required additional paragraph or None
     # try:
     #     additional = AdditionalParagraph.objects.get(
     #         training=Training.objects.get(id=request.POST.get('training_id')),
-    #         rule_gen_id=x, code_year=currentyear().code_year
+    #         rule_gen_id=x, current_year
     #     )
     # except AdditionalParagraph.DoesNotExist:
     additional = None
 
     specific = True if request.POST.get('type') == 'specific' else False
     json_response = {
-        'id': x,
+        'id': rule_id,
         'year': "%s/%s" % (
-            currentyear().code_year, currentyear().code_year + 1),
+            current_year, current_year + 1),
         'title': rule.label,
         'is_specific': specific,
         'paragraphs': [
             {'alinea': e.id,
              'text': e.text_standard if not (
-                 e.is_interaction and specific) else gimme_txt(e.id, x)[0],
-             'is_derog': gimme_txt(e.id, x)[1],
+                 e.is_interaction and specific) else gimme_txt(e.id, rule_id)[0],
+             'is_derog': gimme_txt(e.id, rule_id)[1],
              'can_be_derog': e.is_interaction,
              'info': _('Dérogation')}
             for e in paragraphs],
-
+        'degree_types': [e.long_label for e in types],
     }
+
     if specific:
         json_response["additional"] = {
             "alinea": "",
