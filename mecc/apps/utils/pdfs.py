@@ -843,7 +843,7 @@ def gen_model_story(trainings, model, date, target, standard, ref, gen_type, use
     """
     ordered_trainings = trainings.order_by('degree_type', 'label')
     i = datetime.datetime.now()
-    if year is not None:
+    if year is None:
         year = currentyear().code_year
 
     if 'review' in target:
