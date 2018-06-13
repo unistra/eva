@@ -2,11 +2,15 @@
 View for document generator 3000
 """
 import json
+import re
+
 from django.contrib.auth.models import User
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 
+from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.utils.queries import currentyear
@@ -16,7 +20,7 @@ from mecc.apps.years.models import UniversityYear, InstituteYear
 from mecc.apps.rules.models import Rule
 from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
 
-from mecc.apps.utils.pdfs import setting_up_pdf,  \
+from mecc.apps.utils.pdfs import setting_up_pdf, \
     canvas_for_preview_mecctable, \
     preview_mecctable_story, NumberedCanvas_landscape, \
     DocGenerator
@@ -38,10 +42,13 @@ def dispatch_to_good_pdf(request):
     # GET ALL INFORMATIONS
     trainings = request.GET.getlist('selected')
     generator = DocGenerator()
-    
+
     if not trainings:
         try:
-            current_year = currentyear().code_year
+            if request.GET.get('year') and re.match(r'2\d{3}', request.GET.get('year')):
+                current_year = request.GET.get('year')
+            else:
+                current_year = currentyear().code_year
         except AttributeError:
             return render(request, 'msg.html',
                           {'msg': _("Initialisation de l'année non effectuée")}
@@ -49,8 +56,12 @@ def dispatch_to_good_pdf(request):
         institute = Institute.objects.get(id=request.GET.get('institute'))
         trainings = Training.objects.filter(
             code_year=current_year, supply_cmp=institute.code, is_used=True)
-            
-        doc, response = generator.create_eci(request, trainings)
+
+        if 'd' == request.GET.get('model'):
+            trainings = trainings.filter(date_val_cfvu__isnull=False)
+            doc, response = generator.validated_history(request, trainings, institute, current_year)
+        else:
+            doc, response = generator.create_eci(request, trainings)
     else:
         doc, response = generator.run(request, trainings)
 
@@ -116,7 +127,7 @@ def home(request, template='doc_generator/home.html'):
         code_year=current_year)
 
     if request.user.is_superuser or 'DES1' in [
-            e.name for e in request.user.groups.all()]:
+        e.name for e in request.user.groups.all()]:
         data['institutes'] = [(e, institute_year.get(id_cmp=e.id))
                               for e in all_institutes]
     else:
@@ -165,7 +176,7 @@ def available_target(request):
     # Handling profiles
     p = user.meccuser.profile.all()
     other = [{'code': "DES1" if 'DES1' in [e.name for e in user.groups.all()]
-              else '', 'cmp:':"ALL"}]
+    else '', 'cmp:': "ALL"}]
     profiles = [{'code': e.code, 'cmp': e.cmp} for e in p if p]
     profiles.extend(other)
 
@@ -173,7 +184,7 @@ def available_target(request):
     profile_cmp = [e.get('code') for e in profiles if e.get('cmp') == cmp_code]
 
     if any(True for profile in profile_cmp if profile in [
-            'RESPFORM', 'RESPENS']) or user.is_superuser:
+        'RESPFORM', 'RESPENS']) or user.is_superuser:
         target.append({
             'code': "review_my",
             'label': _("Relecture (mes formations)"),
@@ -283,13 +294,13 @@ def trainings_for_target(request):
 
     def process_prepare_cc():
         return [e.small_dict for e in trainings if (
-            e.progress_rule == 'A' and e.progress_table == 'A')]
+                e.progress_rule == 'A' and e.progress_table == 'A')]
 
     def process_prepare_cc_my():
         spe_train = trainings.filter(
             resp_formations=user.meccuser, code_year=current_year)
         return [e.small_dict for e in spe_train if (
-            e.progress_rule == 'A' and e.progress_table == 'A')]
+                e.progress_rule == 'A' and e.progress_table == 'A')]
 
     def process_prepare_cfvu():
         return [e.small_dict for e in trainings if e.date_visa_des not in [
@@ -319,3 +330,84 @@ def trainings_for_target(request):
 
     trains = process[target]()
     return JsonResponse(trains, safe=False) if json else trains
+
+
+def get_years(current_year):
+    """Get years for select box"""
+    years = UniversityYear.objects \
+        .filter(is_year_init=True) \
+        .order_by('-code_year')
+    return years
+
+
+@login_required()
+def history_home(request):
+    current_year = currentyear().code_year
+    years = get_years(current_year)
+
+    return render(request, 'doc_generator/history_home.html', {
+        'active_years': years,
+        'home': True,
+    })
+
+
+@login_required()
+def history_for_year(request, year):
+    """
+    List of Institutes for given year with links to MECC, presentation letter
+    and other documents
+    :param request:
+    :param year:
+    :return:
+    """
+
+    def get_trainings_for_institute_and_year(institute):
+        trainings = Training.objects.filter(
+            code_year=year, supply_cmp=institute.code, is_used=True, date_val_cfvu__isnull=False)
+        if trainings.count():
+            return trainings.count()
+        return False
+
+    def get_institutes():
+        active_institutes_for_year = InstituteYear.objects.filter(code_year=year)
+        institutes = Institute.objects.filter(
+            id__in=active_institutes_for_year.values_list('id_cmp', flat=True).distinct()
+        ).order_by('field', 'label')
+        return institutes
+
+    current_year = currentyear().code_year
+    selected_year = year
+    years = get_years(current_year)
+    institutes = get_institutes()
+    ordered_list = []
+    for institute in institutes:
+        try:
+            iy = InstituteYear.objects.get(
+                code_year=selected_year, id_cmp=institute.id)
+        except ObjectDoesNotExist:
+            continue
+        except MultipleObjectsReturned:
+            iy = InstituteYear.objects.filter(
+                code_year=selected_year, id_cmp=institute.id).first()
+        field = {
+            'id': institute.id,
+            'year': year,
+            'domaine': institute.field.name,
+            'code': institute.code,
+            'labelled': institute.label,
+            'mecc': get_trainings_for_institute_and_year(institute),
+            'letter': FileUpload.objects.filter(
+                object_id=institute.id,
+                additional_type__startswith='letter_' + selected_year),
+            'misc_docs': FileUpload.objects.filter(
+                object_id=institute.id,
+                additional_type__startswith='misc_' + selected_year).order_by('file'),
+        }
+        if field['mecc'] or field['letter'] or field['misc_docs']:
+            ordered_list.append(field)
+
+    return render(request, 'doc_generator/history_home.html', {
+        'active_years': years,
+        'selected_year': str(selected_year),
+        'institutes': ordered_list,
+    })

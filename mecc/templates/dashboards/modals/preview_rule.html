@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="modal fade" id="preview" role="dialog" style="z-index: 1400;">
     <div class="modal-dialog modal-90">
         <!-- Modal content-->
@@ -16,11 +17,21 @@
                 </div>
             </div>
             <div class="modal-body">
+                <table class="no-padding" id="preview-degree-types">
+                    <thead>
+                    <tr class="disabled no-padding">
+                        <th class="no-padding italic" style="font-weight: normal;">{% trans "Types de diplôme concernés" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
                 <table class="no-padding" id="preview-rules">
                     <thead>
                         <tr class="disabled no-padding">
-                            <th width="10%" class="td-centered no-padding italic" style="font-weight: normal;">Alinéas</th>
-                            <th width="70%"> </th>
+                            <th width="10%" class="no-padding italic" style="font-weight: normal;">{% trans "Alinéas" %}</th>
+                            <th width="70%"></th>
                             <th width="20%"></th>
                         </tr>
                     </thead>

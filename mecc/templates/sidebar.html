@@ -197,7 +197,7 @@
             {% endif %}
 
             <li id="historic">
-                <a href="#"
+                <a href="{% url 'doc_gen:history_home' %}"
                 {% if 'historic' in request.path %}
                 class="item-selected"
                 {% endif %}>{% trans 'Historique MECC validées' %}</a>

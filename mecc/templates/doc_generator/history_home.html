@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block page-header %}
+{% trans 'Historique MECC validées' %}
+{% endblock %}
+
+{% block app_content %}
+<div class='flex-container' style="flex-direction:column">
+    <form class="form-comp" action="#">
+        <div class="form-group">
+            <label for="year-list" class="control-label">{% trans 'Sélectionnez une année universitaire' %}</label>
+            <div class="controls">
+                <select name="years" id="year-list" class="form-control select">
+                    {% if active_years %}
+                        <option value="">{% trans 'Sélectionnez une année universitaire' %}</option>
+                    {% endif %}
+                    {% for year in active_years %}
+                        <option value="{{ year.code_year }}" {% if year.code_year|slugify == selected_year %}selected="selected"{% endif %}>{{ year.label_year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+{% if institutes %}
+    {% regroup institutes by domaine as institute_list %}
+    <table class="table" style="order:1">
+    <tr class="fixed">
+        <th><span class="sr-only">Composante</span></th>
+        <th>MECC</th>
+        <th>{% trans "Lettre de présentation" %}</th>
+        <th>{% trans "Autres documents" %}</th>
+    </tr>
+    {% for field in institute_list %}
+        <tr>
+            <th>{{ field.grouper }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+
+        {% for item in field.list %}
+            {% if item.mecc %}
+                <tr class="hover-row">
+                    <td style="padding-left: 2em;">{{ item.labelled }}</td>
+                    <td>
+                        {% if item.mecc %}
+                             <a href="{% url 'doc_gen:generate_pdf' %}?year={{ selected_year }}&institute={{ item.id }}&model=d&target=history">MECC</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for letter in item.letter %}
+                            <a href="{{ letter.file.url }}">{% trans "Lettre de présentation" %}</a>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if item.misc_docs|length %}
+                            <a href="#" class="show-detail-files" data-institute-id="{{ item.id }}">{% trans "Autres documents (PV Conseils...)" %}</a> ({{ item.misc_docs|length }})
+                            <ul id="misc-docs-{{ item.id }}" class="hidden" data-institute-label="{{ item.labelled }}">
+                            {% for misc_doc in item.misc_docs %}
+                                <li><a href="{{ misc_doc.file.url }}">{{ misc_doc.filename }}</a></li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+
+    {% endfor %}
+    </table>
+{% else %}
+    {% if not home %}
+        <p>{% trans "Aucun document." %}</p>
+    {% endif %}
+{% endif %}
+
+</div>
+
+{% include "training/modal_preview_files.html" %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#year-list').change(function( ) {
+            var year = $(this).val();
+            if (year) {
+                var url = '{% url 'doc_gen:history_home' %}' + year + '/';
+                window.location = url;
+            }
+        });
+
+        $('a.show-detail-files').on('click', function(e) {
+            var institute = $(this).data('institute-id');
+            document.getElementById('myModalLabel').innerHTML = document.getElementById('misc-docs-'+institute).getAttribute('data-institute-label');
+            document.getElementById('files_list').innerHTML = document.getElementById('misc-docs-'+institute).innerHTML;
+            $('#preview_files').modal('show');
+            e.preventDefault();
+        });
+    });
+
+    function detail_files(institute) {
+    }
+</script>
+
+{% endblock %}
