@@ -30,6 +30,17 @@ from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 LOGGER = logging.getLogger(__name__)
 
 
+def has_exams(request):
+    """
+    Returns "true" or "false" whether a structure has or not exams attached.
+    """
+    structure_id = request.GET.get('structure_id')
+    if Exam.objects.filter(id_attached=structure_id):
+        return JsonResponse({'has_exams': 1})
+    else:
+        return JsonResponse({'has_exams': 0})
+
+
 def copy_exam_1_to_2(request, id_structure):
     """
     Copy primary exam to secondary exams
@@ -160,6 +171,96 @@ def list_exams(request, id_structure):
     asked_exams = exams.filter(session='2') if request.GET.get(
         'session2') else exams.filter(session='1')
     return JsonResponse([e.as_json for e in asked_exams], safe=False)
+
+
+def copy_old_exams(request, id_structure=None):
+    """
+    Copy exams from last year
+    into unchanged structures owned by the current training
+    """
+
+
+    def copy_last_year_exams(structure):
+        """
+        Copy last year exams for the given structure
+        """
+        old_structure = StructureObject.objects.get(
+            auto_id=structure.auto_id,
+            code_year=structure.code_year-1
+        ) 
+        if old_structure:
+            old_exams = Exam.objects.filter(id_attached=old_structure.id) 
+            if old_exams:
+
+                import copy
+                for old_exam in old_exams:
+                    exam = copy.copy(old_exam)
+                    exam.id = exam._id = None
+                    exam.code_year = structure.code_year
+                    exam.id_attached = structure.id
+                    exam.save()
+
+                return 666 
+            else:
+                return 333
+        else:
+            return 999
+
+    id_structure = request.GET.get('structure_id')
+
+    if id_structure is not None:
+        current_structure = StructureObject.objects.get(id=id_structure)
+        data = {
+            'id_struct': current_structure.id,
+            'st_label': current_structure.label,
+            'st_nature': current_structure.nature,
+            'st_regime': current_structure.regime,
+            'st_session': current_structure.session,
+            'st_ref_scol': current_structure.ref_si_scol,
+            'st_rof_ref': current_structure.ROF_ref
+        }
+
+        data['status'] = status = copy_last_year_exams(current_structure)
+
+        if status == 666:
+            data['msg'] = "Les épreuves de l'année précédente ont bien été importées."
+        elif status == 333:
+            data['msg'] = "Aucune épreuve à importer."
+        else:
+            data['msg'] = "Cette structure d'enseignement n'existait pas l'année précédente."
+
+    else:
+        print("Début du traitement de la récupération des épreuves pour toutes les structures.")
+        id_training = request.GET.get('training_id')
+        if id_training:
+            print("ID de la formation récupéré")
+        current_structures = StructureObject.objects.filter(
+            owner_training_id=id_training,
+        ).exclude(id__in=[exam.id_attached for exam in Exam.objects.filter(
+            code_year=currentyear().code_year)])
+        if current_structures:
+            print("Structures à traiter récupérées.")
+
+        updated_objects = 0
+        data = {}
+        # we check that the corresponding current structure is empty
+        # in that case, the old_exam is copied in the current_structure
+        for structure in current_structures:
+            print(structure.label)
+            if copy_last_year_exams(structure) == 666:
+                data = {
+                    'id_struct': structure.id,
+                    'st_label': structure.label,
+                    'st_nature': structure.nature,
+                    'st_regime': structure.regime,
+                    'st_session': structure.session,
+                    'st_ref_scol': structure.ref_si_scol,
+                    'st_rof_ref': structure.ROF_ref
+                }
+                updated_objects += 1
+        data['updated_objects'] = updated_objects 
+        print("Fin du traitement de la récupération des épreuves pour toutes les structures.")
+    return JsonResponse(data)
 
 
 @login_required
@@ -1074,61 +1175,7 @@ def copy_old_mecctable(request, id_training):
     return redirect('/mecctable/training/' + str(id_training))
 
 
-def copy_old_exams(request):
-    """
-    Copy exams from last year
-    into unchanged structures owned by the current training
-    """
-    # Gimme all your training,
-    # all your exams and structures too
-    id_training = request.GET.get('training_id')
-    current_training = Training.objects.get(id=id_training)
-    old_training = Training.objects.get(
-        code_year=current_training.code_year-1,
-        n_train=current_training.n_train
-    )
-    current_structures = StructureObject.objects.filter(
-        owner_training_id=id_training,
-    )
-    old_structures = StructureObject.objects.filter(
-        owner_training_id=old_training.id
-    )
-    current_exams = Exam.objects.filter(
-        id_attached__in=[structure.id for structure in current_structures],
-        code_year=current_training.code_year
-    )
-    old_exams = Exam.objects.filter(
-        id_attached__in=[structure.id for structure in old_structures],
-        code_year=old_training.code_year
-    )
-    current_structures_with_exams = current_structures.filter(
-        id__in=[exam.id_attached for exam in current_exams]
-    )
-    exams_copied_cnt = 0
-    data = {}
 
-    import copy
-    # For each exam in the structures of last year training (old_exam)
-    # we check that the corresponding current structure is empty
-    # in that case, the old_exam is copied in the current_structure
-    for old_exam in old_exams:
-        old_structure = old_structures.get(id=old_exam.id_attached)
-        current_structure = current_structures.get(
-            label=old_structure.label
-        )
-        if current_structure not in current_structures_with_exams:
-            new_exam = copy.copy(old_exam)
-            new_exam.id = None
-            new_exam._id = None
-            new_exam.code_year = current_training.code_year
-            new_exam.id_attached = current_structure.id
-            new_exam.save()
-            exams_copied_cnt += 1
-
-    print(exams_copied_cnt)
-    data['copied_exams_cnt'] = exams_copied_cnt
-
-    return JsonResponse(data)
 
 
 # Using generic classview

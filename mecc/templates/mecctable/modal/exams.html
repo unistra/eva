@@ -15,7 +15,8 @@
                         <h1 class="title-modal">{% trans "Définition des épreuves" %}</h1>
                         {% trans "Année universitaire : " %} {{request.display.current_year}}
                     </div>
-                    <button type="button" class="btn-primary btn btn-sm btn-1" id="get_old_exams">{% trans "Récupérer les ÉPREUVES <br>de l'année précédente pour cet objet" %}</button>
+                    <div id="msg" role="alert"></div>
+                    <button type="button" class="btn-primary btn btn-sm btn-1 copy-old">{% trans "Récupérer les ÉPREUVES <br>de l'année précédente pour cet objet" %}</button>
                 </div>
                 <div class="disp-flex space-between paddin-top">
                     <div>
@@ -114,6 +115,10 @@
     </div>
 </div>
 <script>
+
+	$("#exams_tab").on('hidden.bs.modal', function (e) {
+        $("#msg").hide();
+    })
 
     var type_dict = {
         "A": "Autre",
@@ -256,6 +261,15 @@
         }
 
         // update title
+        $("#exams_tab .copy-old").attr("id", id_structure);
+        $.ajax({
+            type: "GET",
+            url: "{% url 'mecctable:has_exams' %}",
+            data: { structure_id: id_structure },
+            success: function (data) {
+                $("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+            }
+        });
         document.getElementById('struct_object').innerHTML = st_label;
         document.getElementById('struct_type').innerHTML = st_nature;
         document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
@@ -382,7 +396,15 @@
             onItemDeleted: function (args) {
                 args.grid.loadData();
                 update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref);
+		        $.ajax({
+		            type: "GET",
+		            url: "{% url 'mecctable:has_exams' %}",
+		            data: { structure_id: id_structure },
+		            success: function (data) {
+						$("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+		            }
+		        });
             },
             onInit: function () {},
             controller: {
@@ -680,7 +702,15 @@
             onItemDeleted: function (args) {
                 args.grid.loadData();
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref) 
+                $.ajax({
+		            type: "GET",
+		            url: "{% url 'mecctable:has_exams' %}",
+		            data: { structure_id: id_structure },
+		            success: function (data) {
+						$("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+		            }
+		        });
             },
             controller: {
                 loadData: function (filter) {

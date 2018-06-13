@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %} {% load mecc_tags %}
 
 <div class="{% if can_edit or a.can_be_edited %}updatable{% endif %} meccRow id-{{a.link.id}} r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {% if not a.structure.is_in_use %}grey-all{% endif %} {% if a.is_imported %}green{% endif %}"
      id="{{a.link.id}}">
@@ -165,7 +165,7 @@
                     {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %}
                     <td class="border-left">
                          <a class="smaller hand" 
-                            onclick="struct_select({{a.structure.id}}, 
+                            onclick="struct_select({{a.structure.id}},
                                                   '{{a.structure.get_nature_display}}', 
                                                   '{{a.structure.get_regime_display}}', 
                                                   '{{a.structure.get_session_display}}', 

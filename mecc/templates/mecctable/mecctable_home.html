@@ -243,10 +243,13 @@ function check_regime_session(id_training, link_clicked) {
                         copy_old_mecctable();
                     }
                     break;
-                case 'copy-old-exams':
+                default:
                     if(data.regime_session_changed){
                         $('#exam_regime_session_changed').modal('toggle');
                     } else {
+                        if (link_clicked != 'copy-old-exams') {
+                            $("#exam_copy_confirm .btn-primary").attr("id", link_clicked);
+                        }
                         $('#exam_copy_confirm').modal('toggle');
                     }
                     break;
@@ -270,21 +273,58 @@ function copy_old_mecctable() {
 }
 
 function copy_old_exams() {
+    structure_id = $("#exam_copy_confirm .btn-primary").attr("id");
     $.ajax({
         url: "{%url 'mecctable:copy_old_exams' %}",
         type: "GET",
         data: {
             training_id: {{training.id}},
+            structure_id: structure_id,
         },
         success: function(data) {
-            console.log(data.copied_exams_cnt);
             $('#exam_copy_confirm').modal('hide');
-            $('#exam_copy_report').modal('toggle');
-            $('#para-exam-report-cnt-1').text(data.copied_exams_cnt);
-            // TODO : load data dynamically instead of reload the entire page
-            $('#exam_copy_report').on('hide.bs.modal',function(e){
-                window.location.reload();
-            });
+            if (typeof structure_id === "undefined") {
+                $('#exam_copy_report').modal('toggle');
+                $('#para-exam-report-cnt-1').text(data.updated_objects);
+            } else {
+                $("#msg").show();
+                switch (data.status) {
+                    case 666:
+                        $("#msg").attr("class", "alert alert-success").text(data.msg);
+                        break;
+                    default:
+                        $("#msg").attr("class", "alert alert-danger").text(data.msg);
+                        break;
+                }
+                struct_select(
+                    data.id_struct,
+                    data.st_nature,
+                    data.st_regime,
+                    data.st_session,
+                    data.st_ref_scol,
+                    data.st_rof_ref                   
+                );
+            }
+            update_mini_table(
+                "1",
+                data.id_struct,
+                data.st_label,
+                data.st_nature,
+                data.st_regime,
+                data.st_session,
+                data.st_ref_scol,
+                data.st_rof_ref
+            );
+            update_mini_table(
+                "2",
+                data.id_struct,
+                data.st_label,
+                data.st_nature,
+                data.st_regime,
+                data.st_session,
+                data.st_ref_scol,
+                data.st_rof_ref 
+            );
         }
     });
 }
