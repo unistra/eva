@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.db import transaction
@@ -525,6 +525,8 @@ def details_rules(request):
             )
         except SpecificParagraph.DoesNotExist:
             return Paragraph.objects.get(id=paraid).text_standard, False
+        except MultipleObjectsReturned:
+            return '', False
 
         derog.append(paraid)
         return o.text_specific_paragraph, True
