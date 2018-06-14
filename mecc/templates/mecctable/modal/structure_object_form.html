@@ -9,8 +9,8 @@
                     {% trans "Objet de la structure d'enseignement" %}
                 </h4>
                 <div class="grey">
-                    <div class="" id="struct_id">
-                        {% trans "ID : " %} 
+                    <div class="">
+                        {% trans "ID : " %}<span id="struct_id"></span> 
                     </div>
                     <div class="">
                         {% trans "Année universitaire : " %} {{request.display.current_year}}
@@ -226,7 +226,7 @@ if (!is_catalogue) {
 
 
     function get_struct_details(_id, id_parent, nature) {
-        $("#struct_id").append(_id);
+        $("#struct_id").text(_id);
         select.innerHTML = "";
         select.innerHTML = options;
         if (nature === 'SE' || nature === 'UE' || nature === 'EC'){
