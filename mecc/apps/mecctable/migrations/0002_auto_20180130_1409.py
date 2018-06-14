@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='exam',
             name='coefficient',
-            field=models.DecimalField(blank=True, max_digits=2, decimal_places=2, verbose_name="Coefficient de l'épreuve", null=True),
+            field=models.DecimalField(null=True, verbose_name="Coefficient de l'épreuve", decimal_places=2, max_digits=4, blank=True),
         ),
     ]

@@ -131,7 +131,7 @@ compris entre 1 et 3"),
                             "<span class='red'>%s</span>" % len(proper_exam_2)),
                     })
             # 3
-            if "C" in training.MECC_type:
+            if "C" in training.MECC_type and "2" in struc.session:
                 to_add = report['3']['objects']
                 can_be_added = {
                     "0": struc.nature,

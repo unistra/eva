@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='exam',
-            name='coefficient',
-            field=models.DecimalField(null=True, verbose_name="Coefficient de l'épreuve", decimal_places=2, max_digits=4, blank=True),
-        ),
+        # migrations.AlterField(
+        #     model_name='exam',
+        #     name='coefficient',
+        #     field=models.DecimalField(null=True, verbose_name="Coefficient de l'épreuve", decimal_places=2, max_digits=4, blank=True),
+        # ),
     ]

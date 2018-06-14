@@ -1,6 +1,7 @@
 from django import template
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from mecc.apps.mecctable.models import Exam
 
 register = template.Library()
 
@@ -28,3 +29,7 @@ def settings_get(name):
         return str(settings.__getattr__(name))
     except:
         return ""
+
+@register.filter(name="has_exams")
+def has_exams(structure_id):
+    return True if structure_id in [exam.id_attached for exam in Exam.objects.all()] else False

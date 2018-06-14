@@ -601,7 +601,7 @@ def send_mail(request):
     institute_year.save()
     to = settings.EMAIL_TEST if hasattr(
         settings, 'EMAIL_TEST') else ['']
-    cc = [request.POST.get('cc')]
+    cc = request.POST.get('cc').split(',') if request.POST.get('cc') else ''
     subject = "%s %s - %s %s" % (settings.EMAIL_SUBJECT_PREFIX,
                                  institute.label,
                                  request.user.first_name,
@@ -634,8 +634,8 @@ def send_mail_des(request):
     """
 
     to = settings.EMAIL_TEST if hasattr(
-        settings, 'EMAIL_TEST') else ['']
-    cc = [request.POST.get('cc')] if request.POST.get('cc') else ''
+        settings, 'EMAIL_TEST') else ''
+    cc = request.POST.get('cc').split(',') if request.POST.get('cc') else ''
     subject = request.POST.get('subject')
 
     body = request.POST.get('body')
@@ -646,7 +646,7 @@ def send_mail_des(request):
             request.user.first_name,
             request.user.last_name,
             request.user.email),
-        to=[request.POST.get('to')],
+        to=request.POST.get('to').split(','),
         cc=cc,
         bcc=to,
         reply_to=[settings.MAIL_FROM]

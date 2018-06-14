@@ -70,7 +70,7 @@ def do_consistency_check(request):
     for e in report:
         if not report.get(e).get('objects'):
             to_remove.append(e)
-        
+
     for e in to_remove:
         report.pop(e)
 
@@ -730,7 +730,7 @@ def send_mail(request):
     Send notification mail to des-admin-mecc@unistra.fr
     """
 
-    cc = [request.POST.get('cc')]
+    cc = request.POST.get('cc').split(',') if request.POST.get('cc') else ''
     subject = request.POST.get('subject')
     body = request.POST.get('body')
     mail = EmailMultiAlternatives(

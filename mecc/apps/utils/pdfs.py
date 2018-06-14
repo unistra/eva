@@ -205,7 +205,7 @@ class DocGenerator(object):
         """
         Create the document
         """
-        if self.target not in ['publish', 'history']:
+        if self.target not in ['publish_my', 'publish_all', 'history']:
             custom_watermark(canvas, "Document intermédiaire", rotation=40,
                              font_size=40, position_x=550, position_y=-70)
         canvas.saveState()

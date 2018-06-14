@@ -15,7 +15,7 @@
                 <div class="disp-flex ">
                         <div class="parent padding-1-left disp-flex">
                             <div class="item-80 dir-col  padding-1">
-                                <div>{% trans "Année universitaire :" %}{{training.code_year}}/{{training.code_year}}</div> 
+                                <div>{% trans "Année universitaire :" %} {{request.display.current_year}}</div> 
                                 <div class="">
                                     {% trans "Intitulé de la formation : "%}
                                     <strong>{{training.label}}</strong>
