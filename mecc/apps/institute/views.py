@@ -646,7 +646,7 @@ def send_mail_des(request):
             request.user.first_name,
             request.user.last_name,
             request.user.email),
-        to=request.POST.get('to').split(',')
+        to=request.POST.get('to').split(','),
         cc=cc,
         bcc=to,
         reply_to=[settings.MAIL_FROM]
