@@ -57,13 +57,26 @@ def manage_respform(dic, t_id):
     Create / delete repsform for a training
     """
     supply_cmp = Training.objects.get(id=t_id).supply_cmp
-    user_profile = Profile.objects.filter(Q(code="RESPFORM", cmp=supply_cmp))
     training = Training.objects.get(id=dic.get('formation'))
+    user_profile, u_p_created = Profile.objects.get_or_create(
+        code="RESPFORM",
+        label="Responsable de formation",
+        year=currentyear().code_year,
+        cmp=supply_cmp,
+    )
     user, user_created = User.objects.get_or_create(
-        username=dic.get('username'))
+        username=dic.get('username')
+    )
 
     meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
-    u_p = user_profile.first()
+    # u_p = user_profile.first()
+    # for profile in user_profile:
+    print(user_profile.id)
+    print(user_profile.code)
+    print(user_profile.year)
+    # print(u_p.id)
+    # print(u_p.code)
+    # print(u_p.year)
 
     if 'add_respform' in dic:
         if user_created:
@@ -72,12 +85,12 @@ def manage_respform(dic, t_id):
         user.last_name = dic.get('name')
         user.email = dic.get('mail')
         user.save()
-        if len(user_profile) < 1:
-            u_p = Profile.objects.create(
-                code="RESPFORM", cmp=supply_cmp,
-                label="Responsable de formation", year=currentyear().code_year)
+        # if len(user_profile) < 1:
+        #     u_p = Profile.objects.create(
+        #         code="RESPFORM", cmp=supply_cmp,
+        #         label="Responsable de formation", year=currentyear().code_year)
         meccuser.cmp = dic.get('cmp')
-        meccuser.profile.add(u_p)
+        meccuser.profile.add(user_profile)
         training.resp_formations.add(meccuser)
         training.save()
         meccuser.save()
@@ -88,8 +101,9 @@ def manage_respform(dic, t_id):
             resp_formations__user__username=dic.get('username')
         )
         training.resp_formations.remove(meccuser)
-        if len(train_respform) < 1:
-            meccuser.profile.remove(u_p)
+        meccuser.profile.remove(user_profile)
+        # if len(train_respform) < 1:
+        #     meccuser.profile.remove(user_profile)
         if len(meccuser.profile.all()) < 1 and len(user.groups.all()) < 1:
             meccuser.user.delete()
             meccuser.delete()

@@ -54,8 +54,8 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeFormWithoutPass
     add_form = UserCreationFormWithoutPass
 
-    list_filter = ('is_staff', 'groups__name',)
-    list_display = ('username', 'is_superuser', 'get_profile',
+    list_filter = ('is_staff', 'groups__name', 'meccuser__profile__year', )
+    list_display = ('username', 'is_superuser', 'get_profile', 'get_year',
                     'get_group', 'get_cmp')
 
     def get_cmp(self, obj):
@@ -66,6 +66,13 @@ class UserAdmin(BaseUserAdmin):
             ["%s %s" % (e.label, e.cmp) for e in obj.meccuser.profile.all()])
     # Allow br to work
     get_profile.allow_tags = True
+    
+    
+    def get_year(self, obj):
+        return "<br>".join(
+            ["%s" % e.year for e in obj.meccuser.profile.all()])
+    # Allow br to work
+    get_year.allow_tags = True
 
     def get_group(self, obj):
         """
@@ -75,9 +82,16 @@ class UserAdmin(BaseUserAdmin):
         return ','.join(
             [g.name for g in obj.groups.all()]) if obj.groups.count() else ''
 
+
+    def lookup_allowed(self, key, value):
+        if key in ('meccuser__profile__year',):
+            return True
+        return super(UserAdmin, self).lookup_allowed(key, value)
+
     get_cmp.short_description = _('Composante')
     get_group.short_description = _('Groupe')
     get_profile.short_description = _('Profil')
+    get_year.short_description = _('Année')
     get_profile.admin_order_field = 'meccuser__profile'
 
     fieldsets = (
