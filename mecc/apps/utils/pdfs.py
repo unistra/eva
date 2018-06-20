@@ -1083,7 +1083,19 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
         shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
         for e in derogs.order_by('rule_gen_id'):
             table_derog = []
-            if target in ["publish", "history"]:
+            if target in ["publish_my", "publish_all"]:
+                table_derog = [
+                    Paragraph("<para textColor=blue></para>",
+                              styles['Normal']),
+                    Table([
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
+                        [list_of_parag_with_bullet(e.text_specific_paragraph)]
+                    ], style=additional_style)
+                ]
+            elif target in ["history"]:
                 table_derog = [
                     Paragraph("<para textColor=blue>(D)</para>",
                               styles['Normal']),
