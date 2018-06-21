@@ -1057,6 +1057,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     """
     Adding derog and additional for specific training
     """
+    shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
     # #### STYLES
     main_table_style = [
         ('VALIGN', (1, 0), (-1, -1), "TOP"),
@@ -1080,7 +1081,6 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     # #### TABLES
     table = []
     if derogs:
-        shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
         for e in derogs.order_by('rule_gen_id'):
             table_derog = []
             if target in ["publish_my", "publish_all"]:
