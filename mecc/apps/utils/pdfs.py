@@ -1172,7 +1172,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         current_year = currentyear().code_year
     else:
         current_year = year
-    in_two_parts = False if target in ['publish', 'history'] else True
+    in_two_parts = False if target in ['publish_all', 'publish_my', 'history'] else True
     training_is_ccct = True if training.MECC_type == 'C' else False
     current_structures = StructureObject.objects.filter(code_year=current_year)
     current_links = ObjectsLink.objects.filter(code_year=current_year)
