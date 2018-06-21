@@ -70,13 +70,6 @@ def manage_respform(dic, t_id):
 
     meccuser, meccuser_created = MeccUser.objects.get_or_create(user=user)
     # u_p = user_profile.first()
-    # for profile in user_profile:
-    print(user_profile.id)
-    print(user_profile.code)
-    print(user_profile.year)
-    # print(u_p.id)
-    # print(u_p.code)
-    # print(u_p.year)
 
     if 'add_respform' in dic:
         if user_created:
