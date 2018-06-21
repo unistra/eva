@@ -705,10 +705,10 @@ def duplicate_add(request):
             session_type=t.session_type,
             ref_cpa_rof=t.ref_cpa_rof,
             ref_si_scol=t.ref_si_scol,
-            date_val_cmp=t.date_val_cmp,
-            date_res_des=t.date_res_des,
-            date_visa_des=t.date_visa_des,
-            date_val_cfvu=t.date_val_cfvu,
+            # date_val_cmp=t.date_val_cmp,
+            # date_res_des=t.date_res_des,
+            # date_visa_des=t.date_visa_des,
+            # date_val_cfvu=t.date_val_cfvu,
             supply_cmp=t.supply_cmp,
             n_train=t.n_train
         )

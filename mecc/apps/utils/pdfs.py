@@ -1057,6 +1057,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     """
     Adding derog and additional for specific training
     """
+    shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
     # #### STYLES
     main_table_style = [
         ('VALIGN', (1, 0), (-1, -1), "TOP"),
@@ -1080,10 +1081,21 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
     # #### TABLES
     table = []
     if derogs:
-        shared_additionals = additionals.filter(rule_gen_id__in=[d.rule_gen_id for d in derogs])
         for e in derogs.order_by('rule_gen_id'):
             table_derog = []
-            if target in ["publish", "history"]:
+            if target in ["publish_my", "publish_all"]:
+                table_derog = [
+                    Paragraph("<para textColor=blue></para>",
+                              styles['Normal']),
+                    Table([
+                        [Paragraph(
+                            '<para fontsize=12 textColor=steelblue><b>%s</b></para>'
+                            % edited_rules.filter(id=e.rule_gen_id).first().label, styles['BodyText']
+                        )],
+                        [list_of_parag_with_bullet(e.text_specific_paragraph)]
+                    ], style=additional_style)
+                ]
+            elif target in ["history"]:
                 table_derog = [
                     Paragraph("<para textColor=blue>(D)</para>",
                               styles['Normal']),
@@ -1160,7 +1172,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         current_year = currentyear().code_year
     else:
         current_year = year
-    in_two_parts = False if target in ['publish', 'history'] else True
+    in_two_parts = False if target in ['publish_all', 'publish_my', 'history'] else True
     training_is_ccct = True if training.MECC_type == 'C' else False
     current_structures = StructureObject.objects.filter(code_year=current_year)
     current_links = ObjectsLink.objects.filter(code_year=current_year)
