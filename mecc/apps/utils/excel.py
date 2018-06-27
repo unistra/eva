@@ -33,7 +33,7 @@ class MeccTable:
             training_is_ccct = True if training.MECC_type == 'C' else False
 
             self.write_worksheet_headers(institute, worksheet, training, year, references)
-            self.write_training_headers(worksheet)
+            self.write_training_headers(worksheet, training)
 
             current_structures = StructureObject.objects.filter(code_year=year)
             current_links = ObjectsLink.objects.filter(code_year=year)
@@ -137,7 +137,11 @@ class MeccTable:
         for e in what.get('children'):
             self.write_training_data(e, worksheet, training_is_ccct)
 
-    def write_training_headers(self, worksheet):
+    def write_training_headers(self, worksheet, training):
+        if training.MECC_type == 'E':
+            mecc_type = 'Convocation'
+        else:
+            mecc_type = 'CC/CT'
         worksheet.merge_range('A7:F7', 'Objets', self.formats['header4'])
         worksheet.merge_range('G7:R7', 'Épreuves', self.formats['header5'])
         worksheet.merge_range('A8:F8', '', self.formats['default'])
@@ -148,7 +152,7 @@ class MeccTable:
             worksheet.write(8, col, header, self.formats['default'])
             col = col + 1
         col = 6
-        for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', 'CC/CT', 'Note seuil', 'Report session 2'):
+        for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', mecc_type, 'Note seuil', 'Report session 2'):
             worksheet.write(8, col, header, self.formats['header8'])
             col = col + 1
         col = 13
