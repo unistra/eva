@@ -1,5 +1,12 @@
-{% extends "base.html" %} {% load i18n %} {% load staticfiles %} {% block page-header %}
-{%trans 'Moteur de génération de documents MECC' %} {% endblock %} {% block app_content %}
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block page-header %}
+    {%trans 'Moteur de génération de documents MECC' %}
+{% endblock %}
+
+{% block app_content %}
 <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8"
 />
 <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
@@ -165,22 +172,11 @@
     // In order to get all trainings concerned and specific values of radio buttons
     get_trainings($("#target").val(), $('#institute').val())
 
-
     // set datatable
     $('#checkbox_all').on('click', function () {
         $('input[type="checkbox"].select_id').prop('checked', this.checked);
     });
-    $('#generate').on('click', function(){
-        let selected_list = [];
-        $('input[type="checkbox"].select_id:checked').each(function() {
-            selected_list.push(this.value)
-        });
-        let ref = $('input:radio[name=ref]:checked').serialize().split('=')[1];
-        let standard = $('input:radio[name=standard]:checked').serialize().split('=')[1];
-        let gen_type = $('input:radio[name=gen_type]:checked').serialize().split('=')[1];
-        let model = $('input:radio[name=model]:checked').serialize().split('=')[1];
 
-    });
     var table_suggest = $('#trainings').DataTable({
         "paging": false,
         // "ordering": false,
@@ -195,7 +191,7 @@
         },
         "columns": [{
             'targets': 0,
-            "orderable": false,            
+            "orderable": false,
             'searchable': false,
             'className': 'dt-body-center noarrow',
             'render': function (data, type, full, meta) {
@@ -293,13 +289,12 @@
                     select.append($("<option></option>")
                         .attr("value", this.code).text(this.label));
                 });
-
                 get_trainings(data[0].code, institute)
-
             }
         })
     }
-    $('#generate').on('click', function(e){
+
+    $('#generate').on('click', function (e) {
         e.preventDefault();
         let gen_type = $('input[name=gen_type]:checked').val();
         let url = '';
@@ -316,23 +311,22 @@
         }
 
         let not_selected = true;
-        $("input:checked").each(function() {
-
-            if ($(this).attr("name") != null){
-                url += '&' + $(this).attr("name") + '=' +  $(this).val() 
+        $("input:checked").each(function () {
+            if ($(this).attr("name") != null) {
+                url += '&' + $(this).attr("name") + '=' + $(this).val()
             }
-            if ($(this).attr('name') === 'selected'){
+            if ($(this).attr('name') === 'selected') {
                 not_selected = false
             }
         });
-        if (not_selected){
+        if (not_selected) {
             $("#trainings").addClass("all-in-red");
-        } else{
+        } else {
             $("#trainings").removeClass("all-in-red");
             window.location.href = url;
         }
-
     });
+
     $('#target').on('change', function () {
 
         let institute = $('#institute');
@@ -350,6 +344,7 @@
         get_trainings(this.value, institute.val())
 
     });
+
     $('#institute').on('change', function () {
         get_target(this.value);
         let target = $('#target').val();
@@ -362,6 +357,7 @@
             }
         }
     });
+
     $('#date').datepicker({
         orientation: "bottom auto",
         todayHighlight: true,

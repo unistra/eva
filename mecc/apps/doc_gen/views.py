@@ -3,9 +3,7 @@ View for document generator 3000
 """
 import json
 import re
-from io import BytesIO
 
-import xlsxwriter
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
@@ -416,6 +414,7 @@ def history_for_year(request, year):
     })
 
 
+@login_required
 def generate_excel_mecctable(request):
     year = request.GET.get('year', currentyear().code_year)
     institute_code = request.GET.get('institute', 'CHM')
