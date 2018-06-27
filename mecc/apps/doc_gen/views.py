@@ -421,7 +421,8 @@ def generate_excel_mecctable(request):
     references = request.GET.get('ref', 'with_si')  # ['without', 'with_si', 'with_rof', 'both']
     institute = Institute.objects.get(code=institute_code)
     training_ids = request.GET.getlist('selected')
-    trainings = Training.objects.filter(id__in=[e for e in training_ids])
+    trainings = Training.objects.filter(id__in=[e for e in training_ids])\
+        .order_by('degree_type__display_order', 'label')
 
     output = MeccTable().get_mecc_tables(trainings, institute, year, references)
 
