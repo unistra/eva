@@ -29,7 +29,7 @@ class MeccTable:
         self.formats = self.define_formats(workbook)
 
         for training in trainings:
-            worksheet = workbook.add_worksheet(training.label + ' (' + str(training.id) + ')')
+            worksheet = workbook.add_worksheet(training.label)
             training_is_ccct = True if training.MECC_type == 'C' else False
 
             self.write_worksheet_headers(institute, worksheet, training, year, references)
@@ -138,7 +138,7 @@ class MeccTable:
             self.write_training_data(e, worksheet, training_is_ccct)
 
     def write_training_headers(self, worksheet):
-        worksheet.merge_range('A7:F7', 'Objects', self.formats['header4'])
+        worksheet.merge_range('A7:F7', 'Objets', self.formats['header4'])
         worksheet.merge_range('G7:R7', 'Épreuves', self.formats['header5'])
         worksheet.merge_range('A8:F8', '', self.formats['default'])
         worksheet.merge_range('G8:M8', 'Session principale', self.formats['header6'])
