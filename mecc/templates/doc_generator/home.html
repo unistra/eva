@@ -184,7 +184,7 @@
         let gen_type = $('input:radio[name=gen_type]:checked').serialize().split('=')[1];
         let model = $('input:radio[name=model]:checked').serialize().split('=')[1];
 
-    })
+    });
     var table_suggest = $('#trainings').DataTable({
         "paging": false,
         // "ordering": false,
@@ -243,38 +243,39 @@
                 $radios_model.first().prop('checked', true);
 
                 let $radios_standard = $('input:radio[name=standard]');
-                $radios_standard.prop('checked', false)
-                $radios_standard.first().prop('checked', true)
-                
-                if(target == 'review_all'|| target==='review_before'||target==='review_after'||target==='review_my'){
+                $radios_standard.prop('checked', false);
+                $radios_standard.first().prop('checked', true);
+
+                if (target === 'review_all' || target === 'review_before' || target === 'review_after' || target === 'review_my') {
                     $radios_gen.filter('[value=pdf]').prop('checked', true);
                     $radios_gen.not('[value=pdf]').attr('disabled', true);
                     $radios_gen.filter('[value=pdf]').prop('checked', true);
-                    
+
                     $radios_model.filter('[value=a]').prop('checked', true);
                     $radios_model.attr('disabled', false);
 
-                    $radios_standard.filter('[value=no]').attr('disabled', false)              
+                    $radios_standard.filter('[value=no]').attr('disabled', false)
                 }
-                if(target == 'prepare_cc'|| target==='prepare_cc_my'||target==='prepare_cfvu'){
-                    $radios_gen.filter('[value=pdf]').prop('checked', true)
-                    $radios_gen.not('[value=pdf]').attr('disabled', true)
+                if (target === 'prepare_cc' || target === 'prepare_cc_my' || target === 'prepare_cfvu') {
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    $radios_gen.not('[value=pdf]').attr('disabled', true);
 
                     $radios_model.filter('[value=a]').prop('checked', true);
                     $radios_model.not('[value=a]').attr('disabled', true);
 
-                    $radios_standard.filter('[value=no]').attr('disabled', false)
-                    
+                    $radios_standard.filter('[value=no]').attr('disabled', false);
+
                 }
-                if(target == 'publish_all'|| target==='publish_my'){
-                    $radios_gen.filter('[value=pdf]').prop('checked', true)
-                    $radios_gen.not('[value=pdf]').attr('disabled', false)
-                    $radios_gen.not('[value=pdf]').parent('li').removeClass( "hidden" );     
+                if (target === 'publish_all' || target === 'publish_my') {
+                    $radios_gen.filter('[value=pdf]').prop('checked', true);
+                    $radios_gen.not('[value=pdf], [value=excel]').attr('disabled', true);
+                    $radios_gen.filter('[value=pdf], [value=excel]').attr('disabled', false);
+                    $radios_gen.not('[value=pdf], [value=excel]').parent('li').removeClass("hidden");
 
                     $radios_model.filter('[value=a]').prop('checked', true);
                     $radios_model.attr('disabled', false);
 
-                    $radios_standard.filter('[value=no]').attr('disabled', true)
+                    $radios_standard.filter('[value=no]').attr('disabled', true);
                 }
             }
         })
@@ -291,11 +292,11 @@
             },
             success: function (data) {
                 let select = $("#target");
-                select.empty()
+                select.empty();
                 $.each(data, function () {
                     select.append($("<option></option>")
                         .attr("value", this.code).text(this.label));
-                })
+                });
 
                 get_trainings(data[0].code, institute)
 
@@ -303,9 +304,22 @@
         })
     }
     $('#generate').on('click', function(e){
-        e.preventDefault()
-        let url = "/doc_gen/generate_pdf/?date=" + $('#date').val() + "&target=" + $('#target').val()
-        let not_selected = true
+        e.preventDefault();
+        let gen_type = $('input[name=gen_type]:checked').val();
+        let url = '';
+        switch (gen_type) {
+            case 'pdf':
+                url = '{% url 'doc_gen:generate_pdf' %}' + "?date=" + $('#date').val() + "&target=" + $('#target').val();
+                break;
+            case 'excel':
+                url = '{% url 'doc_gen:mecctable_excel' %}?target=' + $('#target').val();
+                break;
+            case 'doc':
+                url = "#";
+                break;
+        }
+
+        let not_selected = true;
         $("input:checked").each(function() {
 
             if ($(this).attr("name") != null){
@@ -322,15 +336,15 @@
             window.location.href = url;
         }
 
-    })
+    });
     $('#target').on('change', function () {
 
-        let institute = $('#institute')
+        let institute = $('#institute');
         if (this.value === 'prepare_cc' || this.value === 'prepare_cc_my' || this.value === 'prepare_cfvu') {
             if (this.value === 'prepare_cfvu') {
                 $('#date').datepicker('update', "{{university_year.date_expected|date:'d/m/Y'}}");
             } else {
-                let date = institute.find(':selected').data('date-expected')
+                let date = institute.find(':selected').data('date-expected');
                 $('#date').datepicker('update', date);
 
             }
@@ -339,19 +353,19 @@
         }
         get_trainings(this.value, institute.val())
 
-    })
+    });
     $('#institute').on('change', function () {
-        get_target(this.value)
-        let target = $('#target').val()
+        get_target(this.value);
+        let target = $('#target').val();
         if (target === 'prepare_cc' || target === 'prepare_cc_my') {
-            let date = $(this).find(':selected').data('date-expected')
+            let date = $(this).find(':selected').data('date-expected');
             $('#date').datepicker('update', date);
         } else {
             if (target != 'prepare_cfvu') {
                 $('#date').datepicker('update', null);
             }
         }
-    })
+    });
     $('#date').datepicker({
         orientation: "bottom auto",
         todayHighlight: true,

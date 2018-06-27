@@ -3,16 +3,19 @@ View for document generator 3000
 """
 import json
 import re
+from io import BytesIO
 
+import xlsxwriter
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 
 from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.utils.excel import MeccTable
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
@@ -411,3 +414,22 @@ def history_for_year(request, year):
         'selected_year': str(selected_year),
         'institutes': ordered_list,
     })
+
+
+def generate_excel_mecctable(request):
+    year = request.GET.get('year', currentyear().code_year)
+    institute_code = request.GET.get('institute', 'CHM')
+    references = request.GET.get('ref', 'with_si')  # ['without', 'with_si', 'with_rof', 'both']
+    institute = Institute.objects.get(code=institute_code)
+    training_ids = request.GET.getlist('selected')
+    trainings = Training.objects.filter(id__in=[e for e in training_ids])
+
+    output = MeccTable().get_mecc_tables(trainings, institute, year, references)
+
+    doc_name = "eva_mecctable_%s" % year
+    response = HttpResponse(
+        output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="%s.xlsx"' % doc_name
+
+    return response
