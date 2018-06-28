@@ -715,7 +715,15 @@ def duplicate_add(request):
         for cmp in t.institutes.all():
             training.institutes.add(cmp)
         for y in t.resp_formations.all():
-            training.resp_formations.add(y)
+            dic = {}
+            t_id = dic['formation'] = training.id
+            dic['username'] = y.user.username
+            dic['mail'] = y.user.email
+            dic['name'] = y.user.last_name
+            dic['firstname'] = y.user.first_name
+            dic['cmp'] = y.cmp
+            dic['add_respform'] = "Oui"
+            manage_respform(dic, t_id)
 
         labels.append(training.label)
         n_trains.append(training.n_train)
