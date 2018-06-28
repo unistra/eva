@@ -28,8 +28,12 @@ class MeccTable:
         self.references = references
         self.formats = self.define_formats(workbook)
 
+        training_index = 0
         for training in trainings:
-            worksheet = workbook.add_worksheet(training.label)
+            training_index += 1
+
+            worksheet_label = "{} {}".format(training_index, training.label)
+            worksheet = workbook.add_worksheet(worksheet_label[:31])  # Excel WS name must be <= 31 chars
             training_is_ccct = True if training.MECC_type == 'C' else False
 
             self.write_worksheet_headers(institute, worksheet, training, year, references)
