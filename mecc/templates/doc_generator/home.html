@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load staticfiles %}
+{% load groups %}
 
 {% block page-header %}
     {%trans 'Moteur de génération de documents MECC' %}
@@ -172,6 +173,13 @@
     // In order to get all trainings concerned and specific values of radio buttons
     get_trainings($("#target").val(), $('#institute').val())
 
+    var doc_excel_formats_available = false;
+    {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,REFSCOL,GESCOL' %}
+        doc_excel_formats_available = true;
+    {% endif %}
+
+    console.log('doc_excel_formats_available: ' + doc_excel_formats_available);
+
     // set datatable
     $('#checkbox_all').on('click', function () {
         $('input[type="checkbox"].select_id').prop('checked', this.checked);
@@ -259,10 +267,17 @@
 
                 }
                 if (target === 'publish_all' || target === 'publish_my') {
-                    $radios_gen.filter('[value=pdf]').prop('checked', true);
-                    $radios_gen.not('[value=pdf], [value=excel]').attr('disabled', true);
-                    $radios_gen.filter('[value=pdf], [value=excel]').attr('disabled', false);
-                    $radios_gen.not('[value=pdf], [value=excel]').parent('li').removeClass("hidden");
+                    $radios_gen.attr('disabled', true);
+
+                    $radios_gen.filter('[value=pdf]').prop('checked', true)
+                        .attr('disabled', false)
+                        .parent('li').removeClass("hidden");
+
+                    if (doc_excel_formats_available) {
+                        $radios_gen.filter('[value=excel], [value=doc]')
+                            .attr('disabled', false)
+                            .parent('li').removeClass("hidden");
+                    }
 
                     $radios_model.filter('[value=a]').prop('checked', true);
                     $radios_model.attr('disabled', false);
