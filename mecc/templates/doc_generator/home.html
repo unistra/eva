@@ -174,7 +174,7 @@
     get_trainings($("#target").val(), $('#institute').val())
 
     var doc_excel_formats_available = false;
-    {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,REFSCOL,GESCOL' %}
+    {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,REFAPP,GESCOL' %}
         doc_excel_formats_available = true;
     {% endif %}
 
