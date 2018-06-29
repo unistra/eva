@@ -4,6 +4,7 @@ from math import modf
 
 import xlsxwriter
 
+from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.utils.queries import get_mecc_table_order
 
@@ -21,7 +22,7 @@ class MeccTable:
         self.formats = {}
         self.current_row = 0
 
-    def get_mecc_tables(self, trainings, institute, year, references):
+    def get_mecc_tables(self, trainings, year, references):
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output)
 
@@ -31,6 +32,7 @@ class MeccTable:
         training_index = 0
         for training in trainings:
             training_index += 1
+            institute = Institute.objects.get(code__exact=training.supply_cmp)  # training.supply_cmp
 
             worksheet_label = "{} {}".format(training_index, training.label.translate(
                 {ord(c): '-' for c in '[]:*?\/\\'}))  # Character '[]:*?/\' are invalid in sheetname
