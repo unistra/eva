@@ -417,14 +417,12 @@ def history_for_year(request, year):
 @login_required
 def generate_excel_mecctable(request):
     year = request.GET.get('year', currentyear().code_year)
-    institute_code = request.GET.get('institute', 'CHM')
     references = request.GET.get('ref', 'with_si')  # ['without', 'with_si', 'with_rof', 'both']
-    institute = Institute.objects.get(code=institute_code)
     training_ids = request.GET.getlist('selected')
     trainings = Training.objects.filter(id__in=[e for e in training_ids])\
         .order_by('degree_type__display_order', 'label')
 
-    output = MeccTable().get_mecc_tables(trainings, institute, year, references)
+    output = MeccTable().get_mecc_tables(trainings, year, references)
 
     doc_name = "eva_mecctable_%s" % year
     response = HttpResponse(
