@@ -112,8 +112,6 @@ class MeccTable:
                     worksheet.write(self.current_row, 15, '', cell_format)
                     worksheet.write(self.current_row, 16, '', cell_format)
                     worksheet.write(self.current_row, 17, '', cell_format)
-                if len(list_1) > 1 and len(list_2) > 1:
-                    self.current_row += 1
 
         ref_scol = struct.ref_si_scol if struct.ref_si_scol else ""
         if self.references == 'with_rof':
