@@ -32,7 +32,8 @@ class MeccTable:
         for training in trainings:
             training_index += 1
 
-            worksheet_label = "{} {}".format(training_index, training.label)
+            worksheet_label = "{} {}".format(training_index, training.label.translate(
+                {ord(c): '-' for c in '[]:*?\/\\'}))  # Character '[]:*?/\' are invalid in sheetname
             worksheet = workbook.add_worksheet(worksheet_label[:31])  # Excel WS name must be <= 31 chars
             training_is_ccct = True if training.MECC_type == 'C' else False
 
