@@ -321,7 +321,7 @@
                 url = '{% url 'doc_gen:mecctable_excel' %}?target=' + $('#target').val();
                 break;
             case 'doc':
-                url = "#";
+                url = '{% url 'doc_gen:rules_docx' %}?target=' + $('#target').val() + '&institute=' + $('#institute').val();
                 break;
         }
 
