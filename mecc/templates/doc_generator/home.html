@@ -260,9 +260,9 @@
                 }
                 if (target === 'publish_all' || target === 'publish_my') {
                     $radios_gen.filter('[value=pdf]').prop('checked', true);
-                    $radios_gen.not('[value=pdf], [value=excel]').attr('disabled', true);
-                    $radios_gen.filter('[value=pdf], [value=excel]').attr('disabled', false);
-                    $radios_gen.not('[value=pdf], [value=excel]').parent('li').removeClass("hidden");
+                    $radios_gen.not('[value=pdf], [value=excel], [value=doc]').attr('disabled', true);
+                    $radios_gen.filter('[value=pdf], [value=excel], [value=doc]').attr('disabled', false);
+                    $radios_gen.not('[value=pdf], [value=excel], [value=doc]').parent('li').removeClass("hidden");
 
                     $radios_model.filter('[value=a]').prop('checked', true);
                     $radios_model.attr('disabled', false);
@@ -306,7 +306,7 @@
                 url = '{% url 'doc_gen:mecctable_excel' %}?target=' + $('#target').val();
                 break;
             case 'doc':
-                url = "#";
+                url = '{% url 'doc_gen:rules_docx' %}?target=' + $('#target').val() + '&institute=' + $('#institute').val();
                 break;
         }
 
