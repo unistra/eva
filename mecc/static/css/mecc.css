@@ -9,7 +9,7 @@ table.dataTable thead .sorting_desc_disabled {
     *cursor: hand
 }
 
-table.dataTable thead .sorting::before::not(.noarrow) {
+table.dataTable thead .sorting::before:not {
     content: '\2195 \00a0\00a0';
     font-size: 120%;
 }
@@ -119,10 +119,10 @@ a.green:hover {
     color: lightgreen!important;
 }
 .grey {
-    color: grey!important:
+    color: grey!important;
 }
 .black {
-    color: black:
+    color: black;
 }
 .grey-background {
     background-color: lightgrey;
@@ -694,7 +694,7 @@ label[for=id_is_on_duty] {
     margin-left: 25%;
     margin-top: 1em;
 }
-#comp-right-btn-close,  {
+#comp-right-btn-close  {
     margin-top: auto;
     align-self: center;
 }
@@ -1059,7 +1059,7 @@ form {
 
 /* stage relative class */
 .dev {
-    color: red;*/
+    color: red;
 }
 
 .test {

@@ -757,6 +757,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
     data['notification_to'] = settings.MAIL_FROM
+    supply_cmp = Institute.objects.get(code__exact=training.supply_cmp)
+    data['rof_enabled'] = supply_cmp.ROF_support
     # user = reques.user.username
     respens_struct = [e.id for e in current_structures.filter(
         RESPENS_id=request.user.username)]
