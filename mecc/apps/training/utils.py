@@ -7,6 +7,7 @@ from datetime import datetime
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import Group
 
+from mecc.apps.institute.models import Institute
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
@@ -273,6 +274,7 @@ def remove_training(request, training_id):
     training = Training.objects.get(id=training_id)
     training_code = training.supply_cmp
     confirmed = request.GET.get('confirm')
+    institute = Institute.objects.get(code__exact=training.supply_cmp)
 
     try:
         date_cmp = datetime.strftime(training.date_val_cmp, '%d/%m/%Y')
@@ -290,6 +292,8 @@ def remove_training(request, training_id):
     mecc_validated = _("MECC validées en")
     message = ""
     removable = True
+
+
 
     def has_consumed(removable, message):
         """" check training strucutre object are not used anywhere else """
@@ -310,6 +314,12 @@ def remove_training(request, training_id):
         profiles = user.meccuser.profile.filter(
             cmp=code_cmp, code__in=profile_list)
         return True if profiles else False
+
+    if institute.ROF_support:
+        return {
+            "removable": False,
+            "message": _("Le support ROF est activé pour la composante. La formation ne peut pas être supprimée")
+        }
 
     if user_has_profile(request.user, diret_gescol, training_code):
         if date_cfvu:

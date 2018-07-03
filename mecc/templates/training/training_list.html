@@ -28,129 +28,148 @@
 {% endblock %}
 
 {% block app_content %}
-<h2 class='title-block bold'>{{label_cmp}}</h2>
-<br>
-{% include "institute/modal/documents_list.html"%}
-{%if object_list%}
-<div class="table_list list-training">
-  {% if object_list %}
-  <table class="table" id="rule-table">
-      <thead>
-         <tr>
-            <th width="5%" class=" no-padding td-centered no-border"></th>
-            <th width="20%" class=" no-padding td-centered no-border"></th>
-            <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Avancement" %}</th>
-            <th colspan="4" class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
-            <th width="10%" class=" no-padding td-centered no-border"></th>
-            <th width="5%" class=" no-padding td-centered no-border"></th>
-         </tr>
-         <tr>
-            <th width="5%" class=" no-padding td-centered no-border-top"></th>
-            <th width="20%" class=" no-padding td-centered no-border-top"></th>
-            <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Règles' %}</th>
-            <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Tableau MECC' %}</th>
-            <th class="td-centered border-right-left no-padding ">{% trans 'Conseil de composante' %}</th>
-            <th class="td-centered border-right-left no-padding ">{% trans "Réserve DES" %}</th>
-            <th class="td-centered border-right-left no-padding ">{% trans "Visa DES" %}</th>
-            <th class="td-centered border-right-left no-padding ">{% trans "Validation en CFVU" %}</th>
-            <th width="10%" class=" no-padding td-centered no-border-top"></th>
-            <th width="5%" class=" no-padding td-centered no-border-top"></th>
-         </tr>
-       </thead>
-   <tbody class="overflow" >
-{% if object_list %}
-{%regroup object_list by degree_type as trainings %}
-
-
-{%for field in trainings%}
-{% if trainings %}
-<tr>
-    <td class='no-border'><strong>{{field.grouper}}</strong></td>
-<tr>
-{% for item in field.list %}
-<tr class="hover-row">
-    <td width="5%" class='no-padding no-border'></td>
-    <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{%if not item.is_used%}HS - {%endif%}{{item.label}}</a></td>
-    <td class="no-padding td-centered border-bottom">{{item.get_progress_rule_display}}</td>
-    <td class="no-padding td-centered border-bottom">{{item.get_progress_table_display}}</td>
-    <td class="no-padding td-centered border-bottom">{%if item.date_val_cmp %}{{item.date_val_cmp}}{%endif%}</td>
-    <td class="no-padding td-centered border-bottom red">{%if item.date_res_des %}{{item.date_res_des}}{%endif%}</td>
-    <td class="no-padding td-centered border-bottom">{%if item.date_visa_des %}{{item.date_visa_des}}{%endif%}</td>
-    <td class="no-padding td-centered border-bottom">{%if item.date_val_cfvu %}{{item.date_val_cfvu}}{%endif%}</td>
-    <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening.1}}</td>
-    <td width="5%" class="no-padding td-centered no-border">
-
-        {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user.is_superuser%}
-        
-        {% if item.supply_cmp == institute.code or institute == 'ALL' %}
-        
-        <a href="{% url 'training:delete' item.id %}" class="glyphicon glyphicon-trash"></a>
-
+    <h2 class='title-block bold'>{{ label_cmp }}</h2>
+    <br>
+    {% include "institute/modal/documents_list.html" %}
+    {% if object_list %}
+        <div class="table_list list-training">
+        {% if object_list %}
+            <table class="table" id="rule-table">
+            <thead>
+            <tr>
+                {% if rof_enabled %}
+                    <th width="25%" rowspan="2" colspan="2" class="no-padding no-border-top">
+                        <img src="{% static 'img/logo_rof.png' %}" title="Appui ROF" alt="ROF" width="90" height="60">
+                    </th>
+                {% else %}
+                    <th width="5%" rowspan="2" class=" no-padding td-centered no-border-top"></th>
+                    <th width="20%" rowspan="2" class=" no-padding td-centered no-border-top"></th>
+                {% endif %}
+                <th colspan="2" class="td-centered border-right-left no-padding">{% trans "Avancement" %}</th>
+                <th colspan="4"
+                    class="td-centered border-right-left no-padding">{% trans "Etapes de validation (Dates)" %}</th>
+                <th width="10%" class=" no-padding td-centered no-border"></th>
+                <th width="5%" class=" no-padding td-centered no-border"></th>
+            </tr>
+            <tr>
+                <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Règles' %}</th>
+                <th class="td-centered border-right-left no-padding ">{% trans 'Saisie Tableau MECC' %}</th>
+                <th class="td-centered border-right-left no-padding ">{% trans 'Conseil de composante' %}</th>
+                <th class="td-centered border-right-left no-padding ">{% trans "Réserve DES" %}</th>
+                <th class="td-centered border-right-left no-padding ">{% trans "Visa DES" %}</th>
+                <th class="td-centered border-right-left no-padding ">{% trans "Validation en CFVU" %}</th>
+                <th width="10%" class=" no-padding td-centered no-border-top"></th>
+                <th width="5%" class=" no-padding td-centered no-border-top"></th>
+            </tr>
+            </thead>
+            <tbody class="overflow">
+            {% if object_list %}
+                {% regroup object_list by degree_type as trainings %}
+                {% for field in trainings %}
+                    {% if trainings %}
+                        <tr>
+                            <td class='no-border'><strong>{{ field.grouper }}</strong></td>
+                        <tr>
+                            {% for item in field.list %}
+                                <tr class="hover-row">
+                                    <td width="5%" class='no-padding no-border'></td>
+                                    <td width="20%" class='no-padding no-border v-align-m'><a
+                                            href="{% url 'training:edit' id=item.id %}">{% if not item.is_used %}HS
+                                        - {% endif %}{{ item.label }}</a></td>
+                                    <td class="no-padding td-centered border-bottom">{{ item.get_progress_rule_display }}</td>
+                                    <td class="no-padding td-centered border-bottom">{{ item.get_progress_table_display }}</td>
+                                    <td class="no-padding td-centered border-bottom">
+                                        {% if item.date_val_cmp %}{{ item.date_val_cmp }}{% endif %}</td>
+                                    <td class="no-padding td-centered border-bottom red">
+                                        {% if item.date_res_des %}{{ item.date_res_des }}{% endif %}</td>
+                                    <td class="no-padding td-centered border-bottom">
+                                        {% if item.date_visa_des %}{{ item.date_visa_des }}{% endif %}</td>
+                                    <td class="no-padding td-centered border-bottom">
+                                        {% if item.date_val_cfvu %}{{ item.date_val_cfvu }}{% endif %}</td>
+                                    <td width="10%" class="no-padding td-centered grey border-bottom">
+                                        Saisie {{ item.input_opening.1 }}</td>
+                                    <td width="5%" class="no-padding td-centered no-border">
+                                    {% if not rof_enabled %}
+                                        {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user|has_group:'DES1' or request.user.is_superuser %}
+                                            {% if item.supply_cmp == institute.code or institute == 'ALL' %}
+                                                <a href="{% url 'training:delete' item.id %}"
+                                                   class="glyphicon glyphicon-trash"></a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            {% endif %}
         {% endif %}
-        {% endif %} 
-    </td>
-</tr>
-
-{%endfor%}
-{% endif %}
-{%endfor%}
-</tbody>
-
-{%endif%}
-{%endif%}
-{% endif %}
+    {% endif %}
 </table>
 </div>
-<hr class="hr_blue">
-<div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
-    <span class="title-block" style="width=20%">
+    <hr class="hr_blue">
+    <div class=" has-bottom-border disp-flex"
+         style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
+    <span class="title-block" style="width: 20%">
         <strong>{% trans "Préparation" %}</strong>
     </span>
-    <div class="" style="width:80%">
-        <a href="{% url 'training:duplicate'%}" class="btn-primary btn btn-sm btn-1" style="width:45%">{% trans "Dupliquer les formations des années précédentes" %}</a>
-        <a href="{% url 'training:new'%}" class="btn-primary btn btn-sm" style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
+        <div class="" style="width:80%">
+            {% if not rof_enabled %}
+                <a href="{% url 'training:duplicate' %}" class="btn-primary btn btn-sm btn-1"
+                   style="width:45%">{% trans "Dupliquer les formations des années précédentes" %}</a>
+                <a href="{% url 'training:new' %}" class="btn-primary btn btn-sm"
+                   style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
+            {% else %}
+                <a href="#" class="btn-primary btn btn-sm btn-1"
+                   style="width:45%">{% trans "Réappliquer les attributs de l'année précédente" %}</a>
+            {% endif %}
+        </div>
     </div>
-</div>
-{% if request.user|has_group:'DES1' or request.user.is_superuser %}
-<div class=" has-bottom-border disp-flex" style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
-    <span class="title-block" style="width=20%">
+    {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+        <div class=" has-bottom-border disp-flex"
+             style="padding-bottom:1em;align-items:baseline;justify-content:space-around">
+    <span class="title-block" style="width: 20%">
         <strong>{% trans "Validation" %}</strong>
     </span>
-    <div class="" style="width:80%;margin-top:1em;">
-        <a href="#" data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</a>
-        <a href="{% url 'institute:check_validate' code=request.session.visited_cmp %}" class="btn btn-primary btn btn-sm" style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CFVU" %}<br>&nbsp;</a>
-    </div>
-</div>
-{% endif %}
-<style media="screen">
+            <div class="" style="width:80%;margin-top:1em;">
+                <a href="#" data-toggle="modal" data-target="#documents_list" class="btn btn-primary btn btn-sm"
+                   style="width:45%;white-space: normal;">{% trans "Consulter les documents déposés par la composante <br>Extraits de PV, listes d'émargement, lettre de présentation..." %}</a>
+                <a href="{% url 'institute:check_validate' code=request.session.visited_cmp %}"
+                   class="btn btn-primary btn btn-sm"
+                   style="width:45%;white-space: normal;">{% trans "Saisir réserves DES / Visas DES / Validation CFVU" %}<br>&nbsp;</a>
+            </div>
+        </div>
+    {% endif %}
 
-table {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-  width: 100%;
-}
-table thead {
-  /* head takes the height it requires,
-  and it's not scaled when table is resized */
-  flex: 0 0 auto;
-  width: calc(100% - 0.9em);
-}
-table tbody {
-  /* body takes all the remaining available space */
-  flex: 1 1 auto;
-  display: block;
-  overflow: auto;
-  max-height: 62vh;
+    <style media="screen">
+        table {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+            width: 100%;
+        }
+        table thead {
+            /* head takes the height it requires,
+            and it's not scaled when table is resized */
+            flex: 0 0 auto;
+            width: calc(100% - 0.9em);
+        }
+        table tbody {
+            /* body takes all the remaining available space */
+            flex: 1 1 auto;
+            display: block;
+            overflow: auto;
+            max-height: 62vh;
 
-}
-table tbody tr {
-  width: 100%;
-}
-table thead,
-table tbody tr {
-  display: table;
-  table-layout: fixed;
-}
-</style>
+        }
+        table tbody tr {
+            width: 100%;
+        }
+        table thead,
+        table tbody tr {
+            display: table;
+            table-layout: fixed;
+        }
+    </style>
 {% endblock %}

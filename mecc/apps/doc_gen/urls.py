@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from .views import home, trainings_for_target, available_target, \
     preview_mecctable, dispatch_to_good_pdf, generate_pdf, history_home, \
-    history_for_year, generate_excel_mecctable
+    history_for_year, generate_excel_mecctable, generate_rules_docx
 
 urlpatterns = [
     url(r'^start/$', home, name='home'),
@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^history/(?P<year>\d+)/$', history_for_year,
         name='history_year'),
     url(r'^generate_mecctable_excel/$', generate_excel_mecctable, name='mecctable_excel'),
+    url(r'^generate_rules_docx/$', generate_rules_docx, name='rules_docx'),
 ]

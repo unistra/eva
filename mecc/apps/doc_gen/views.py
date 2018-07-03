@@ -14,9 +14,11 @@ from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.utils.excel import MeccTable
+from mecc.apps.utils.docx import docx_gen
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
 from mecc.apps.years.models import UniversityYear, InstituteYear
+from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.rules.models import Rule
 from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
@@ -27,6 +29,7 @@ from mecc.apps.utils.pdfs import setting_up_pdf, \
     DocGenerator
 
 from django_cas.decorators import login_required
+from docx import Document
 
 
 @login_required
@@ -429,5 +432,41 @@ def generate_excel_mecctable(request):
         output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename="%s.xlsx"' % doc_name
+
+    return response
+
+
+@login_required
+def generate_rules_docx(request):
+    """
+    Docx document generation
+    """
+    model = request.GET.get('model')
+    reference = request.GET.get('ref')
+    year = UniversityYear.objects.get(code_year=currentyear().code_year)
+    institute = Institute.objects.get(code=request.GET.get('institute'))
+    training_ids = request.GET.getlist('selected')
+    trainings = Training.objects.filter(
+        id__in=[training_id for training_id in training_ids]).order_by(
+        'degree_type',
+        'MECC_type',
+        'label')
+    data_degree_types = list(set([training.degree_type for training in trainings]))
+    data = [model, reference, year, institute.label]
+    for data_degree_type in data_degree_types:
+        data_trainings = trainings.filter(degree_type=data_degree_type)
+        data_mecc_types = list(set([training.MECC_type for training in data_trainings]))
+        data.append({
+            'degree_type': data_degree_type,
+            'mecc_types': data_mecc_types,
+            'trainings': data_trainings
+        })
+
+    docx_document = docx_gen(data)
+
+    doc_name = "eva_rules_%s" % year
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename="%s".docx' % doc_name
+    docx_document.save(response)
 
     return response
