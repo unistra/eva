@@ -80,7 +80,7 @@
     <td width="10%" class="no-padding td-centered grey border-bottom">Saisie {{item.input_opening.1}}</td>
     <td width="5%" class="no-padding td-centered no-border">
 
-        {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user.is_superuser%}
+        {% if request.user.meccuser.id in item.list_respform_id or request.user.meccuser.id in item.list_editable_pple or request.user|has_group:'DES1' or request.user.is_superuser%}
         
         {% if item.supply_cmp == institute.code or institute == 'ALL' %}
         
