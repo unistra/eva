@@ -140,9 +140,7 @@ def docx_gen(data):
 
         in_charge = doc.add_paragraph()
         in_charge.add_run("Responsable(s) : ").bold = True
-        for respform in training.get_respform_names:
-            in_charge.add_run(respform+", ")
-        add_lines()
+        in_charge.add_run(', '.join(respform for respform in training.get_respform_names))
 
 
     def write_training_specifics_additionals(rules, specifics, additionals):
@@ -155,7 +153,7 @@ def docx_gen(data):
                 write_rules_paragraphs(specifics.filter(rule_gen_id=rule.id))
             if additionals.filter(rule_gen_id=rule.id):
                 additionals_title = doc.add_paragraph()
-                run = additionals_title.add_run("Alinéas additionnels :")
+                run = additionals_title.add_run("Alinéa additionnel :")
                 run.bold = run.italic = True
                 write_rules_paragraphs(additionals.filter(rule_gen_id=rule.id))
 
@@ -293,9 +291,6 @@ def docx_gen(data):
                         to_write = training_additionals.filter(
                             rule_gen_id=rule.id
                         )
-                        additionals_title = doc.add_paragraph()
-                        run = additionals_title.add_run("Alinéas additionels :")
-                        run.bold = run.italic = True
                         write_rules_paragraphs(to_write)
             doc.add_page_break()
 
