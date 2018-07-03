@@ -509,8 +509,12 @@
                 {
                     name: "label",
                     type: "text",
-                    title: "Intitulé épreuve (25 car.)",
-                    width: 180
+                    title: "Intitulé épreuve (50 car.)",
+                    width: 180,
+                    _createTextBox: function() {
+                        var $input = jsGrid.fields.text.prototype._createTextBox.call(this);
+                        return $input.attr("maxlength", 50)
+                    }
                 },
                 {
                     name: "additionnal_info",
@@ -523,6 +527,10 @@
                             "" :
                             value.substr(0, 12) + "\u2026";
                         return "<td>" + text + "</td>"
+                    },
+                    _createTextBox: function() {
+                        var $input = jsGrid.fields.text.prototype._createTextBox.call(this);
+                        return $input.attr("maxlength", 100)
                     }
                 },
                 {
@@ -821,8 +829,12 @@
                 {
                     name: "label",
                     type: "text",
-                    title: "Intitulé épreuve (25 car.)",
-                    width: 180
+                    title: "Intitulé épreuve (50 car.)",
+                    width: 180,
+                    _createTextBox: function() {
+                        var $input = jsGrid.fields.text.prototype._createTextBox.call(this);
+                        return $input.attr("maxlength", 50)
+                    }
                 },
                 {
                     name: "additionnal_info",
@@ -835,6 +847,10 @@
                             "" :
                             value.substr(0, 12) + "\u2026";
                         return "<td>" + text + "</td>"
+                    },
+                    _createTextBox: function() {
+                        var $input = jsGrid.fields.text.prototype._createTextBox.call(this);
+                        return $input.attr("maxlength", 100)
                     }
                 },
                 {
