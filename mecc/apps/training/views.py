@@ -184,6 +184,10 @@ class TrainingListView(ListView):
             'label_cmp'] = institute.label if id_cmp is not None else "Toutes composantes"
         self.request.session['visited_cmp_id'] = context[
             'code_cmp'] = institute.pk if id_cmp is not None else None
+        try:
+            context['rof_enabled'] = institute.ROF_support
+        except AttributeError:
+            context['rof_enabled'] = False
 
         try:
             context['letter_file'] = FileUpload.objects.filter(
