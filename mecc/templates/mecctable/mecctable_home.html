@@ -1,102 +1,118 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% load groups %} {% load staticfiles %}
+{% extends "base.html" %}
+{% load i18n crispy_forms_tags groups staticfiles %}
 
 {% block breadcrumb %}
-<ol class="breadcrumb">
-{% if request.session.visited_cmp in "RESPFORM, RESPENS" %}
-    {% if request.session.visited_cmp == "RESPFORM" %}
-    <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
-    {% else %}
-    <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
-    {% endif %}
-    {% else %}
-    <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}
-                     {%url 'training:list_all'%}
+    <ol class="breadcrumb">
+        {% if request.session.visited_cmp in "RESPFORM, RESPENS" %}
+            {% if request.session.visited_cmp == "RESPFORM" %}
+                <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
+            {% else %}
+                <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
+            {% endif %}
+        {% else %}
+            <li>
+                <a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}
+                     {% url 'training:list_all' %}
                  {% else %}
-                     {%url 'training:list' request.user.meccuser.cmp%}
-                 {%endif%}">{% trans "Offre de formation" %}</a></li>
-    <li> <a href="{%url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
-    {% if request.session.training_list %}
-    {% endif %}
-{% endif %}
-    <li class="active"> {{training.label}}</li>
-</ol>
+                     {% url 'training:list' request.user.meccuser.cmp %}
+                 {% endif %}">{% trans "Offre de formation" %}</a>
+            </li>
+            <li>
+                <a href="{% url 'training:list' request.session.visited_cmp %}">{{ request.session.visited_cmp_label }}</a>
+            </li>
+            {% if request.session.training_list %}
+            {% endif %}
+        {% endif %}
+        <li class="active"> {{ training.label }}</li>
+    </ol>
 {% endblock %}
- 
+
 {% block page-header %}
-{% trans 'Fiche Formation' %}
+    {% trans 'Fiche Formation' %}
 {% endblock %}
 
 {% block app_content %}
 
-<!-- static files -->
-<link rel="stylesheet" href="{% static 'css/mecctable/tree.css' %}" type="text/css" title="no title" charset="utf-8" />
-<script src="{% static 'js/notif.js' %}"></script>
-<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <!-- static files -->
+    <link rel="stylesheet" href="{% static 'css/mecctable/tree.css' %}" type="text/css" title="no title" charset="utf-8"/>
+    <script src="{% static 'js/notif.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
 
-<!-- span used to display messages -->
-<span class="top-right"></span>
+    <!-- span used to display messages -->
+    <span class="top-right"></span>
 
-<!-- links to navigate through the three panels of a training record -->
-<ul class="nav nav-tabs" style="margin-bottom:1em">
-    <li><a href="{% if training %}{% url 'training:edit' training.pk %}{% else %}#{% endif %}">{% trans "Général" %}</a></li>
-    <li><a href="{% if training %}{% url 'training:edit_rules' training.pk %}{% else %}#{% endif %}">{% trans "Règles" %}</a></li>
-    <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
-</ul>
+    <!-- links to navigate through the three panels of a training record -->
+    <ul class="nav nav-tabs" style="margin-bottom:1em">
+        <li>
+            <a href="{% if training %}{% url 'training:edit' training.pk %}{% else %}#{% endif %}">{% trans "Général" %}</a>
+        </li>
+        <li>
+            <a href="{% if training %}{% url 'training:edit_rules' training.pk %}{% else %}#{% endif %}">{% trans "Règles" %}</a>
+        </li>
+        <li class="active"><a href="#">{% trans "Tableau MECC" %}</a></li>
+    </ul>
 
-<div class="disp-flex dir-col has-bottom-border">
-    <div class=" parent disp-flex ">
-        <div class="item-80 dir-col">
-            <div class="">
-                {% trans "Intitulé de la formation: "%}
+    <div class="disp-flex dir-col has-bottom-border">
+        <div class=" parent disp-flex ">
+            <div class="item-70 dir-col">
+                <div class="">
+                    {% trans "Intitulé de la formation: " %}
+                </div>
+                <div class="">
+                    <strong>{{ training.label }}</strong>
+                </div>
             </div>
-            <div class="">
-                <strong>{{training.label}}</strong>
+            <div class="item-20 disabled dir-col">
+                <div>
+                    {% trans "En service:" %} {% if training.is_used %} ☑ {% else %} ☐{% endif %}
+                </div>
+                <div>
+                    {% trans "Régime:" %} {{ training.get_MECC_type_display }}
+                </div>
+                <div>
+                    {{ training.get_session_type_display }}
+                </div>
+            </div>
+            <div class="item-10 flex-center dir-col">
+                <div>
+                    {% if rof_enabled %}
+                        <img src="{% static 'img/logo_rof.png' %}" title="Appui ROF" width="90" height="60" alt="ROF">
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="item-20 disabled dir-col">
-            <div>
-                {% trans "En service:"%} {%if training.is_used%} ☑ {%else%} ☐{%endif%}
-            </div>
-            <div>
-                {% trans "Régime:"%} {{training.get_MECC_type_display}}
-            </div>
-            <div>
-                {{training.get_session_type_display}}
-            </div>
-        </div>
-    </div>
-    <div>
-        {% if can_edit %}
-        <div class="blue">
-            {% trans "Racine" %}<br>
-            <a onclick="get_struct_details(0,0, 'E')"
-                data-toggle="modal"
-                title="{% trans 'Créer un objet à la racine'%}"
-                class="hand glyphicon glyphicon-plus blue no-border"
-                aria-hidden="true"
-                data-target="#form-obj">
-            </a>
-            <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
-                  title="{%trans 'Importer un objet mutualisé à la racine'%}"
-                  aria-hidden="true"
-                  data-toggle="modal"
-                  data-target="#shared-object"
-                  onclick="asking_inclusion=0;">
-            </span>
-        </div>
-        {% endif %}
+        <div>
+            {% if not rof_enabled and can_edit %}
+                <div class="blue">
+                    {% trans "Racine" %}<br>
+                    <a onclick="get_struct_details(0,0, 'E')"
+                       data-toggle="modal"
+                       title="{% trans 'Créer un objet à la racine' %}"
+                       class="hand glyphicon glyphicon-plus blue no-border"
+                       aria-hidden="true"
+                       data-target="#form-obj">
+                    </a>
+                    <span class="hand glyphicon glyphicon-circle-arrow-left no-border green"
+                          title="{% trans 'Importer un objet mutualisé à la racine' %}"
+                          aria-hidden="true"
+                          data-toggle="modal"
+                          data-target="#shared-object"
+                          onclick="asking_inclusion=0;">
+                    </span>
+                </div>
+            {% endif %}
 
-        {% if la_liste|length > 0 %}
-        <div class="mecctable-container">
-            <div class="meccRow header">
-                <span class="mecc-label no-border-top"></span>
-                <span class="mecc-actionsButtons no-border-top centered"></span>
-                <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
-                <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
-                <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
-                <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
-                <span class="mecc-details border-left-5"></span>
-                <span class="mecc-semesters border-left">
+            {% if la_liste|length > 0 %}
+                <div class="mecctable-container">
+                    <div class="meccRow header">
+                        <span class="mecc-label no-border-top"></span>
+                        <span class="mecc-actionsButtons no-border-top centered"></span>
+                        <span class="mecc-ects border-left centered">{% trans "ECTS" %}</span>
+                        <span class="mecc-respens border-left centered">{% trans "Responsable" %}</span>
+                        <span class="mecc-coef border-left-3 centered">{% trans "Coef" %}</span>
+                        <span class="mecc-note border-left-3 centered">{% trans "Note<br>seuil" %}</span>
+                        <span class="mecc-details border-left-5"></span>
+                        <span class="mecc-semesters border-left">
                     <span class="mecc-s1 ">
                         <span>
                         {% trans "Session principale" %}
@@ -108,328 +124,338 @@
                         </span>
                     </span>
                 </span>
-            </div>
+                    </div>
 
-            <div class="mecctable-content">
-                {% for a in la_liste %}
-                    {% include "mecctable/tree_view.html" %}
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="footer">
-        <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
-            <label>
-                {% trans 'Etat de saisie du tableau MECC : '%}
-            </label>
-            <label class="margin-left1">
-                {% trans "En cours " %}<input type="radio" name="progress" value="E"
-                {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
-                {% if training.progress_table == "E" %}checked="checked" {% endif %}>
-            </label>
-            <label class="margin-left1">
-                {% trans 'Achevée '%} <input type="radio" name="progress" value="A"
-                {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %} 
-                {% if training.progress_table == "A" %}checked="checked" {% endif %}>
-            </label>
-        </div>
-
-        <div class="button_container dir-row">
-            <div class="dir-col">
-            </div>
-            <div class="flex-item">
-                <a  href="#"
-                    class="btn-primary btn btn-sm btn-1 copy-old {% if la_liste %}disabled {% endif %}"
-                    id="copy-old-mecctable">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}
-                </a>
-            </div>
-            <div class="flex-item">
-                <a  href="#" 
-                    class="btn-primary btn btn-sm btn-1 copy-old {% if not la_liste or not can_edit %}disabled {% endif %}" 
-                    id="copy-old-exams">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}
-                </a>
-            </div>
-            {% if can_edit and object.input_opening.0 != "4" %}
-            <div class="flex-item">                    
-                <a  href="#"
-                    class="btn-primary btn btn-sm btn-1 {% if not can_edit %}disabled {% endif %}" 
-                    onclick="check_consistency({{training.id}})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}
-                </a>
-            </div>
+                    <div class="mecctable-content">
+                        {% for a in la_liste %}
+                            {% include "mecctable/tree_view.html" %}
+                        {% endfor %}
+                    </div>
+                </div>
             {% endif %}
-            <div class="flex-item">
-                <a  href="{% url 'doc_gen:preview_mecctable' %}?training_id={{training.id}}" 
-                    class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}
-                </a>
-            </div>
-            <div class="flex-item dir-row">
-                <a  data-toggle="modal" 
-                    class="btn-primary btn btn-sm send_mail" 
-                    data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}
-                </a>
-                <span class="small-blue-txt">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
-            </div>
         </div>
 
-        <!-- modals inclusions -->
-        {% include "mecctable/modal/structure_object_form.html" %}
-        {% include "mecctable/modal/exams.html" %}
-        {% include "mecctable/modal/show_consume.html" %}
-        {% include "mecctable/modal/include_shared_object.html" %}
-        {% include "mecctable/modal/object_is_used.html" %}
-        {% include "mecctable/modal/regime_or_session_has_changed.html" %}
-        {% include "mecctable/modal/exam_regime_session_changed.html" %}
-        {% include "mecctable/modal/exam_copy_confirm.html" %}
-        {% include "mecctable/modal/exam_copy_report.html" %}
-        {% include "generic/modal_confirm_delete.html" %}
-        {% include "training/modal_consistency.html" %}
-        {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}        
-        {% include "training/send_mail.html"%}
-        
+        <div class="footer">
+            <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
+                <label>{% trans 'Etat de saisie du tableau MECC : ' %}</label>
+                <label class="margin-left1">
+                    {% trans "En cours " %}<input type="radio" name="progress" value="E"
+                        {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
+                                                  {% if training.progress_table == "E" %}checked="checked" {% endif %}>
+                </label>
+                <label class="margin-left1">
+                    {% trans 'Achevée ' %} <input type="radio" name="progress" value="A"
+                        {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
+                                                  {% if training.progress_table == "A" %}checked="checked" {% endif %}>
+                </label>
+            </div>
+
+            <div class="button_container dir-row">
+                <div class="dir-col">
+                </div>
+                <div class="flex-item">
+                    {% if rof_enabled %}
+                        <a href="#"
+                           class="btn-primary btn btn-sm btn-1 {% if la_liste %}{% endif %}"
+                           id="retrieve-previous-attributes">{% trans "Récupérer les responsables,<br>coéfs et notes seuils<br>des objects de l'année précédente" %}
+                        </a>
+                    {% else %}
+                        <a href="#"
+                           class="btn-primary btn btn-sm btn-1 copy-old {% if la_liste %}disabled {% endif %}"
+                           id="copy-old-mecctable">{% trans "Récupérer la STRUCTURE <br>de l'année précédente" %}
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="flex-item">
+                    <a href="#"
+                       class="btn-primary btn btn-sm btn-1 copy-old {% if not la_liste or not can_edit %}disabled {% endif %}"
+                       id="copy-old-exams">{% trans "Récupérer TOUTES les ÉPREUVES <br>de l'année précédente" %}
+                    </a>
+                </div>
+                {% if can_edit and object.input_opening.0 != "4" %}
+                    <div class="flex-item">
+                        <a href="#"
+                           class="btn-primary btn btn-sm btn-1 {% if not can_edit %}disabled {% endif %}"
+                           onclick="check_consistency({{ training.id }})">{% trans "Effectuer les <br>de CONTRÔLES DE COHERENCE" %}
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="flex-item">
+                    <a href="{% url 'doc_gen:preview_mecctable' %}?training_id={{ training.id }}"
+                       class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}
+                    </a>
+                </div>
+                <div class="flex-item dir-row">
+                    <a data-toggle="modal"
+                       class="btn-primary btn btn-sm send_mail"
+                       data-target="#send_mail">{% trans "Envoyer un <br>message à la DES" %}
+                    </a>
+                    <span class="small-blue-txt">{% trans "Si vous souhaitez poser une question ou demander un avis sur les modalités d'évaluation, solliciter la DES" %}</span>
+                </div>
+            </div>
+
+            <!-- modals inclusions -->
+            {% include "mecctable/modal/structure_object_form.html" %}
+            {% include "mecctable/modal/exams.html" %}
+            {% include "mecctable/modal/show_consume.html" %}
+            {% include "mecctable/modal/include_shared_object.html" %}
+            {% include "mecctable/modal/object_is_used.html" %}
+            {% include "mecctable/modal/regime_or_session_has_changed.html" %}
+            {% include "mecctable/modal/exam_regime_session_changed.html" %}
+            {% include "mecctable/modal/exam_copy_confirm.html" %}
+            {% include "mecctable/modal/exam_copy_report.html" %}
+            {% include "generic/modal_confirm_delete.html" %}
+            {% include "training/modal_consistency.html" %}
+            {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}
+            {% include "training/send_mail.html" %}
+        </div>
     </div>
-</div>
 
-
-
-
-<script type="text/javascript">
-$('.editme').on('keydown', function(e) {
-    let that = this;
-    console.log("EDITION");
-    if (e.which == 13 && e.shiftKey == false) {
-        let value = this.innerHTML;
-        $.ajax({
-            url: "{%url 'mecctable:update_grade_coeff'%}",
-            type: "POST",
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                to_update: this.id,
-                value : value
-            },
-            success: function(data) {
-                if (data.status === "ERROR") {
-                    alert(data.error);
-                }
-                console.log("EDIT SUCCESS");
-                that.innerHTML = data.val;
-          }
-      })
-    return false;
-  }
-});
-
-let asking_inclusion = 0;
-
-$('.copy-old').click(function() {
-    check_regime_session({{training.id}}, this.id);
-});
-
-function check_regime_session(id_training, link_clicked) {
-    $.ajax({
-        url: "{%url 'training:regime_session_check' %}",
-        type: "GET",
-        data: {
-            training_id: id_training,
-            link_clicked: link_clicked,
-        },
-        success: function(data) {
-            switch(link_clicked) {
-                case 'copy-old-mecctable':
-                    if(data.regime_session_changed){
-                        $('#regime_session_changed').modal('toggle');
-                    } else {
-                        copy_old_mecctable();
-                    }
-                    break;
-                default:
-                    if(data.regime_session_changed){
-                        $('#exam_regime_session_changed').modal('toggle');
-                    } else {
-                        if (link_clicked != 'copy-old-exams') {
-                            $("#exam_copy_confirm .btn-primary").attr("id", link_clicked);
+    <script type="text/javascript">
+        $('.editme').on('keydown', function (e) {
+            let that = this;
+            console.log("EDITION");
+            if (e.which == 13 && e.shiftKey == false) {
+                let value = this.innerHTML;
+                $.ajax({
+                    url: "{%url 'mecctable:update_grade_coeff'%}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        to_update: this.id,
+                        value: value
+                    },
+                    success: function (data) {
+                        if (data.status === "ERROR") {
+                            alert(data.error);
                         }
-                        $('#exam_copy_confirm').modal('toggle');
+                        console.log("EDIT SUCCESS");
+                        that.innerHTML = data.val;
                     }
-                    break;
+                });
+                return false;
             }
-        }
-    });
-}
-
-function copy_old_mecctable() {
-    $.ajax({
-        url: "{%url 'mecctable:copy_old_mecctable' %}",
-        type: "GET",
-        data: {
-            training_id: {{training.id}},
-        },
-        success: function() {
-            // TODO : load data dynamically instead of reload the entire page
-            window.location.reload();
-        }
-    });
-}
-
-function copy_old_exams() {
-    structure_id = $("#exam_copy_confirm .btn-primary").attr("id");
-    $.ajax({
-        url: "{%url 'mecctable:copy_old_exams' %}",
-        type: "GET",
-        data: {
-            training_id: {{training.id}},
-            structure_id: structure_id,
-        },
-        success: function(data) {
-            $('#exam_copy_confirm').modal('hide');
-            if (typeof structure_id === "undefined") {
-                $('#exam_copy_report').modal('toggle');
-                $('#para-exam-report-cnt-1').text(data.updated_objects);
-            } else {
-                $("#msg").show();
-                switch (data.status) {
-                    case 666:
-                        $("#msg").attr("class", "alert alert-success").text(data.msg);
-                        break;
-                    default:
-                        $("#msg").attr("class", "alert alert-danger").text(data.msg);
-                        break;
-                }
-                struct_select(
-                    data.id_struct,
-                    data.st_nature,
-                    data.st_regime,
-                    data.st_session,
-                    data.st_ref_scol,
-                    data.st_rof_ref                   
-                );
-            }
-            update_mini_table(
-                "1",
-                data.id_struct,
-                data.st_label,
-                data.st_nature,
-                data.st_regime,
-                data.st_session,
-                data.st_ref_scol,
-                data.st_rof_ref
-            );
-            update_mini_table(
-                "2",
-                data.id_struct,
-                data.st_label,
-                data.st_nature,
-                data.st_regime,
-                data.st_session,
-                data.st_ref_scol,
-                data.st_rof_ref 
-            );
-        }
-    });
-}
-
-function check_delete(id_obj, label){
-    $.ajax({
-        url: "{%url 'mecctable:get_consom'%}",
-        type: "GET",
-        data: {
-            id_obj: id_obj,
-        },
-        success: function(data) {
-            if (data.has_consom){
-                $('#is_consumed').modal('toggle');
-                document.getElementById("para-used-1").innerHTML = "L'objet ne peut pas être supprimé car il est présent dans d'autres formations."
-                document.getElementById("showme-used").innerHTML = "Mut."
-                document.getElementById("showme-used").className += " hand "
-                let onclick = "get_consom("+ id_obj + ");$('#is_consumed').modal('toggle');"
-                $("#showme-used").attr("onclick", onclick);
-
-            } else {
-                ask_delete(id_obj, label);
-                $('#preview').modal('toggle');
-            }
-        }
-    })
-}
-function ask_delete(id_obj, label){
-    document.getElementById('type').innerHTML = "cet objet";
-    document.getElementById('to_del').innerHTML = label;
-    document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
-}
-
-function ask_delete_imported(id_link, label){
-    document.getElementById('type').innerHTML = "cet objet importé";
-    document.getElementById('to_del').innerHTML = label;
-    document.gen_form.action = "/mecctable/imported/remove/" + id_link;
-}
-
-let disable_sortable = !{{can_edit|yesno:"true,false"}};
-$(".sortme").sortable({
-    cancel: ':input,button,.contenteditable, .editme',
-    disabled: disable_sortable,
-    update: function(e, ui) {
-        let newPositions = $.map($(this).find('.updatable'), function(el) {
-            return $(el).attr('id') + ':' + $(el).index();
         });
-        $.ajax({
-            url: "{%url 'mecctable:update_mecc_position'%}",
-            type: "POST",
-            data: {
-                new_positions: newPositions.toString(),
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function(data){
-                if (data.status === 200) {
-                    $('.top-right').notify({
-                        message: { text: 'Tableau mis à jour.' },
-                        type:'info'
-                    }).show();
-                }else {
-                    $('.top-right').notify({
-                        message: { text: 'Error lors de la mise à jour du tableau.'},
-                        type:'warning'
-                    }).show();
-                }
-            }
-        })
-    }
-});
-    $(document).on('change', 'input[name="progress"]:radio', function(){
-        $.ajax({
-            url: "{% url 'rules:update_progress'%}",
-            type: "POST",
-            data: {
-                val: $(this).val(),
-                training_id : {{training.id}},
-                type : "TABLE",
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function(data){
-                if (data.status = 200) {
-                    $('.top-right').notify({
-                        message: { text: 'Etat de saisie mis à jour : ' + data.val},
-                        type:'info'
-                    }).show();
-                }else {
-                    $('.top-right').notify({
-                        message: { text: 'Error lors de la mise à jour de la saisie'},
-                        type:'warning'
-                    }).show();
-                }
-            }
 
-        })
-    });
-</script>
-<style media="screen">
-    .top-right{
-        position: absolute;
-        z-index: 1200;
-        right: 2em;;
-    }
-    #form-obj{
-        overflow-y: scroll;
-    }
-</style>
+        let asking_inclusion = 0;
+
+        $('.copy-old').click(function () {
+            check_regime_session({{training.id}}, this.id);
+        });
+
+        $('#retrieve-previous-attributes').on('click', function (e) {
+            // @todo implémenter, cf #44
+            e.preventDefault();
+            alert('À implémenter, #44');
+        });
+
+        function check_regime_session(id_training, link_clicked) {
+            $.ajax({
+                url: "{%url 'training:regime_session_check' %}",
+                type: "GET",
+                data: {
+                    training_id: id_training,
+                    link_clicked: link_clicked,
+                },
+                success: function (data) {
+                    switch (link_clicked) {
+                        case 'copy-old-mecctable':
+                            if (data.regime_session_changed) {
+                                $('#regime_session_changed').modal('toggle');
+                            } else {
+                                copy_old_mecctable();
+                            }
+                            break;
+                        default:
+                            if (data.regime_session_changed) {
+                                $('#exam_regime_session_changed').modal('toggle');
+                            } else {
+                                if (link_clicked != 'copy-old-exams') {
+                                    $("#exam_copy_confirm .btn-primary").attr("id", link_clicked);
+                                }
+                                $('#exam_copy_confirm').modal('toggle');
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        function copy_old_mecctable() {
+            $.ajax({
+                url: "{%url 'mecctable:copy_old_mecctable' %}",
+                type: "GET",
+                data: {
+                    training_id: {{training.id}},
+                },
+                success: function () {
+                    // TODO : load data dynamically instead of reload the entire page
+                    window.location.reload();
+                }
+            });
+        }
+
+        function copy_old_exams() {
+            structure_id = $("#exam_copy_confirm .btn-primary").attr("id");
+            $.ajax({
+                url: "{%url 'mecctable:copy_old_exams' %}",
+                type: "GET",
+                data: {
+                    training_id: {{training.id}},
+                    structure_id: structure_id,
+                },
+                success: function (data) {
+                    $('#exam_copy_confirm').modal('hide');
+                    if (typeof structure_id === "undefined") {
+                        $('#exam_copy_report').modal('toggle');
+                        $('#para-exam-report-cnt-1').text(data.updated_objects);
+                    } else {
+                        $("#msg").show();
+                        switch (data.status) {
+                            case 666:
+                                $("#msg").attr("class", "alert alert-success").text(data.msg);
+                                break;
+                            default:
+                                $("#msg").attr("class", "alert alert-danger").text(data.msg);
+                                break;
+                        }
+                        struct_select(
+                            data.id_struct,
+                            data.st_nature,
+                            data.st_regime,
+                            data.st_session,
+                            data.st_ref_scol,
+                            data.st_rof_ref
+                        );
+                    }
+                    update_mini_table(
+                        "1",
+                        data.id_struct,
+                        data.st_label,
+                        data.st_nature,
+                        data.st_regime,
+                        data.st_session,
+                        data.st_ref_scol,
+                        data.st_rof_ref
+                    );
+                    update_mini_table(
+                        "2",
+                        data.id_struct,
+                        data.st_label,
+                        data.st_nature,
+                        data.st_regime,
+                        data.st_session,
+                        data.st_ref_scol,
+                        data.st_rof_ref
+                    );
+                }
+            });
+        }
+
+        function check_delete(id_obj, label) {
+            $.ajax({
+                url: "{%url 'mecctable:get_consom'%}",
+                type: "GET",
+                data: {
+                    id_obj: id_obj,
+                },
+                success: function (data) {
+                    if (data.has_consom) {
+                        $('#is_consumed').modal('toggle');
+                        document.getElementById("para-used-1").innerHTML = "L'objet ne peut pas être supprimé car il est présent dans d'autres formations.";
+                        document.getElementById("showme-used").innerHTML = "Mut.";
+                        document.getElementById("showme-used").className += " hand ";
+                        let onclick = "get_consom(" + id_obj + ");$('#is_consumed').modal('toggle');";
+                        $("#showme-used").attr("onclick", onclick);
+
+                    } else {
+                        ask_delete(id_obj, label);
+                        $('#preview').modal('toggle');
+                    }
+                }
+            })
+        }
+
+        function ask_delete(id_obj, label) {
+            document.getElementById('type').innerHTML = "cet objet";
+            document.getElementById('to_del').innerHTML = label;
+            document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
+        }
+
+        function ask_delete_imported(id_link, label) {
+            document.getElementById('type').innerHTML = "cet objet importé";
+            document.getElementById('to_del').innerHTML = label;
+            document.gen_form.action = "/mecctable/imported/remove/" + id_link;
+        }
+
+        {#let disable_sortable = !{{can_edit|yesno:"true,false"}};#}
+        let disable_sortable = {% if rof_enabled or not can_edit %} true {% else %} false {% endif %};
+        $(".sortme").sortable({
+            cancel: ':input,button,.contenteditable, .editme',
+            disabled: disable_sortable,
+            update: function (e, ui) {
+                let newPositions = $.map($(this).find('.updatable'), function (el) {
+                    return $(el).attr('id') + ':' + $(el).index();
+                });
+                $.ajax({
+                    url: "{%url 'mecctable:update_mecc_position'%}",
+                    type: "POST",
+                    data: {
+                        new_positions: newPositions.toString(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        if (data.status === 200) {
+                            $('.top-right').notify({
+                                message: {text: 'Tableau mis à jour.'},
+                                type: 'info'
+                            }).show();
+                        } else {
+                            $('.top-right').notify({
+                                message: {text: 'Error lors de la mise à jour du tableau.'},
+                                type: 'warning'
+                            }).show();
+                        }
+                    }
+                })
+            }
+        });
+        $(document).on('change', 'input[name="progress"]:radio', function () {
+            $.ajax({
+                url: "{% url 'rules:update_progress'%}",
+                type: "POST",
+                data: {
+                    val: $(this).val(),
+                    training_id: {{training.id}},
+                    type: "TABLE",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data.status = 200) {
+                        $('.top-right').notify({
+                            message: {text: 'Etat de saisie mis à jour : ' + data.val},
+                            type: 'info'
+                        }).show();
+                    } else {
+                        $('.top-right').notify({
+                            message: {text: 'Error lors de la mise à jour de la saisie'},
+                            type: 'warning'
+                        }).show();
+                    }
+                }
+
+            })
+        });
+    </script>
+    <style media="screen">
+        .top-right {
+            position: absolute;
+            z-index: 1200;
+            right: 2em;;
+        }
+
+        #form-obj {
+            overflow-y: scroll;
+        }
+    </style>
 {%endblock%}

@@ -1,27 +1,27 @@
-{% load i18n %} {% load mecc_tags %}
+{% load i18n mecc_tags %}
 
-<div class="{% if can_edit or a.can_be_edited %}updatable{% endif %} meccRow id-{{a.link.id}} r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {% if not a.structure.is_in_use %}grey-all{% endif %} {% if a.is_imported %}green{% endif %}"
+<div class="{% if not rof_enabled and can_edit or a.can_be_edited %}updatable{% endif %} meccRow id-{{a.link.id}} r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} {% if not a.structure.is_in_use %}grey-all{% endif %} {% if a.is_imported %}green{% endif %}"
      id="{{a.link.id}}">
 
     <!-- mecc-label -->
     <span class="mecc-label">
-        {% for i in a.loop  %}
+        {% for i in a.loop %}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {% endfor %}
         <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
-        {{a.structure.nature}} :
-        {%if a.is_imported%}
-            {{a.structure.label}} {% if a.not_yet_imported %}- ID:{{a.structure.id}} - ? {% endif %}
+        {{ a.structure.nature }} :
+        {% if a.is_imported %}
+            {{ a.structure.label }} {% if a.not_yet_imported %}- ID:{{ a.structure.id }} - ? {% endif %}
         {% else %}
             {% if can_edit or a.can_be_edited %}
-            <a  data-toggle="modal" 
-                class="hand no-border struct-{{a.structure.id}}" 
-                aria-hidden="true" 
-                data-target="#form-obj" 
-                onclick="get_struct_details({{a.structure.id}}, {{a.link.id_parent}}, '{{a.link.nature_parent}}')">{{a.structure.label}}
+                <a data-toggle="modal"
+                   class="hand no-border struct-{{ a.structure.id }}"
+                   aria-hidden="true"
+                   data-target="#form-obj"
+                   onclick="get_struct_details({{ a.structure.id }}, {{ a.link.id_parent }}, '{{ a.link.nature_parent }}')">{{ a.structure.label }}
             </a>
             {% else %}
-            {{a.structure.label}}
+                {{ a.structure.label }}
             {% endif %}
         {% endif %}
     </span>
@@ -29,15 +29,14 @@
 
     <!-- mecc-actionButtons -->
     <div class="mecc-actionsButtons">
-        
         <!-- add button -->
         <span class="centered mecc-add">
-            {% if a.structure.nature not in "ST PT" and not a.is_imported and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited %}
+            {% if a.structure.nature not in "ST PT" and not a.is_imported and not rof_enabled and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited %}
             <a  onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
-                data-toggle="modal" 
+                data-toggle="modal"
                 class="hand glyphicon glyphicon-plus blue no-border"
                 title="{% trans 'Créer un objet fils dans cet objet' %}"
-                aria-hidden="true" 
+                aria-hidden="true"
                 data-target="#form-obj" >
             </a>
         </span>
@@ -47,7 +46,7 @@
 
         <!-- import button -->
         <span class=" mecc-import">
-            <span data-toggle="modal" 
+            <span data-toggle="modal"
                   data-target="#shared-object"
                   class="glyphicon glyphicon-circle-arrow-left green hand"
                   title="{% trans 'Importer un objet mutualisé dans cet objet' %}"
@@ -63,7 +62,7 @@
 
         <!-- remove/unbind button -->
         <span class="mecc-remove">
-            {% if can_edit or a.can_be_edited %}
+            {% if not rof_enabled and can_edit or a.can_be_edited %}
                 {% if a.link.is_imported %}
                 <span data-toggle="modal" 
                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
