@@ -87,9 +87,9 @@ def get_mecc_table_order(
         # ADDING FUN WITH EXAMS
         # Get 3 first exams_1 & exam_2
         exams_1 = current_exams.filter(
-            id_attached=structure.id, session="1").order_by('id')
+            id_attached=structure.id, session="1").order_by('_id')
         exams_2 = current_exams.filter(
-            id_attached=structure.id, session="2").order_by('id')
+            id_attached=structure.id, session="2").order_by('_id')
 
         items = {
             "link": link,

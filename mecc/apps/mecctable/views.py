@@ -167,7 +167,7 @@ def list_exams(request, id_structure):
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
     exams = Exam.objects.filter(
-        id_attached=structure_concerned.id, code_year=currentyear().code_year).order_by('id')
+        id_attached=structure_concerned.id, code_year=currentyear().code_year).order_by('_id')
     if request.GET.get('session2') == 'True':
         asked_exams = exams.filter(session='2')
     else:
