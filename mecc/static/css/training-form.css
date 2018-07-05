@@ -115,3 +115,7 @@ caption {
     display: none!important;
     background-color: tomato;
 }
+
+.logo_rof{
+    float: right;
+}

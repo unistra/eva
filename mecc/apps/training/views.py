@@ -268,7 +268,46 @@ class TrainingEdit(UpdateView):
             input_is_open
         ) or self.request.user.is_superuser or ('DES1' in [
             e.name for e in self.request.user.groups.all()] and self.object.input_opening[0] != '4')
+        context['rof_enabled'] = Institute.objects.get(code=self.object.supply_cmp).ROF_support
         return context
+
+
+    def post(self, request, *args, **kwargs):
+        # En mode ROF les champs Type de diplôme, Intitulé de la formatio,
+        # En service et Réf. CP Année ROF sont désactivés (attribut "disabled")
+        # Le formulaire ne retourne don aucune valeur pour ces champs
+        # Ces champs sont alimentés ici par les infos en base de données
+        self.object = self.get_object()
+        if Institute.objects.get(code=self.object.supply_cmp).ROF_support:
+            request.POST = request.POST.copy()
+            request.POST['label'] = self.object.label
+            request.POST['degree_type'] = self.object.degree_type.id
+            request.POST['is_used'] = self.object.is_used
+            request.POST['ref_cpa_rof'] = self.object.ref_cpa_rof
+
+        return super(TrainingEdit, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # En mode ROF, si le témoin reappli_atb est positionné à False et que
+        # l'un des champs Témoin Tableau MECC, Régime, Session Référence SI Scol
+        # ou Composantes est modifié, on positionne le témoin reappli_atb à True
+        if Institute.objects.get(code=self.object.supply_cmp).ROF_support and \
+                not self.object.reappli_atb and \
+                not set(form.changed_data).isdisjoint(['MECC_tab',
+                                                       'MECC_type',
+                                                       'session_type',
+                                                       'ref_si_scol',
+                                                       'institutes',
+                                                       'supply_cmp']):
+
+            self.object.reappli_atb = True
+
+        return super(TrainingEdit, self).form_valid(form)
+
+    def form_invalid(self, form):
+        print("WE ARE REALLY DOOMED !!!")
+
+        return super(TrainingEdit, self).form_invalid(form)
 
 
 class TrainingDelete(DeleteView):
