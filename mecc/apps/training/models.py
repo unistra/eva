@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
 from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
+from mecc.apps.institute.models import Institute
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
@@ -66,6 +67,11 @@ class Training(models.Model):
     resp_formations = models.ManyToManyField('adm.MeccUser')
     n_train = models.IntegerField(
         _('Numéro de règle'), unique=False, null=True)
+
+    reappli_atb = models.BooleanField(
+        _("Témoin de réapplication des attributs en mode ROF"),
+        default=False,
+    )
 
     @property
     def small_dict(self):
@@ -161,6 +167,10 @@ class Training(models.Model):
         can_do_alot = Profile.objects.filter(cmp=self.supply_cmp).filter(Q(code='DIRCOMP') | Q(code='RAC') | Q(code='REFAPP')
                                                                          | Q(code='GESCOL') | Q(code='DIRETU'))
         return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
+
+    @property
+    def list_institutes_id(self):
+        return sorted([institute.id for institute in self.institutes.all()])
 
     @property
     def input_opening(self):

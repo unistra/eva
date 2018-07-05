@@ -41,7 +41,7 @@
         <li><a href={%if object.MECC_tab %}"{% url 'mecctable:mecctable_home' object.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
     </ul>
   <div class="disp-flex">
-      <div class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {%endif%}" style="margin-right:1em">
+      <div id="left-column" class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {%endif%}" style="margin-right:1em">
           <form action="" method="post" id="training_form" >
               {%crispy form%}
               {% include "training/form/add_cmp.html" %}
@@ -125,9 +125,11 @@
     {% endif %}
 {% else %}"{%url 'training:list_all' %}"
 {% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
+{% if not rof_enabled %}
 {%if not is_respform%}
 <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
 {%endif%}
+{% endif %}
 {% if  can_edit and object.input_opening.0 != "4" %}
 <a class="btn-primary btn btn-sm" onclick="check_consistency({{training.id}})">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
 {% endif %}
@@ -149,6 +151,11 @@
 </style>
 
 <script type="text/javascript">
+{% if rof_enabled %}
+let logoRofUrl = "{% static 'img/logo_rof.png' %}";
+$('#left-column').prepend('<img class="img-responsivei logo_rof" src="'+logoRofUrl+'" alt="Logo ROF" />');
+{% endif %}
+
 {% if not can_edit %}
 $("input").prop("disabled", true);
 $("select").prop("disabled", true);
