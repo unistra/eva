@@ -167,9 +167,12 @@ def list_exams(request, id_structure):
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
     exams = Exam.objects.filter(
-        id_attached=structure_concerned.id, code_year=currentyear().code_year)
-    asked_exams = exams.filter(session='2') if request.GET.get(
-        'session2') else exams.filter(session='1')
+        id_attached=structure_concerned.id, code_year=currentyear().code_year).order_by('_id')
+    if request.GET.get('session2') == 'True':
+        asked_exams = exams.filter(session='2')
+    else:
+        asked_exams = exams.filter(session='1')
+
     return JsonResponse([e.as_json for e in asked_exams], safe=False)
 
 
@@ -757,6 +760,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
     data['notification_to'] = settings.MAIL_FROM
+    supply_cmp = Institute.objects.get(code__exact=training.supply_cmp)
+    data['rof_enabled'] = supply_cmp.ROF_support
     # user = reques.user.username
     respens_struct = [e.id for e in current_structures.filter(
         RESPENS_id=request.user.username)]
