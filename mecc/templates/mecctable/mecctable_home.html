@@ -204,6 +204,7 @@
             {% include "mecctable/modal/exam_regime_session_changed.html" %}
             {% include "mecctable/modal/exam_copy_confirm.html" %}
             {% include "mecctable/modal/exam_copy_report.html" %}
+            {% include "mecctable/modal/alert_finish_edit.html" %}
             {% include "generic/modal_confirm_delete.html" %}
             {% include "training/modal_consistency.html" %}
             {% include "generic/search_member.html" with type="RESPENS" style="un enseignant" %}
@@ -421,11 +422,12 @@
             }
         });
         $(document).on('change', 'input[name="progress"]:radio', function () {
+            let statut = $(this).val();
             $.ajax({
                 url: "{% url 'rules:update_progress'%}",
                 type: "POST",
                 data: {
-                    val: $(this).val(),
+                    val: statut,
                     training_id: {{training.id}},
                     type: "TABLE",
                     csrfmiddlewaretoken: '{{ csrf_token }}'
@@ -436,6 +438,9 @@
                             message: {text: 'Etat de saisie mis à jour : ' + data.val},
                             type: 'info'
                         }).show();
+                        if (statut == 'A') {
+                            $('#alert_finish_mecctable_edit').modal('show');
+                        }
                     } else {
                         $('.top-right').notify({
                             message: {text: 'Error lors de la mise à jour de la saisie'},
