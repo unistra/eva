@@ -169,10 +169,6 @@ class Training(models.Model):
         return reduce(operator.concat, [e.give_user_id for e in can_do_alot])
 
     @property
-    def list_institutes_id(self):
-        return sorted([institute.id for institute in self.institutes.all()])
-
-    @property
     def input_opening(self):
         INPUT_CHOICE = (
             ('1', _('ouverte')),
@@ -237,6 +233,12 @@ class Training(models.Model):
         if need_to_edit_struct:
             update_regime_session(self, self.MECC_type, self.session_type)
 
+        print(self.__original_list_respform_id)
+        if Institute.objects.get(code=self.supply_cmp).ROF_support and \
+                not self.reappli_atb and \
+                sorted(self.list_respform_id) != sorted(self.__original_list_respform_id):
+            self.reappli_atb = True
+
         super(Training, self).save(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -245,6 +247,7 @@ class Training(models.Model):
             self.__original_session_type = self.session_type
             self.__original_MECC_type = self.MECC_type
             self.__original_degree_type = self.degree_type
+            self.__original_list_respform_id = self.list_respform_id
         except DegreeType.DoesNotExist:
             pass
 

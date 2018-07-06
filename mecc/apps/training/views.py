@@ -262,6 +262,7 @@ class TrainingEdit(UpdateView):
             currentyear().code_year, currentyear().code_year + 1)
         context['resp_form'] = self.object.resp_formations.all()
         context['is_respform'] = True if self.request.user.meccuser in context['resp_form'] else False
+        print(self.object)
         input_is_open = self.object.input_opening[0] in ['1', '3']
         context['can_edit'] = (
             self.request.environ['allowed'] and
