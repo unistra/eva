@@ -167,9 +167,12 @@ def list_exams(request, id_structure):
     """
     structure_concerned = StructureObject.objects.get(id=id_structure)
     exams = Exam.objects.filter(
-        id_attached=structure_concerned.id, code_year=currentyear().code_year)
-    asked_exams = exams.filter(session='2') if request.GET.get(
-        'session2') else exams.filter(session='1')
+        id_attached=structure_concerned.id, code_year=currentyear().code_year).order_by('_id')
+    if request.GET.get('session2') == 'True':
+        asked_exams = exams.filter(session='2')
+    else:
+        asked_exams = exams.filter(session='1')
+
     return JsonResponse([e.as_json for e in asked_exams], safe=False)
 
 
@@ -596,6 +599,7 @@ def mecctable_update(request):
     """
     training = Training.objects.get(id=request.POST.get('training_id'))
     is_catalgue = 'CATALOGUE' in training.degree_type.short_label
+    institute = Institute.objects.get(code__exact=training.supply_cmp)
 
     # needed stuff in order to create objectslink
     id_parent = int(request.POST.get('id_parent'))
@@ -708,26 +712,29 @@ def mecctable_update(request):
             if j.get('RESPENS_id') not in ['', ' ', None]:
                 create_respens(j.get('RESPENS_id'))
         struct.code_year = currentyear().code_year
-        struct.nature = j.get('nature')
         struct.owner_training_id = training.id
         struct.cmp_supply_id = training.supply_cmp
         struct.regime = j.get('regime') if is_catalgue else training.MECC_type
         struct.session = j.get(
             'session') if is_catalgue else training.session_type
-        struct.label = j.get('label')
-        struct.is_in_use = True if j.get('is_in_use') else False
-        struct.period = j.get('period')
-        struct.ECTS_credit = None if j.get('ECTS_credit') in [
-            0, '', ' '] else j.get('ECTS_credit')
         struct.RESPENS_id = j.get('RESPENS_id')
         struct.external_name = j.get('external_name')
-        struct.mutual = is_mutual
         struct.ROF_ref = j.get('ROF_ref')
         struct.ROF_code_year = None if j.get('ROF_code_year') in [
             0, '', ' ', None] else j.get('ROF_code_year')
         struct.ROF_nature = j.get('ROF_nature')
         struct.ROF_supply_program = j.get('ROF_supply_program')
         struct.ref_si_scol = j.get('ref_si_scol')
+        if not institute.ROF_support:
+            """Champs non modifiables si appui ROF"""
+            struct.nature = j.get('nature')
+            struct.label = j.get('label')
+            struct.is_in_use = True if j.get('is_in_use') else False
+            struct.ECTS_credit = None if j.get('ECTS_credit') in [
+                0, '', ' '] else j.get('ECTS_credit')
+            struct.period = j.get('period')
+            struct.mutual = is_mutual
+
         struct.save()
 
 

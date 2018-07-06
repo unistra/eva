@@ -259,7 +259,6 @@ function get_struct_details(_id, id_parent, nature) {
     document.getElementById('id_period_2').tabIndex = "auto";
     document.getElementById('id_period_3').tabIndex = "auto";
 
-
     $.ajax({
         url: "{% url 'mecctable:get_stuct_obj_details' %}",
         type: "GET",
@@ -334,6 +333,21 @@ function get_struct_details(_id, id_parent, nature) {
 
         }
     });
+
+    if (rof_enabled) {
+        // Si la composante choisit de synchroniser avec ROF, les infos suivantes ne sont pas modifiables
+        $('select#id_nature').prop('disabled', true);
+        $('input#id_label').prop('disabled', true);
+        $('input#id_is_in_use').prop('disabled', true);
+        $('input#id_ECTS_credit').prop('disabled', true);
+        $('input[type=radio][name=period]').prop('disabled', true);
+        $('input#id_mutual').prop('disabled', true);
+        $('div#div_id_ROF_ref').addClass('disabled');
+        $('input#id_ROF_ref').prop('disabled', true);
+        $('input#id_ROF_code_year').prop('disabled', true);
+        $('input#id_ROF_nature').prop('disabled', true);
+        $('input#id_ROF_supply_program').prop('disabled', true);
+    }
 }
 
 
