@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from mecc.apps.adm.models import Profile
 from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
+from mecc.apps.institute.models import Institute
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
@@ -66,6 +67,11 @@ class Training(models.Model):
     resp_formations = models.ManyToManyField('adm.MeccUser')
     n_train = models.IntegerField(
         _('Numéro de règle'), unique=False, null=True)
+
+    reappli_atb = models.BooleanField(
+        _("Témoin de réapplication des attributs en mode ROF"),
+        default=False,
+    )
 
     @property
     def small_dict(self):
@@ -227,6 +233,12 @@ class Training(models.Model):
         if need_to_edit_struct:
             update_regime_session(self, self.MECC_type, self.session_type)
 
+        print(self.__original_list_respform_id)
+        if Institute.objects.get(code=self.supply_cmp).ROF_support and \
+                not self.reappli_atb and \
+                sorted(self.list_respform_id) != sorted(self.__original_list_respform_id):
+            self.reappli_atb = True
+
         super(Training, self).save(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -235,6 +247,7 @@ class Training(models.Model):
             self.__original_session_type = self.session_type
             self.__original_MECC_type = self.MECC_type
             self.__original_degree_type = self.degree_type
+            self.__original_list_respform_id = self.list_respform_id
         except DegreeType.DoesNotExist:
             pass
 
