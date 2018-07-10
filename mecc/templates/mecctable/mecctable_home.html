@@ -423,6 +423,7 @@
         });
         $(document).on('change', 'input[name="progress"]:radio', function () {
             let statut = $(this).val();
+            let rof_enabled = {{ rof_enabled|lower }};
             $.ajax({
                 url: "{% url 'rules:update_progress'%}",
                 type: "POST",
@@ -438,7 +439,7 @@
                             message: {text: 'Etat de saisie mis à jour : ' + data.val},
                             type: 'info'
                         }).show();
-                        if (statut == 'A') {
+                        if (statut == 'A' && rof_enabled) {
                             $('#alert_finish_mecctable_edit').modal('show');
                         }
                     } else {
