@@ -249,16 +249,13 @@ def copy_old_exams(request, id_structure=None):
             data['msg'] = "Cette structure d'enseignement n'existait pas l'année précédente."
 
     else:
-        print("Début du traitement de la récupération des épreuves pour toutes les structures.")
         id_training = request.GET.get('training_id')
         if id_training:
-            print("ID de la formation récupéré")
         current_structures = StructureObject.objects.filter(
             owner_training_id=id_training,
         ).exclude(id__in=[exam.id_attached for exam in Exam.objects.filter(
             code_year=currentyear().code_year)])
         if current_structures:
-            print("Structures à traiter récupérées.")
 
         updated_objects = 0
         data = {}
@@ -266,7 +263,6 @@ def copy_old_exams(request, id_structure=None):
         # we check that the corresponding current structure is empty
         # in that case, the old_exam is copied in the current_structure
         for structure in current_structures:
-            print(structure.label)
             if copy_last_year_exams(structure) == 666:
                 updated_objects += 1
                 data['exams_infos'][str(updated_objects)] = {
@@ -279,7 +275,6 @@ def copy_old_exams(request, id_structure=None):
                     'st_rof_ref': structure.ROF_ref
                 }
         data['updated_objects'] = updated_objects 
-        print("Fin du traitement de la récupération des épreuves pour toutes les structures.")
     return JsonResponse(data)
 
 
