@@ -250,12 +250,10 @@ def copy_old_exams(request, id_structure=None):
 
     else:
         id_training = request.GET.get('training_id')
-        if id_training:
         current_structures = StructureObject.objects.filter(
             owner_training_id=id_training,
         ).exclude(id__in=[exam.id_attached for exam in Exam.objects.filter(
             code_year=currentyear().code_year)])
-        if current_structures:
 
         updated_objects = 0
         data = {}
