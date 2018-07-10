@@ -329,26 +329,30 @@
                             data.st_rof_ref
                         );
                     }
-                    update_mini_table(
-                        "1",
-                        data.id_struct,
-                        data.st_label,
-                        data.st_nature,
-                        data.st_regime,
-                        data.st_session,
-                        data.st_ref_scol,
-                        data.st_rof_ref
-                    );
-                    update_mini_table(
-                        "2",
-                        data.id_struct,
-                        data.st_label,
-                        data.st_nature,
-                        data.st_regime,
-                        data.st_session,
-                        data.st_ref_scol,
-                        data.st_rof_ref
-                    );
+                    Object.keys(data.exams_infos).forEach(function(key) {
+                        console.log(key);
+                        console.log(data.exams_infos[key].id_struct);
+                        update_mini_table(
+                            "1",
+                            data.exams_infos[key].id_struct,
+                            data.exams_infos[key].st_label,
+                            data.exams_infos[key].st_nature,
+                            data.exams_infos[key].st_regime,
+                            data.exams_infos[key].st_session,
+                            data.exams_infos[key].st_ref_scol,
+                            data.exams_infos[key].st_rof_ref
+                        );
+                        update_mini_table(
+                            "2",
+                            data.exams_infos[key].id_struct,
+                            data.exams_infos[key].st_label,
+                            data.exams_infos[key].st_nature,
+                            data.exams_infos[key].st_regime,
+                            data.exams_infos[key].st_session,
+                            data.exams_infos[key].st_ref_scol,
+                            data.exams_infos[key].st_rof_ref
+                        );
+                    });
                 }
             });
         }
