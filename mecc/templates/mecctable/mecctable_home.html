@@ -329,26 +329,28 @@
                             data.st_rof_ref
                         );
                     }
-                    update_mini_table(
-                        "1",
-                        data.id_struct,
-                        data.st_label,
-                        data.st_nature,
-                        data.st_regime,
-                        data.st_session,
-                        data.st_ref_scol,
-                        data.st_rof_ref
-                    );
-                    update_mini_table(
-                        "2",
-                        data.id_struct,
-                        data.st_label,
-                        data.st_nature,
-                        data.st_regime,
-                        data.st_session,
-                        data.st_ref_scol,
-                        data.st_rof_ref
-                    );
+                    for (element in data.exams_infos) {
+                        update_mini_table(
+                            "1",
+                            data.element.id_struct,
+                            data.element.st_label,
+                            data.element.st_nature,
+                            data.element.st_regime,
+                            data.element.st_session,
+                            data.element.st_ref_scol,
+                            data.element.st_rof_ref
+                        );
+                        update_mini_table(
+                            "2",
+                            data.element.id_struct,
+                            data.element.st_label,
+                            data.element.st_nature,
+                            data.element.st_regime,
+                            data.element.st_session,
+                            data.element.st_ref_scol,
+                            data.element.st_rof_ref
+                        );
+                    }
                 }
             });
         }
