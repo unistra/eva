@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
+from mecc.apps.institute.models import Institute
 
 
 def manage_dircomp_rac(new_username, profile, institute, request, name):
@@ -94,6 +95,10 @@ def manage_respform(dic, t_id):
             resp_formations__user__username=dic.get('username')
         )
         training.resp_formations.remove(meccuser)
+        if Institute.objects.get(code=training.supply_cmp).ROF_support and \
+                not training.reappli_atb:
+            training.reappli_atb = True
+            training.save()
         meccuser.profile.remove(user_profile)
         # if len(train_respform) < 1:
         #     meccuser.profile.remove(user_profile)
