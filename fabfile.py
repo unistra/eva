@@ -84,7 +84,6 @@ def dev():
     env.socket_port = '8001'
     env.map_settings = {
         'ldap_token': "LDAP_TOKEN",
-        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
@@ -111,7 +110,6 @@ def test():
     env.socket_host = '127.0.0.1'
     env.map_settings = {
         'ldap_token': "LDAP_TOKEN",
-        'camelot_token': "CAMELOT_TOKEN"
     }
     env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
@@ -143,7 +141,6 @@ def preprod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
-        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
@@ -174,7 +171,6 @@ def prod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
-        'camelot_token': "CAMELOT_TOKEN"
     }
     execute(build_env)
 
