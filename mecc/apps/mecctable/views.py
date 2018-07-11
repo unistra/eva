@@ -226,10 +226,12 @@ def copy_old_exams(request, id_structure=None):
             return 999
 
     id_structure = request.GET.get('structure_id')
-
+    data = {}
+    data['exams_infos'] = {}
     if id_structure is not None:
+        print("SLOUBI 1")
         current_structure = StructureObject.objects.get(id=id_structure)
-        data['exams_infos']['1'] = {
+        data['exams_infos']['object'] = {
             'id_struct': current_structure.id,
             'st_label': current_structure.label,
             'st_nature': current_structure.nature,
@@ -239,9 +241,12 @@ def copy_old_exams(request, id_structure=None):
             'st_rof_ref': current_structure.ROF_ref
         }
 
+        print("SLOUBI 5")
+
         data['status'] = status = copy_last_year_exams(current_structure)
 
         if status == 666:
+            print("SLOUBI 10")
             data['msg'] = "Les épreuves de l'année précédente ont bien été importées."
         elif status == 333:
             data['msg'] = "Aucune épreuve à importer."
@@ -256,14 +261,13 @@ def copy_old_exams(request, id_structure=None):
             code_year=currentyear().code_year)])
 
         updated_objects = 0
-        data = {}
-        data['exams_infos'] = {}
+
         # we check that the corresponding current structure is empty
         # in that case, the old_exam is copied in the current_structure
         for structure in current_structures:
             if copy_last_year_exams(structure) == 666:
                 updated_objects += 1
-                data['exams_infos'][str(updated_objects)] = {
+                data['exams_infos']['object_'+str(updated_objects)] = {
                     'id_struct': structure.id,
                     'st_label': structure.label,
                     'st_nature': structure.nature,
@@ -272,7 +276,9 @@ def copy_old_exams(request, id_structure=None):
                     'st_ref_scol': structure.ref_si_scol,
                     'st_rof_ref': structure.ROF_ref
                 }
-        data['updated_objects'] = updated_objects 
+        data['updated_objects'] = updated_objects
+    print("SLOUBI 20")
+    print(data)
     return JsonResponse(data)
 
 
