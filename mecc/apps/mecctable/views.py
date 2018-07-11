@@ -213,7 +213,7 @@ def copy_old_exams(request, id_structure=None):
                     exam_2 = copy.copy(old_exam_2)
                     exam_2.id = exam_2._id = None
                     for old_exam_1_auto_id, exam_1_auto_id in copied_exams:
-                        if old_exam_2._id is old_exam_1_auto_id:
+                        if old_exam_2._id == old_exam_1_auto_id:
                             exam_2._id = exam_1_auto_id
                     exam_2.code_year = structure.code_year
                     exam_2.id_attached = structure.id
