@@ -72,14 +72,6 @@ MIDDLEWARE_CLASSES += (
 INTERNAL_IPS = ('127.0.0.1', '0.0.0.0')
 
 ####################
-# Camelot settings #
-####################
-
-CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
-CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
-CAMELOT_TOKEN = environ.get('CAMELOT_TOKEN', 'S3CR3T')
-
-####################
 # LDAP Settings    #
 ####################
 

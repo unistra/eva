@@ -120,33 +120,3 @@ def get_from_ldap(val):
         format='json', establishment='UDS', last_or_birth_name=val)
 
     return process_stuff(ask)
-
-
-def ask_camelot(val):
-    client = create_client('camelot_client', settings.CAMELOT_TOKEN,
-                           settings.CAMELOT_SPORE, settings.CAMELOT_BASE_URL)
-    goto = [
-        client.get_persons(format='json', username=val),
-        client.get_persons(format='json', last_name=val),
-        client.get_persons(format='json', birth_name=val)
-        # client.get_persons(format='json', first_name=val)
-    ]
-    result = []
-    for e in goto:
-        r = json.loads(e.text)
-        if r and 'results' in r and r['results']:
-            for i in r['results']:
-                a = {
-                    "first_name": i['first_name'].title(),
-                    "last_name": i['last_name'],
-                }
-                mails = []
-                if i['accounts']:
-                    for m in i['accounts']:
-                        a.update({"id_member": m['username']})
-                        mails.append(m['mail'])
-                a.update({"mail": mails})
-                if a not in result:
-                    result.append(a)
-
-    return result

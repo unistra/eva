@@ -43,14 +43,6 @@ DIPSTRAP_VERSION = '{{ dipstrap_version }}'
 DIPSTRAP_STATIC_URL += '%s/' % DIPSTRAP_VERSION
 
 ####################
-# Camelot settings #
-####################
-
-CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
-CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-test.u-strasbg.fr')
-CAMELOT_TOKEN = '{{camelot_token}}'
-
-####################
 # LDAP Settings    #
 ####################
 
