@@ -232,8 +232,6 @@ class Training(models.Model):
             need_to_edit_struct = True
         if need_to_edit_struct:
             update_regime_session(self, self.MECC_type, self.session_type)
-
-        print(self.__original_list_respform_id)
         if Institute.objects.get(code=self.supply_cmp).ROF_support and \
                 not self.reappli_atb and \
                 sorted(self.list_respform_id) != sorted(self.__original_list_respform_id):
@@ -247,10 +245,8 @@ class Training(models.Model):
             self.__original_session_type = self.session_type
             self.__original_MECC_type = self.MECC_type
             self.__original_degree_type = self.degree_type
-            self.__original_list_respform_id = self.list_respform_id
         except DegreeType.DoesNotExist:
             pass
-
         if not self.code_year:
             self.code_year = currentyear().code_year
         if not self.degree_type_id:
@@ -259,6 +255,9 @@ class Training(models.Model):
             # creating n_train for ROF imported training
             self.n_train = self.id
             self.save()
+        if Institute.objects.get(code=self.supply_cmp).ROF_support and \
+                not self.reappli_atb:
+            self.__original_list_respform_id = self.list_respform_id
 
 
 class SpecificParagraph(models.Model):
