@@ -321,7 +321,7 @@
                 if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
-                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+                _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
 
                 let duration = args.item.exam_duration
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
@@ -576,7 +576,7 @@
                     name: "eliminatory_grade",
                     css: "eliminatory_grade",
                     type: "text",
-                    title: "Note seuil",
+                    title: "Seuil compens.",
                     width: 40
                 },
                 {
@@ -651,7 +651,7 @@
                 if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
-                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+                _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
 
                 let duration = args.item.exam_duration
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
@@ -685,7 +685,7 @@
                     args.cancel = true;
                     alert("Un intitulé est obligatoire")
                 }
-                _checkall(args.item.eliminatory_grade, "Note seuil")
+                _checkall(args.item.eliminatory_grade, "Seuil compens.")
 
                 let duration = args.item.exam_duration;
                 let durations_h = duration.slice(0, duration.indexOf(':'));
@@ -884,7 +884,7 @@
                     name: "eliminatory_grade",
                     css: "eliminatory_grade",
                     type: "text",
-                    title: "Note seuil",
+                    title: "Seuil compens.",
                     width: 40
                 },
                 {
