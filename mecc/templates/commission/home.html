@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block page-header %}
-{% trans 'Commission ECI et étudiants élus' %}
+{% trans 'Commission MECC et étudiants élus' %}
 {% endblock %}
 
 {% block app_content %}
@@ -17,9 +17,11 @@
 
                 <select id='filterText' onchange='filterCol(this)'>
                     <option value='all' selected>{% trans "Tous" %}</option>
-                    <option value='commission'>{% trans "Commission ECI" %}</option>
+                    <option value='commission'>{% trans "Commission MECC" %}</option>
                     <option value='supply'>{% trans "Étudiant CFVU suppléant" %}</option>
                     <option value='tenured'>{% trans "Étudiant CFVU titulaire" %}</option>
+                    <option value='catit'>{% trans "Étudiant CA titulaire" %}</option>
+                    <option value='casup'>{% trans "Étudiant CA suppléant" %}</option>
                 </select>
               </th>
               <th></th>
@@ -35,7 +37,9 @@
                 <select class='select-type' id="val">
                     <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
                     <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
-                    <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans 'Etudiant CFVU titulaire' %}</option>
+                    <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU titulaire" %}</option>
+                    <option value="catit" {% if e.member_type == 'catit'%} selected="selected" {% endif %} > {% trans "Etudiant CA titulaire" %}</option>
+                    <option value="casup" {% if e.member_type == 'casup'%} selected="selected" {% endif %} > {% trans "Etudiant CA suppléant" %}</option>
                 </select>
               </td>
               <td>
@@ -122,6 +126,14 @@
      }
      if (a === 'supply'){
          mails = '{%for e in supply_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+     if (a === 'catit'){
+         mails = '{%for e in catit_mails%}{{e}}, {%endfor%}'
+         document.getElementById('send-to').value = mails
+     }
+     if (a === 'casup'){
+         mails = '{%for e in casup_mails%}{{e}}, {%endfor%}'
          document.getElementById('send-to').value = mails
      }
   }
