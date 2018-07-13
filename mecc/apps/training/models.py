@@ -232,10 +232,6 @@ class Training(models.Model):
             need_to_edit_struct = True
         if need_to_edit_struct:
             update_regime_session(self, self.MECC_type, self.session_type)
-        if Institute.objects.get(code=self.supply_cmp).ROF_support and \
-                not self.reappli_atb and \
-                sorted(self.list_respform_id) != sorted(self.__original_list_respform_id):
-            self.reappli_atb = True
 
         super(Training, self).save(*args, **kwargs)
 
@@ -255,9 +251,6 @@ class Training(models.Model):
             # creating n_train for ROF imported training
             self.n_train = self.id
             self.save()
-        if Institute.objects.get(code=self.supply_cmp).ROF_support and \
-                not self.reappli_atb:
-            self.__original_list_respform_id = self.list_respform_id
 
 
 class SpecificParagraph(models.Model):

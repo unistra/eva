@@ -98,13 +98,13 @@ def docx_gen(data):
             else:
                 to_write = clean_up(paragraph.text_additional_paragraph)
             for element in to_write:
-                if element in ['i', 'strong', 'u', 'li']:
+                if element in ['i', 'em', 'strong', 'u', 'li']:
                     char_styles.append(element)
                 elif element is not 'p':
                     paragraph = doc.add_paragraph()
                     run = paragraph.add_run(element)
                     for style in char_styles:
-                        if style == 'i':
+                        if style == 'i' or style == 'em':
                             run.italic = True
                         if style == 'strong':
                             run.bold = True

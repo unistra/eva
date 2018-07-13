@@ -86,6 +86,9 @@ def manage_respform(dic, t_id):
         meccuser.cmp = dic.get('cmp')
         meccuser.profile.add(user_profile)
         training.resp_formations.add(meccuser)
+        if Institute.objects.get(code=training.supply_cmp).ROF_support and \
+                not training.reappli_atb:
+            training.reappli_atb = True
         training.save()
         meccuser.save()
         return True
