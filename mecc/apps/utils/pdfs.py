@@ -13,7 +13,7 @@ from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4, landscape
 
@@ -29,6 +29,7 @@ from reportlab.platypus.flowables import Flowable
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+styles.add(ParagraphStyle(name='Right', parent=styles['Normal'], alignment=TA_RIGHT))
 styles.add(ParagraphStyle(name='Bullet_1', bulletIndent=25, bulletText="•"))
 styles.add(ParagraphStyle(name='CenterBalek', alignment=TA_CENTER))
 styles.add(ParagraphStyle(name='CenterSmall', alignment=TA_CENTER, fontSize=8))
@@ -1210,9 +1211,28 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
                                    _("Néant"), styles['Normal']))
 
     story.append(CondPageBreak(250))
-    title = Paragraph(
-        "<para fontSize=12 lindent=0 spaceAfter=14 spaceBefore=14 textColor=darkblue><strong>%s</strong></para>" %
+    title_style = [
+        # ('GRID', (0, 0), (-1, -1), 0.5, colors.green),
+        ('TOPPADDING', (0, 0), (0, 0), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0)
+
+    ]
+    title_left = Paragraph(
+        "<para fontSize=12 TextColor=darkblue><strong>%s</strong></para>" %
         _("Tableau MECC"), styles['Normal'])
+    title_right = Paragraph(
+        "<para fontSize=7 textColor=black>%s</para>" %_("(E = Ecrit, O = Oral, A = Autre)"),
+        styles['Right']
+    )
+    title_data = [[title_left, title_right]]
+    title = Table(
+        title_data, 
+        style=title_style,
+        spaceBefore=14,
+        spaceAfter=14
+    )
     space = Spacer(0, 12)
 
     story.append(title)
