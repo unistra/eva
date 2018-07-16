@@ -11,6 +11,8 @@ class ECICommissionMember(models.Model):
         ('commission', _('Commission ECI')),
         ('tenured', _('Etudiant CFVU titulaire')),
         ('supply', _('Etudiant CFVU suppléant')),
+        ('catit', _('Etudiant CA titulaire')),
+        ('casup', _('Etudiant CA suppléant')),
     )
 
     username = models.CharField(
