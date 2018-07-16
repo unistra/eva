@@ -181,9 +181,12 @@
 }
 
 .mecc-ects,
-.mecc-coef,
-.mecc-note {
+.mecc-coef {
     width: 4em;
+}
+
+.mecc-note {
+    width: 6em;
 }
 
 .mecc-respens {

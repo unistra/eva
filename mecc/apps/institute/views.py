@@ -416,7 +416,7 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['date_last_notif'] = institute_year.date_last_notif
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
-        institutes__code=code, is_used=True).order_by('degree_type')
+        institutes__code=code, is_used=True).order_by('degree_type', 'label')
     data['notification_to'] = settings.MAIL_FROM
     data['notification_object'] = "%s - %s %s" % (
         institute.label, request.user.first_name, request.user.last_name)
@@ -500,7 +500,7 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     data['date_last_notif'] = institute_year.date_last_notif
     data['trainings'] = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
-        institutes__code=code, is_used=True).order_by('degree_type')
+        institutes__code=code, is_used=True).order_by('degree_type', 'label')
     data['notification_to'] = [user.email for user in staff.filter(
         meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
     data['notification_cc'] = [user.email for user in staff.filter(

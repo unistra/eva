@@ -47,6 +47,10 @@ def home(request, template='commission/home.html'):
         'commission_staff'] if e.member_type == 'tenured']
     data['commission_mails'] = [e.email for e in data[
         'commission_staff'] if e.member_type == 'commission']
+    data['catit_mails'] = [e.email for e in data[
+        'commission_staff'] if e.member_type == 'catit']
+    data['casup_mails'] = [e.email for e in data[
+        'commission_staff'] if e.member_type == 'casup']
     return render(request, template, data)
 
 
