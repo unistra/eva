@@ -35,7 +35,7 @@
               <td>{{e.username}}</td>
               <td>
                 <select class='select-type' id="val">
-                    <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission ECI" %}</option>
+                    <option value="commission" {% if e.member_type == 'commission'%} selected="selected" {% endif %} >{% trans "Commission MECC" %}</option>
                     <option value="supply" {% if e.member_type == 'supply'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU suppléant" %}</option>
                     <option value="tenured" {% if e.member_type == 'tenured'%} selected="selected" {% endif %} > {% trans "Etudiant CFVU titulaire" %}</option>
                     <option value="catit" {% if e.member_type == 'catit'%} selected="selected" {% endif %} > {% trans "Etudiant CA titulaire" %}</option>
