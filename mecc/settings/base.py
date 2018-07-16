@@ -383,13 +383,6 @@ CAS_LOGOUT_REQUEST_ALLOWED = ('cas-dev1.u-strasbg.fr', 'cas-dev2.u-strasbg.fr')
 CAS_USER_CREATION = True
 CAS_USERNAME_FORMAT = lambda username: username.lower().strip()
 
-##########
-# Camelot #
-##########
-CAMELOT_SPORE = None
-CAMELOT_BASE_URL = None
-CAMELOT_TOKEN = None
-
 ############
 # apogeews #
 ############

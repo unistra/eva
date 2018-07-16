@@ -58,15 +58,6 @@ MEDIA_ROOT = '/nfs/mecc/uploads'
 # path for pdf files
 FILES_UPLOAD_PATH = 'docs/%Y'
 
-
-####################
-# Camelot settings #
-####################
-
-CAMELOT_SPORE = environ.get('CAMELOT_SPORE', 'http://rest-api.u-strasbg.fr/camelot/description.json')
-CAMELOT_BASE_URL = environ.get('CAMELOT_BASE_URL', 'https://camelot-ws.u-strasbg.fr')
-CAMELOT_TOKEN = '{{camelot_token}}'
-
 ####################
 # LDAP Settings    #
 ####################
