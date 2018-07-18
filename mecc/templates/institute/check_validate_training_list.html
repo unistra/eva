@@ -4,6 +4,8 @@
 {% load staticfiles %}
 {% load mecc_tags %}
 
+<script src="{% static 'js/datatable.min.js' %}"></script>
+
 <div>
     <table class="table" id="rule-table">
         <thead>
@@ -89,3 +91,16 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+$(document).ready( function () {
+   	$('#rule-table').DataTable({
+		paging: false,
+        searching: false,
+        order: [[ 1, "asc" ]],
+		columnDefs: [
+			{ orderable: false, targets: [0, 7, 8, 9, 10] },
+		],
+	});
+});
+</script>
