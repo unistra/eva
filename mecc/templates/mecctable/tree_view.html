@@ -11,7 +11,8 @@
         <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
         {{ a.structure.nature }} :
         {% if a.is_imported %}
-            {{ a.structure.label }} {% if a.not_yet_imported %}- ID:{{ a.structure.id }} - ? {% endif %}
+        {% if not a.not_yet_imported %}
+        <a onclick="get_owner({{a.structure.id}})" class="hand green">{% endif %}{{ a.structure.label }} {% if a.not_yet_imported %}- ID:{{ a.structure.id }} - ? {% else %}</a>{% endif %}
         {% else %}
             {% if can_edit or a.can_be_edited %}
                 <a data-toggle="modal"
