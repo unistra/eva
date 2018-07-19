@@ -154,7 +154,9 @@ function process_me(id_obj, type, e) {
             type: type
         },
         success: function(data){
-            window.location.replace(data.url)
+            {# console.log(data); #}
+            {# window.location.replace(data.url); #}
+            $("#"+id_obj).replaceWith(data);
         }
     });
 }
@@ -178,7 +180,5 @@ function notify_me(id_obj, e) {
         }
     });
 }
-
-
 </script>
 {% endblock %}

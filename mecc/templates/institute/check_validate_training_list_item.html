@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load mecc_tags %}
+
+<tr id="{{training.id}}" class="hover-row">
+    <td class='border-bottom border-left'>
+        <input type="checkbox" name="chkbox[]" value="{{training.id}}" {% if not training.date_visa_des and not training.date_val_cfvu %} disabled readonly  class="noSelect" {% endif %}{% if training.date_val_cfvu %}class="noSelect"{% endif %}>
+    </td>
+    <td class='no-padding td-centered-left border-bottom'>
+        <strong>{{training.degree_type}}</strong>
+    </td>
+    <td id="{{training.id}}-label" class='no-padding td-centered-left border-bottom'>{{training.label}}</td>
+    <td id="{{training.id}}-validation-date" class="no-padding td-centered border-bottom text-nowrap">
+    {%if training.date_val_cmp %}{{training.date_val_cmp|date:"d/m/Y"}}
+        {% if not training.date_res_des and not training.date_visa_des and not training.date_val_cfvu %}
+            <a class="glyphicon glyphicon-trash" title="{% trans 'Supprimer'%}" onclick="process_me({{training.id}}, 'remove_validation')" style="color:black"></a>
+        {% endif %}
+    {%endif%}
+    </td>
+    <td id="{{training.id}}-reserve-date" class="no-padding td-centered border-bottom text-nowrap">
+    {%if training.date_res_des %}{{training.date_res_des|date:"d/m/Y"}}
+        {% if not training.date_val_cfvu %}
+            <a class="glyphicon glyphicon-trash" title="{% trans 'Supprimer'%}" onclick="process_me({{training.id}}, 'remove_reserve')" style="color:black"></a>
+        {% endif %}
+    {%endif%}
+    </td>
+    <td id="{{training.id}}-visa-date" class="no-padding td-centered border-bottom text-nowrap">
+    {%if training.date_visa_des %}{{training.date_visa_des|date:"d/m/Y"}}
+        {% if not training.date_val_cfvu %}
+             <a class="glyphicon glyphicon-trash" title="{% trans 'Supprimer'%}" onclick="process_me({{training.id}}, 'remove_visa')" style="color:black"></a>
+        {% endif %}
+    {%endif%}
+    </td>
+    <td id="{{training.id}}-des-validation-date" class="no-padding td-centered border-bottom text-nowrap">
+    {%if training.date_val_cfvu %}
+        {{training.date_val_cfvu|date:"d/m/Y"}}<a class="glyphicon glyphicon-trash" title="{% trans 'Supprimer'%}" onclick="process_me({{training.id}}, 'remove_cfvu')" style="color:black"></a>
+    {%endif%}
+    </td>
+    <td class="no-padding td-centered-left border-bottom border-right italic">Saisie {{training.input_opening.1}}</td>
+    <td id="{{training.id}}-reserve" class="no-padding td-centered border-bottom">
+    {% if training.date_val_cmp and not training.date_res_des and not training.date_val_cfvu %}
+        <a class="glyphicon glyphicon-thumbs-down" title="{% trans 'Ajouter une réserve DES'%}" onclick="process_me({{training.id}}, 'add_reserve')" style="color:red"></a>
+    {% endif %}
+    </td>
+    <td id="{{training.id}}-visa" class="no-padding td-centered border-bottom">
+    {% if training.date_val_cmp and not training.date_visa_des and not training.date_val_cfvu %}
+        <a class="glyphicon glyphicon-thumbs-up" title="{% trans 'Ajouter un visa DES'%}" onclick="process_me({{training.id}}, 'add_visa')" style="color:green"></a>
+    {% endif %}
+    </td>
+    <td class="no-padding td-centered border-bottom border-right">
+        <a class="glyphicon glyphicon-envelope" title="{% trans 'Envoyer une notification'%}" onclick="notify_me({{training.id}})"></a>
+    </td>
+</tr>
