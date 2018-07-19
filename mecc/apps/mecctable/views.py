@@ -359,6 +359,33 @@ def get_consom(request):
         'status': 200})
 
 
+@is_ajax_request
+def get_owner(request):
+    """
+    Give infos on the training that owns a certain imported object
+    """
+    structure = StructureObject.objects.get(id=request.GET.get('id_obj'))
+    owner = Training.objects.get(id=structure.owner_training_id)
+
+    return JsonResponse({
+        'year': "%s/%s" % (structure.code_year, structure.code_year+1),
+        'structure': {
+            'label': structure.label,
+            'nature': structure.nature,
+            'si_scol': structure.ref_si_scol,
+            'rof': structure.ROF_ref,
+        },
+        'owner': {
+            'code': owner.supply_cmp,
+            'label': owner.label,
+            'respforms': [{
+                'first_name': respens.user.first_name,
+                'last_name': respens.user.last_name
+            } for respens in owner.resp_formations.all()],
+        }
+    })
+
+
 @login_required
 @is_ajax_request
 def get_mutual_by_cmp(request):
