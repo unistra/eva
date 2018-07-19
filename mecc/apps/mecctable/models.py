@@ -115,6 +115,15 @@ class StructureObject(models.Model):
             id=e.id_child) for e in ObjectsLink.objects.filter(
                 id_parent=self.id)]
 
+
+    @property
+    def get_all_children(self):
+        children = self.get_children
+        for child in children:
+            children += child.get_children
+        return children 
+
+
     @property
     def get_respens_name(self):
         """

@@ -109,8 +109,17 @@ compris entre 1 et 3"),
                         })
             #  1 - 2 
             if "E" in training.MECC_type and struc.nature == 'UE':
+                ue_children = struc.get_all_children
+                children_exam_1 = exams.filter(
+                    session=1,
+                    id_attached__in=[child.id for child in ue_children]
+                )
+                children_exam_2 = exams.filter(
+                    session=2,
+                    id_attached__in=[child.id for child in ue_children]
+                )
                 # 1
-                if len(proper_exam_1) < 3:
+                if len(proper_exam_1) + len(children_exam_1) < 3:
                     to_add = report['1']['objects']
                     to_add.append({
                         "0": struc.nature,
@@ -118,10 +127,10 @@ compris entre 1 et 3"),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
                             _("Nombre d'épreuves en session 1"),
-                            "<span class='red'>%s</span>" % len(proper_exam_1)),
+                            "<span class='red'>%s</span>" % (len(proper_exam_1)+len(children_exam_1))),
                     })
                 # 2
-                if len(proper_exam_2) > 1:
+                if len(proper_exam_2) + len(children_exam_2) > 1:
                     to_add = report['2']['objects']
                     to_add.append({
                         "0": struc.nature,
@@ -129,7 +138,7 @@ compris entre 1 et 3"),
                         "2": struc.ref_si_scol,
                         "3": "%s = %s" % (
                             _("Nombre d'épreuves en session 2"),
-                            "<span class='red'>%s</span>" % len(proper_exam_2)),
+                            "<span class='red'>%s</span>" % (len(proper_exam_2)+len(children_exam_2))),
                     })
             # 3
             if "C" in training.MECC_type and "2" in struc.session:
