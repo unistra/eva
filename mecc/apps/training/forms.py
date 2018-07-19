@@ -55,9 +55,9 @@ class SpecificParagraphDerogForm(forms.ModelForm):
         super(SpecificParagraphDerogForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML("{{text_derog|safe}}"),
+            HTML("<b>ETAPE 1 :</b>{{text_derog|safe}}"),
             'text_specific_paragraph',
-            HTML("{{text_motiv|safe}}"),
+            HTML("<b>ETAPE 2 :</b>{{text_motiv|safe}}"),
             'text_motiv',
             Div(
                 Submit(
