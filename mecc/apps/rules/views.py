@@ -18,7 +18,6 @@ from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from mecc.apps.utils.queries import currentyear
-from mecc.apps.mecctable.models import ObjectsLink
 
 
 class RulesListView(ListView):
@@ -443,24 +442,13 @@ def duplicate_remove(request):
 def update_progress(request):
     training = Training.objects.get(id=request.POST.get('training_id'))
     _type = request.POST.get('type')
-    data = {}
     if _type == "TABLE":
-        links = ObjectsLink.objects.filter(
-            id_training=training.id,
-            nature_child__in=['UE', 'EC', 'PT', 'ST']
-        )
-        if None in [link.coefficient for link in links] and \
-                request.POST.get('val') == 'A':
-            data['status'] = 409
-        else:
-            training.progress_table = request.POST.get('val')
-            data['status'] = 200
+        training.progress_table = request.POST.get('val')
     if _type == "RULE":
         training.progress_rule = request.POST.get('val')
-        data['status'] = 200
     training.save()
-    data['val'] = _('en cours') if request.POST.get('val') == 'E' else _('achevée')
-    return JsonResponse(data)
+    val = _('en cours') if request.POST.get('val') == 'E' else _('achevée')
+    return JsonResponse({'status': 200, 'val': val})
 
 
 @login_required
