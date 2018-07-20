@@ -7,7 +7,7 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
     send_mail_respform, copy_old_mecctable2, list_exams, add_exam, update_exam, \
-    delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams
+    delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams, get_owner
 
 
 urlpatterns = [
@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^get_consom/$',
         get_consom,
         name='get_consom'),
+
+    url(r'^get_owner/$',
+        get_owner,
+        name='get_owner'),
 
     url(r'^training/(?P<id>\w+)/$',
         mecctable_home,

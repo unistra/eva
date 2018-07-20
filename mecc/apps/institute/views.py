@@ -714,12 +714,16 @@ def process_check_validate(request):
 
     if tobject:
         tobject.save()
-        response = {'status': 1, 'message': _(
-            "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp']}
+        # response = {'status': 1, 'message': _(
+        #     "Ok"), 'url': '/institute/checkvalidate/%s' % request.session['visited_cmp']}
+        return render(
+            request,
+            'institute/check_validate_training_list_item.html',
+            {'training': tobject}
+        )
     else:
         response = {'status': 0, 'message': _("Error")}
-
-    return HttpResponse(json.dumps(response), content_type='application/json')
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 @is_post_request
