@@ -724,11 +724,16 @@ def mecctable_update(request):
                 id_parent=id_parent, code_year=currentyear().code_year)
         except ObjectsLink.DoesNotExist:
             link = ObjectsLink.objects.create(
-                id_child=struct.id, code_year=currentyear().code_year,
-                id_training=training.id, id_parent=id_parent,
+                id_child=struct.id,
+                code_year=currentyear().code_year,
+                id_training=training.id,
+                id_parent=id_parent,
                 order_in_child=last_order_in_parent,
                 coefficient=coeff if struct.nature == 'UE' else None,
-                n_train_child=training.n_train, nature_child=j.get('nature')
+                n_train_child=training.n_train,
+                # nature_child=j.get('nature')
+                nature_child='INT',
+                is_imported=False
             )
         if 'DU' in str(training.degree_type.short_label) and int(struct.ECTS_credit) == 0:
             coeff = 0
