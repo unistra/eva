@@ -68,13 +68,13 @@
                 <span data-toggle="modal" 
                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
                       title="{% trans 'Décrocher cet objet mutualisé' %}"
-                      onclick='ask_delete_imported({{a.link.id}}, "{{a.structure.label}}")' 
+                      onclick='ask_delete_imported({{a.link.id}}, {{a.link.id}}, "{{a.structure.label}}")' 
                       data-target="#preview">
                 </span>
                 {% else %}
                     {% if not a.has_childs %}
                         {% if a.structure.mutual and not a.is_imported %}
-                        <span onclick='check_delete({{a.structure.id}}, "{{a.structure.label}}")'
+                        <span onclick='check_delete({{a.link.id}}, {{a.structure.id}}, "{{a.structure.label}}")'
                               title="{% trans 'Supprimer cet objet' %}"
                               class="glyphicon glyphicon glyphicon-remove-sign red hand">
                         </span>
