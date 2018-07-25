@@ -83,7 +83,7 @@
                                 <span data-toggle="modal" 
                                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
                                       title="{% trans 'Supprimer cet objet' %}"
-                                      onclick='ask_delete({{a.structure.id}}, "{{a.structure.label}}")' 
+                                      onclick='ask_delete({{a.link.id}}, {{a.structure.id}}, "{{a.structure.label}}")' 
                                       data-target="#preview">
                                 </span>
                             {% endif %}
