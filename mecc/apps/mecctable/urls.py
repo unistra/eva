@@ -60,7 +60,7 @@ urlpatterns = [
     url(r'^structureobject/update/(?P<id>\d+)/$',
         StructureObjectUpdateView.as_view(),
         name='mecctable_structureobject_update'),
-    url(r'^structureobject/remove/(?P<id>\d+)$',
+    url(r'^structureobject/remove/(?P<id_struct>\d+)/(?P<id_link>\d+)$',
         remove_object,
         name='remove_structureobject'),
 

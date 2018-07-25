@@ -360,7 +360,7 @@
             });
         }
 
-        function check_delete(id_obj, label) {
+        function check_delete(id_link, id_obj, label) {
             $.ajax({
                 url: "{%url 'mecctable:get_consom'%}",
                 type: "GET",
@@ -377,17 +377,17 @@
                         $("#showme-used").attr("onclick", onclick);
 
                     } else {
-                        ask_delete(id_obj, label);
+                        ask_delete(id_link, id_obj, label);
                         $('#preview').modal('toggle');
                     }
                 }
             })
         }
 
-        function ask_delete(id_obj, label) {
+        function ask_delete(id_link, id_obj, label) {
             document.getElementById('type').innerHTML = "cet objet";
             document.getElementById('to_del').innerHTML = label;
-            document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj;
+            document.gen_form.action = '/mecctable/structureobject/remove/' + id_obj + '/' + id_link;
         }
 
         function ask_delete_imported(id_link, label) {

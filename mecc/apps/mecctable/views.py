@@ -595,34 +595,37 @@ def remove_imported(request, id):
 
 @login_required
 @is_post_request
-def remove_object(request, id):
+def remove_object(request, id_struct, id_link):
     """
-    Remove struct_obj and relating object_link
+    Remove struct_obj and related object_link
     """
-    struc = StructureObject.objects.get(id=id)
-    link = ObjectsLink.objects.get(id_child=id)
+    struc = StructureObject.objects.get(id=id_struct)
+    link = ObjectsLink.objects.filter(id_child=id_struct)
 
-    def get_children(parent, children_list=[]):
-        """
-        Return a list of children from a parent
-        """
-        for e in ObjectsLink.objects.filter(id_parent=parent.id_child):
-            children_list.append(e)
-            get_children(e, children_list)
-        return children_list
-
-    for e in get_children(link):
-        struct = StructureObject.objects.get(id=e.id_child)
-
-        remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
-            id=struct.owner_training_id))
-        struct.delete()
-        e.delete()
+    # def get_children(parent, children_list=[]):
+    #     """
+    #     Return a list of children from a parent
+    #     """
+    #     for e in ObjectsLink.objects.filter(id_parent=parent.id_child):
+    #         children_list.append(e)
+    #         get_children(e, children_list)
+    #     return children_list
+    #
+    # for e in get_children(link):
+    #     struct = StructureObject.objects.get(id=e.id_child)
+    #
+    #     remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
+    #         id=struct.owner_training_id))
+    #     struct.delete()
+    #     e.delete()
 
     remove_respens(struc.RESPENS_id, struc.label, Training.objects.get(
         id=struc.owner_training_id))
-    struc.delete()
-    link.delete()
+    if link.count() == 1:
+        struc.delete()
+        link.delete()
+    else:
+        link.get(id=id_link).delete()
 
     return redirect('/mecctable/training/' + str(struc.owner_training_id))
 
