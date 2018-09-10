@@ -72,6 +72,10 @@ class Training(models.Model):
         _("Témoin de réapplication des attributs en mode ROF"),
         default=False,
     )
+    published_mecc_url = models.URLField(
+        _("URL publique"),
+        blank=True, null=True, default=None,
+    )
 
     @property
     def small_dict(self):

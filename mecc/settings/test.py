@@ -65,3 +65,13 @@ EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr'
 #########
 
 STAGE = '{{ goal }}'
+
+############################
+# Ceph Storage credentials #
+############################
+CEPH_STORAGE = {
+    'KEY_ID': '{{ ceph_key_id }}',
+    'SECRET_KEY': '{{ ceph_secret_key }}',
+    'END_POINT_URL': '{{ ceph_end_point_url }}',
+    'BUCKET': '{{ ceph_bucket }}',
+}

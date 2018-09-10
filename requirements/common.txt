@@ -9,3 +9,4 @@ Pillow==3.2.0
 python-docx==0.8.6
 xlsxwriter
 beautifulsoup4
+boto3==1.7.50

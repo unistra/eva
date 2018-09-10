@@ -99,3 +99,13 @@ EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr'
 #########
 
 STAGE = 'dev'
+
+############################
+# Ceph Storage credentials #
+############################
+CEPH_STORAGE = {
+    'KEY_ID': environ.get('CEPH_KEY_ID'),
+    'SECRET_KEY': environ.get('CEPH_SECRET_KEY'),
+    'END_POINT_URL': environ.get('CEPH_ENDOINT_URL', 'https://s3.unistra.fr'),
+    'BUCKET': environ.get('CEPH_BUCKET'),
+}
