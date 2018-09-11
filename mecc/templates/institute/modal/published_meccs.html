@@ -1,0 +1,48 @@
+{% load i18n dipstrapfiles crispy_forms_tags staticfiles %}
+<div class="modal fade" id="published_meccs_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-90">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">MECC {{ current_year.label_year }}</h4>
+                <h5>{% trans "Publication pour les sites web" %}</h5>
+            </div>
+            <div class="modal-body">
+                <div class="comp-left">
+                    <div class="misc_files">
+                        {% if published_meccs %}
+                            {% regroup published_meccs by degree_type.short_label as type_list %}
+                            {% for type in type_list %}
+                                <h5>{{ type.grouper }}</h5>
+                                <table class="table">
+                                    <tbody>
+                                    {% for training in type.list %}
+                                        <tr>
+                                            {% if training.published_mecc_url %}
+                                                <td width="70%">
+                                                    <a href="{% url 'doc_gen:published_mecc' training_id=training.id %}">
+                                                        {{ training.label }}
+                                                    </a>
+                                                </td>
+                                            {% else %}
+                                                <td width="70%">{{ training.label }}</td>
+                                            {% endif %}
+                                            <td width="15%">CFVU : {{ training.date_val_cfvu|date:"d/m/Y"|default:"non validé" }}</td>
+                                            <td width="15%">ROF : {{ training.ref_cpa_rof }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endfor %}
+                        {% else %}
+                            <h5>{% trans "Aucun document publié" %}</h5>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
+            </div>
+        </div>
+    </div>
+</div>

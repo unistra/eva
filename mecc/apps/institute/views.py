@@ -335,6 +335,16 @@ class InstituteUpdate(UpdateView):
                 object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
             context['misc_file'] = FileUpload.objects.filter(
                 object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
+            context['published_meccs'] = Training.objects.filter(
+                is_used=True,
+                code_year=uy.code_year,
+                supply_cmp=self.object.code,
+            ).prefetch_related(
+                'degree_type',
+            ).order_by(
+                'degree_type__display_order',
+                'label',
+            )
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
@@ -567,7 +577,6 @@ def documents_institute(request, code, template='institute/documents.html'):
     """
     Show documents relative to Institute
     """
-
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
@@ -579,6 +588,18 @@ def documents_institute(request, code, template='institute/documents.html'):
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    trainings = Training.objects.filter(
+        is_used=True,
+        code_year=current_year.code_year,
+        supply_cmp=institute.code,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
+    data['published_meccs'] = trainings
+    data['current_year'] = current_year
 
     return render(request, template, data)
 

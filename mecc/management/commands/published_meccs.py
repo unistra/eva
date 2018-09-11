@@ -24,6 +24,7 @@ class Command(BaseCommand):
     def publish(self):
         trainings = self.select_trainings_to_publish()
         for training in trainings:
+            self.stdout.write('Processing training #{}'.format(training.id))
             filename = self.make_filename(training)
             pdf = BytesIO()
             PublishedMeccPdf(training, pdf).build_doc()
