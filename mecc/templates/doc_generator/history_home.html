@@ -31,10 +31,12 @@
         <th>MECC</th>
         <th>{% trans "Lettre de présentation" %}</th>
         <th>{% trans "Autres documents" %}</th>
+        <th>{% trans "Publication SITES" %}</th>
     </tr>
     {% for field in institute_list %}
         <tr>
             <th>{{ field.grouper }}</th>
+            <th></th>
             <th></th>
             <th></th>
             <th></th>
@@ -46,7 +48,7 @@
                     <td style="padding-left: 2em;">{{ item.labelled }}</td>
                     <td>
                         {% if item.mecc %}
-                             <a href="{% url 'doc_gen:generate_pdf' %}?year={{ selected_year }}&institute={{ item.id }}&model=d&target=history">MECC</a>
+                             <a href="{% url 'doc_gen:generate_pdf' %}?year={{ selected_year }}&amp;institute={{ item.id }}&amp;model=d&amp;target=history">MECC</a>
                         {% endif %}
                     </td>
                     <td>
@@ -64,6 +66,7 @@
                             </ul>
                         {% endif %}
                     </td>
+                    <td><a href="#" class="published_mecc_link" data-institute-label="{{ item.labelled }}" data-institute-code="{{ item.code }}">PDF sites</a></td>
                 </tr>
             {% endif %}
         {% endfor %}
@@ -77,6 +80,8 @@
 {% endif %}
 
 </div>
+
+    <div id="published_meccs_modal_container"></div>
 
 {% include "training/modal_preview_files.html" %}
 <script type="text/javascript">
@@ -96,10 +101,19 @@
             $('#preview_files').modal('show');
             e.preventDefault();
         });
-    });
 
-    function detail_files(institute) {
-    }
+        $('a.published_mecc_link').on('click', function (e) {
+            var institute_code = $(this).data('institute-code');
+            var institute_label = $(this).data('institute-label');
+            var year = $('#year-list').find(':selected').val();
+            $.getJSON('/institute/published_meccs/'+institute_code+'/'+year+'/', function (data) {
+                document.getElementById('published_meccs_modal_container').innerHTML = data.html;
+                $('div.modal-header').append('<p>'+institute_label+'</p>');
+                $("#published_meccs_modal").modal("show");
+            });
+            e.preventDefault();
+        });
+    });
 </script>
 
 {% endblock %}

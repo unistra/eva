@@ -1,5 +1,6 @@
 import json
 
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -602,6 +603,24 @@ def documents_institute(request, code, template='institute/documents.html'):
     data['current_year'] = current_year
 
     return render(request, template, data)
+
+
+@login_required()
+def published_meccs_for_institute_and_year(request, year, institute):
+    uy = UniversityYear.objects.get(code_year=year)
+    trainings = Training.objects.filter(
+        is_used=True,
+        code_year=year,
+        supply_cmp=institute,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
+    html = render_to_string('institute/modal/published_meccs.html', {'published_meccs': trainings, 'current_year': uy})
+    return JsonResponse({'html': html}, content_type='application/json')
+
 
 
 @is_post_request
