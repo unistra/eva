@@ -20,23 +20,40 @@ class Command(BaseCommand):
         subcommand = options['subcommand']
         if subcommand == 'publish':
             self.publish()
+        elif subcommand == 'unpublish':
+            self.unpublish()
 
     def publish(self):
         trainings = self.select_trainings_to_publish()
         for training in trainings:
-            self.stdout.write('Processing training #{}'.format(training.id))
             filename = self.make_filename(training)
             pdf = BytesIO()
             PublishedMeccPdf(training, pdf).build_doc()
             url = self.save_to_ceph(training, pdf)
             training.published_mecc_url = url
-            training.save()
-            self.stdout.write('{} - Training {}: saved {} as {} ({})'.format(
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                training.id,
-                filename,
-                url,
-                training.label))
+            training.save(update_fields=['published_mecc_url'])
+            self.stdout.write('{ts} - Training {id} ({label})\n\tsaved {filename} as {url}'.format(
+                ts=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                id=training.id,
+                label=training.label,
+                filename=filename,
+                url=url
+            ))
+
+    def unpublish(self):
+        trainings = self.select_trainings_to_unpublish()
+        for training in trainings:
+            filename = self.make_filename(training)
+            self.delete_from_ceph(training)
+            training.published_mecc_url = None
+            training.save(update_fields=['published_mecc_url'])
+            self.stdout.write('{ts} - Training {id} ({label})\n\t{filename} removed'.format(
+                ts=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                id=training.id,
+                label=training.label,
+                filename=filename
+            ))
+
 
     def select_trainings_to_publish(self):
         year = currentyear()
@@ -48,6 +65,16 @@ class Command(BaseCommand):
             Q(published_mecc_url__isnull=True) | Q(published_mecc_url='')
         ).exclude(
             Q(ref_cpa_rof__isnull=True) | Q(ref_cpa_rof='')
+        )
+        return trainings
+
+    def select_trainings_to_unpublish(self):
+        year = currentyear()
+        trainings = Training.objects.filter(
+            code_year=year.code_year,
+            is_used=True,
+            date_val_cfvu__isnull=True,
+            published_mecc_url__isnull=False,
         )
         return trainings
 
@@ -64,3 +91,7 @@ class Command(BaseCommand):
         ceph.save(pdf)
         url = ceph.get_url(86400 * 365 * 2)
         return url
+
+    def delete_from_ceph(self, training):
+        ceph = Ceph(self.make_filename(training))
+        ceph.delete()
