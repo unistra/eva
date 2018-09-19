@@ -513,7 +513,8 @@ class PublishedMeccPdf:
             if paragraph.name == 'ul' or paragraph.name == 'ol':
                 items = paragraph.find_all('li', recursive=False)
                 for item in items:
-                    to_write.append((item.name, item.string))
+                    if item.string is not None:
+                        to_write.append((item.name, item.string))
             else:
                 content = " ".join([str(e) for e in paragraph.contents])
                 to_write.append((paragraph.name, content))
