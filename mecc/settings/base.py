@@ -356,20 +356,23 @@ CKEDITOR_CONFIGS = {
             ['-', 'Bold', 'Italic']
         ],
         'toolbar_Tools': [
-            {'name': 'clipboard', 'items': ['-', 'Undo', 'Redo']},
+            {'name': 'clipboard', 'items': ['Undo', 'Redo', 'PasteFromWord', ]},
             {'name': 'basicstyles',
              'items': ['Bold', 'Italic', 'Underline']},
             {'name': 'paragraph',
              'items': ['BulletedList']},
             # {'name': 'styles', 'items': ['Font', 'FontSize']},
             # {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize']},
+            {'name': 'tools', 'items': ['Maximize', ]},
         ],
         'toolbar': 'Tools',
         'height': '9em',
         'width': '100%',
         'entities_latin': 'false',
-        'entities': 'false'
+        'entities': 'false',
+        'extraPlugins': ','.join([
+            'pastefromword',
+        ]),
     },
 }
 

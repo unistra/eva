@@ -54,7 +54,6 @@ class Command(BaseCommand):
                 filename=filename
             ))
 
-
     def select_trainings_to_publish(self):
         year = currentyear()
         trainings = Training.objects.filter(
