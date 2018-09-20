@@ -419,10 +419,10 @@ class PublishedMeccPdf:
             code_year=self.year.code_year,
             degree_type=self.training.degree_type
         ).order_by('display_order')
-        if self.training.MECC_type == 'C':
-            rules = rules.exclude(is_eci=0)
-        if self.training.MECC_type == 'E':
-            rules = rules.exclude(is_ccct=0)
+        if self.training.MECC_type == 'C':      # cc/ct
+            rules = rules.filter(is_ccct=1)
+        if self.training.MECC_type == 'E':      # eci
+            rules = rules.filter(is_eci=1)
         training_specifics = SpecificParagraph.objects.filter(
             training=self.training
         )
