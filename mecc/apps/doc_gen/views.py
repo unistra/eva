@@ -17,9 +17,8 @@ from mecc.apps.utils.excel import MeccTable
 from mecc.apps.utils.docx import docx_gen
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
-from mecc.apps.utils.storage.ceph import Ceph
+from mecc.libs.storage.ceph import Ceph
 from mecc.apps.years.models import UniversityYear, InstituteYear
-from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.rules.models import Rule
 from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
@@ -30,7 +29,6 @@ from mecc.apps.utils.pdfs import setting_up_pdf, \
     DocGenerator
 
 from django_cas.decorators import login_required
-from docx import Document
 
 
 @login_required

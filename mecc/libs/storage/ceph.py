@@ -1,4 +1,3 @@
-import os
 import tempfile
 from io import BytesIO
 
@@ -15,10 +14,11 @@ class Ceph:
     def __init__(self, filename):
         self.ceph = boto3.client(
             's3',
-            aws_access_key_id=settings.CEPH_STORAGE['KEY_ID'],
-            aws_secret_access_key=settings.CEPH_STORAGE['SECRET_KEY'],
-            endpoint_url=settings.CEPH_STORAGE['END_POINT_URL'])
-        self.bucket = settings.CEPH_STORAGE['BUCKET']
+            aws_access_key_id=settings.CEPH_STORAGE_KEY_ID,
+            aws_secret_access_key=settings.CEPH_STORAGE_SECRET_KEY,
+            endpoint_url=settings.CEPH_STORAGE_ENDPOINT_URL
+        )
+        self.bucket = settings.CEPH_STORAGE_BUCKET
         self.filename = filename
 
     def save(self, data):

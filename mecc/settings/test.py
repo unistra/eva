@@ -69,9 +69,7 @@ STAGE = '{{ goal }}'
 ############################
 # Ceph Storage credentials #
 ############################
-CEPH_STORAGE = {
-    'KEY_ID': '{{ ceph_key_id }}',
-    'SECRET_KEY': '{{ ceph_secret_key }}',
-    'END_POINT_URL': '{{ ceph_end_point_url }}',
-    'BUCKET': '{{ ceph_bucket }}',
-}
+CEPH_STORAGE_KEY_ID = '{{ ceph_key_id }}'
+CEPH_STORAGE_SECRET_KEY = '{{ ceph_secret_key }}'
+CEPH_STORAGE_ENDPOINT_URL = '{{ ceph_endpoint_url }}'
+CEPH_STORAGE_BUCKET = '{{ ceph_bucket }}'

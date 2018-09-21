@@ -7,7 +7,7 @@ from django.db.models import Q
 from mecc.apps.training.models import Training
 from mecc.apps.utils.published_mecc_pdf import PublishedMeccPdf
 from mecc.apps.utils.queries import currentyear
-from mecc.apps.utils.storage.ceph import Ceph
+from mecc.libs.storage.ceph import Ceph
 
 
 class Command(BaseCommand):

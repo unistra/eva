@@ -110,10 +110,10 @@ def test():
     env.socket_host = '127.0.0.1'
     env.map_settings = {
         'ldap_token': "LDAP_TOKEN",
-        'ceph_key_id': "CEPH_KEY_ID",
-        'ceph_secret_key': "CEPH_SECRET_KEY",
-        'ceph_end_point_url': "CEPH_END_POINT_URL",
-        'ceph_bucket': "CEPH_BUCKET",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
     }
     env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
@@ -145,10 +145,10 @@ def preprod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
-        'ceph_key_id': "CEPH_KEY_ID",
-        'ceph_secret_key': "CEPH_SECRET_KEY",
-        'ceph_end_point_url': "CEPH_END_POINT_URL",
-        'ceph_bucket': "CEPH_BUCKET",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
     }
     execute(build_env)
 
@@ -179,10 +179,10 @@ def prod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
-        'ceph_key_id': "CEPH_KEY_ID",
-        'ceph_secret_key': "CEPH_SECRET_KEY",
-        'ceph_end_point_url': "CEPH_END_POINT_URL",
-        'ceph_bucket': "CEPH_BUCKET",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
     }
     execute(build_env)
 
