@@ -353,16 +353,14 @@ CKEDITOR_CONFIGS = {
         # 'skin': 'minimalist',
         'skin': 'office2013',
         'toolbar_Basic': [
-            ['-', 'Bold', 'Italic']
+            ['-', 'Bold', 'Italic', ]
         ],
         'toolbar_Tools': [
             {'name': 'clipboard', 'items': ['Undo', 'Redo', 'PasteFromWord', ]},
-            {'name': 'basicstyles',
-             'items': ['Bold', 'Italic', 'Underline']},
-            {'name': 'paragraph',
-             'items': ['BulletedList']},
-            # {'name': 'styles', 'items': ['Font', 'FontSize']},
-            # {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', ]},
+            {'name': 'paragraph', 'items': ['BulletedList', ]},
+            # {'name': 'styles', 'items': ['Font', 'FontSize', ]},
+            # {'name': 'colors', 'items': ['TextColor', 'BGColor', ]},
             {'name': 'tools', 'items': ['Maximize', ]},
         ],
         'toolbar': 'Tools',

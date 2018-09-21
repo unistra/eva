@@ -11,6 +11,7 @@ import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
 from mecc.apps.utils.queries import update_regime_session
+from mecc.libs.html.sanitizer import sanitize
 
 
 class Training(models.Model):
@@ -276,6 +277,11 @@ class SpecificParagraph(models.Model):
     def __str__(self):
         return _("Alinéa spécifique n° %s" % self.pk)
 
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.text_specific_paragraph = sanitize(self.text_specific_paragraph)
+        self.text_motiv = sanitize(self.text_motiv)
+
 
 class AdditionalParagraph(models.Model):
     """
@@ -292,3 +298,7 @@ class AdditionalParagraph(models.Model):
 
     def __str__(self):
         return _("Alinéa additionnel n° %s" % self.pk)
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.text_additional_paragraph = sanitize(self.text_additional_paragraph)

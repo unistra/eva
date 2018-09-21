@@ -6,10 +6,11 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from mecc.apps.years.models import UniversityYear
+from mecc.libs.html.sanitizer import sanitize
 
 
 class Rule(models.Model):
-    """ 
+    """
     Rule model
     """
     EDITED_CHOICES = (
@@ -32,7 +33,7 @@ class Rule(models.Model):
     # @property
     # def as_json(self):
     #     """
-    #     Give custom dict 
+    #     Give custom dict
     #     """
     #     dict(
     #         id=self.id,
@@ -63,7 +64,6 @@ class Rule(models.Model):
         return True if True in [e.is_interaction for e in Paragraph.objects.filter(
             rule=self)] else False
 
-    
     @property
     def has_current_exceptions(self):
         """
@@ -129,7 +129,7 @@ class Paragraph(models.Model):
     text_motiv = models.TextField(_("Texte de consigne pour la saisie des \
         motivations"), blank=True)
     origin_parag = models.IntegerField(_("Num. de paragraph d'orgin"), null=True)
-    
+
     def __str__(self):
         return "Alinéa n° %s" % self.pk
 
@@ -141,6 +141,12 @@ class Paragraph(models.Model):
 
     def get_absolute_url(self):
         return reverse('rules:rule_edit', id=Rule.object.all()[0].id)
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.text_standard = sanitize(self.text_standard)
+        self.text_derog = sanitize(self.text_derog)
+        self.text_motiv = sanitize(self.text_motiv)
 
     class Meta:
         ordering = ['display_order']
