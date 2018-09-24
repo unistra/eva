@@ -1,17 +1,4 @@
-import bleach
-
-
-allowed_tags = [
-    'abbr', 'acronym',
-    'b', 'br',
-    'em',
-    'i',
-    'li',
-    'ol',
-    'p',
-    'strong',
-    'u', 'ul',
-]
+from html_sanitizer.django import get_sanitizer
 
 
 def sanitize(bad):
@@ -22,11 +9,7 @@ def sanitize(bad):
     :return: cleaned html
     :rtype: str
     """
-    good = bleach.clean(
-        bad,
-        tags=allowed_tags,
-        strip=True,
-        strip_comments=True
-    )
+    sanitizer = get_sanitizer(name='rules')
+    good = sanitizer.sanitize(bad)
 
     return good

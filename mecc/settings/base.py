@@ -374,6 +374,29 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+HTML_SANITIZERS = {
+    'rules': {
+        'tags': {
+            'abbr', 'acronym',
+            'b', 'br',
+            'em',
+            'i',
+            'li',
+            'ol',
+            'p',
+            'sub', 'sup', 'strong',
+            'u', 'ul',
+        },
+        'attributes': {},
+        'empty': {
+            'br',
+        },
+        'separate': {
+            'li', 'p',
+        }
+    }
+}
+
 
 ############################
 # CAS server configuration #
