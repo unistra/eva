@@ -28,12 +28,6 @@ logo_uds_small = Image(
 )
 
 
-# todo save as io.BytesIO
-# todo remove save as /tmp/mecc.pdf
-# todo add page numbers see build_doc.set_footer_and_metadata
-# todo add MECC Table
-
-
 class PublishedMeccPdf:
     COLOR_DARKBLUE = '#4682B3'
     COLOR_LIGHTBLUE = '#AFC3DD'
@@ -419,9 +413,9 @@ class PublishedMeccPdf:
             code_year=self.year.code_year,
             degree_type=self.training.degree_type
         ).order_by('display_order')
-        if self.training.MECC_type == 'C':      # cc/ct
+        if self.training.MECC_type == 'C':  # cc/ct
             rules = rules.filter(is_ccct=1)
-        if self.training.MECC_type == 'E':      # eci
+        if self.training.MECC_type == 'E':  # eci
             rules = rules.filter(is_eci=1)
         training_specifics = SpecificParagraph.objects.filter(
             training=self.training
