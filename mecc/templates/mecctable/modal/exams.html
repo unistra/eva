@@ -323,9 +323,9 @@
                 }
                 _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
 
-                let duration = args.item.exam_duration
+                let duration = args.item.exam_duration.trim()
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " ") {
+                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
@@ -335,57 +335,57 @@
                     ':'))
                 let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
                     1)
-                durations_h = durations_h === '' ? '0' : durations_h
-                durations_m = durations_m === '' ? '00' : durations_m
+                durations_h = durations_h === '' ? '0' : durations_h;
+                durations_m = durations_m === '' ? '00' : durations_m;
 
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
-                    alert("'Durée' doit être sous le format H:mm")
+                    alert("'Durée' doit être sous le format H:mm");
                 }
                 if (args.item.coefficient === "" || args.item.coefficient === " ") {
                     args.cancel = true;
-                    alert("'Coefficient' est obligatoire")
+                    alert("'Coefficient' est obligatoire");
                 }
                 if (isNaN(args.item.coefficient)) {
                     args.cancel = true;
-                    alert("'Coefficient' doit être un nombre")
+                    alert("'Coefficient' doit être un nombre");
                 }
             },
             onItemUpdating: function (args) {
                 if (args.item.label === "") {
                     args.cancel = true;
-                    alert("Un intitulé est obligatoire")
+                    alert("Un intitulé est obligatoire");
                 }
                 if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
-                _checkall(args.item.eliminatory_grade, "Note seuil", args)
+                _checkall(args.item.eliminatory_grade, "Note seuil", args);
 
-                let duration = args.item.exam_duration
+                let duration = args.item.exam_duration.trim();
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " ") {
+                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
                 let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'))
+                    ':'));
                 let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1)
-                durations_h = durations_h === '' ? '0' : durations_h
-                durations_m = durations_m === '' ? '00' : durations_m
+                    1);
+                durations_h = durations_h === '' ? '0' : durations_h;
+                durations_m = durations_m === '' ? '00' : durations_m;
 
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
-                    alert("'Durée' doit être sour le format H:mm")
+                    alert("'Durée' doit être sour le format H:mm");
                 }
                 if (args.item.coefficient === "" || args.item.coefficient === " ") {
                     args.cancel = true;
-                    alert("'Coefficient' est obligatoire")
+                    alert("'Coefficient' est obligatoire");
                 }
                 if (isNaN(args.item.coefficient)) {
                     args.cancel = true;
-                    alert("'Coefficient' doit être un nombre")
+                    alert("'Coefficient' doit être un nombre");
                 }
             },
             onItemUpdated: function (args) {
@@ -653,19 +653,19 @@
                 }
                 _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
 
-                let duration = args.item.exam_duration
+                let duration = args.item.exam_duration;
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " ") {
+                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
                 let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'))
+                    ':'));
                 let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1)
-                durations_h = durations_h === '' ? '0' : durations_h
-                durations_m = durations_m === '' ? '00' : durations_m
+                    1);
+                durations_h = durations_h === '' ? '0' : durations_h;
+                durations_m = durations_m === '' ? '00' : durations_m;
 
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
@@ -673,11 +673,11 @@
                 }
                 if (args.item.coefficient === "" || args.item.coefficient === " ") {
                     args.cancel = true;
-                    alert("'Coefficient' est obligatoire")
+                    alert("'Coefficient' est obligatoire");
                 }
                 if (isNaN(args.item.coefficient)) {
                     args.cancel = true;
-                    alert("'Coefficient' doit être un nombre")
+                    alert("'Coefficient' doit être un nombre");
                 }
             },
             onItemUpdating: function (args) {
@@ -710,7 +710,7 @@
             onItemDeleted: function (args) {
                 args.grid.loadData();
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref) 
+                    st_ref_scol, st_rof_ref)
                 $.ajax({
 		            type: "GET",
 		            url: "{% url 'mecctable:has_exams' %}",
