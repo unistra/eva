@@ -170,11 +170,12 @@ moins une composante porteuse."))
 
     def __init__(self, *args, **kwargs):
         super(TrainingForm, self).__init__(*args, **kwargs)
-        self.fields['degree_type'].widget.attrs['disabled'] = \
-            self.fields['label'].widget.attrs['disabled'] = \
-            self.fields['is_used'].widget.attrs['disabled'] = \
-            self.fields['ref_cpa_rof'].widget.attrs['disabled'] = \
-            True if Institute.objects.get(code=self.instance.supply_cmp).ROF_support else False
+        if self.instance.label not in ["", '', None]:
+            self.fields['degree_type'].widget.attrs['disabled'] = \
+                self.fields['label'].widget.attrs['disabled'] = \
+                self.fields['is_used'].widget.attrs['disabled'] = \
+                self.fields['ref_cpa_rof'].widget.attrs['disabled'] = \
+                True if Institute.objects.get(code=self.instance.supply_cmp).ROF_support else False
         self.helper = FormHelper()
         self.helper.form_tag = False
 
