@@ -895,6 +895,51 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
+@login_required
+@is_post_request
+@is_ajax_request
+def reorder_semester(request, training_id):
+    """
+    Reorder top-level (SE) objects up or down
+    :param request:
+    :param training_id:
+    :return:
+    """
+    direction = request.POST.get('direction').strip()
+    order = int(request.POST.get('order'))
+
+    links = ObjectsLink.objects.filter(
+        id_training=training_id,
+        id_parent=0,
+    ).order_by(
+        'order_in_child'
+    ).values('order_in_child', 'id')
+
+    if direction == 'down':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order + 1
+            elif link['order_in_child'] == order + 1:
+                link['order_in_child'] = order
+            else:
+                pass
+    elif direction == 'up':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order - 1
+            elif link['order_in_child'] == order - 1:
+                link['order_in_child'] = order
+            else:
+                pass
+
+    for link in links:
+        objectslink = ObjectsLink.objects.get(id=link['id'])
+        objectslink.order_in_child = link['order_in_child']
+        objectslink.save()
+
+    return JsonResponse({'status': 200, })
+
+
 @is_ajax_request
 def copy_old_mecctable2(request):
     """
@@ -1063,7 +1108,7 @@ def copy_old_mecctable2(request):
                     new_child_id=new_child_id,
                     new_parent_id=new_parent_id
                 )
- 
+
     mecctable_imported = True
 
     json_response = {"mecctable_imported": mecctable_imported}
