@@ -8,11 +8,11 @@ from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 from django.utils.translation import ugettext as _
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
-from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.utils.excel import MeccTable
 from mecc.apps.utils.docx import docx_gen
 from mecc.apps.utils.queries import currentyear
@@ -27,15 +27,126 @@ from mecc.apps.utils.pdfs import setting_up_pdf, \
     canvas_for_preview_mecctable, \
     preview_mecctable_story, NumberedCanvas_landscape, \
     DocGenerator
+from mecc.apps.utils.documents_generator import Document as Doc
 
 from django_cas.decorators import login_required
 
 
 @login_required
-def generate_pdf(request, template='doc_generator/generated_pdf.html'):
-    data = {'url': request.GET.urlencode()}
-    return render(request, template, data)
+def generate_pdf(request):
+    trainings = request.GET.getlist('selected')
+    if not trainings:
+        """
+        Si aucune formation n'est passée dans la requête, cela veut dire que
+        l'utilisateur demande un document modèle C (ECI) ou D (historique des 
+        MECC validées).
+        Ces modèles sont des variantes du modèle A. Leur comportement a été
+        inclus dans la classe ModelA du générateur de documents
+        """
+        try:
+            if request.GET.get('year') and re.match(r'2\d{3}', request.GET.get('year')):
+                current_year = request.GET.get('year')
+            else:
+                current_year = currentyear().code_year
+        except AttributeError:
+            return render(
+                request,
+                'msg.html',
+                {'msg': _("Initialisation de l'année non effectuée")}
+            )
+        institute = Institute.objects.get(id=request.GET.get('institute'))
+        trainings = Training.objects.filter(
+            code_year=current_year,
+            supply_cmp=institute.code,
+            is_used=True
+        )
+        if request.GET.get('model') == 'd':
+            """
+            Modèle D
+            """
+            return Doc.generate(
+                gen_type='pdf',
+                model='a',
+                user=request.user,
+                trainings = trainings.filter(date_val_cfvu__isnull=False),
+                reference='both',
+                standard='yes',
+                target=request.GET.get('target'),
+                date=request.GET.get('date'),
+                year=request.GET.get('year'),
+            )
+        """
+        Modèle C
+        """
+        trainings=trainings.filter(
+            id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
+        )
+        if trainings.count() > 0:
+            return Doc.generate(
+                gen_type='pdf',
+                model='a',
+                user=request.user,
+                trainings=trainings,
+                reference='both',
+                standard='yes',
+                target='review_eci',
+                date=request.GET.get('date'),
+                year=None
+            )
+    """
+    Modèles A et B
+    """
+    return Doc.generate(
+        gen_type=request.GET.get('gen_type'),
+        model=request.GET.get('model'),
+        user=request.user,
+        trainings=Training.objects.filter(id__in=request.GET.getlist('selected')),
+        reference=request.GET.get('ref'),
+        standard=request.GET.get('standard'),
+        target=request.GET.get('target'),
+        date=request.GET.get('date'),
+        year=None
+    )
 
+@login_required
+def generate(request, template='doc_generator/generated_pdf.html'):
+    """
+    Modèles A et B format doc
+    """
+    if request.GET.get('gen_type') == "doc":
+        return Doc.generate(
+            gen_type=request.GET.get('gen_type'),
+            model=request.GET.get('model'),
+            trainings=Training.objects.filter(id__in=request.GET.getlist('selected')),
+            reference=request.GET.get('ref'),
+        )
+    """
+    Format excel
+    """
+    if request.GET.get('gen_type') == 'excel':
+        return Doc.generate(
+            gen_type=request.GET.get('gen_type'),
+            trainings=Training.objects.filter(
+                id__in=request.GET.getlist('selected')
+            ).order_by('degree_type__display_order', 'label'),
+            year=request.GET.get('year', currentyear().code_year),
+            reference=request.GET.get('ref')
+        )
+    """
+    Format PDF
+    """
+    if not request.GET.getlist('selected') and \
+            not Training.objects.filter(
+                id__in=[training.id for training in Training.objects.all() if training.is_ECI_MECC is True],
+                code_year=currentyear().code_year,
+                supply_cmp=Institute.objects.get(id=request.GET.get('institute')).code,
+                is_used=True):
+       back_url = "/training/list_all_meccs/"
+       message = _("Aucune formation affichable.")
+       data = {'back_url': back_url, 'message': message}
+    else:
+        data = {'url': request.GET.urlencode()}
+    return render(request, template, data)
 
 @login_required
 def dispatch_to_good_pdf(request):
@@ -76,12 +187,16 @@ def preview_mecctable(request):
     """
     View getting all data to generate asked pdf
     """
+
     title = "PREVISUALISATION du TABLEAU"
+
     training = Training.objects.filter(
         id=request.GET.get('training_id')).first()
+
     full = None if not request.GET.get(
         'full') else True if 'yes' in request.GET.get('full') else False
     response, doc = setting_up_pdf(title, margin=32, portrait=False)
+
     if training:
         if full:
             additionals = AdditionalParagraph.objects.filter(

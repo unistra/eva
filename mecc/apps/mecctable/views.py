@@ -22,6 +22,7 @@ from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
+from mecc.apps.utils.documents_generator import Document
 from django_cas.decorators import login_required
 
 from .models import StructureObject, ObjectsLink, Exam
@@ -1114,7 +1115,6 @@ def copy_old_mecctable2(request):
     json_response = {"mecctable_imported": mecctable_imported}
     return JsonResponse(json_response)
 
-
 def copy_old_mecctable(request, id_training):
     """
     Copy year -1 mecctable if exists and :
@@ -1273,7 +1273,14 @@ def copy_old_mecctable(request, id_training):
 
     return redirect('/mecctable/training/' + str(id_training))
 
+@login_required
+def preview_mecctable(request):
 
+    return Document.generate(
+        gen_type='pdf',
+        model='preview_mecctable',
+        trainings=Training.objects.get(id=request.GET.get('training_id'))
+    )
 
 
 

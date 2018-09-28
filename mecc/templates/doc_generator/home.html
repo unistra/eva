@@ -315,13 +315,13 @@
         let url = '';
         switch (gen_type) {
             case 'pdf':
-                url = '{% url 'doc_gen:generate_pdf' %}' + "?date=" + $('#date').val() + "&target=" + $('#target').val();
+                url = '{% url 'doc_gen:generate' %}' + "?date=" + $('#date').val() + "&target=" + $('#target').val();
                 break;
             case 'excel':
-                url = '{% url 'doc_gen:mecctable_excel' %}?target=' + $('#target').val();
+                url = '{% url 'doc_gen:generate' %}?target=' + $('#target').val();
                 break;
             case 'doc':
-                url = '{% url 'doc_gen:rules_docx' %}?target=' + $('#target').val() + '&institute=' + $('#institute').val();
+                url = '{% url 'doc_gen:generate' %}?target=' + $('#target').val() + '&institute=' + $('#institute').val();
                 break;
         }
 
