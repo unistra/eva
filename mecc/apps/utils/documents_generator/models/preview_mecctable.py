@@ -103,7 +103,7 @@ class PreviewMeccTable(Document):
             fontName="Helvetica-Bold"
         ))
 
-    def make_watermark_attributes(self, string='Prévisualiation', x=500, y=-75, rotation=40):
+    def make_watermark_attributes(self, string='Prévisualisation', x=500, y=-75, rotation=40):
         self.watermark_string = string 
         self.watermark_position_x = x
         self.watermark_position_y = y
