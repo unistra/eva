@@ -30,6 +30,7 @@ from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
     AdditionalParagraphForm
 from mecc.apps.training.utils import remove_training, consistency_check
 from mecc.apps.years.models import UniversityYear
+from mecc.apps.utils.documents_generator import Document
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
 
@@ -796,3 +797,12 @@ def send_mail(request):
     mail.send()
     messages.success(request, _('Notification envoyée.'))
     return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def preview_mecc(request):
+
+    return Document.generate(
+        gen_type='pdf',
+        model='preview_mecc',
+        trainings=Training.objects.get(id=request.GET.get('training_id'))
+    )

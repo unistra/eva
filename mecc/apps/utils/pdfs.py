@@ -169,6 +169,7 @@ class DocGenerator(object):
 
         margin = 24
         self.doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                                     showBoundary=True,
                                      topMargin=margin, bottomMargin=margin)
         self.add_first_page_frames(margin)
 
@@ -254,6 +255,7 @@ def setting_up_pdf(title, margin=72, portrait=True):
     response['Content-Disposition'] = ('filename="%s.pdf"' % title)
     page_size = A4 if portrait else landscape(A4)
     doc = SimpleDocTemplate(response, pagesize=page_size,
+                            showBoundary=0,
                             topMargin=margin, bottomMargin=18)
     return response, doc
 
@@ -545,7 +547,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
 
         ('TEXTCOLOR', (0, 0), (-2, 0), colors.white),
         ('BOX', (0, 0), (-2, 0), 0.5, colors.black),
-        # ('GRID', (0, 0), (-1, -1), 0.5, colors.yellow)
+        # ('GRID', (0, 0), (-1, -1), 1, colors.green)
 
     ]
     side_style = [
@@ -556,6 +558,7 @@ def table_title_trainings_info(training, in_two_part=True, reference=None, story
         ('SIZE', (0, 0), (-1, -1), 9),
         ('TOPPADDING', (0, 0), (-1, -1), 0.5),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 0.5),
+        # ('GRID', (0, 0), (-1, -1), 1, colors.green)
     ]
     # ############ TABLE STRUCTURE ################################
 
@@ -624,6 +627,7 @@ def models_first_page(model, criteria, trainings, story):
     ]
 
     for e in title:
+        print(e)
         story.append(Paragraph("<para align=center fontSize=16 spaceBefore=16 textColor=\
             steelblue>%s</para>" % e, styles['Normal']))
     story.append(Spacer(0, 24))
@@ -786,6 +790,7 @@ def doc_gen_title(year, cmp_label, date, goal, target, custom_date=None,
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
         ('SIZE', (0, 0), (-1, -1), 13),
         ('FACE', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.green)
 
     ]
     style_middle = [
@@ -793,6 +798,7 @@ def doc_gen_title(year, cmp_label, date, goal, target, custom_date=None,
         ('SIZE', (0, 0), (-1, -1), 12),
         ('LINEBEFORE', (0, 0), (-1, -1), 1, colors.steelblue),
 
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.green)
     ]
     style_last = [
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.steelblue),
@@ -803,7 +809,7 @@ def doc_gen_title(year, cmp_label, date, goal, target, custom_date=None,
         ('TOPPADDING', (0, 0), (-1, -1), 0),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ('SIZE', (0, 0), (-1, -1), 9),
-
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.green)
     ]
     if goal in ['Relecture', 'Publication', 'Relecture Elu']:
         goal_text = goal.upper()
@@ -1181,7 +1187,6 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     root_link = current_links.filter(
         id_parent='0', id_training=training.id).order_by(
         'order_in_child').distinct()
-
     links = get_mecc_table_order([e for e in root_link], [],
                                  current_structures, current_links,
                                  current_exams, all_exam=True)
