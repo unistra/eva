@@ -18,7 +18,8 @@ from django_cas.decorators import login_required
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.files.models import FileUpload
-from mecc.apps.utils.manage_pple import manage_respform, is_poweruser
+from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
+    is_megauser
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
 from mecc.apps.utils.queries import currentyear, save_training_update_structs
@@ -672,6 +673,16 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     data['text_derog'] = p.text_derog
     data['text_motiv'] = p.text_motiv
     data['rule'] = r = Rule.objects.get(id=rule_id)
+    input_is_open = training.input_opening[0] in ['1', '3']
+    data['can_apply_to_others'] = ((
+        is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
+        or 'DES1' in [e.name for e in request.user.groups.all()] \
+        or request.user.is_superuser) \
+        and SpecificParagraph.objects.filter(
+            code_year=currentyear().code_year,
+            paragraph_gen_id=paragraph_id,
+            training_id=training_id
+        ).count() > 0 
 
     # OLD OBJECTS
     old_year = currentyear().code_year - 1 if old == "Y" else None

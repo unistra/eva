@@ -69,6 +69,10 @@ class SpecificParagraphDerogForm(forms.ModelForm):
                     href={% url 'training:specific_paragraph' training_id=training.id rule_id=from_id %} >
                     Annuler et fermer la fenêtre </a>
                      """),
+                HTML("""
+                    {% if can_apply_to_others %}<a class='btn-primary btn btn-sm'
+                    href='#'>Appliquer à d'autres formations</a>{% endif %}
+                     """),
                 css_class='buttons_list'
             ),
             )
