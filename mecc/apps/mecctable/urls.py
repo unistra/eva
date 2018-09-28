@@ -7,8 +7,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     get_stuct_obj_details, update_grade_coeff, get_mutual_by_cmp, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
     send_mail_respform, copy_old_mecctable2, list_exams, add_exam, update_exam, \
-    delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams, get_owner
-
+    delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams, get_owner, \
+    reorder_semester
 
 urlpatterns = [
     url(r'^send_mail_respform/$', send_mail_respform,
@@ -60,7 +60,7 @@ urlpatterns = [
     url(r'^structureobject/update/(?P<id>\d+)/$',
         StructureObjectUpdateView.as_view(),
         name='mecctable_structureobject_update'),
-    url(r'^structureobject/remove/(?P<id>\d+)$',
+    url(r'^structureobject/remove/(?P<id_struct>\d+)/(?P<id_link>\d+)$',
         remove_object,
         name='remove_structureobject'),
 
@@ -78,6 +78,8 @@ urlpatterns = [
     url(r'^objectslink/update/(?P<id>\S+)/$',
         ObjectsLinkUpdateView.as_view(),
         name='mecctable_objectslink_update'),
+    url(r'^objectslink/reorder_semester/(?P<training_id>\d+)/$', reorder_semester,
+        name="mecctable_objectslink_move_semester"),
 
     # urls for Exam
     # AJAX way

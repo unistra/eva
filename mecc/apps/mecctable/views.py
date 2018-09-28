@@ -595,34 +595,37 @@ def remove_imported(request, id):
 
 @login_required
 @is_post_request
-def remove_object(request, id):
+def remove_object(request, id_struct, id_link):
     """
-    Remove struct_obj and relating object_link
+    Remove struct_obj and related object_link
     """
-    struc = StructureObject.objects.get(id=id)
-    link = ObjectsLink.objects.get(id_child=id)
+    struc = StructureObject.objects.get(id=id_struct)
+    link = ObjectsLink.objects.filter(id_child=id_struct)
 
-    def get_children(parent, children_list=[]):
-        """
-        Return a list of children from a parent
-        """
-        for e in ObjectsLink.objects.filter(id_parent=parent.id_child):
-            children_list.append(e)
-            get_children(e, children_list)
-        return children_list
-
-    for e in get_children(link):
-        struct = StructureObject.objects.get(id=e.id_child)
-
-        remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
-            id=struct.owner_training_id))
-        struct.delete()
-        e.delete()
+    # def get_children(parent, children_list=[]):
+    #     """
+    #     Return a list of children from a parent
+    #     """
+    #     for e in ObjectsLink.objects.filter(id_parent=parent.id_child):
+    #         children_list.append(e)
+    #         get_children(e, children_list)
+    #     return children_list
+    #
+    # for e in get_children(link):
+    #     struct = StructureObject.objects.get(id=e.id_child)
+    #
+    #     remove_respens(struct.RESPENS_id, struct.label, Training.objects.get(
+    #         id=struct.owner_training_id))
+    #     struct.delete()
+    #     e.delete()
 
     remove_respens(struc.RESPENS_id, struc.label, Training.objects.get(
         id=struc.owner_training_id))
-    struc.delete()
-    link.delete()
+    if link.count() == 1:
+        struc.delete()
+        link.delete()
+    else:
+        link.get(id=id_link).delete()
 
     return redirect('/mecctable/training/' + str(struc.owner_training_id))
 
@@ -892,6 +895,51 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
+@login_required
+@is_post_request
+@is_ajax_request
+def reorder_semester(request, training_id):
+    """
+    Reorder top-level (SE) objects up or down
+    :param request:
+    :param training_id:
+    :return:
+    """
+    direction = request.POST.get('direction').strip()
+    order = int(request.POST.get('order'))
+
+    links = ObjectsLink.objects.filter(
+        id_training=training_id,
+        id_parent=0,
+    ).order_by(
+        'order_in_child'
+    ).values('order_in_child', 'id')
+
+    if direction == 'down':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order + 1
+            elif link['order_in_child'] == order + 1:
+                link['order_in_child'] = order
+            else:
+                pass
+    elif direction == 'up':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order - 1
+            elif link['order_in_child'] == order - 1:
+                link['order_in_child'] = order
+            else:
+                pass
+
+    for link in links:
+        objectslink = ObjectsLink.objects.get(id=link['id'])
+        objectslink.order_in_child = link['order_in_child']
+        objectslink.save()
+
+    return JsonResponse({'status': 200, })
+
+
 @is_ajax_request
 def copy_old_mecctable2(request):
     """
@@ -1060,7 +1108,7 @@ def copy_old_mecctable2(request):
                     new_child_id=new_child_id,
                     new_parent_id=new_parent_id
                 )
- 
+
     mecctable_imported = True
 
     json_response = {"mecctable_imported": mecctable_imported}

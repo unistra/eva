@@ -134,204 +134,210 @@
     </div>
   </div>
 
+    <div class="text-center">
+        <a href="#" id="comp-list-documents-publisite" class="btn btn-primary">{% trans "Documents Publication SITES (E)" %}</a>
+    </div>
 
- <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
+    <a id="comp-right-btn-close" href="{% url 'institute:create' %}" class="btn btn-primary"> {% trans "Ajouter une composante" %}</a>
+
+    {% include "institute/modal/published_meccs.html" with published_meccs=published_meccs current_year=university_year %}
 
  <script type="text/javascript">
- {% if not cannot_edit %}
- // Put loading icon while searching people
- document.getElementById('load-wrap1').style = ""
-var loading = document.getElementById('load-wrap1');
-loading.style.top='-1.65em';
-loading.style.left='-0.5em';
-var clone = loading.cloneNode(true);
-clone.id = 'load-wrap2';
+     {% if not cannot_edit %}
+         // Put loading icon while searching people
+         document.getElementById('load-wrap1').style = "";
+         var loading = document.getElementById('load-wrap1');
+         loading.style.top = '-1.65em';
+         loading.style.left = '-0.5em';
+         var clone = loading.cloneNode(true);
+         clone.id = 'load-wrap2';
 
-document.getElementById('id_id_dircomp').parentNode.appendChild(loading);
-document.getElementById('id_id_rac').parentNode.appendChild(clone);
+         document.getElementById('id_id_dircomp').parentNode.appendChild(loading);
+         document.getElementById('id_id_rac').parentNode.appendChild(clone);
 
- // Get cmp code in order to search people
-code_cmp = document.getElementById("id_code").value
-var url_prof = "/ressources/prof/" + code_cmp + ".json"
-var url_adm = "/ressources/adm/" + code_cmp + ".json"
-let url_all = "/ressources/all/" + code_cmp + ".json"
+         // Get cmp code in order to search people
+         code_cmp = document.getElementById("id_code").value;
+         var url_prof = "/ressources/prof/" + code_cmp + ".json";
+         var url_adm = "/ressources/adm/" + code_cmp + ".json";
+         let url_all = "/ressources/all/" + code_cmp + ".json";
 
-   var _isEdited = false;
-   $(':input').change(function () {
-     _isEdited = true;
-   });
-
-
- $(document).ready(function () {
+         var _isEdited = false;
+         $(':input').change(function () {
+             _isEdited = true;
+         });
 
 
-   window.onbeforeunload = function (e) {
-   if (_isEdited === true) {
-   var e = e || window.event;
+         $(document).ready(function () {
 
-   // For IE and Firefox
-   if (e) {
-     e.returnValue = 'Des modifications ont été effectuées.';
-   }
+             $('#comp-list-documents-publisite').on('click', function (e) {
+                 $("#published_meccs_modal").modal('show');
+                 e.preventDefault();
+             });
 
-   // For Safari
-   return 'Des modifications ont été effectuées.';
- };
-   };
-var prof_fill = document.getElementById('id_id_dircomp').value;
-var rac_fill = document.getElementById('id_id_rac').value;
-{% if object %}
-$.getJSON(url_all, function (data) {
- var options = {
-   data: data,
-   getValue: function (element) {
-     return element.last_name.toUpperCase() + " " + element.first_name;
-   },
-   template: {
-		type: "description",
-		fields: {
-			description: "id_member"
-		}
-	},
-   list: {
-        onClickEvent : function(){
-            prof_fill = document.getElementById('id_id_dircomp').value;
-        },
-		showAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
+             window.onbeforeunload = function (e) {
+                 if (_isEdited === true) {
+                     var e = e || window.event;
 
-		hideAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-   		match: {
-   			enabled: true
-   		},
-      onSelectItemEvent: function() {
-        var username = $(".input_prof").getSelectedItemData().id_member;
-        var last_name = $(".input_prof").getSelectedItemData().last_name.toUpperCase();
-        var first_name = $(".input_prof").getSelectedItemData().first_name;
-        var email = $(".input_prof").getSelectedItemData().mail;
-        var status = $(".input_prof").getSelectedItemData().status;
-        $("#input_dircomp_username_member").val(username).trigger("change");
-        $("#input_dircomp_last_name").val(last_name).trigger("change");
-        $("#input_dircomp_first_name").val(first_name).trigger("change");
-        $("#input_dircomp_mail").val(email).trigger("change");
-        $("#input_dircomp_status").val(status).trigger("change");
-        $("#id_id_dircomp").val(last_name + " " + first_name).trigger("change");
-      },
-      onHideListEvent: function(){
-          // remove hidden input value if somehow doesnt match
-          var a = document.getElementById('id_id_dircomp').value;
-          var b = document.getElementById('input_dircomp_last_name').value;
-            document.getElementById('id_id_dircomp').className ='input_prof textinput textInput form-control'
-            document.getElementById('id_id_dircomp').disabled = false;
+                     // For IE and Firefox
+                     if (e) {
+                         e.returnValue = 'Des modifications ont été effectuées.';
+                     }
 
-          if (a.indexOf(b) == -1){
-              $("#input_dircomp_username_member").val("");
-              $("#input_dircomp_last_name").val("");
-              $("#input_dircomp_first_name").val("");
-              $("#input_dircomp_mail").val("");
-              $("#input_dircomp_status").val("");
-              $("#id_id_dircomp").val("");
-          }
-      }
-   	}
-  };
- $(".input_prof").click(function () {
-    $(".input_prof").val('');
- });
- $(".input_prof").easyAutocomplete(options);
- $(".input_prof").prop('readonly', false);
- document.getElementById('load-wrap1').style.display = "none"
-});
+                     // For Safari
+                     return 'Des modifications ont été effectuées.';
+                 }
+             };
+             var prof_fill = document.getElementById('id_id_dircomp').value;
+             var rac_fill = document.getElementById('id_id_rac').value;
+             {% if object %}
+                 $.getJSON(url_all, function (data) {
+                     var options = {
+                         data: data,
+                         getValue: function (element) {
+                             return element.last_name.toUpperCase() + " " + element.first_name;
+                         },
+                         template: {
+                             type: "description",
+                             fields: {
+                                 description: "id_member"
+                             }
+                         },
+                         list: {
+                             onClickEvent: function () {
+                                 prof_fill = document.getElementById('id_id_dircomp').value;
+                             },
+                             showAnimation: {
+                                 type: "slide", //normal|slide|fade
+                                 time: 400,
+                                 callback: function () {
+                                 }
+                             },
 
+                             hideAnimation: {
+                                 type: "slide", //normal|slide|fade
+                                 time: 400,
+                                 callback: function () {
+                                 }
+                             },
+                             match: {
+                                 enabled: true
+                             },
+                             onSelectItemEvent: function () {
+                                 var username = $(".input_prof").getSelectedItemData().id_member;
+                                 var last_name = $(".input_prof").getSelectedItemData().last_name.toUpperCase();
+                                 var first_name = $(".input_prof").getSelectedItemData().first_name;
+                                 var email = $(".input_prof").getSelectedItemData().mail;
+                                 var status = $(".input_prof").getSelectedItemData().status;
+                                 $("#input_dircomp_username_member").val(username).trigger("change");
+                                 $("#input_dircomp_last_name").val(last_name).trigger("change");
+                                 $("#input_dircomp_first_name").val(first_name).trigger("change");
+                                 $("#input_dircomp_mail").val(email).trigger("change");
+                                 $("#input_dircomp_status").val(status).trigger("change");
+                                 $("#id_id_dircomp").val(last_name + " " + first_name).trigger("change");
+                             },
+                             onHideListEvent: function () {
+                                 // remove hidden input value if somehow doesnt match
+                                 var a = document.getElementById('id_id_dircomp').value;
+                                 var b = document.getElementById('input_dircomp_last_name').value;
+                                 document.getElementById('id_id_dircomp').className = 'input_prof textinput textInput form-control';
+                                 document.getElementById('id_id_dircomp').disabled = false;
 
+                                 if (a.indexOf(b) == -1) {
+                                     $("#input_dircomp_username_member").val("");
+                                     $("#input_dircomp_last_name").val("");
+                                     $("#input_dircomp_first_name").val("");
+                                     $("#input_dircomp_mail").val("");
+                                     $("#input_dircomp_status").val("");
+                                     $("#id_id_dircomp").val("");
+                                 }
+                             }
+                         }
+                     };
+                     $(".input_prof").click(function () {
+                         $(".input_prof").val('');
+                     });
+                     $(".input_prof").easyAutocomplete(options);
+                     $(".input_prof").prop('readonly', false);
+                     document.getElementById('load-wrap1').style.display = "none"
+                 });
 
+                 $.getJSON(url_adm, function (data) {
+                     var options = {
+                         data: data,
+                         getValue: function (element) {
+                             return element.last_name.toUpperCase() + " " + element.first_name + " ";
+                         },
+                         template: {
+                             type: "description",
+                             fields: {
+                                 description: "id_member"
+                             }
+                         },
+                         list: {
+                             onClickEvent: function () {
+                                 prof_fill = document.getElementById('id_id_rac').value;
+                             },
+                             showAnimation: {
+                                 type: "slide", //normal|slide|fade
+                                 time: 400,
+                                 callback: function () {
+                                 }
+                             },
 
-   $.getJSON(url_adm, function (data) {
-    var options = {
-      data: data,
-      getValue: function (element) {
-        return element.last_name.toUpperCase() + " " + element.first_name + " ";
-      },
-      template: {
-        type: "description",
-    		fields: {
-    			description: "id_member"
-   		}
-   	},
-       list: {
-        onClickEvent : function(){
-           prof_fill = document.getElementById('id_id_rac').value;
-        },
-		showAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
+                             hideAnimation: {
+                                 type: "slide", //normal|slide|fade
+                                 time: 400,
+                                 callback: function () {
+                                 }
+                             },
+                             match: {
+                                 enabled: true
+                             },
+                             onSelectItemEvent: function () {
+                                 var username = $(".input_adm").getSelectedItemData().id_member;
+                                 var last_name = $(".input_adm").getSelectedItemData().last_name.toUpperCase();
+                                 var first_name = $(".input_adm").getSelectedItemData().first_name;
+                                 var email = $(".input_adm").getSelectedItemData().mail;
+                                 var status = $(".input_adm").getSelectedItemData().status;
 
-		hideAnimation: {
-			type: "slide", //normal|slide|fade
-			time: 400,
-			callback: function() {}
-		},
-      		match: {
-      			enabled: true
-      		},
-         onSelectItemEvent: function() {
-           var username = $(".input_adm").getSelectedItemData().id_member;
-           var last_name = $(".input_adm").getSelectedItemData().last_name.toUpperCase();
-           var first_name = $(".input_adm").getSelectedItemData().first_name;
-           var email = $(".input_adm").getSelectedItemData().mail;
-           var status = $(".input_adm").getSelectedItemData().status;
+                                 $("#input_rac_username_member").val(username).trigger("change");
+                                 $("#input_rac_last_name").val(last_name).trigger("change");
+                                 $("#input_rac_first_name").val(first_name).trigger("change");
+                                 $("#input_rac_mail").val(email).trigger("change");
+                                 $("#input_rac_status").val(status).trigger("change");
+                                 $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
 
-           $("#input_rac_username_member").val(username).trigger("change");
-           $("#input_rac_last_name").val(last_name).trigger("change");
-           $("#input_rac_first_name").val(first_name).trigger("change");
-           $("#input_rac_mail").val(email).trigger("change");
-           $("#input_rac_status").val(status).trigger("change");
-           $("#id_id_rac").val(last_name + " " + first_name).trigger("change");
-
-         },
-         onHideListEvent: function(){
-             // remove hidden input value if somehow doesnt match
-             var a = document.getElementById('id_id_rac').value;
-             var b = document.getElementById('input_rac_last_name').value;
-               document.getElementById('id_id_rac').className ='input_prof textinput textInput form-control'
-               document.getElementById('id_id_dircomp').disabled = false;
-             if (a.indexOf(b) == -1){
-                 $("#input_rac_username_member").val("");
-                 $("#input_rac_last_name").val("");
-                 $("#input_rac_first_name").val("");
-                 $("#input_rac_mail").val("");
-                 $("#input_rac_status").val("");
-                 $("#id_id_rac").val("");
-             }
-         }
-      	}
-     };
-     $(".input_adm").click(function () {
-        $(".input_adm").val('');
-     });
-    $(".input_adm").easyAutocomplete(options);
-    $(".input_adm").prop('readonly', false);
-    document.getElementById('load-wrap2').style.display = "none"
-
-   });
-
-
-
-{% endif %}
-});
-{% endif %}
-check_box = document.getElementById("div_id_is_on_duty");
-id_code = document.getElementById("id_code").parentNode;
-id_code.appendChild(check_box)
+                             },
+                             onHideListEvent: function () {
+                                 // remove hidden input value if somehow doesnt match
+                                 var a = document.getElementById('id_id_rac').value;
+                                 var b = document.getElementById('input_rac_last_name').value;
+                                 document.getElementById('id_id_rac').className = 'input_prof textinput textInput form-control';
+                                 document.getElementById('id_id_dircomp').disabled = false;
+                                 if (a.indexOf(b) == -1) {
+                                     $("#input_rac_username_member").val("");
+                                     $("#input_rac_last_name").val("");
+                                     $("#input_rac_first_name").val("");
+                                     $("#input_rac_mail").val("");
+                                     $("#input_rac_status").val("");
+                                     $("#id_id_rac").val("");
+                                 }
+                             }
+                         }
+                     };
+                     $(".input_adm").click(function () {
+                         $(".input_adm").val('');
+                     });
+                     $(".input_adm").easyAutocomplete(options);
+                     $(".input_adm").prop('readonly', false);
+                     document.getElementById('load-wrap2').style.display = "none";
+                 });
+             {% endif %}
+         });
+     {% endif %}
+     check_box = document.getElementById("div_id_is_on_duty");
+     id_code = document.getElementById("id_code").parentNode;
+     id_code.appendChild(check_box)
  </script>
 </div>
 </div>

@@ -71,3 +71,11 @@ LDAP_TOKEN = '{{ldap_token}}'
 #######################
 #SERVER_EMAIL = 'root@localhost'
 EMAIL_SUBJECT_PREFIX = '[MECC]'
+
+############################
+# Ceph Storage credentials #
+############################
+CEPH_STORAGE_KEY_ID = '{{ ceph_key_id }}'
+CEPH_STORAGE_SECRET_KEY = '{{ ceph_secret_key }}'
+CEPH_STORAGE_ENDPOINT_URL = '{{ ceph_endpoint_url }}'
+CEPH_STORAGE_BUCKET = '{{ ceph_bucket }}'

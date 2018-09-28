@@ -1,10 +1,10 @@
 from django.conf.urls import url
 from .views import InstituteCreate, InstituteUpdate, InstituteDelete, \
-    InstituteListView,  edit_institute, granted_edit_institute, \
+    InstituteListView, edit_institute, granted_edit_institute, \
     add_pple, remove_pple, validate_institute, send_mail, send_mail_des, \
-    process_delete_file, process_training_notify, process_upload_letter,  \
+    process_delete_file, process_training_notify, process_upload_letter, \
     process_upload_misc, process_check_validate, documents_institute, \
-    check_validate_institute, details_files
+    check_validate_institute, details_files, published_meccs_for_institute_and_year
 from django_cas.decorators import login_required
 
 
@@ -47,4 +47,6 @@ urlpatterns = [
         name='documents'),
     url(r'^details_files/$', details_files,
         name='details_files'),
+    url(r'^published_meccs/(?P<institute>\w{3})/(?P<year>\d{4})/$', published_meccs_for_institute_and_year,
+        name='published_meccs_for_institute_and_year'),
 ]

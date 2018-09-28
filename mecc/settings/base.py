@@ -353,24 +353,48 @@ CKEDITOR_CONFIGS = {
         # 'skin': 'minimalist',
         'skin': 'office2013',
         'toolbar_Basic': [
-            ['-', 'Bold', 'Italic']
+            ['-', 'Bold', 'Italic', ]
         ],
         'toolbar_Tools': [
-            {'name': 'clipboard', 'items': ['-', 'Undo', 'Redo']},
-            {'name': 'basicstyles',
-             'items': ['Bold', 'Italic', 'Underline']},
-            {'name': 'paragraph',
-             'items': ['BulletedList']},
-            # {'name': 'styles', 'items': ['Font', 'FontSize']},
-            # {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize']},
+            {'name': 'clipboard', 'items': ['Undo', 'Redo', 'PasteFromWord', ]},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', ]},
+            {'name': 'paragraph', 'items': ['BulletedList', ]},
+            # {'name': 'styles', 'items': ['Font', 'FontSize', ]},
+            # {'name': 'colors', 'items': ['TextColor', 'BGColor', ]},
+            {'name': 'tools', 'items': ['Maximize', ]},
         ],
         'toolbar': 'Tools',
         'height': '9em',
         'width': '100%',
         'entities_latin': 'false',
-        'entities': 'false'
+        'entities': 'false',
+        'extraPlugins': ','.join([
+            'pastefromword',
+        ]),
     },
+}
+
+HTML_SANITIZERS = {
+    'rules': {
+        'tags': {
+            'abbr', 'acronym',
+            'b', 'br',
+            'em',
+            'i',
+            'li',
+            'ol',
+            'p',
+            'sub', 'sup', 'strong',
+            'u', 'ul',
+        },
+        'attributes': {},
+        'empty': {
+            'br',
+        },
+        'separate': {
+            'li', 'p',
+        }
+    }
 }
 
 

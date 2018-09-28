@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 from django.utils.translation import ugettext as _
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
@@ -17,8 +17,8 @@ from mecc.apps.utils.excel import MeccTable
 from mecc.apps.utils.docx import docx_gen
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.training.models import Training
+from mecc.libs.storage.ceph import Ceph
 from mecc.apps.years.models import UniversityYear, InstituteYear
-from mecc.apps.degree.models import DegreeType
 
 from mecc.apps.rules.models import Rule
 from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
@@ -29,7 +29,6 @@ from mecc.apps.utils.pdfs import setting_up_pdf, \
     DocGenerator
 
 from django_cas.decorators import login_required
-from docx import Document
 
 
 @login_required
@@ -422,7 +421,7 @@ def generate_excel_mecctable(request):
     year = request.GET.get('year', currentyear().code_year)
     references = request.GET.get('ref', 'with_si')  # ['without', 'with_si', 'with_rof', 'both']
     training_ids = request.GET.getlist('selected')
-    trainings = Training.objects.filter(id__in=[e for e in training_ids])\
+    trainings = Training.objects.filter(id__in=[e for e in training_ids]) \
         .order_by('degree_type__display_order', 'label')
 
     output = MeccTable().get_mecc_tables(trainings, year, references)
@@ -468,5 +467,23 @@ def generate_rules_docx(request):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = 'attachment; filename="%s".docx' % doc_name
     docx_document.save(response)
+
+    return response
+
+
+@login_required()
+def published_mecc(request, training_id):
+    training = get_object_or_404(Training, pk=training_id)
+    filename = 'eva/{year}/{id}-{ref_rof}.pdf'.format(
+        year=training.code_year,
+        id=training.id,
+        ref_rof=training.ref_cpa_rof
+    )
+    pdf = Ceph(filename=filename).get_file()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+        filename.replace('/', '-')
+    )
+    response.write(pdf.getvalue())
 
     return response

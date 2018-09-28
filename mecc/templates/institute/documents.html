@@ -4,36 +4,51 @@
 {% load staticfiles %}
 {% load groups%}
 {% load field_name %}
-{% block page-header %}
-{{label_cmp}}
-{% endblock %}
-{% block app_content %}
-<div class="flex-container">
-<div class="comp-left">
-  <div class="letter">
-      <h3> {% trans "Lettre de présentation" %} :</h3>
-      <ul>
-      {% if letter_file %}
-        {% include "institute/files_list_only.html" with files=letter_file %}
-      {% else %}
-         <li>
-              {% trans 'Aucun fichier envoyé'%}
-         </li>
-      {% endif %}
-      </ul>
-  </div>
-  <div class="misc_files">
-      <h3> {% trans "Conseils de composante - Extraits de PV, listes d'émargements" %} :</h3>
-      <ul>
-      {% if misc_file %}
-        {% include "institute/files_list_only.html" with files=misc_file %}
-      {% else %}
-         <li>
-              {% trans 'Aucun fichier envoyé'%}
-         </li>
-      {% endif %}
-      </ul>
-  </div>
-</div>
 
+{% block page-header %}{{ label_cmp }}{% endblock %}
+
+{% block app_content %}
+    <div class="flex-container">
+        <div class="comp-left">
+            <div class="letter">
+                <h3> {% trans "Lettre de présentation" %} :</h3>
+                <ul>
+                    {% if letter_file %}
+                        {% include "institute/files_list_only.html" with files=letter_file %}
+                    {% else %}
+                        <li>
+                            {% trans 'Aucun fichier envoyé' %}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="misc_files">
+                <h3> {% trans "Conseils de composante - Extraits de PV, listes d'émargements" %} :</h3>
+                <ul>
+                    {% if misc_file %}
+                        {% include "institute/files_list_only.html" with files=misc_file %}
+                    {% else %}
+                        <li>
+                            {% trans 'Aucun fichier envoyé' %}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div>
+                <a href="#" id="comp-list-documents-publisite"
+                   class="btn btn-primary">{% trans "Documents Publication SITES (E)" %}</a>
+            </div>
+            {% include "institute/modal/published_meccs.html" %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#comp-list-documents-publisite').on('click', function (e) {
+                $("#published_meccs_modal").modal("show");
+                e.preventDefault();
+            });
+        });
+    </script>
 {% endblock %}
+
