@@ -49,8 +49,7 @@ class ModelA(PreviewMecc):
             'history' not in self. target \
             else False
         self.cmp = trainings.first().supply_cmp_label
-        today = datetime.datetime.now()
-        self.today = "%s/%s/%s" % (today.day, today.month, today.year)
+        self.today = datetime.date.today().strftime('%d/%m/%Y')
         self.logo = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
         super().__init__(
