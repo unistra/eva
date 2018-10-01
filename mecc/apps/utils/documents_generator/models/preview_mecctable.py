@@ -399,7 +399,8 @@ class PreviewMeccTable(Document):
             object_line = [
                 Paragraph(
                     "<para leftIndent=%s>%s</para> " % (what.get('rank')*10,struct.label),
-                    self.styles['SmallBold'] if what.get('rank') in [0, 1] \
+                    self.styles['SmallBold'] if what.get('rank') == 0 \
+                        or what.get('structure').nature == 'UE' \
                         else self.styles['SmallNormal']),
                 Paragraph(
                     struct.get_respens_name if not struct.external_name else struct.external_name,
