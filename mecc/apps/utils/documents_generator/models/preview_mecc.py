@@ -69,6 +69,10 @@ class PreviewMecc(PreviewMeccTable):
             canvasmaker=LandscapeLeftNumberedCanvas
         )
 
+        pdf = self.buffer.getvalue()
+        self.buffer.close()
+        self.response.write(pdf)
+
         return self.response
 
     def write_derogs_and_adds(self, motivations=True):

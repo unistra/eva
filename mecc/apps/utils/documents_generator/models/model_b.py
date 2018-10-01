@@ -45,6 +45,10 @@ class ModelB(ModelA):
             canvasmaker=LandscapeLeftNumberedCanvas
         )
 
+        pdf = self.buffer.getvalue()
+        self.buffer.close()
+        self.response.write(pdf)
+
         return self.response
 
     def write_rules(self):

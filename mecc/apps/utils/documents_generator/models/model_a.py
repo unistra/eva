@@ -43,7 +43,7 @@ class ModelA(PreviewMecc):
             self.year = int(year)
         else:
             self.year = currentyear().code_year
-        self.mecc_state=True if \
+        self.mecc_state = True if \
             'publish' not in self.target and \
             'eci' not in self.target and \
             'history' not in self. target \
@@ -53,7 +53,7 @@ class ModelA(PreviewMecc):
         self.logo = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
         super().__init__(
-            trainings=None, 
+            trainings=None,
             reference=self.reference
         )
         self.model = 'a'
@@ -271,6 +271,10 @@ class ModelA(PreviewMecc):
             self.story,
             canvasmaker=LandscapeLeftNumberedCanvas
         )
+
+        pdf = self.buffer.getvalue()
+        self.buffer.close()
+        self.response.write(pdf)
 
         return self.response
 

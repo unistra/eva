@@ -1,3 +1,4 @@
+from io import BytesIO
 from math import modf
 import itertools
 
@@ -39,8 +40,10 @@ class PreviewMeccTable(Document):
         self.set_response()
         self.set_doc_margins()
 
+        self.buffer = BytesIO()
+
         self.document = BaseDocTemplate(
-            filename=self.response,
+            filename=self.buffer,
             pagesize=landscape(A4),
             leftMargin=self.left_margin,
             rightMargin=self.right_margin,
@@ -119,6 +122,10 @@ class PreviewMeccTable(Document):
             self.story,
             canvasmaker=LandscapeLeftNumberedCanvas
         )
+
+        pdf = self.buffer.getvalue()
+        self.buffer.close()
+        self.response.write(pdf)
 
         return self.response
 
@@ -534,7 +541,7 @@ class PreviewMeccTable(Document):
                 self.mecctable_header_line_1.pop(2)
                 mecctable_header_line_2.pop(2)
                 mecctable_header_line_3.pop(2)
-    
+
                 mecc_table_style.extend([
                     ('FACE', (0, 0), (4, 2), 'Helvetica-Bold'),
                     ('FACE', (5, 0), (-1, 0), 'Helvetica-Bold'),
@@ -543,24 +550,24 @@ class PreviewMeccTable(Document):
                     ('SPAN', (5, 0), (-1, 0)),
                     ('BACKGROUND', (5, 0), (-1, 0), colors.steelblue)
                 ])
-    
+
                 big_table = [
                     self.mecctable_header_line_1,
                 ]
-    
-    
+
+
                 if self.training.session_type == '1':
                     big_table.extend([
                         mecctable_header_line_2[:6],
                         mecctable_header_line_3[:11]
                     ])
-    
+
                     mecc_table_style.extend([
                         ('SPAN', (5, 1), (-1, 1)),
                         ('BACKGROUND', (5, 1), (-1, 1), colors.lightgrey),
                         ('BACKGROUND', (5, 2), (-1, 2), colors.lightgrey)
                     ])
-    
+
                     col_width = [9.25*cm, 3.5*cm, 0.6*cm, 0.6*cm, 0.6*cm]
                     width_exams = [0.85*cm, 9.25*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
 
@@ -569,7 +576,7 @@ class PreviewMeccTable(Document):
                         mecctable_header_line_2,
                         mecctable_header_line_3
                     ])
-    
+
                     mecc_table_style.extend([
                         ('SPAN', (5, 1), (11, 1)),
                         ('SPAN', (12, 1), (-1, 1)),
@@ -578,7 +585,7 @@ class PreviewMeccTable(Document):
                         ('BACKGROUND', (12, 1), (-1, 1), colors.grey),
                         ('BACKGROUND', (12, 2), (-1, 2), colors.grey)
                     ])
-    
+
                     col_width = [6.6*cm, 2.25*cm, 0.6*cm, 0.6*cm, 0.6*cm]
                     width_exams = [0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
                                    0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.7*cm]
@@ -592,23 +599,23 @@ class PreviewMeccTable(Document):
                     ('SPAN', (6, 0), (-1, 0)),
                     ('BACKGROUND', (6, 0), (-1, 0), colors.steelblue)
                 ])
-    
+
                 big_table = [
                     self.mecctable_header_line_1,
                 ]
-    
+
                 if self.training.session_type == '1':
                     big_table.extend([
                         mecctable_header_line_2[:7],
                         mecctable_header_line_3[:12]
                     ])
-    
+
                     mecc_table_style.extend([
                         ('SPAN', (6, 1), (-1, 1)),
                         ('BACKGROUND', (6, 1), (-1, 1), colors.lightgrey),
                         ('BACKGROUND', (6, 2), (-1, 2), colors.lightgrey)
                     ])
-    
+
                     col_width = [8.65*cm, 2.9*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
                     width_exams = [0.85*cm, 8.65*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
                 else:
@@ -616,7 +623,7 @@ class PreviewMeccTable(Document):
                         mecctable_header_line_2,
                         mecctable_header_line_3
                     ])
-    
+
                     mecc_table_style.extend([
                         ('SPAN', (6, 1), (12, 1)),
                         ('SPAN', (13, 1), (-1, 1)),
@@ -625,7 +632,7 @@ class PreviewMeccTable(Document):
                         ('BACKGROUND', (13, 1), (-1, 1), colors.grey),
                         ('BACKGROUND', (13, 2), (-1, 2), colors.grey)
                     ])
-    
+
                     col_width = [6*cm, 2.25*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
                     width_exams = [0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
                                    0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.7*cm]
