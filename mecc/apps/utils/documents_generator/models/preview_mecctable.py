@@ -538,7 +538,6 @@ class PreviewMeccTable(Document):
 
         if self.respforms:
             if self.reference == 'without':
-                self.mecctable_header_line_1.pop(2)
                 mecctable_header_line_2.pop(2)
                 mecctable_header_line_3.pop(2)
 
@@ -637,7 +636,6 @@ class PreviewMeccTable(Document):
                     width_exams = [0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
                                    0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.7*cm]
         else:
-            self.mecctable_header_line_1.pop(1)
             mecctable_header_line_2.pop(1)
             mecctable_header_line_3.pop(1)
             if self.reference == 'without':
