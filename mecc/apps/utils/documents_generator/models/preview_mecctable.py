@@ -23,6 +23,7 @@ class PreviewMeccTable(Document):
     def __init__(self, trainings, reference='both'):
         self.training = trainings
         self.reference = reference
+        self.respforms = True
         self.mecc_state = True
         self.title_header = "Prévisualisation du tableau"
         self.mecctable_header_line_1 = ["OBJETS", '', '', '', '', '', "ÉPREUVES"]
@@ -401,10 +402,14 @@ class PreviewMeccTable(Document):
                     "<para leftIndent=%s>%s</para> " % (what.get('rank')*10,struct.label),
                     self.styles['SmallBold'] if what.get('rank') == 0 \
                         or what.get('structure').nature == 'UE' \
-                        else self.styles['SmallNormal']),
+                        else self.styles['SmallNormal']
+                ),
                 Paragraph(
-                    struct.get_respens_name if not struct.external_name else struct.external_name,
-                    self.styles['CenterSmall'] if not struct.external_name else self.styles['CenterSmallItalic']),
+                    struct.get_respens_name if not struct.external_name \
+                        else struct.external_name,
+                    self.styles['CenterSmall'] if not struct.external_name else \
+                        self.styles['CenterSmallItalic']
+                ),
                 [ref_data],
                 '30' if self.training.degree_type.ROF_code in display_30_ects_credits\
                     and what.get('rank') == 0\
@@ -413,9 +418,13 @@ class PreviewMeccTable(Document):
                 link.eliminatory_grade,
                 write_exams(exams_1, exams_2)
             ]
-
-            if self.reference == 'without':
-                object_line.pop(2)
+            if self.respforms:
+                if self.reference == 'without':
+                    object_line.pop(2)
+            else:
+                object_line.pop(1)
+                if self.reference == 'without':
+                    object_line.pop(1)
 
             big_table.append(object_line)
 
@@ -426,10 +435,16 @@ class PreviewMeccTable(Document):
             write_the_table(e)
 
         for e in range(3, len(big_table)):
-            if self.reference == 'without':
-                mecc_table_style.append(('SPAN', (5, e), (-1, e)))
+            if self.respforms:
+                if self.reference == 'without':
+                    mecc_table_style.append(('SPAN', (5, e), (-1, e)))
+                else:
+                    mecc_table_style.append(('SPAN', (6, e), (-1, e)))
             else:
-                mecc_table_style.append(('SPAN', (6, e), (-1, e)))
+                if self.reference == 'without':
+                    mecc_table_style.append(('SPAN', (4, e), (-1, e)))
+                else:
+                    mecc_table_style.append(('SPAN', (5, e), (-1, e)))
 
         for e in background_blue:
             mecc_table_style.append(
@@ -514,103 +529,208 @@ class PreviewMeccTable(Document):
             VerticalText('Seuil compens.')
         ]
 
-        if self.reference == 'without':
-            mecctable_header_line_2.pop(2)
-            mecctable_header_line_3.pop(2)
-
-            mecc_table_style.extend([
-                ('FACE', (0, 0), (4, 2), 'Helvetica-Bold'),
-                ('FACE', (5, 0), (-1, 0), 'Helvetica-Bold'),
-                ('TEXTCOLOR', (5, 0), (-1, 0), colors.white),
-                ('SPAN', (0, 0), (4, 0)),
-                ('SPAN', (5, 0), (-1, 0)),
-                ('BACKGROUND', (5, 0), (-1, 0), colors.steelblue)
-            ])
-
-            big_table = [
-                self.mecctable_header_line_1,
-            ]
-
-
-            if self.training.session_type == '1':
-                big_table.extend([
-                    mecctable_header_line_2[:6],
-                    mecctable_header_line_3[:11]
-                ])
-
+        if self.respforms:
+            if self.reference == 'without':
+                self.mecctable_header_line_1.pop(2)
+                mecctable_header_line_2.pop(2)
+                mecctable_header_line_3.pop(2)
+    
                 mecc_table_style.extend([
-                    ('SPAN', (5, 1), (-1, 1)),
-                    ('BACKGROUND', (5, 1), (-1, 1), colors.lightgrey),
-                    ('BACKGROUND', (5, 2), (-1, 2), colors.lightgrey)
+                    ('FACE', (0, 0), (4, 2), 'Helvetica-Bold'),
+                    ('FACE', (5, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('TEXTCOLOR', (5, 0), (-1, 0), colors.white),
+                    ('SPAN', (0, 0), (4, 0)),
+                    ('SPAN', (5, 0), (-1, 0)),
+                    ('BACKGROUND', (5, 0), (-1, 0), colors.steelblue)
                 ])
+    
+                big_table = [
+                    self.mecctable_header_line_1,
+                ]
+    
+    
+                if self.training.session_type == '1':
+                    big_table.extend([
+                        mecctable_header_line_2[:6],
+                        mecctable_header_line_3[:11]
+                    ])
+    
+                    mecc_table_style.extend([
+                        ('SPAN', (5, 1), (-1, 1)),
+                        ('BACKGROUND', (5, 1), (-1, 1), colors.lightgrey),
+                        ('BACKGROUND', (5, 2), (-1, 2), colors.lightgrey)
+                    ])
+    
+                    col_width = [9.25*cm, 3.5*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 9.25*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
 
-                col_width = [9.25*cm, 3.5*cm, 0.6*cm, 0.6*cm, 0.6*cm]
-                width_exams = [0.85*cm, 9.25*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
+                else:
+                    big_table.extend([
+                        mecctable_header_line_2,
+                        mecctable_header_line_3
+                    ])
+    
+                    mecc_table_style.extend([
+                        ('SPAN', (5, 1), (11, 1)),
+                        ('SPAN', (12, 1), (-1, 1)),
+                        ('BACKGROUND', (5, 1), (11, 1), colors.lightgrey),
+                        ('BACKGROUND', (5, 2), (11, 2), colors.lightgrey),
+                        ('BACKGROUND', (12, 1), (-1, 1), colors.grey),
+                        ('BACKGROUND', (12, 2), (-1, 2), colors.grey)
+                    ])
+    
+                    col_width = [6.6*cm, 2.25*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
+                                   0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.7*cm]
             else:
-                big_table.extend([
-                    mecctable_header_line_2,
-                    mecctable_header_line_3
-                ])
-
                 mecc_table_style.extend([
-                    ('SPAN', (5, 1), (11, 1)),
-                    ('SPAN', (12, 1), (-1, 1)),
-                    ('BACKGROUND', (5, 1), (11, 1), colors.lightgrey),
-                    ('BACKGROUND', (5, 2), (11, 2), colors.lightgrey),
-                    ('BACKGROUND', (12, 1), (-1, 1), colors.grey),
-                    ('BACKGROUND', (12, 2), (-1, 2), colors.grey)
+                    ('FACE', (0, 0), (5, 2), 'Helvetica-Bold'),
+                    ('FACE', (6, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('TEXTCOLOR', (6, 0), (-1, 0), colors.white),
+                    ('SPAN', (5, 1), (5, 2)),
+                    ('SPAN', (0, 0), (5, 0)),
+                    ('SPAN', (6, 0), (-1, 0)),
+                    ('BACKGROUND', (6, 0), (-1, 0), colors.steelblue)
                 ])
-
-                col_width = [6.6*cm, 2.25*cm, 0.6*cm, 0.6*cm, 0.6*cm]
-                width_exams = [0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
-                               0.85*cm, 4.6*cm, 0.6*cm, 1.1*cm, 0.7*cm]
+    
+                big_table = [
+                    self.mecctable_header_line_1,
+                ]
+    
+                if self.training.session_type == '1':
+                    big_table.extend([
+                        mecctable_header_line_2[:7],
+                        mecctable_header_line_3[:12]
+                    ])
+    
+                    mecc_table_style.extend([
+                        ('SPAN', (6, 1), (-1, 1)),
+                        ('BACKGROUND', (6, 1), (-1, 1), colors.lightgrey),
+                        ('BACKGROUND', (6, 2), (-1, 2), colors.lightgrey)
+                    ])
+    
+                    col_width = [8.65*cm, 2.9*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 8.65*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
+                else:
+                    big_table.extend([
+                        mecctable_header_line_2,
+                        mecctable_header_line_3
+                    ])
+    
+                    mecc_table_style.extend([
+                        ('SPAN', (6, 1), (12, 1)),
+                        ('SPAN', (13, 1), (-1, 1)),
+                        ('BACKGROUND', (6, 1), (12, 1), colors.lightgrey),
+                        ('BACKGROUND', (6, 2), (12, 2), colors.lightgrey),
+                        ('BACKGROUND', (13, 1), (-1, 1), colors.grey),
+                        ('BACKGROUND', (13, 2), (-1, 2), colors.grey)
+                    ])
+    
+                    col_width = [6*cm, 2.25*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
+                                   0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.7*cm]
         else:
-            mecc_table_style.extend([
-                ('FACE', (0, 0), (5, 2), 'Helvetica-Bold'),
-                ('FACE', (6, 0), (-1, 0), 'Helvetica-Bold'),
-                ('TEXTCOLOR', (6, 0), (-1, 0), colors.white),
-                ('SPAN', (5, 1), (5, 2)),
-                ('SPAN', (0, 0), (5, 0)),
-                ('SPAN', (6, 0), (-1, 0)),
-                ('BACKGROUND', (6, 0), (-1, 0), colors.steelblue)
-            ])
-
-            big_table = [
-                self.mecctable_header_line_1,
-            ]
-
-            if self.training.session_type == '1':
-                big_table.extend([
-                    mecctable_header_line_2[:7],
-                    mecctable_header_line_3[:12]
-                ])
+            self.mecctable_header_line_1.pop(1)
+            mecctable_header_line_2.pop(1)
+            mecctable_header_line_3.pop(1)
+            if self.reference == 'without':
+                self.mecctable_header_line_1.pop(1)
+                mecctable_header_line_2.pop(1)
+                mecctable_header_line_3.pop(1)
 
                 mecc_table_style.extend([
-                    ('SPAN', (6, 1), (-1, 1)),
-                    ('BACKGROUND', (6, 1), (-1, 1), colors.lightgrey),
-                    ('BACKGROUND', (6, 2), (-1, 2), colors.lightgrey)
+                    ('FACE', (0, 0), (3, 2), 'Helvetica-Bold'),
+                    ('FACE', (4, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('TEXTCOLOR', (4, 0), (-1, 0), colors.white),
+                    ('SPAN', (0, 0), (3, 0)),
+                    ('SPAN', (4, 0), (-1, 0)),
+                    ('BACKGROUND', (4, 0), (-1, 0), colors.steelblue)
                 ])
 
-                col_width = [8.65*cm, 2.9*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
-                width_exams = [0.85*cm, 8.65*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
+                big_table = [
+                    self.mecctable_header_line_1,
+                ]
+
+                if self.training.session_type == '1':
+                    big_table.extend([
+                        mecctable_header_line_2[:6],
+                        mecctable_header_line_3[:11]
+                    ])
+
+                    mecc_table_style.extend([
+                        ('SPAN', (4, 1), (-1, 1)),
+                        ('BACKGROUND', (4, 1), (-1, 1), colors.lightgrey),
+                        ('BACKGROUND', (4, 2), (-1, 2), colors.lightgrey)
+                    ])
+
+                    col_width = [11*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 11*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
+
+                else:
+                    big_table.extend([
+                        mecctable_header_line_2,
+                        mecctable_header_line_3
+                    ])
+
+                    mecc_table_style.extend([
+                        ('SPAN', (4, 1), (10, 1)),
+                        ('SPAN', (11, 1), (-1, 1)),
+                        ('BACKGROUND', (4, 1), (10, 1), colors.lightgrey),
+                        ('BACKGROUND', (4, 2), (10, 2), colors.lightgrey),
+                        ('BACKGROUND', (11, 1), (-1, 1), colors.grey),
+                        ('BACKGROUND', (11, 2), (-1, 2), colors.grey)
+                    ])
+
+                    col_width = [7.35*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 5.35*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
+                                   0.85*cm, 5.35*cm, 0.6*cm, 1.1*cm, 0.7*cm]
             else:
-                big_table.extend([
-                    mecctable_header_line_2,
-                    mecctable_header_line_3
-                ])
-
                 mecc_table_style.extend([
-                    ('SPAN', (6, 1), (12, 1)),
-                    ('SPAN', (13, 1), (-1, 1)),
-                    ('BACKGROUND', (6, 1), (12, 1), colors.lightgrey),
-                    ('BACKGROUND', (6, 2), (12, 2), colors.lightgrey),
-                    ('BACKGROUND', (13, 1), (-1, 1), colors.grey),
-                    ('BACKGROUND', (13, 2), (-1, 2), colors.grey)
+                    ('FACE', (0, 0), (4, 2), 'Helvetica-Bold'),
+                    ('FACE', (6, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('TEXTCOLOR', (5, 0), (-1, 0), colors.white),
+                    ('SPAN', (4, 1), (4, 2)),
+                    ('SPAN', (0, 0), (4, 0)),
+                    ('SPAN', (5, 0), (-1, 0)),
+                    ('BACKGROUND', (5, 0), (-1, 0), colors.steelblue)
                 ])
 
-                col_width = [6*cm, 2.25*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
-                width_exams = [0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
-                               0.85*cm, 4*cm, 0.6*cm, 1.1*cm, 0.7*cm]
+                big_table = [
+                    self.mecctable_header_line_1,
+                ]
+
+                if self.training.session_type == '1':
+                    big_table.extend([
+                        mecctable_header_line_2[:7],
+                        mecctable_header_line_3[:12]
+                    ])
+
+                    mecc_table_style.extend([
+                        ('SPAN', (5, 1), (-1, 1)),
+                        ('BACKGROUND', (5, 1), (-1, 1), colors.lightgrey),
+                        ('BACKGROUND', (5, 2), (-1, 2), colors.lightgrey)
+                    ])
+
+                    col_width = [10.1*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 10.1*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm]
+                else:
+                    big_table.extend([
+                        mecctable_header_line_2,
+                        mecctable_header_line_3
+                    ])
+
+                    mecc_table_style.extend([
+                        ('SPAN', (5, 1), (11, 1)),
+                        ('SPAN', (12, 1), (-1, 1)),
+                        ('BACKGROUND', (5, 1), (11, 1), colors.lightgrey),
+                        ('BACKGROUND', (5, 2), (11, 2), colors.lightgrey),
+                        ('BACKGROUND', (12, 1), (-1, 1), colors.grey),
+                        ('BACKGROUND', (12, 2), (-1, 2), colors.grey)
+                    ])
+
+                    col_width = [6.75*cm, 1.8*cm, 0.6*cm, 0.6*cm, 0.6*cm]
+                    width_exams = [0.85*cm, 4.75*cm, 0.6*cm, 1.1*cm, 0.6*cm, 0.7*cm, 0.7*cm,
+                                   0.85*cm, 4.75*cm, 0.6*cm, 1.1*cm, 0.7*cm]
 
         return col_width, width_exams, mecc_table_style, big_table
 

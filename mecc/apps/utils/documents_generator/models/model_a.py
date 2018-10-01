@@ -57,6 +57,7 @@ class ModelA(PreviewMecc):
             reference=self.reference
         )
         self.model = 'a'
+        self.respforms = True if 'eci' not in self.target else False
 
         self.make_watermark_attributes(
             string='Document intermédiaire' if 'publish' not in self.target \
