@@ -25,12 +25,16 @@ class ModelB(ModelA):
         for self.training in self.trainings:
 
 
-            self.write_landscape_training_infos()
             if self.standard == 'yes':
+                self.write_landscape_training_infos()
                 self.write_rules()
                 self.story.append(PageBreak())
 
             self.write_landscape_training_infos()
+            if self.standard == 'no':
+                self.write_derogs_and_adds(
+                    motivations=True
+                )
             self.write_table_title()
             self.write_mecctable()
 
@@ -40,6 +44,10 @@ class ModelB(ModelA):
             self.story,
             canvasmaker=LandscapeLeftNumberedCanvas
         )
+
+        pdf = self.buffer.getvalue()
+        self.buffer.close()
+        self.response.write(pdf)
 
         return self.response
 
