@@ -171,7 +171,7 @@ class ModelA(PreviewMecc):
             x1=self.left_margin,
             y1=self.bottom_margin,
             width=self.document.width,
-            height=self.document.height+0.5*cm,
+            height=self.document.height+0.7*cm,
             id='landscape_frame',
             showBoundary=0
         )
@@ -190,7 +190,7 @@ class ModelA(PreviewMecc):
         ])
 
     def set_doc_margins(self):
-        self.top_margin = 1.5 * cm
+        self.top_margin = 1.7 * cm
         self.bottom_margin = self.left_margin = self.right_margin = cm
 
     def make_styles(self):
@@ -535,7 +535,7 @@ class ModelA(PreviewMecc):
                 rules_table,
                 style=rules_table_style,
                 colWidths=[1*cm, 18.65*cm, 8*cm],
-                spaceBefore=10
+                spaceBefore=0
             ))
 
     def footer_watermark(self, canvas, doc):
@@ -553,11 +553,19 @@ class ModelA(PreviewMecc):
             ('LEFTPADDING', (0, 0), (-1, -1), 0),
             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
             ('TOPPADDING', (0, 0), (-1, -1), 0),
-            ('BOTTOMPADDING', (0, 0), (0, 0), 2),
-            ('BOTTOMPADDING', (1, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            # ('BOTTOMPADDING', (0, 0), (0, 0), 2),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            # ('GRID', (0, 0), (-1, -1), 0.5, colors.green),
             ('LINEBELOW', (0, -1), (-1, -1), 1, colors.lightgrey),
+            # ('GRID', (0, 0), (-1, -1), 0.5, colors.green),
+        ]
+        header_subtable_style = [
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            # ('GRID', (0, 0), (-1, -1), 0.5, colors.orange),
         ]
         header_table = [
             [
@@ -578,7 +586,7 @@ class ModelA(PreviewMecc):
                             self.styles['CenteredSmall']
                         )]
                     ],
-                    style=header_table_style[:-1]
+                    style=header_subtable_style
                 ),
                 Table(
                     [
@@ -589,11 +597,14 @@ class ModelA(PreviewMecc):
                             self.styles['RightSmall']
                         )],
                         [Paragraph(
-                            "<para textColor=steelblue><b>%s</b></para>" % (self.goal.upper() if 'prepare' not in self.target else self.goal),
+                            "<para textColor=steelblue><b>%s</b></para>" % (
+                                self.goal.upper() if 'prepare' not in self.target \
+                                else self.goal
+                            ),
                             self.styles['RightSmall']
                         )]
                     ],
-                    style=header_table_style[:-1]
+                    style=header_subtable_style
                 )
             ]
         ]
