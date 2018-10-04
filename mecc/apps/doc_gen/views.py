@@ -9,6 +9,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse, HttpResponse
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, redirect
+from django_cas.decorators import login_required
 
 from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
@@ -29,8 +30,11 @@ from mecc.apps.utils.pdfs import setting_up_pdf, \
     DocGenerator
 from mecc.apps.utils.documents_generator import Document as Doc
 
-from django_cas.decorators import login_required
-
+from .tasks import \
+    task_generate_pdf_model_a, \
+    task_generate_pdf_model_b, \
+    task_generate_pdf_model_c, \
+    task_generate_pdf_model_d
 
 @login_required
 def generate_pdf(request):
@@ -64,6 +68,13 @@ def generate_pdf(request):
             """
             Modèle D
             """
+            task_generate_pdf_model_d.delay(
+                user=(request.user.first_name, request.user.last_name),
+                trainings=[training.id for training in trainings.filter(date_val_cfvu__isnull=False)],
+                target=request.GET.get('target'),
+                date=request.GET.get('date'),
+                year=request.GET.get('year'),
+            )
             return Doc.generate(
                 gen_type='pdf',
                 model='a',
@@ -78,35 +89,50 @@ def generate_pdf(request):
         """
         Modèle C
         """
-        trainings=trainings.filter(
+        trainings=[training.id for training in trainings.filter(
             id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
+        )]
+        print(trainings)
+        task_generate_pdf_model_c.delay(
+            user=(request.user.first_name, request.user.last_name),
+            trainings=trainings,
+            date=request.GET.get('date')
         )
-        if trainings.count() > 0:
-            return Doc.generate(
-                gen_type='pdf',
-                model='a',
-                user=request.user,
-                trainings=trainings,
-                reference='both',
-                standard='yes',
-                target='review_eci',
-                date=request.GET.get('date'),
-                year=None
-            )
+        return Doc.generate(
+            gen_type='pdf',
+            model='a',
+            user=request.user,
+            trainings=trainings,
+            reference='both',
+            standard='yes',
+            target='review_eci',
+            date=request.GET.get('date'),
+            year=None
+        )
     """
-    Modèles A et B
+    Modèle A
     """
-    return Doc.generate(
-        gen_type=request.GET.get('gen_type'),
-        model=request.GET.get('model'),
-        user=request.user,
-        trainings=Training.objects.filter(id__in=request.GET.getlist('selected')),
-        reference=request.GET.get('ref'),
-        standard=request.GET.get('standard'),
-        target=request.GET.get('target'),
-        date=request.GET.get('date'),
-        year=None
-    )
+    if request.GET.get('model') == 'a':
+        task_generate_pdf_model_a.delay(
+            user=(request.user.first_name, request.user.last_name),
+            trainings=request.GET.getlist('selected'),
+            reference=request.GET.get('reference'),
+            standard=request.GET.get('standard'),
+            target=request.GET.get('target'),
+            date=request.GET.get('date')
+        )
+    """
+    Modèle B
+    """
+    if request.GET.get('model') == 'b':
+        task_generate_pdf_model_b.delay(
+            user=(request.user.first_name, request.user.last_name),
+            trainings=request.GET.getlist('selected'),
+            reference=request.GET.get('reference'),
+            standard=request.GET.get('standard'),
+            target=request.GET.get('target'),
+            date=request.GET.get('date')
+        )
 
 @login_required
 def generate(request, template='doc_generator/generated_pdf.html'):

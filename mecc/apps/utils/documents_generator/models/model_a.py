@@ -1,19 +1,23 @@
 import datetime
 
+from django.conf import settings
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph, PageBreak, Table, PageBreak, Image, \
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.platypus import BaseDocTemplate, Paragraph, Table, PageBreak, Image, \
     NextPageTemplate, Frame, PageTemplate, FrameBreak, Spacer
 from reportlab.platypus.doctemplate import _doNothing
 from reportlab.lib.units import cm
 
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
-from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject
+from mecc.apps.training.models import Training, SpecificParagraph
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.utils.queries import currentyear
 
-from .preview_mecc import PreviewMecc, LandscapeLeftNumberedCanvas
+from .preview_mecc import PreviewMecc
+from .preview_mecctable import LandscapeLeftNumberedCanvas
 
 
 class ModelA(PreviewMecc):
@@ -25,13 +29,12 @@ class ModelA(PreviewMecc):
             standard,
             target,
             date,
-            year):
+            year,
+            task_id):
         self.user = user
-        self.trainings = trainings.order_by(
-            'degree_type',
-            'MECC_type',
-            'label'
-        )
+        self.trainings = Training.objects\
+            .filter(id__in=trainings)\
+            .order_by('degree_type', 'MECC_type', 'label')
         self.degree_types = list(set(
             [training.degree_type for training in self.trainings]
         ))
@@ -39,6 +42,7 @@ class ModelA(PreviewMecc):
         self.standard = standard
         self.target = target
         self.date = date
+        self.task_id = task_id
         if year is not None:
             self.year = int(year)
         else:
@@ -48,12 +52,13 @@ class ModelA(PreviewMecc):
             'eci' not in self.target and \
             'history' not in self. target \
             else False
-        self.cmp = trainings.first().supply_cmp_label
+        print(self.trainings)
+        self.cmp = self.trainings.first().supply_cmp_label
         self.today = datetime.date.today().strftime('%d/%m/%Y')
         self.logo = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
+        print(self.trainings.first().id)
         super().__init__(
-            trainings=None,
             reference=self.reference
         )
         self.model = 'a'
@@ -86,6 +91,32 @@ class ModelA(PreviewMecc):
             self.cmp,
             self.goal.upper()
         )
+        self.filename = "MECC - %s-%s - %s - %s" % (
+            self.year, self.year+1,
+            self.cmp,
+            self.goal.upper()
+        )
+
+    def doc_setup(self):
+        self.set_doc_title()
+        # self.set_response()
+        self.set_doc_margins()
+
+        # self.buffer = BytesIO()
+
+        self.document = BaseDocTemplate(
+            filename=settings.MEDIA_ROOT+'/tmp/%s - %s.pdf' % (self.task_id, self.filename),
+            pagesize=landscape(A4),
+            leftMargin=self.left_margin,
+            rightMargin=self.right_margin,
+            topMargin=self.top_margin,
+            bottomMargin=self.bottom_margin,
+            title=self.title,
+            author="Université de Strasbourg",
+            showBoundary=0,
+        )
+
+        self.add_page_templates()
 
     def add_page_templates(self):
         # ########## FIRST PAGE ##########
@@ -272,11 +303,13 @@ class ModelA(PreviewMecc):
             canvasmaker=LandscapeLeftNumberedCanvas
         )
 
-        pdf = self.buffer.getvalue()
-        self.buffer.close()
-        self.response.write(pdf)
+        return self.filename
 
-        return self.response
+        # pdf = self.buffer.getvalue()
+        # self.buffer.close()
+        # self.response.write(pdf)
+        #
+        # return self.response
 
     def write_toc(self):
         self.story.append(NextPageTemplate('second_page'))
@@ -314,7 +347,7 @@ class ModelA(PreviewMecc):
             criteria_table = Table(
                 [
                     ["Critères d'édition"],
-                    ["Utilisateur : %s %s" % (self.user.first_name, self.user.last_name)],
+                    ["Utilisateur : %s %s" % (self.user[0], self.user[1])],
                     ["Objectif : %s" % self.goal_criteria],
                     ["Modèle : %s" % self.model.upper()],
                     ["Date : %s" % self.today],

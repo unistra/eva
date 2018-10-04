@@ -14,7 +14,7 @@ from .preview_mecctable import PreviewMeccTable, LandscapeLeftNumberedCanvas
 from ..document import Document
 
 class PreviewMecc(PreviewMeccTable):
-    def __init__(self, trainings, reference='both'):
+    def __init__(self, trainings=None, reference='both'):
         super().__init__(trainings, reference)
         self.title_header = "Prévisualisation des MECC"
 

@@ -240,11 +240,13 @@ THIRD_PARTY_APPS = (
     'crispy_forms',
     'django_cas',
     'ckeditor',
+    'django_celery_results',
 )
 
 LOCAL_APPS = (
     'mecc.apps.utils',
     'mecc',
+    'mecc.apps.doc_gen',
     'mecc.apps.commission',
     'mecc.apps.degree',
     'mecc.apps.institute',
@@ -428,3 +430,10 @@ MAIL_ARCHIVES = 'des-mecc-archives@unistra.fr'
 #########
 
 FILES_UPLOAD_PATH = 'uploads/docs/%Y'
+
+##########
+# CELERY #
+##########
+
+CELERY_NAME = "mecc"
+CELERY_RESULT_BACKEND = "django-db"
