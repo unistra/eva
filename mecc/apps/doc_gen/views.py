@@ -6,10 +6,12 @@ import re
 
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect, FileResponse, Http404
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, redirect
 from django_cas.decorators import login_required
+from django_celery_results.models import TaskResult
+from django.conf import settings
 
 from mecc.apps.files.models import FileUpload
 from mecc.apps.institute.models import Institute
@@ -36,106 +38,9 @@ from .tasks import \
     task_generate_pdf_model_c, \
     task_generate_pdf_model_d
 
-@login_required
-def generate_pdf(request):
-    trainings = request.GET.getlist('selected')
-    if not trainings:
-        """
-        Si aucune formation n'est passée dans la requête, cela veut dire que
-        l'utilisateur demande un document modèle C (ECI) ou D (historique des 
-        MECC validées).
-        Ces modèles sont des variantes du modèle A. Leur comportement a été
-        inclus dans la classe ModelA du générateur de documents
-        """
-        try:
-            if request.GET.get('year') and re.match(r'2\d{3}', request.GET.get('year')):
-                current_year = request.GET.get('year')
-            else:
-                current_year = currentyear().code_year
-        except AttributeError:
-            return render(
-                request,
-                'msg.html',
-                {'msg': _("Initialisation de l'année non effectuée")}
-            )
-        institute = Institute.objects.get(id=request.GET.get('institute'))
-        trainings = Training.objects.filter(
-            code_year=current_year,
-            supply_cmp=institute.code,
-            is_used=True
-        )
-        if request.GET.get('model') == 'd':
-            """
-            Modèle D
-            """
-            task_generate_pdf_model_d.delay(
-                user=(request.user.first_name, request.user.last_name),
-                trainings=[training.id for training in trainings.filter(date_val_cfvu__isnull=False)],
-                target=request.GET.get('target'),
-                date=request.GET.get('date'),
-                year=request.GET.get('year'),
-            )
-            return Doc.generate(
-                gen_type='pdf',
-                model='a',
-                user=request.user,
-                trainings = trainings.filter(date_val_cfvu__isnull=False),
-                reference='both',
-                standard='yes',
-                target=request.GET.get('target'),
-                date=request.GET.get('date'),
-                year=request.GET.get('year'),
-            )
-        """
-        Modèle C
-        """
-        trainings=[training.id for training in trainings.filter(
-            id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
-        )]
-        print(trainings)
-        task_generate_pdf_model_c.delay(
-            user=(request.user.first_name, request.user.last_name),
-            trainings=trainings,
-            date=request.GET.get('date')
-        )
-        return Doc.generate(
-            gen_type='pdf',
-            model='a',
-            user=request.user,
-            trainings=trainings,
-            reference='both',
-            standard='yes',
-            target='review_eci',
-            date=request.GET.get('date'),
-            year=None
-        )
-    """
-    Modèle A
-    """
-    if request.GET.get('model') == 'a':
-        task_generate_pdf_model_a.delay(
-            user=(request.user.first_name, request.user.last_name),
-            trainings=request.GET.getlist('selected'),
-            reference=request.GET.get('reference'),
-            standard=request.GET.get('standard'),
-            target=request.GET.get('target'),
-            date=request.GET.get('date')
-        )
-    """
-    Modèle B
-    """
-    if request.GET.get('model') == 'b':
-        task_generate_pdf_model_b.delay(
-            user=(request.user.first_name, request.user.last_name),
-            trainings=request.GET.getlist('selected'),
-            reference=request.GET.get('reference'),
-            standard=request.GET.get('standard'),
-            target=request.GET.get('target'),
-            date=request.GET.get('date')
-        )
 
 @login_required
-def generate(request, template='doc_generator/generated_pdf.html'):
+def generate(request):
     """
     Modèles A et B format doc
     """
@@ -161,18 +66,117 @@ def generate(request, template='doc_generator/generated_pdf.html'):
     """
     Format PDF
     """
-    if not request.GET.getlist('selected') and \
-            not Training.objects.filter(
-                id__in=[training.id for training in Training.objects.all() if training.is_ECI_MECC is True],
-                code_year=currentyear().code_year,
-                supply_cmp=Institute.objects.get(id=request.GET.get('institute')).code,
-                is_used=True):
-       back_url = "/training/list_all_meccs/"
-       message = _("Aucune formation affichable.")
-       data = {'back_url': back_url, 'message': message}
-    else:
-        data = {'url': request.GET.urlencode()}
+    template = 'doc_generator/generated_pdf.html'
+    trainings = request.GET.getlist('selected')
+    data = {}
+    if not trainings:
+        """
+        si aucune formation n'est passée dans la requête, cela veut dire que
+        l'utilisateur demande un document modèle C (eci) ou D (historique des
+        mecc validées).
+        ces modèles sont des variantes du modèle A. leur comportement a été
+        inclus dans la classe ModelA du générateur de documents
+        """
+        try:
+            if request.GET.get('year') and re.match(r'2\d{3}', request.GET.get('year')):
+                current_year = request.GET.get('year')
+            else:
+                current_year = currentyear().code_year
+        except AttributeError:
+            return render(
+                request,
+                'msg.html',
+                {'msg': _("initialisation de l'année non effectuée")}
+            )
+        institute = Institute.objects.get(id=request.GET.get('institute'))
+        trainings = Training.objects.filter(
+            code_year=current_year,
+            supply_cmp=institute.code,
+            is_used=True
+        )
+        if request.GET.get('model') == 'd':
+            """
+            modèle D
+            """
+            task = task_generate_pdf_model_d.delay(
+                user=(request.user.first_name, request.user.last_name),
+                trainings=[training.id for training in trainings.filter(date_val_cfvu__isnull=False)],
+                target=request.GET.get('target'),
+                date=request.GET.get('date'),
+                year=request.GET.get('year'),
+            )
+        """
+        modèle C
+        """
+        trainings = trainings.filter(
+            id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
+        )
+        if trainings.count() == 0:
+            data['back_url'] = "/training/list_all_meccs/"
+            data['message'] = _("Aucune formation affichable.")
+            return render(request, template, data)
+        else:
+            task = task_generate_pdf_model_c.delay(
+                user=(request.user.first_name, request.user.last_name),
+                trainings=[training.id for training in trainings],
+                date=request.GET.get('date')
+            )
+    """
+    modèle A
+    """
+    if request.GET.get('model') == 'a':
+        task = task_generate_pdf_model_a.delay(
+            user=(request.user.first_name, request.user.last_name),
+            trainings=request.GET.getlist('selected'),
+            reference=request.GET.get('reference'),
+            standard=request.GET.get('standard'),
+            target=request.GET.get('target'),
+            date=request.GET.get('date')
+        )
+    """
+    modèle B
+    """
+    if request.GET.get('model') == 'b':
+        task = task_generate_pdf_model_b.delay(
+            user=(request.user.first_name, request.user.last_name),
+            trainings=request.GET.getlist('selected'),
+            reference=request.GET.get('reference'),
+            standard=request.GET.get('standard'),
+            target=request.GET.get('target'),
+            date=request.GET.get('date')
+        )
+
+    task_result, created = TaskResult.objects.get_or_create(task_id=task.id)
+    task_id = task_result.id
+    return redirect('doc_gen:generate_pdf', task_id=task_id)
+
+def generate_pdf(request, task_id, template='doc_generator/generated_pdf.html'):
+    data = {'task_id': task_id}
+
     return render(request, template, data)
+
+def get_pdf_task_status(request, task_id):
+    task = TaskResult.objects.get(id=task_id)
+    response = {'status': task.status}
+    if task.status == 'SUCCESS':
+        pdf_url = task.result.encode('utf-8').decode('unicode_escape')
+        response['task_id'] = task_id
+    return JsonResponse(response, safe=False)
+
+def get_pdf(request, task_id):
+    task = TaskResult.objects.get(id=task_id)
+    filename = task.result.encode('utf-8').decode('unicode_escape')
+
+    try:
+        return FileResponse(
+            open(
+                settings.MEDIA_ROOT+'/tmp/%s' % filename[1:-1],
+                'rb'
+            ), content_type='application/pdf'
+        )
+
+    except FileNotFoundError:
+        raise Http404()
 
 @login_required
 def dispatch_to_good_pdf(request):

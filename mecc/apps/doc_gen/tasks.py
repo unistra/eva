@@ -38,7 +38,8 @@ def task_generate_pdf_model_a(
         year=None,
         task_id=task_result.id
     )
-    return settings.MEDIA_URL+'tmp/%s.pdf' % filename
+
+    return '%s - %s.pdf' % (task_result.id, filename)
 
 @task_prerun.connect(sender=task_generate_pdf_model_a)
 def start_task_generate_pdf_model_a(sender=None, *args, **kwargs):
@@ -73,7 +74,7 @@ def task_generate_pdf_model_b(
 
     task_result, created = TaskResult.objects.get_or_create(task_id=self.request.id)
 
-    Document.generate(
+    filename = Document.generate(
         gen_type='pdf',
         model='b',
         user=user,
@@ -85,7 +86,8 @@ def task_generate_pdf_model_b(
         year=None,
         task_id=task_result.id
     )
-    return "DONE"
+
+    return '%s - %s.pdf' % (task_result.id, filename)
 
 @task_prerun.connect(sender=task_generate_pdf_model_b)
 def start_task_generate_pdf_model_b(sender=None, *args, **kwargs):
@@ -113,7 +115,7 @@ def task_generate_pdf_model_c(self, user, trainings, date):
 
     task_result, created = TaskResult.objects.get_or_create(task_id=self.request.id)
 
-    Document.generate(
+    filename = Document.generate(
         gen_type='pdf',
         model='a',
         user=user,
@@ -125,7 +127,8 @@ def task_generate_pdf_model_c(self, user, trainings, date):
         year=None,
         task_id=task_result.id
     )
-    return "DONE"
+
+    return '%s - %s.pdf' % (task_result.id, filename)
 
 @task_prerun.connect(sender=task_generate_pdf_model_c)
 def start_task_generate_pdf_model_c(sender=None, *args, **kwargs):
@@ -153,7 +156,7 @@ def task_generate_pdf_model_d(self, user, trainings, target, date, year):
 
     task_result, created = TaskResult.objects.get_or_create(task_id=self.request.id)
 
-    Document.generate(
+    filename = Document.generate(
         gen_type='pdf',
         model='a',
         user=user,
@@ -165,7 +168,8 @@ def task_generate_pdf_model_d(self, user, trainings, target, date, year):
         year=year,
         task_id=task_result.id
     )
-    return "DONE"
+
+    return '%s - %s.pdf' % (task_result.id, filename)
 
 @task_prerun.connect(sender=task_generate_pdf_model_d)
 def start_task_generate_pdf_model_d(sender=None, *args, **kwargs):
