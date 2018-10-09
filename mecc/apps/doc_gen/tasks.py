@@ -1,7 +1,11 @@
 import logging
+import os
+import shutil
 
 from celery import shared_task
+from celery.decorators import periodic_task
 from celery.signals import task_prerun, task_postrun, task_success, task_failure
+from celery.schedules import crontab
 from django_celery_results.models import TaskResult
 from django.conf import settings
 
@@ -185,4 +189,35 @@ def stop_task_generate_pdf_model_d(sender=None, *args, **kwargs):
 
 @task_failure.connect(sender=task_generate_pdf_model_d)
 def failure_task_generate_pdf_model_d(sender=None, *args, **kwargs):
+    logger.info("Fail : {sender}".format(sender=sender))
+
+################################################################################
+############################ TMP DIRECTORY CLEANER #############################
+################################################################################
+
+@shared_task(bind=True, ignore_result=True)
+def task_clean_tmp_directory(self):
+    """
+    Remove generated pdfs in the /media/tmp directory on a daily basis
+    The task deletes the tmp directory and recreates it
+    """
+    tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
+    shutil.rmtree(tmp_dir_path)
+    os.mkdir(tmp_dir_path)
+
+
+@task_prerun.connect(sender=task_clean_tmp_directory)
+def start_task_clean_tmp_directory(sender=None, *args, **kwargs):
+    logger.info("Starting : {sender}".format(sender=sender))
+
+@task_success.connect(sender=task_clean_tmp_directory)
+def success_task_clean_tmp_directory(sender=None, *args, **kwargs):
+    logger.info("Success : {sender}".format(sender=sender))
+
+@task_postrun.connect(sender=task_clean_tmp_directory)
+def stop_task_tmp_directory(sender=None, *args, **kwargs):
+    logger.info("Stopping : {sender}".format(sender=sender))
+
+@task_failure.connect(sender=task_clean_tmp_directory)
+def failure_task_clean_tmp_directory(sender=None, *args, **kwargs):
     logger.info("Fail : {sender}".format(sender=sender))
