@@ -112,4 +112,6 @@ CEPH_STORAGE_BUCKET = environ.get('CEPH_BUCKET')
 # CELERY #
 ##########
 
-CELERY_BROKER = "amqp://mecc:ccem@localhost:5673/mecc"
+BROKER_URL = "amqp://{}:{}@{}/{}".format(
+    RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_SERVER, RABBITMQ_VHOST
+)

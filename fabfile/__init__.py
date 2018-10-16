@@ -100,8 +100,8 @@ def test():
     env.roledefs = {
         'web': ['django-test.u-strasbg.fr'],
         'lb': ['django-test.u-strasbg.fr'],
-        'celery_worker' = ['django-test.u-strasbg.fr'],
-        'broker' = ['django-test.u-strasbg.fr'],
+        'celery-worker' : ['django-test.u-strasbg.fr'],
+        'broker' : ['django-test.u-strasbg.fr'],
     }
     # env.user = 'root'  # user for ssh
     env.backends = ['127.0.0.1']
@@ -122,7 +122,7 @@ def test():
         'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
         'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
         'ceph_bucket': "CEPH_STORAGE_BUCKET",
-	'rabbitmq_password': 'RABBITMQ_PASSWORD',
+        'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
     env.rabbitmq_server = env.socket_host
     env.extra_symlink_dirs = ['mecc/media']
@@ -172,7 +172,7 @@ def prod():
     """Define prod stage"""
     env.roledefs = {
         'web': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
-        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr']
+        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr'],
         'celery-worker': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
         'broker': ['rabbitmq-prod.di.unistra.fr']
     }
@@ -349,19 +349,19 @@ def custom_manage_cmd(cmd):
 def install_celery():
     """Install celery on remote"""
     execute(celery.install_celery)
-    
+
 @roles('broker')
 @task
 def install_rabbitmq():
     execute(rabbitmq.install)
     execute(rabbitmq.enable_management)
-    
+
 @roles('celery-worker')
 @task
 def celery_start():
     """Start celery service on remote"""
     execute(celery.celery_start)
-    
+
 @roles('celery-worker')
 @task
 def celery_restart():
@@ -373,7 +373,7 @@ def celery_restart():
 def celerybeat_start():
     """Start celerybeat service on remote"""
     execute(celery.celerybeat_start)
-    
+
 @roles('celery-worker')
 @task
 def celerybeat_restart():

@@ -11,7 +11,7 @@ from django.conf import settings
 
 pdf = Celery(
     settings.CELERY_NAME,
-    broker=settings.CELERY_BROKER,
+    broker=settings.BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND
 )
 
