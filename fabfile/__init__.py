@@ -8,8 +8,8 @@ from os.path import join
 
 import pydiploy
 
-from . import celery.py
-from . import rabbitmq.py
+from . import celery
+from . import rabbitmq
 
 # edit config here !
 
