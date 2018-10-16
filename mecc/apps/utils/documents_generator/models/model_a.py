@@ -351,8 +351,8 @@ class ModelA(PreviewMecc):
                     ["Objectif : %s" % self.goal_criteria],
                     ["Modèle : %s" % self.model.upper()],
                     ["Date : %s" % self.today],
-                    ["Règles standards : %s" % 'Avec' if self.standard == 'yes' else 'Sans'],
-                    ["Références : %s" % 'Sans' if self.reference == 'without' else 'Avec']
+                    ["Règles standards : %s" % ('Avec' if self.standard == 'yes' else 'Sans')],
+                    ["Références : %s" % ('Sans' if self.reference == 'without' else 'Avec')]
                 ],
                 style=style_criteria_table,
                 colWidths=[6*cm]

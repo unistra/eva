@@ -2,12 +2,10 @@ import logging
 import os
 import shutil
 
-from celery import shared_task
-from celery.decorators import periodic_task
-from celery.signals import task_prerun, task_postrun, task_success, task_failure
-from celery.schedules import crontab
-from django_celery_results.models import TaskResult
 from django.conf import settings
+from django_celery_results.models import TaskResult
+from celery import shared_task
+from celery.signals import task_prerun, task_postrun, task_success, task_failure
 
 from mecc.apps.utils.documents_generator import Document
 
@@ -48,6 +46,8 @@ def task_generate_pdf_model_a(
 @task_prerun.connect(sender=task_generate_pdf_model_a)
 def start_task_generate_pdf_model_a(sender=None, *args, **kwargs):
     logger.info("Starting : {sender}".format(sender=sender))
+    tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
+    os.makedirs(tmp_dir_path, exist_ok=True)
 
 @task_success.connect(sender=task_generate_pdf_model_a)
 def success_task_generate_pdf_model_a(sender=None, *args, **kwargs):
@@ -96,6 +96,8 @@ def task_generate_pdf_model_b(
 @task_prerun.connect(sender=task_generate_pdf_model_b)
 def start_task_generate_pdf_model_b(sender=None, *args, **kwargs):
     logger.info("Starting : {sender}".format(sender=sender))
+    tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
+    os.makedirs(tmp_dir_path, exist_ok=True)
 
 @task_success.connect(sender=task_generate_pdf_model_b)
 def success_task_generate_pdf_model_b(sender=None, *args, **kwargs):
@@ -124,7 +126,7 @@ def task_generate_pdf_model_c(self, user, trainings, date):
         model='a',
         user=user,
         trainings=trainings,
-        reference='both',
+        reference='without',
         standard='yes',
         target='review_eci',
         date=date,
@@ -137,6 +139,8 @@ def task_generate_pdf_model_c(self, user, trainings, date):
 @task_prerun.connect(sender=task_generate_pdf_model_c)
 def start_task_generate_pdf_model_c(sender=None, *args, **kwargs):
     logger.info("Starting : {sender}".format(sender=sender))
+    tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
+    os.makedirs(tmp_dir_path, exist_ok=True)
 
 @task_success.connect(sender=task_generate_pdf_model_c)
 def success_task_generate_pdf_model_c(sender=None, *args, **kwargs):
@@ -178,6 +182,8 @@ def task_generate_pdf_model_d(self, user, trainings, target, date, year):
 @task_prerun.connect(sender=task_generate_pdf_model_d)
 def start_task_generate_pdf_model_d(sender=None, *args, **kwargs):
     logger.info("Starting : {sender}".format(sender=sender))
+    tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
+    os.makedirs(tmp_dir_path, exist_ok=True)
 
 @task_success.connect(sender=task_generate_pdf_model_d)
 def success_task_generate_pdf_model_d(sender=None, *args, **kwargs):

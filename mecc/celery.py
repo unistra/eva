@@ -5,7 +5,7 @@ from celery import Celery
 from celery.schedules import crontab
 from kombu import Exchange, Queue
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mecc.settingsi{{ goal  }}')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mecc.settings.{{ goal }}')
 
 from django.conf import settings
 

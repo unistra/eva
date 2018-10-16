@@ -128,7 +128,7 @@ def generate(request):
         task = task_generate_pdf_model_a.delay(
             user=(request.user.first_name, request.user.last_name),
             trainings=request.GET.getlist('selected'),
-            reference=request.GET.get('reference'),
+            reference=request.GET.get('ref'),
             standard=request.GET.get('standard'),
             target=request.GET.get('target'),
             date=request.GET.get('date')
@@ -140,7 +140,7 @@ def generate(request):
         task = task_generate_pdf_model_b.delay(
             user=(request.user.first_name, request.user.last_name),
             trainings=request.GET.getlist('selected'),
-            reference=request.GET.get('reference'),
+            reference=request.GET.get('ref'),
             standard=request.GET.get('standard'),
             target=request.GET.get('target'),
             date=request.GET.get('date')
