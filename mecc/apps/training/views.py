@@ -804,5 +804,5 @@ def preview_mecc(request):
     return Document.generate(
         gen_type='pdf',
         model='preview_mecc',
-        trainings=Training.objects.get(id=request.GET.get('training_id'))
+        trainings=request.GET.get('training_id')
     )

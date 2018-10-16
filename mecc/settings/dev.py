@@ -107,3 +107,9 @@ CEPH_STORAGE_KEY_ID = environ.get('CEPH_KEY_ID')
 CEPH_STORAGE_SECRET_KEY = environ.get('CEPH_SECRET_KEY')
 CEPH_STORAGE_ENDPOINT_URL = environ.get('CEPH_ENDPOINT_URL', 'https://s3.unistra.fr')
 CEPH_STORAGE_BUCKET = environ.get('CEPH_BUCKET')
+
+##########
+# CELERY #
+##########
+
+CELERY_BROKER = "amqp://mecc:ccem@localhost:5673/mecc"

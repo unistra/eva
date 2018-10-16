@@ -54,3 +54,6 @@ misc
 .ropeproject
 mecc/media
 .vscode
+
+#Local celery log, pid and schedule files
+celery/

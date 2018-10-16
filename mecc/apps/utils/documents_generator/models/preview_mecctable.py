@@ -1,19 +1,21 @@
-from io import BytesIO
 from math import modf
+from io import BytesIO
 import itertools
 
 from django.http import HttpResponse
+from django.conf import settings
 
 from reportlab.pdfgen import canvas
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Frame
 from reportlab.platypus.flowables import Flowable
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm
 
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
+from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear, get_mecc_table_order
 
 from ..document import Document
@@ -22,7 +24,8 @@ from ..document import Document
 class PreviewMeccTable(Document):
 
     def __init__(self, trainings, reference='both'):
-        self.training = trainings
+        if trainings is not None:
+            self.training = Training.objects.get(id=trainings)
         self.reference = reference
         self.respforms = True
         self.mecc_state = True
@@ -72,10 +75,11 @@ class PreviewMeccTable(Document):
             onPage=self.footer_watermark
         )
 
+
         self.document.addPageTemplates([landscape_pagetemplate])
 
     def set_doc_title(self):
-        self.title = "Previsualisation du tableau"
+        self.title = "Prévisualisation du tableau"
 
     def set_response(self):
         self.response = HttpResponse(content_type='application/pdf')

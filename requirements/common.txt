@@ -11,3 +11,6 @@ xlsxwriter
 beautifulsoup4
 boto3==1.7.50
 html-sanitizer>1.6,<1.7
+celery==4.1.0
+kombu==4.1.0
+django-celery-results==1.0.1

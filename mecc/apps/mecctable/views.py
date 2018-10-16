@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django_cas.decorators import login_required
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
@@ -23,7 +24,6 @@ from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.documents_generator import Document
-from django_cas.decorators import login_required
 
 from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
@@ -1275,11 +1275,12 @@ def copy_old_mecctable(request, id_training):
 
 @login_required
 def preview_mecctable(request):
+    training = request.GET.get('training_id')
 
     return Document.generate(
         gen_type='pdf',
         model='preview_mecctable',
-        trainings=Training.objects.get(id=request.GET.get('training_id'))
+        trainings=training
     )
 
 

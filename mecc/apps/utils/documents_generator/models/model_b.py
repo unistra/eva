@@ -40,16 +40,20 @@ class ModelB(ModelA):
 
             self.story.append(PageBreak())
 
+        print("DEBUT DU BUILD")
         self.document.build(
             self.story,
             canvasmaker=LandscapeLeftNumberedCanvas
         )
+        print("FIN DU BUILD")
 
-        pdf = self.buffer.getvalue()
-        self.buffer.close()
-        self.response.write(pdf)
+        return self.filename
 
-        return self.response
+        # pdf = self.buffer.getvalue()
+        # self.buffer.close()
+        # self.response.write(pdf)
+        #
+        # return self.response
 
     def write_rules(self):
         rules = Rule.objects.filter(
