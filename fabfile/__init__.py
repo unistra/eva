@@ -124,7 +124,7 @@ def test():
         'ceph_bucket': "CEPH_STORAGE_BUCKET",
 	'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
-    env.rabbitmq_server = env.roledefs['broker'][0]
+    env.rabbitmq_server = env.socket_host
     env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
 
