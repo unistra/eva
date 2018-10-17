@@ -14,6 +14,7 @@ import fabric
 import fabtools
 from fabric.api import env
 from pydiploy.decorators import do_verbose
+from pydiploy.require.system import is_systemd
 
 
 def celery_service_name():
@@ -25,20 +26,94 @@ def celerybeat_service_name():
 @do_verbose
 def install_celery():
     if all([e in env.keys() for e in ('celery_version',)]):
-        # Configure the celery file in /etc/init.d
-        initd_path = join(sep, 'etc', 'init.d')
-        with fabric.api.cd(initd_path):
-            fabric.api.sudo(
-                'wget -c https://raw.githubusercontent.com/celery/celery/%s/extra/generic-init.d/celeryd -O %s'\
-                    % (env.celery_version, celery_service_name())
+        # Firstly we check if the system uses sytemd
+        if is_systemd():
+            worker_filename = 'celery-%s' % env.application_name
+            beat_filename = 'celerybeat-%s' % env.application_name
+            tmpfiles_filename = worker_filename + ".conf"
+
+            # Create celery log folder
+            fabtools.require.files.directory(
+                path=join(sep, "var", "log", "celery"),
+                use_sudo=True,
+                owner=env.remote_owner,
+                group=env.remote_group,
+                mode='755'
             )
-            fabric.api.sudo(
-                'wget -c https://raw.githubusercontent.com/celery/celery/%s/extra/generic-init.d/celerybeat -O %s'\
-                    % (env.celery_version, celerybeat_service_name())
+
+            # Create celery run folder
+            fabtools.require.files.directory(
+                path=join(sep, "var", "run", "celery"),
+                use_sudo=True,
+                owner=env.remote_owner,
+                group=env.remote_group,
+                mode='755'
             )
-            fabric.api.sudo('chmod 755 %s' % celery_service_name())
-            fabric.api.sudo('chmod 755 %s' % celerybeat_service_name())
-        # Configure the celery file in /etc/default
+
+            #Configure the celery worker and beat service file in /etc/systemd/system
+            systemd_path = join(sep, "etc", "systemd", "system")
+            worker_filepath = join(systemd_path, worker_filename + ".service")
+            beat_filepath = join(systemd_path, beat_filename + ".service")
+
+            with fabric.api.cd(systemd_path):
+                # Worker service file
+                fabtools.files.upload_template(
+                    'celery-mecc.service.tpl',
+                    worker_filepath,
+                    context=env,
+                    template_dir=join(dirname(__file__), 'templates'),
+                    use_jinja=True,
+                    use_sudo=True,
+                    user='root',
+                    chown=True,
+                    mode='755'
+                )
+                # Beat service file
+                fabtools.files.upload_template(
+                    'celerybeat-mecc.service.tpl',
+                    beat_filepath,
+                    context=env,
+                    template_dir=join(dirname(__file__), 'templates'),
+                    use_jinja=True,
+                    use_sudo=True,
+                    user='root',
+                    chown=True,
+                    mode='755'
+                )
+
+            # Configure the tmpfiles conf file in /etc/tmpfiles.d
+            tmpfiles_path = join(sep, "etc", "tmpfiles.d")
+            tmpfiles_filepath = join(tmpfiles_path, tmpfiles_filename)
+
+            with fabric.api.cd(tmpfiles_path):
+                fabtools.files.upload_template(
+                    'celery-mecc.conf.tpl',
+                    tmpfiles_filepath,
+                    context=env,
+                    template_dir=join(dirname(__file__), 'templates'),
+                    use_jinja=True,
+                    use_sudo=True,
+                    user='root',
+                    chown=True,
+                    mode='755'
+                )
+        # if the system doesn't use systemd, we assume that it uses initd
+        else:
+            # Configure the celery file in /etc/init.d
+            initd_path = join(sep, 'etc', 'init.d')
+            with fabric.api.cd(initd_path):
+                fabric.api.sudo(
+                    'wget -c https://raw.githubusercontent.com/celery/celery/%s/extra/generic-init.d/celeryd -O %s'\
+                        % (env.celery_version, celery_service_name())
+                )
+                fabric.api.sudo(
+                    'wget -c https://raw.githubusercontent.com/celery/celery/%s/extra/generic-init.d/celerybeat -O %s'\
+                        % (env.celery_version, celerybeat_service_name())
+                )
+                fabric.api.sudo('chmod 755 %s' % celery_service_name())
+                fabric.api.sudo('chmod 755 %s' % celerybeat_service_name())
+
+        # Configure the celery conf file in /etc/default
         celeryd_path = join(sep, 'etc', 'default')
         celeryd_filepath = join(celeryd_path, celery_service_name())
 

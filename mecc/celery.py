@@ -8,7 +8,7 @@ from kombu import Exchange, Queue
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mecc.settings.{{ goal }}')
 
 from django.conf import settings
-
+print(settings.BROKER_URL)
 pdf = Celery(
     settings.CELERY_NAME,
     broker=settings.BROKER_URL,
