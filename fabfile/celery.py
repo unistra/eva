@@ -38,7 +38,7 @@ def install_celery():
                 use_sudo=True,
                 owner=env.remote_owner,
                 group=env.remote_group,
-                mode='755'
+                mode='775'
             )
 
             # Create celery run folder
@@ -47,7 +47,7 @@ def install_celery():
                 use_sudo=True,
                 owner=env.remote_owner,
                 group=env.remote_group,
-                mode='755'
+                mode='775'
             )
 
             #Configure the celery worker and beat service file in /etc/systemd/system
@@ -63,7 +63,7 @@ def install_celery():
                     context=env,
                     template_dir=join(dirname(__file__), 'templates'),
                     use_jinja=True,
-                    use_sudo=True,
+                    # use_sudo=True,
                     user='root',
                     chown=True,
                     mode='755'
@@ -75,7 +75,7 @@ def install_celery():
                     context=env,
                     template_dir=join(dirname(__file__), 'templates'),
                     use_jinja=True,
-                    use_sudo=True,
+                    # use_sudo=True,
                     user='root',
                     chown=True,
                     mode='755'
@@ -92,11 +92,12 @@ def install_celery():
                     context=env,
                     template_dir=join(dirname(__file__), 'templates'),
                     use_jinja=True,
-                    use_sudo=True,
+                    # use_sudo=True,
                     user='root',
                     chown=True,
                     mode='755'
                 )
+            fabric.api.sudo('systemctl daemon-reload')
         # if the system doesn't use systemd, we assume that it uses initd
         else:
             # Configure the celery file in /etc/init.d
@@ -136,7 +137,10 @@ def install_celery():
 def celery_start():
     """ Starts celery """
     if not celery_started():
-        fabtools.service.start(celery_service_name())
+        if is_systemd():
+            fabtools.systemd.start(celery_service_name())
+        else:
+            fabtools.service.start(celery_service_name())
     else:
         fabric.api.puts("Celery is already started")
 
@@ -144,7 +148,10 @@ def celery_start():
 def celerybeat_start():
     """ Starts celerybeat """
     if not celerybeat_started():
-        fabtools.service.start(celerybeat_service_name())
+        if is_systemd():
+            fabtools.systemd.start(celerybeat_service_name)
+        else:
+            fabtools.service.start(celerybeat_service_name())
     else:
         fabric.api.puts("Celerybeat is already started")
 
@@ -152,9 +159,14 @@ def celerybeat_start():
 def celery_restart():
     """ Starts/Restarts celery """
     if not celery_started():
+        fabric.api.puts("celery-mecc not started")
         fabric.api.execute(celery_start)
     else:
-        fabtools.service.restart(celery_service_name())
+        fabric.api.puts("celery-mecc started")
+        if is_systemd():
+            fabtools.systemd.restart(celery_service_name())
+        else:
+            fabtools.service.restart(celery_service_name())
 
 @do_verbose
 def celerybeat_restart():
@@ -162,18 +174,32 @@ def celerybeat_restart():
     if not celerybeat_started():
         fabric.api.execute(celerybeat_start)
     else:
-        fabtools.service.restart(celerybeat_service_name())
+        if is_systemd():
+            fabtools.systemd.stop(celerybeat_service_name())
+            fabtools.systemd.start(celerybeat_service_name())
+        else:
+            fabtools.service.restart(celerybeat_service_name())
 
+@do_verbose
 def celery_started():
     """
     Returns true/false depending on whether the celery service is started or not
     """
+    if is_systemd():
+        running = 'active' in fabric.api.sudo('systemctl is-active %s' % celery_service_name())
+        return running
+
     return fabtools.service.is_running(celery_service_name())
 
-def celery_beat_started():
+@do_verbose
+def celerybeat_started():
     """
     Returns true/false depending on whether the celerybeat service is started or not
     """
+    if is_systemd():
+        running = 'active' in fabric.api.sudo('systemctl is-active %s' % celerybeat_service_name())
+        return running
+
     return fabtools.service.is_running(celerybeat_service_name())
 
 @do_verbose
@@ -182,6 +208,21 @@ def deploy_celery_file():
     fabtools.files.upload_template(
         'celery.py',
         join(env.remote_base_package_dir, 'celery.py'),
+        template_dir=env.local_tmp_root_app_package,
+        context=env,
+        use_sudo=True,
+        user=env.remote_owner,
+        chown=True,
+        mode='644',
+        use_jinja=True
+    )
+
+@do_verbose
+def deploy_celery_file():
+    """ Uploads wsgi.py template on remote """
+    fabtools.files.upload_template(
+        'celery.py',
+        join(env.remote_base_package_dir,'celery.py'),
         template_dir=env.local_tmp_root_app_package,
         context=env,
         use_sudo=True,

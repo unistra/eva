@@ -40,12 +40,10 @@ class ModelB(ModelA):
 
             self.story.append(PageBreak())
 
-        print("DEBUT DU BUILD")
         self.document.build(
             self.story,
             canvasmaker=LandscapeLeftNumberedCanvas
         )
-        print("FIN DU BUILD")
 
         return self.filename
 

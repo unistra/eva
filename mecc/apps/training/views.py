@@ -306,8 +306,6 @@ class TrainingEdit(UpdateView):
         return super(TrainingEdit, self).form_valid(form)
 
     def form_invalid(self, form):
-        print("WE ARE REALLY DOOMED !!!")
-
         return super(TrainingEdit, self).form_invalid(form)
 
 

@@ -14,7 +14,7 @@ CELERY_APP="{{ root_package_name }}"
 # and owned by the userid/group configured.
 CELERY_CREATE_DIRS=1
 
-export DJANGO_SETTINGS_MODULE="{{ root_package_name }}.settings.{{ goal }}"
+DJANGO_SETTINGS_MODULE="{{ root_package_name }}.settings.{{ goal }}"
 
 ###################
 # Worker Settings #

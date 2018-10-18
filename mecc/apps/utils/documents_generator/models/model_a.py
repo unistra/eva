@@ -52,12 +52,10 @@ class ModelA(PreviewMecc):
             'eci' not in self.target and \
             'history' not in self. target \
             else False
-        print(self.trainings)
         self.cmp = self.trainings.first().supply_cmp_label
         self.today = datetime.date.today().strftime('%d/%m/%Y')
         self.logo = Image('mecc/static/img/signature_uds_02.png', 80, 30)
 
-        print(self.trainings.first().id)
         super().__init__(
             reference=self.reference
         )
