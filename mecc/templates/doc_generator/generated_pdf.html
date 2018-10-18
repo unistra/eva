@@ -26,7 +26,7 @@
 {% endif %}
 <script type="text/javascript">
     $(document).ready(function check_status() {
-        $.getJSON('/doc_gen/get_pdf_task_status/{{task_id}}', function(data) {
+        $.getJSON("{% url 'doc_gen:get_pdf_task_status' task_id %}", function(data) {
             if (data['status'] == 'SUCCESS') {
                 console.log("SUCCESS");
                 $("#iframe_wrapper").append(
