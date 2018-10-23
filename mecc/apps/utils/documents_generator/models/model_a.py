@@ -303,12 +303,6 @@ class ModelA(PreviewMecc):
 
         return self.filename
 
-        # pdf = self.buffer.getvalue()
-        # self.buffer.close()
-        # self.response.write(pdf)
-        #
-        # return self.response
-
     def write_toc(self):
         self.story.append(NextPageTemplate('second_page'))
 
@@ -350,7 +344,10 @@ class ModelA(PreviewMecc):
                     ["Modèle : %s" % self.model.upper()],
                     ["Date : %s" % self.today],
                     ["Règles standards : %s" % ('Avec' if self.standard == 'yes' else 'Sans')],
-                    ["Références : %s" % ('Sans' if self.reference == 'without' else 'Avec')]
+                    ["Références : %s" % (
+                        'SI scolarité' if self.reference == 'with_si' else \
+                        'ROF' if self.reference == 'with_rof' \
+                        else 'Sans')]
                 ],
                 style=style_criteria_table,
                 colWidths=[6*cm]
