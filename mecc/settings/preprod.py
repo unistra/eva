@@ -87,7 +87,7 @@ CEPH_STORAGE_BUCKET = '{{ ceph_bucket }}'
 RABBITMQ_USER = '{{ application_name }}'
 RABBITMQ_PASSWORD = '{{ rabbitmq_password }}'
 RABBITMQ_SERVER = '{{ rabbitmq_server }}'
-RABBITMQ_VHOST = '{}_test'.format(RABBITMQ_USER)
+RABBITMQ_VHOST = '{}_preprod'.format(RABBITMQ_USER)
 BROKER_URL = "amqp://{}:{}@{}/{}".format(
     RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_SERVER, RABBITMQ_VHOST
 )

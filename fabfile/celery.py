@@ -114,22 +114,23 @@ def install_celery():
                 fabric.api.sudo('chmod 755 %s' % celery_service_name())
                 fabric.api.sudo('chmod 755 %s' % celerybeat_service_name())
 
-        # Configure the celery conf file in /etc/default
+        # Configure the celery conf files in /etc/default
         celeryd_path = join(sep, 'etc', 'default')
-        celeryd_filepath = join(celeryd_path, celery_service_name())
+        for service in [celery_service_name(), celerybeat_service_name()]:
+            celeryd_filepath = join(celeryd_path, service)
 
-        with fabric.api.cd(celeryd_path):
-            fabtools.files.upload_template(
-                'celeryd.tpl',
-                celeryd_filepath,
-                context=env,
-                template_dir=join(dirname(__file__), 'templates'),
-                use_jinja=True,
-                use_sudo=True,
-                user='root',
-                chown=True,
-                mode='644'
-            )
+            with fabric.api.cd(celeryd_path):
+                fabtools.files.upload_template(
+                    'celeryd.tpl',
+                    celeryd_filepath,
+                    context=env,
+                    template_dir=join(dirname(__file__), 'templates'),
+                    use_jinja=True,
+                    use_sudo=True,
+                    user='root',
+                    chown=True,
+                    mode='644'
+                )
     else:
         fabric.api.abort('Please provide parameters for Celery installation !')
 
