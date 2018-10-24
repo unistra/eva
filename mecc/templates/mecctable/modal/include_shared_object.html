@@ -1,5 +1,7 @@
-{% load i18n %} {% load crispy_forms_tags %}
+{% load i18n %}
+{% load crispy_forms_tags %}
 {% load staticfiles %}
+
 <script src="{% static 'js/datatable.min.js' %}"></script>
 
 <div class=" modal fade " id="shared-object" role="dialog" style="z-index: 1200;">
@@ -71,159 +73,167 @@
 </div>
 
 <style media="screen">
-/*put footer just under header*/
-tfoot {
-    display: table-header-group;
-}
-/*hide unwanted column select-option*/
-tfoot tr td:first-child select, tfoot tr td:nth-child(3) select,
-tfoot tr td:nth-child(8) select, tfoot tr td:nth-child(10) select {
-    display: none
-}
+    /*put footer just under header*/
+    tfoot {
+        display: table-header-group;
+    }
+
+    /*hide unwanted column select-option*/
+    tfoot tr td:first-child select, tfoot tr td:nth-child(3) select,
+    tfoot tr td:nth-child(8) select, tfoot tr td:nth-child(10) select {
+        display: none
+    }
 </style>
 
 
 <script type="text/javascript">
-function selectall(source) {
-    let checkboxes = document.getElementsByName('suggest-id');
-    for(let i=0, n=checkboxes.length;i<n;i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
 
-function import_selected_suggestions(){
-    let checkboxValues = [];
-    $('input[name="suggest-id"]:checked').map(function(){
-        checkboxValues.push(this.value);
-    });
-    $.ajax({
-        url: "{% url 'mecctable:import_objectslink' %}",
-        type: "POST",
-        data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            selected_id: checkboxValues,
-            asking_id: asking_inclusion,
-            id_training : {{ training.id }}
-        },
-        success: function(data) {
-            $('#shared-object').modal('hide');
-            if (data.not_imported === true) {
-                $('.top-right').notify({
-                    message: { text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.' },
-                    type:'warning'
-                }).show();
-            } else {
-                $('.top-right').notify({
-                    message: { text: 'Tableau mis à jour.' },
-                    type:'info'
-                }).show();
-            }
-            setTimeout(function(){window.location.reload()}, 5000)
-        },
-        error: function(data){
-            console.log(data);
+    function selectall(source) {
+        let checkboxes = document.getElementsByName('suggest-id');
+        for (let i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
         }
-    });
-}
-$(document).ready(function () {
-    // set datatable
-    let table_suggest =  $('#suggest').DataTable( {
-        paging: false,
-        // "ordering": false,
-        info: false,
-        searching: false,
-        ordering: false,
-        order: [[ 1, 'asc' ]],
-    } );
+    }
 
-    // Reset values on new modal
-    $('#shared-object').on('shown.bs.modal', function() {
-        $("#select-train").focus();
-        $("#select-train").val("0");
-        document.getElementById('checkbox_all').checked = false;
-        table_suggest.state.clear();
-        table_suggest.clear().draw();
-    });
-    // to populate datatable
-    $('#select-train').on('change', function() {
-        populate_table(asking_inclusion, this.value)
-    });
-    // ajax call to populate
-    function populate_table(asking_inclusion, cmp_code){
+    function import_selected_suggestions() {
+        let checkboxValues = [];
+        $('input[name="suggest-id"]:checked').map(function () {
+            checkboxValues.push(this.value);
+        });
         $.ajax({
-            url: "{% url 'mecctable:get_mutual_by_cmp' %}",
-            type: "GET",
+            url: "{% url 'mecctable:import_objectslink' %}",
+            type: "POST",
             data: {
-                cmp_code: cmp_code,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                selected_id: checkboxValues,
                 asking_id: asking_inclusion,
-                training_id: {{ training.id }}
+                id_training: {{ training.id }}
             },
-            success: function(data) {
-                table_suggest = $('#suggest').DataTable( {
-                    columnDefs: [ {
-                       orderable: false,
-                       className: 'select-checkbox',
-                       targets:   0
-                    } ],
-                    select: {
-                       style:    'os',
-                       selector: 'td:first-child'
-                    },
-                    order: [[ 1, 'asc' ]],
-                    paging: false,
-                    info: false,
-//                    searching:false,
-                    destroy: true, // in order to reset early data
-                    data: data.suggest, // populate
-                    language: {
-                       processing:     "Traitement en cours...",
-                       search:         "Rechercher&nbsp;:",
-                       lengthMenu:     "Afficher _MENU_ &eacute;l&eacute;ments",
-                       info:           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-                       infoEmpty:      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
-                       infoFiltered:   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-                       infoPostFix:    "",
-                       loadingRecords: "Chargement en cours...",
-                       zeroRecords:    "Aucun &eacute;l&eacute;ment &agrave; afficher",
-                       emptyTablei:    " ",
-                       paginate: {
-                           first:      "Premier",
-                           previous:   "Pr&eacute;c&eacute;dent",
-                           next:       "Suivant",
-                           last:       "Dernier"
-                       },
-                       aria: {
-                           sortAscending:  ": activer pour trier la colonne par ordre croissant",
-                           sortDescending: ": activer pour trier la colonne par ordre décroissant"
-                       }
-                    },
-                    initComplete: function(){
-                        this.api().columns().every( function () {
-                            let column = this;
-                            let select = $('<select><option value ="" disabled>---</option></select>')
-                                .appendTo( $(column.footer()).empty() )
-                                .on( 'change', function() {
-                                    var val = $.fn.dataTable.util.escapeRegex(
-                                        $(this).val()
-                                    );
-                                    console.log(column.search( val ? '^'+val+'$' : '', true, false ));
-                                    column
-                                        .search( val ? '^'+val+'$' : '', true, false )
-                                        .draw();
-                                } );
-                            select.append('<option class="option_suggest" value="">Tous</option>');
-                            column.data().unique().sort().each( function( d, j ) {
-                                if(column.search() === '^'+d+'$'){
-                                    select.append( '<option value="'+d+'" selected="selected">'+d+'</option>' )
-                                } else {
-                                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                                }
-                            } );
-                        } );
-                    },
-                } );
+            success: function (data) {
+                $('#shared-object').modal('hide');
+                if (data.not_imported === true) {
+                    $('.top-right').notify({
+                        message: {text: 'Des objets n\'ont pas été importé car déjà existant au sein du même père.'},
+                        type: 'warning'
+                    }).show();
+                } else {
+                    $('.top-right').notify({
+                        message: {text: 'Tableau mis à jour.'},
+                        type: 'info'
+                    }).show();
+                }
+                setTimeout(function () {
+                    window.location.reload()
+                }, 5000)
+            },
+            error: function (data) {
+                console.log(data);
             }
         });
     }
-});
+
+    $(document).ready(function () {
+        // set datatable
+        let table_suggest = $('#suggest').DataTable({
+            paging: false,
+            // "ordering": false,
+            info: false,
+            searching: false,
+            ordering: false,
+            order: [[1, 'asc']],
+        });
+
+        let selecttrain = $('#select-train');
+
+        // Reset values on new modal
+        $('#shared-object').on('shown.bs.modal', function () {
+            selecttrain.focus();
+            selecttrain.val("0");
+            document.getElementById('checkbox_all').checked = false;
+            table_suggest.state.clear();
+            table_suggest.clear().draw();
+        });
+        // to populate datatable
+        selecttrain.on('change', function () {
+            populate_table(asking_inclusion, this.value)
+        });
+
+        // ajax call to populate
+        function populate_table(asking_inclusion, cmp_code) {
+            $.ajax({
+                url: "{% url 'mecctable:get_mutual_by_cmp' %}",
+                type: "GET",
+                data: {
+                    cmp_code: cmp_code,
+                    asking_id: asking_inclusion,
+                    training_id: {{ training.id }}
+                },
+                success: function (data) {
+                    table_suggest = $('#suggest').DataTable({
+                        columnDefs: [{
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets: 0
+                        }],
+                        select: {
+                            style: 'os',
+                            selector: 'td:first-child'
+                        },
+                        order: [[1, 'asc']],
+                        paging: false,
+                        info: false,
+//                    searching:false,
+                        destroy: true, // in order to reset early data
+                        data: data.suggest, // populate
+                        language: {
+                            processing: "Traitement en cours...",
+                            search: "Rechercher&nbsp;:",
+                            lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
+                            info: "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+                            infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                            infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                            infoPostFix: "",
+                            loadingRecords: "Chargement en cours...",
+                            zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                            emptyTablei: " ",
+                            paginate: {
+                                first: "Premier",
+                                previous: "Pr&eacute;c&eacute;dent",
+                                next: "Suivant",
+                                last: "Dernier"
+                            },
+                            aria: {
+                                sortAscending: ": activer pour trier la colonne par ordre croissant",
+                                sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                            }
+                        },
+                        initComplete: function () {
+                            this.api().columns().every(function () {
+                                let column = this;
+                                let select = $('<select><option value ="" disabled>---</option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                        );
+                                        console.log(column.search(val ? '^' + val + '$' : '', true, false));
+                                        column
+                                            .search(val ? '^' + val + '$' : '', true, false)
+                                            .draw();
+                                    });
+                                select.append('<option class="option_suggest" value="">Tous</option>');
+                                column.data().unique().sort().each(function (d, j) {
+                                    if (column.search() === '^' + d + '$') {
+                                        select.append('<option value="' + d + '" selected="selected">' + d + '</option>');
+                                    } else {
+                                        select.append('<option value="' + d + '">' + d + '</option>');
+                                    }
+                                });
+                            });
+                        },
+                    });
+                }
+            });
+        }
+    });
 </script>
