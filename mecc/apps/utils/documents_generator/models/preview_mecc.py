@@ -3,7 +3,7 @@ import re
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph, Table
+from reportlab.platypus import Paragraph, Table, CondPageBreak
 from reportlab.lib.units import cm
 
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
@@ -62,6 +62,7 @@ class PreviewMecc(PreviewMeccTable):
         self.write_preview_header()
         self.write_landscape_training_infos()
         self.write_derogs_and_adds()
+        self.story.append(CondPageBreak(6*cm))
         self.write_table_title()
         self.write_mecctable()
         self.document.build(

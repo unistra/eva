@@ -105,22 +105,23 @@ def generate(request):
                 date=request.GET.get('date'),
                 year=request.GET.get('year'),
             )
-        """
-        modèle C
-        """
-        trainings = trainings.filter(
-            id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
-        )
-        if trainings.count() == 0:
-            data['back_url'] = "/training/list_all_meccs/"
-            data['message'] = _("Aucune formation affichable.")
-            return render(request, template, data)
-        else:
-            task = task_generate_pdf_model_c.delay(
-                user=(request.user.first_name, request.user.last_name),
-                trainings=[training.id for training in trainings],
-                date=request.GET.get('date')
+        if request.GET.get('model') == 'c':
+            """
+            modèle C
+            """
+            trainings = trainings.filter(
+                id__in=[training.id for training in trainings if training.is_ECI_MECC is True]
             )
+            if trainings.count() == 0:
+                data['back_url'] = "/training/list_all_meccs/"
+                data['message'] = _("Aucune formation affichable.")
+                return render(request, template, data)
+            else:
+                task = task_generate_pdf_model_c.delay(
+                    user=(request.user.first_name, request.user.last_name),
+                    trainings=[training.id for training in trainings],
+                    date=request.GET.get('date')
+                )
     """
     modèle A
     """

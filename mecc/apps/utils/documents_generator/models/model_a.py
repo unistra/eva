@@ -8,7 +8,7 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.platypus import BaseDocTemplate, Paragraph, Table, PageBreak, Image, \
-    NextPageTemplate, Frame, PageTemplate, FrameBreak, Spacer
+    NextPageTemplate, Frame, PageTemplate, FrameBreak, Spacer, CondPageBreak
 from reportlab.platypus.doctemplate import _doNothing
 from reportlab.lib.units import cm
 
@@ -293,6 +293,7 @@ class ModelA(PreviewMecc):
                         'history' not in self.target \
                         else False
                 )
+                self.story.append(CondPageBreak(6*cm))
                 self.write_table_title()
                 self.write_mecctable()
                 self.story.append(PageBreak())
