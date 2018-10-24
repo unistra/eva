@@ -24,6 +24,7 @@
 {% else %}
     <div id="iframe_wrapper"></div>
 {% endif %}
+{% if task_id %}
 <script type="text/javascript">
     $(document).ready(function check_status() {
         $.getJSON("{% url 'doc_gen:get_pdf_task_status' task_id %}", function(data) {
@@ -53,4 +54,5 @@
         });
     });
 </script>
+{% endif %}
 {% endblock %}

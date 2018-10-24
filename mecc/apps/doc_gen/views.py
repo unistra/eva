@@ -105,7 +105,7 @@ def generate(request):
                 date=request.GET.get('date'),
                 year=request.GET.get('year'),
             )
-        if request.GET.get('model') == 'c':
+        else:
             """
             modèle C
             """
