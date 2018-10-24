@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.utils.text import slugify
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
@@ -89,11 +90,11 @@ class ModelA(PreviewMecc):
             self.cmp,
             self.goal.upper()
         )
-        self.filename = "MECC - %s-%s - %s - %s" % (
+        self.filename = slugify("MECC %s-%s %s %s" % (
             self.year, self.year+1,
-            self.cmp,
+            self.trainings.first().supply_cmp,
             self.goal.upper()
-        )
+        ))
 
     def doc_setup(self):
         self.set_doc_title()

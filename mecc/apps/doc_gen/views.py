@@ -165,7 +165,7 @@ def get_pdf_task_status(request, task_id):
 
 def get_pdf(request, task_id):
     task = TaskResult.objects.get(id=task_id)
-    filename = task.result.encode('utf-8').decode('unicode_escape')
+    filename = task.result
 
     try:
         return FileResponse(
