@@ -145,7 +145,7 @@ $(document).ready(function () {
         table_suggest.clear().draw();
     });
     // to populate datatable
-    $('#select-train').on('click', function() {
+    $('#select-train').on('change', function() {
         populate_table(asking_inclusion, this.value)
     });
     // ajax call to populate
@@ -219,7 +219,7 @@ $(document).ready(function () {
                                     select.append( '<option value="'+d+'">'+d+'</option>' )
                                 }
                             } );
-                        } );    
+                        } );
                     },
                 } );
             }
