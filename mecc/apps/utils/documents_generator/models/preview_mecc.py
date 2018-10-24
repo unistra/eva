@@ -84,8 +84,7 @@ class PreviewMecc(PreviewMeccTable):
         shared_adds = adds.filter(rule_gen_id__in=[derog.rule_gen_id for derog in derogs])
         table_derogs = []
         table_derogs_style = [
-            ('VALIGN', (0, 0), (0, -1), 'MIDDLE'),
-            ('VALIGN', (2, 0), (2, -1), 'MIDDLE'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('TOPPADDING', (0, 0), (-1, -1), 0),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
             ('LEFTPADDING', (0, 0), (-1, -1), 0),

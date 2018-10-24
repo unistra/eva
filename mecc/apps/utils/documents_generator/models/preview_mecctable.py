@@ -110,6 +110,12 @@ class PreviewMeccTable(Document):
             fontSize=8,
             fontName="Helvetica-Bold"
         ))
+        self.styles.add(ParagraphStyle(
+            name='InversedBigBold',
+            fontSize=11,
+            fontName="Helvetica-Bold",
+            textColor=colors.white,
+        ))
 
     def make_watermark_attributes(self, string='Prévisualisation', x=500, y=-75, rotation=40):
         self.watermark_string = string 
@@ -195,18 +201,21 @@ class PreviewMeccTable(Document):
         if self.reference == 'without':
             ref_label = ''
         elif self.reference == 'with_rof':
-            ref_label = "Référence ROF : %s" % self.training.ref_cpa_rof
+            ref_label = "Référence ROF : %s" % self.training.ref_cpa_rof \
+                if self.training.ref_cpa_rof is not None else ''
         elif self.reference == 'both':
             ref_label = "Référence ROF : %s\n\nRéférence APOGEE : %s" % (
-                self.training.ref_cpa_rof, 
-                self.training.ref_si_scol
+                self.training.ref_cpa_rof if self.training.ref_cpa_rof is not None \
+                    else '', 
+                self.training.ref_si_scol if self.training.ref_si_scol is not None \
+                    else ''
             )
         else:
             ref_label = "Référence APOGEE : %s" % self.training.ref_si_scol
 
         table = [
             [
-                "%s" % self.training.label,
+                Paragraph("%s" % self.training.label, self.styles['InversedBigBold']),
                 "%s - %s" % (
                     self.training.get_MECC_type_display(), 
                     self.training.get_session_type_display()
