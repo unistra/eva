@@ -652,7 +652,6 @@ class PreviewMeccTable(Document):
             mecctable_header_line_2.pop(1)
             mecctable_header_line_3.pop(1)
             if self.reference == 'without':
-                self.mecctable_header_line_1.pop(1)
                 mecctable_header_line_2.pop(1)
                 mecctable_header_line_3.pop(1)
 
@@ -671,8 +670,8 @@ class PreviewMeccTable(Document):
 
                 if self.training.session_type == '1':
                     big_table.extend([
-                        mecctable_header_line_2[:6],
-                        mecctable_header_line_3[:11]
+                        mecctable_header_line_2[:5],
+                        mecctable_header_line_3[:10]
                     ])
 
                     mecc_table_style.extend([

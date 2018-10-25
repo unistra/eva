@@ -62,7 +62,7 @@ class PreviewMecc(PreviewMeccTable):
         self.write_preview_header()
         self.write_landscape_training_infos()
         self.write_derogs_and_adds()
-        self.story.append(CondPageBreak(6*cm))
+        self.story.append(CondPageBreak(8*cm))
         self.write_table_title()
         self.write_mecctable()
         self.document.build(

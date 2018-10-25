@@ -293,7 +293,7 @@ class ModelA(PreviewMecc):
                         'history' not in self.target \
                         else False
                 )
-                self.story.append(CondPageBreak(6*cm))
+                self.story.append(CondPageBreak(8*cm))
                 self.write_table_title()
                 self.write_mecctable()
                 self.story.append(PageBreak())
