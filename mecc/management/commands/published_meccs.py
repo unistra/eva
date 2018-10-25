@@ -1,14 +1,12 @@
 from datetime import datetime
-from io import BytesIO
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from mecc.apps.training.models import Training
-from mecc.apps.utils.published_mecc_pdf import PublishedMeccPdf
+from mecc.apps.utils.documents_generator import Document
 from mecc.apps.utils.queries import currentyear
 from mecc.libs.storage.ceph import Ceph
-from mecc.apps.utils.documents_generator import Document
 
 
 class Command(BaseCommand):
@@ -33,7 +31,6 @@ class Command(BaseCommand):
                 model='e',
                 training=training
             )
-            print(type(pdf))
             url = self.save_to_ceph(training, pdf)
             training.published_mecc_url = url
             training.save(update_fields=['published_mecc_url'])
