@@ -44,6 +44,7 @@ class ModelE(PreviewMeccTable):
         self.p_page_height = (self.p_height - self.top_margin * 2)
         self.mecctable_header_line_1 = ['Enseignements'.upper(), '', '', '', '', '', 'Épreuves'.upper()]
         self.story = []
+        self.respforms = True
 
     def build_doc(self):
         self.write_training_header()
