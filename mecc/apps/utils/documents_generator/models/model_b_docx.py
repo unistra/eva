@@ -3,6 +3,7 @@ from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 
 from .model_a_docx import ModelADocx
 
+
 class ModelBDocx(ModelADocx):
 
     def build_doc(self):

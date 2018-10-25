@@ -3,15 +3,13 @@ import re
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import Paragraph, Table, CondPageBreak
 from reportlab.lib.units import cm
+from reportlab.platypus import Paragraph, Table, CondPageBreak
 
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
-from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 from mecc.apps.rules.models import Rule
-
+from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 from .preview_mecctable import PreviewMeccTable, LandscapeLeftNumberedCanvas
-from ..document import Document
+
 
 class PreviewMecc(PreviewMeccTable):
     def __init__(self, trainings=None, reference='both'):
@@ -97,13 +95,13 @@ class PreviewMecc(PreviewMeccTable):
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
             ('LEFTPADDING', (0, 0), (-1, -1), 0),
             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-            # ('GRID', (0, 0), (-1, -1), 0.5, colors.red), 
+            # ('GRID', (0, 0), (-1, -1), 0.5, colors.red),
         ]
         count_lines = -1
         self.story.append(
             Paragraph(
                 "<para>Dérogations et alinéas additionnels</para>",
-                self.styles['H1']               
+                self.styles['H1']
             )
         )
         if derogs or adds:
