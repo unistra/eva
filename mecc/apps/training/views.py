@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
@@ -28,7 +28,7 @@ from mecc.apps.rules.models import Rule, Paragraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
-    AdditionalParagraphForm
+    AdditionalParagraphForm, ExtraTrainingsForm
 from mecc.apps.training.utils import remove_training, consistency_check
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.utils.documents_generator import Document
@@ -664,7 +664,7 @@ votre formation. Merci de la rédiger ci-dessous :")
 @is_correct_respform
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule, old='N', template="training/form/edit_specific_paragraph.html"):
     data = {}
-
+    print("POST DONE")
     # CURRENT OBJECTS
     data['title'] = _("Dérogation")
     data['from_id'] = rule_id
@@ -682,7 +682,7 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
             code_year=currentyear().code_year,
             paragraph_gen_id=paragraph_id,
             training_id=training_id
-        ).count() > 0 
+        ).count() > 0
 
     # OLD OBJECTS
     old_year = currentyear().code_year - 1 if old == "Y" else None
@@ -716,16 +716,67 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
         sp.origin_id = old_sp.id if old_sp else sp.id
         sp.save()
 
-    data['form'] = SpecificParagraphDerogForm(instance=sp)
+    extra_trainings = Training.objects.\
+        filter(
+            code_year=training.code_year,
+            supply_cmp=training.supply_cmp,
+            degree_type=training.degree_type,
+            MECC_type=training.MECC_type).\
+        filter(
+            Q(date_val_cmp__isnull=True) \
+            | \
+            Q(date_val_cmp__isnull=False, date_res_des__isnull=False)).\
+        exclude(
+            id=training.id)
+
+    data['specific_form'] = SpecificParagraphDerogForm(
+        instance=sp,
+        prefix="spe"
+    )
+    data['extra_trainings_form'] = ExtraTrainingsForm(
+        queryset=extra_trainings,
+        prefix="ext"
+    )
+
     if created:
         sp.delete()
+
     if request.method == 'POST':
-        form = SpecificParagraphDerogForm(request.POST, instance=sp)
-        if form.is_valid():
-            form.save()
+        print("POST REALLY DONE")
+        specific_form = SpecificParagraphDerogForm(
+            data=request.POST,
+            instance=sp,
+            prefix="spe"
+        )
+        if data['can_apply_to_others']:
+            extra_trainings_form = ExtraTrainingsForm(
+                data=request.POST,
+                queryset=extra_trainings,
+                prefix="ext"
+            )
+        if specific_form.is_valid():
+            print("POST REALLY REALLY DONE")
+            specific_form.save()
+            try:
+                extra_trainings_form
+            except:
+                pass
+            else:
+                if extra_trainings_form.is_valid():
+                    for training_id in extra_trainings_form.cleaned_data['extra_trainings']:
+                        specific, created = SpecificParagraph.objects.\
+                            update_or_create(
+                                defaults=specific_form.cleaned_data,
+                                training=Training.objects.get(id=training_id),
+                                code_year=sp.code_year,
+                                rule_gen_id=sp.rule_gen_id,
+                                paragraph_gen_id=sp.paragraph_gen_id,
+                                origin_id=sp.origin_id
+                            )
             return redirect(
                 'training:specific_paragraph',
                 training_id=training.id, rule_id=rule_id)
+    print("POST DONE WITH ERRORS")
     return render(request, template, data)
 
 

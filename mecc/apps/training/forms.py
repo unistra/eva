@@ -1,4 +1,5 @@
 from ckeditor.widgets import CKEditorWidget
+from crispy_forms.bootstrap import StrictButton, Tab, TabHolder
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Submit
 from django import forms
@@ -41,7 +42,6 @@ class AdditionalParagraphForm(forms.ModelForm):
             'text_additional_paragraph'
         ]
 
-
 class SpecificParagraphDerogForm(forms.ModelForm):
     """
     Specific paragraph form
@@ -54,28 +54,13 @@ class SpecificParagraphDerogForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SpecificParagraphDerogForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
-            HTML("<b>ETAPE 1 :</b>{{text_derog|safe}}"),
+            HTML("{{text_derog|safe}}"),
             'text_specific_paragraph',
-            HTML("<b>ETAPE 2 :</b>{{text_motiv|safe}}"),
+            HTML("{{text_motiv|safe}}"),
             'text_motiv',
-            Div(
-                Submit(
-                    'add', _('Valider et fermer la fenêtre'),
-                    css_class="btn-primary btn btn-sm",
-                    ),
-                HTML("""
-                    <a class='btn-primary btn btn-sm'
-                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=from_id %} >
-                    Annuler et fermer la fenêtre </a>
-                     """),
-                HTML("""
-                    {% if can_apply_to_others %}<a class='btn-primary btn btn-sm'
-                    href='#'>Appliquer à d'autres formations</a>{% endif %}
-                     """),
-                css_class='buttons_list'
-            ),
-            )
+        )
 
     class Meta:
         model = SpecificParagraph
@@ -92,6 +77,23 @@ class SpecificParagraphDerogForm(forms.ModelForm):
 
         return self.cleaned_data
 
+class ExtraTrainingsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset')
+        super(ExtraTrainingsForm, self).__init__(*args, **kwargs)
+
+        self.fields['extra_trainings'] = forms.MultipleChoiceField(
+            choices=((training.id, training.label) for training in queryset),
+            widget=forms.CheckboxSelectMultiple(),
+            required=False
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            'extra_trainings'
+        )
 
 class RespTrainingForm(forms.ModelForm):
     class Meta:

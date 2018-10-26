@@ -437,3 +437,4 @@ FILES_UPLOAD_PATH = 'uploads/docs/%Y'
 
 CELERY_NAME = "mecc"
 CELERY_RESULT_BACKEND = "django-db"
+BROKER_URL = ""
