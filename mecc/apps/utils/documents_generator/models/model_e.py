@@ -1,25 +1,19 @@
 from io import BytesIO
-from math import modf
 
 from bs4 import BeautifulSoup as bs
-
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.pagesizes import A4, landscape, portrait
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm, cm
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import mm
 from reportlab.platypus import Image, BaseDocTemplate, Paragraph, Table, \
     TableStyle, NextPageTemplate, PageTemplate, Frame
-from reportlab.platypus.flowables import HRFlowable, PageBreak, Spacer
+from reportlab.platypus.flowables import HRFlowable, PageBreak
 
 from mecc.apps.institute.models import Institute
-from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.rules.models import Rule, Paragraph as RuleParagraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
-from mecc.apps.utils.pdfs import verticalText
-from mecc.apps.utils.queries import get_mecc_table_order
 from mecc.apps.years.models import UniversityYear
-
 from .preview_mecctable import PreviewMeccTable
 
 logo_uds_small = Image(
@@ -50,6 +44,7 @@ class ModelE(PreviewMeccTable):
         self.p_page_height = (self.p_height - self.top_margin * 2)
         self.mecctable_header_line_1 = ['Enseignements'.upper(), '', '', '', '', '', 'Épreuves'.upper()]
         self.story = []
+        self.respforms = True
 
     def build_doc(self):
         self.write_training_header()

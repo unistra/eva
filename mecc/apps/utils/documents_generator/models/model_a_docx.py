@@ -1,17 +1,16 @@
+from bs4 import BeautifulSoup as bs
 from django.db.models import Q
 from django.http import HttpResponse
-
 from docx import Document
 from docx.shared import Cm
-from bs4 import BeautifulSoup as bs
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.rules.models import Rule, Paragraph
-from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
+from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.years.models import UniversityYear
-
 from ..document import Document as Doc
+
 
 class ModelADocx(Doc):
     def __init__(self, reference, trainings):

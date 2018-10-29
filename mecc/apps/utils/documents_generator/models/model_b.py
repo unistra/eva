@@ -1,12 +1,10 @@
-from reportlab.lib import colors
 from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, NextPageTemplate, PageBreak, Table
 
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
-from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
-
+from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
 from .model_a import ModelA, LandscapeLeftNumberedCanvas
+
 
 class ModelB(ModelA):
     def __init__(self, **kwargs):

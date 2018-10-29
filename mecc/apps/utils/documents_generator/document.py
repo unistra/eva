@@ -3,6 +3,11 @@ from abc import ABCMeta, abstractmethod
 
 class Document(metaclass=ABCMeta):
 
+    training_types_for_which_to_display_30_ects = [
+        'DE', 'DT', 'UF', 'GE', 'IE', 'XA',
+        'DP', 'XB', 'DS', 'DF', 'PS', 'PA'
+    ]
+
     @staticmethod
     def generate(gen_type='pdf', model='a', **kwargs):
         if gen_type == 'doc':

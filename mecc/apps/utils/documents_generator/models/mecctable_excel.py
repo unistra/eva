@@ -9,9 +9,10 @@ import xlsxwriter
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.utils.queries import get_mecc_table_order
+from mecc.apps.utils.documents_generator.document import Document
 
 
-class MeccTableExcel:
+class MeccTableExcel(Document):
     COLOR_DARKBLUE = '#4682B3'
     COLOR_LIGHTBLUE = '#AFC3DD'
     COLOR_LIGHTGREY = '#D3D3D3'
@@ -27,8 +28,6 @@ class MeccTableExcel:
         self.current_row = 0
 
         self.output = BytesIO()
-
-
 
     def build_doc(self):
         workbook = xlsxwriter.Workbook(self.output)
@@ -59,9 +58,8 @@ class MeccTableExcel:
             links = get_mecc_table_order([e for e in root_link], [], current_structures,
                                          current_links, current_exams, all_exam=True)
 
-            self.current_row = 8
             for link in links:
-                self.write_training_data(link, worksheet, training_is_ccct)
+                self.write_training_data(link, worksheet, training, training_is_ccct)
 
         workbook.close()
         self.output.seek(0)
@@ -74,7 +72,7 @@ class MeccTableExcel:
 
         return self.response
 
-    def write_training_data(self, what, worksheet, training_is_ccct):
+    def write_training_data(self, what, worksheet, training, training_is_ccct):
         self.current_row += 1
 
         struct = what.get('structure')
@@ -88,6 +86,14 @@ class MeccTableExcel:
                 return int(whole)
             else:
                 return str(number).rstrip('0')
+
+        def number_of_credits():
+            if training.degree_type.ROF_code \
+                    in self.training_types_for_which_to_display_30_ects \
+                    and struct.nature == 'SE':
+                return '30'
+            else:
+                return struct.ECTS_credit or '-'
 
         def write_exams(list_1, list_2, worksheet, cell_format):
 
@@ -148,36 +154,59 @@ class MeccTableExcel:
         worksheet.write(self.current_row, 1,
                         struct.get_respens_name if not struct.external_name else struct.external_name, cell_format)
         worksheet.write(self.current_row, 2, ref, cell_format)
-        worksheet.write(self.current_row, 3, struct.ECTS_credit if struct.ECTS_credit else '-', cell_format)
+        worksheet.write(
+            self.current_row,
+            3,
+            number_of_credits(),
+            cell_format
+        )
         worksheet.write(self.current_row, 4, formatted(link.coefficient) if link.coefficient else '', cell_format)
         worksheet.write(self.current_row, 5, link.eliminatory_grade, cell_format)
         write_exams(exams_1, exams_2, worksheet, cell_format)
 
         for e in what.get('children'):
-            self.write_training_data(e, worksheet, training_is_ccct)
+            self.write_training_data(e, worksheet, training, training_is_ccct)
 
     def write_training_headers(self, worksheet, training):
         if training.MECC_type == 'E':
             mecc_type = 'Convocation'
         else:
             mecc_type = 'CC/CT'
-        worksheet.merge_range('A7:F7', 'Objets', self.formats['header4'])
-        worksheet.merge_range('G7:R7', 'Épreuves', self.formats['header5'])
-        worksheet.merge_range('A8:F8', '', self.formats['default'])
-        worksheet.merge_range('G8:M8', 'Session principale', self.formats['header6'])
-        worksheet.merge_range('N8:R8', 'Session de rattrapage', self.formats['header7'])
+        if training.session_type == '1':
+            worksheet.merge_range('A8:F8', 'Objets', self.formats['header4'])
+            worksheet.merge_range('G8:L8', 'Épreuves', self.formats['header5'])
+            worksheet.merge_range('A9:F9', '', self.formats['default'])
+            worksheet.merge_range('G9:L9', 'Session unique', self.formats['header6'])
+        else:
+            worksheet.merge_range('A7:F7', 'Objets', self.formats['header4'])
+            worksheet.merge_range('G7:R7', 'Épreuves', self.formats['header5'])
+            worksheet.merge_range('A8:F8', '', self.formats['default'])
+            worksheet.merge_range('G8:M8', 'Session principale', self.formats['header6'])
+            worksheet.merge_range('N8:R8', 'Session de rattrapage', self.formats['header7'])
+
+        if training.session_type == '1':
+            self.current_row = 9
+        else:
+            self.current_row = 8
+
         col = 0
         for header in ('Intitulé', 'Responsable', 'Réf', 'ECTS', 'Coefficient', 'Seuil de compensation'):
-            worksheet.write(8, col, header, self.formats['default'])
+            worksheet.write(self.current_row, col, header, self.formats['default'])
             col = col + 1
         col = 6
-        for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', mecc_type, 'Seuil de compensation', 'Report session 2'):
-            worksheet.write(8, col, header, self.formats['header8'])
-            col = col + 1
-        col = 13
-        for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', 'Seuil de compensation'):
-            worksheet.write(8, col, header, self.formats['header9'])
-            col = col + 1
+        if training.session_type == '1':
+            for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', mecc_type, 'Seuil de compensation'):
+                worksheet.write(self.current_row, col, header, self.formats['header8'])
+                col = col + 1
+        else:
+            for header in (
+            'Coefficient', 'Intitulé', 'Type', 'Durée', mecc_type, 'Seuil de compensation', 'Report session 2'):
+                worksheet.write(self.current_row, col, header, self.formats['header8'])
+                col = col + 1
+            col = 13
+            for header in ('Coefficient', 'Intitulé', 'Type', 'Durée', 'Seuil de compensation'):
+                worksheet.write(self.current_row, col, header, self.formats['header9'])
+                col = col + 1
 
     def write_worksheet_headers(self, institute, worksheet, training):
         respforms = ', '.join([e for e in training.get_respform_names])
@@ -191,18 +220,34 @@ class MeccTableExcel:
             ref_label = "Réf. ROF : %s\nRéf. APOGEE : %s" % (training.ref_cpa_rof, training.ref_si_scol)
         else:
             ref_label = "Réf. APOGEE : %s" % training.ref_si_scol
-        worksheet.merge_range('A1:R1', "Modalités d'évaluation des connaissances et des compétences",
-                              self.formats['header1'])
-        worksheet.merge_range('A2:R2', "Année universitaire %s/%s" % (self.year, int(self.year) + 1), self.formats['header2'])
-        worksheet.merge_range('A3:R3', institute.label, self.formats['header2'])
-        worksheet.merge_range('A4:R4', '')
-        worksheet.merge_range('A5:F5', training.label, self.formats['header3'])
-        worksheet.merge_range('G5:L5', '%s - %s' % (mecc_type, session_type), self.formats['header3'])
-        worksheet.merge_range('M5:R5', ref_label, self.formats['header3'])
-        worksheet.set_row(4, 20)
-        worksheet.merge_range('A6:R6', '', self.formats['default'])
-        worksheet.write_rich_string('A6', self.formats['bold'], 'Responsables : ',
-                                    self.formats['default'], respforms, self.formats['default'])
+        if training.session_type == '1':
+            worksheet.merge_range('A1:L1', "Modalités d'évaluation des connaissances et des compétences",
+                                  self.formats['header1'])
+            worksheet.merge_range('A2:L2', "Année universitaire %s/%s" % (self.year, int(self.year) + 1),
+                                  self.formats['header2'])
+            worksheet.merge_range('A3:L3', institute.label, self.formats['header2'])
+            worksheet.merge_range('A4:L4', '')
+            worksheet.merge_range('A5:F5', training.label, self.formats['header3'])
+            worksheet.merge_range('G5:L5', '%s - %s' % (mecc_type, session_type), self.formats['header3'])
+            worksheet.merge_range('A6:L6', ref_label, self.formats['default'])
+            worksheet.set_row(4, 20)
+            worksheet.merge_range('A7:L7', '', self.formats['default'])
+            worksheet.write_rich_string('A7', self.formats['bold'], 'Responsables : ',
+                                        self.formats['default'], respforms, self.formats['default'])
+        else:
+            worksheet.merge_range('A1:R1', "Modalités d'évaluation des connaissances et des compétences",
+                                  self.formats['header1'])
+            worksheet.merge_range('A2:R2', "Année universitaire %s/%s" % (self.year, int(self.year) + 1),
+                                  self.formats['header2'])
+            worksheet.merge_range('A3:R3', institute.label, self.formats['header2'])
+            worksheet.merge_range('A4:R4', '')
+            worksheet.merge_range('A5:F5', training.label, self.formats['header3'])
+            worksheet.merge_range('G5:L5', '%s - %s' % (mecc_type, session_type), self.formats['header3'])
+            worksheet.merge_range('M5:R5', ref_label, self.formats['header3'])
+            worksheet.set_row(4, 20)
+            worksheet.merge_range('A6:R6', '', self.formats['default'])
+            worksheet.write_rich_string('A6', self.formats['bold'], 'Responsables : ',
+                                        self.formats['default'], respforms, self.formats['default'])
 
     def define_formats(self, workbook):
         formats = {

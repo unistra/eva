@@ -2,21 +2,18 @@ import datetime
 
 from django.conf import settings
 from django.utils.text import slugify
-
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
-from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import cm
 from reportlab.platypus import BaseDocTemplate, Paragraph, Table, PageBreak, Image, \
     NextPageTemplate, Frame, PageTemplate, FrameBreak, Spacer, CondPageBreak
 from reportlab.platypus.doctemplate import _doNothing
-from reportlab.lib.units import cm
 
-from mecc.apps.mecctable.models import ObjectsLink, StructureObject
-from mecc.apps.training.models import Training, SpecificParagraph
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
+from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
-
 from .preview_mecc import PreviewMecc
 from .preview_mecctable import LandscapeLeftNumberedCanvas
 
@@ -670,7 +667,7 @@ class ModelA(PreviewMecc):
         canvas.setFillGray(0.2)
         canvas.setFont("Helvetica", 8)
         canvas.drawString(cm, 0.5*cm, footer)
-        
+
         canvas.restoreState()
 
     def publish_footer(self, canvas, doc):

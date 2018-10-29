@@ -3,20 +3,19 @@ from io import BytesIO
 import itertools
 
 from django.http import HttpResponse
-from django.conf import settings
 
 from reportlab.pdfgen import canvas
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Frame
 from reportlab.platypus.flowables import Flowable
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm
 
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.training.models import Training
-from mecc.apps.utils.queries import currentyear, get_mecc_table_order
+from mecc.apps.utils.queries import get_mecc_table_order
 
 from ..document import Document
 
@@ -118,7 +117,7 @@ class PreviewMeccTable(Document):
         ))
 
     def make_watermark_attributes(self, string='Prévisualisation', x=500, y=-75, rotation=40):
-        self.watermark_string = string 
+        self.watermark_string = string
         self.watermark_position_x = x
         self.watermark_position_y = y
         self.watermark_rotation = rotation
@@ -206,7 +205,7 @@ class PreviewMeccTable(Document):
         elif self.reference == 'both':
             ref_label = "Référence ROF : %s\n\nRéférence APOGEE : %s" % (
                 self.training.ref_cpa_rof if self.training.ref_cpa_rof is not None \
-                    else '', 
+                    else '',
                 self.training.ref_si_scol if self.training.ref_si_scol is not None \
                     else ''
             )
@@ -217,7 +216,7 @@ class PreviewMeccTable(Document):
             [
                 Paragraph("%s" % self.training.label, self.styles['InversedBigBold']),
                 "%s - %s" % (
-                    self.training.get_MECC_type_display(), 
+                    self.training.get_MECC_type_display(),
                     self.training.get_session_type_display()
                 ),
                 ref_label,
@@ -304,7 +303,7 @@ class PreviewMeccTable(Document):
             id_training=self.training.id).order_by(
                 'order_in_child').distinct()
         links = get_mecc_table_order(
-            [e for e in root_link], 
+            [e for e in root_link],
             [],
             current_structures, current_links,
             current_exams, all_exam=True
@@ -413,10 +412,6 @@ class PreviewMeccTable(Document):
                 else Paragraph(ref_scol, self.styles['CenterSmall']) if self.reference == 'with_si' \
                 else Paragraph('', self.styles['CenterSmall'])
 
-            display_30_ects_credits = [
-                'DE', 'DT', 'UF', 'GE', 'IE', 'XA',
-                'DP', 'XB', 'DS', 'DF', 'PS', 'PA'
-            ]
             object_line = [
                 Paragraph(
                     "<para leftIndent=%s>%s</para> " % (what.get('rank')*10,struct.label),
@@ -431,8 +426,8 @@ class PreviewMeccTable(Document):
                         self.styles['CenterSmallItalic']
                 ),
                 [ref_data],
-                '30' if self.training.degree_type.ROF_code in display_30_ects_credits\
-                    and what.get('rank') == 0\
+                '30' if self.training.degree_type.ROF_code in self.training_types_for_which_to_display_30_ects\
+                    and struct.nature == 'SE'\
                     else struct.ECTS_credit if struct.ECTS_credit else '-',
                 formated(link.coefficient) if link.coefficient else '',
                 link.eliminatory_grade,
