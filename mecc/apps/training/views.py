@@ -625,6 +625,10 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['title'] = _("Alinéa additionnel")
     rule = data['rule'] = Rule.objects.get(id=rule_id)
     data['from_id'] = rule_id
+    data['can_apply_to_others'] = ((
+        is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
+        or 'DES1' in [e.name for e in request.user.groups.all()] \
+        or request.user.is_superuser)
     old_year = currentyear().code_year - 1
     old_additional = AdditionalParagraph.objects.filter(
         code_year=old_year, rule_gen_id=n_rule).first() if old == 'Y' else None
@@ -641,7 +645,14 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
         origin_id=old_additional.id
     )
 
-    data['form'] = AdditionalParagraphForm(instance=additional)
+    data['add_form'] = AdditionalParagraphForm(
+        instance=additional,
+        prefix='add'
+    )
+    data['extra_trainings_form'] = ExtraTrainingsForm(
+        training=training,
+        prefix="ext"
+    )
 # Delete temporary additional paragraph if created
     if created:
         additional.origin_id = additional.id + 1
@@ -651,9 +662,34 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['additional'] = _("Vous souhaitez ajouter un alinéa à cette règle pour \
 votre formation. Merci de la rédiger ci-dessous :")
     if request.method == 'POST':
-        form = AdditionalParagraphForm(request.POST, instance=additional)
-        if form.is_valid():
-            form.save()
+        add_form = AdditionalParagraphForm(
+            request.POST,
+            instance=additional,
+            prefix='add'
+        )
+        if data['can_apply_to_others']:
+            extra_trainings_form = ExtraTrainingsForm(
+                data=request.POST,
+                training=training,
+                prefix="ext"
+            )
+        if add_form.is_valid():
+            add_form.save()
+            try:
+                extra_trainings_form
+            except:
+                pass
+            else:
+                if extra_trainings_form.is_valid():
+                    for training_id in extra_trainings_form.cleaned_data['extra_trainings']:
+                        add, created = AdditionalParagraph.objects.\
+                            update_or_create(
+                                defaults=add_form.cleaned_data,
+                                training=Training.objects.get(id=training_id),
+                                code_year=additional.code_year,
+                                rule_gen_id=additional.rule_gen_id,
+                                origin_id=additional.origin_id
+                            )
             return redirect(
                 'training:specific_paragraph',
                 training_id=training_id, rule_id=rule_id)
@@ -677,12 +713,12 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     data['can_apply_to_others'] = ((
         is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
         or 'DES1' in [e.name for e in request.user.groups.all()] \
-        or request.user.is_superuser) \
-        and SpecificParagraph.objects.filter(
-            code_year=currentyear().code_year,
-            paragraph_gen_id=paragraph_id,
-            training_id=training_id
-        ).count() > 0
+        or request.user.is_superuser) # \
+        # and SpecificParagraph.objects.filter(
+        #     code_year=currentyear().code_year,
+        #     paragraph_gen_id=paragraph_id,
+        #     training_id=training_id
+        # ).count() > 0
 
     # OLD OBJECTS
     old_year = currentyear().code_year - 1 if old == "Y" else None
@@ -716,25 +752,12 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
         sp.origin_id = old_sp.id if old_sp else sp.id
         sp.save()
 
-    extra_trainings = Training.objects.\
-        filter(
-            code_year=training.code_year,
-            supply_cmp=training.supply_cmp,
-            degree_type=training.degree_type,
-            MECC_type=training.MECC_type).\
-        filter(
-            Q(date_val_cmp__isnull=True) \
-            | \
-            Q(date_val_cmp__isnull=False, date_res_des__isnull=False)).\
-        exclude(
-            id=training.id)
-
     data['specific_form'] = SpecificParagraphDerogForm(
         instance=sp,
         prefix="spe"
     )
     data['extra_trainings_form'] = ExtraTrainingsForm(
-        queryset=extra_trainings,
+        training=training,
         prefix="ext"
     )
 
@@ -742,7 +765,6 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
         sp.delete()
 
     if request.method == 'POST':
-        print("POST REALLY DONE")
         specific_form = SpecificParagraphDerogForm(
             data=request.POST,
             instance=sp,
@@ -751,11 +773,10 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
         if data['can_apply_to_others']:
             extra_trainings_form = ExtraTrainingsForm(
                 data=request.POST,
-                queryset=extra_trainings,
+                training=training,
                 prefix="ext"
             )
         if specific_form.is_valid():
-            print("POST REALLY REALLY DONE")
             specific_form.save()
             try:
                 extra_trainings_form
@@ -776,7 +797,6 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
             return redirect(
                 'training:specific_paragraph',
                 training_id=training.id, rule_id=rule_id)
-    print("POST DONE WITH ERRORS")
     return render(request, template, data)
 
 

@@ -101,7 +101,11 @@
             {% if can_apply_to_others %}
             <div class="tab-content">
                 <div class="tab-pane active" id="one">
-                    {% crispy specific_form %}
+                    {% if specific_form %}
+                        {% crispy specific_form %}
+                    {% else %}
+                        {% crispy add_form %}
+                    {% endif %}
                     <div class="buttons_list">
                         <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
                         <button type="button" class="btn btn-sm btn-primary btnNext">Etape 2 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
@@ -117,7 +121,11 @@
                 </div>
             </div>
             {% else %}
-                {% crispy specific_form %}
+                {% if specific_form %}
+                    {% crispy specific_form %}
+                {% else %}
+                    {% crispy add_form %}
+                {% endif %}
                 <div class="buttons_list">
                     <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
                     <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
