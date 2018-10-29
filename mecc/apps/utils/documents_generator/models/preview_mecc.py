@@ -1,5 +1,7 @@
 import re
 
+from django.db.models import Q
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.styles import ParagraphStyle
@@ -78,9 +80,17 @@ class PreviewMecc(PreviewMeccTable):
 
     def write_derogs_and_adds(self, motivations=True):
 
-        rules = Rule.objects.filter(code_year=self.training.code_year)
-        derogs = SpecificParagraph.objects.filter(training_id=self.training)
+        derogs = SpecificParagraph.objects.\
+            filter(training_id=self.training).\
+            order_by('paragraph_gen_id')
         adds = AdditionalParagraph.objects.filter(training_id=self.training)
+        rules = Rule.objects.\
+            filter(code_year=self.training.code_year).\
+            filter(
+                Q(id__in=[derog.rule_gen_id for derog in derogs]) \
+                | \
+                Q(id__in=[add.rule_gen_id for add in adds])
+            )
 
         shared_adds = adds.filter(rule_gen_id__in=[derog.rule_gen_id for derog in derogs])
         table_derogs = []
@@ -97,55 +107,61 @@ class PreviewMecc(PreviewMeccTable):
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
             ('LEFTPADDING', (0, 0), (-1, -1), 0),
             ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-            # ('GRID', (0, 0), (-1, -1), 0.5, colors.red), 
+            # ('GRID', (0, 0), (-1, -1), 0.5, colors.red),
         ]
         count_lines = -1
         self.story.append(
             Paragraph(
                 "<para>Dérogations et alinéas additionnels</para>",
-                self.styles['H1']               
+                self.styles['H1']
             )
         )
-        if derogs or adds:
+        if rules:
             if derogs:
-                for derog in derogs.order_by('rule_gen_id'):
-                    count_lines += 2
-                    table_derogs.extend(
-                        [[Paragraph(
-                            rules.get(id=derog.rule_gen_id).label,
+                for rule in rules.filter(id__in=[derog.rule_gen_id for derog in derogs]):
+                    count_lines += 1
+                    table_derogs.append(
+                        [Paragraph(
+                            rule.label,
                             style=self.styles['H2']
-                        )],
-                        [
-                            Paragraph(
-                                "<para textColor=steelblue><b>(D)</b></para>",
-                                style=self.styles['CenterNormal']
-                            ),
-                            Table(
-                                [[self.clean_up(derog.text_specific_paragraph)]],
-                                style=subtable_style,
-                            ),
-                            Paragraph(
-                                "<para textColor=red><u>Motif de la dérogation</u> : %s" \
-                                    % derog.text_motiv,
-                                style=self.styles['Normal']
-                            ) if motivations else ''
-                        ]]
+                        )]
                     )
                     table_derogs_style.extend([
-                        ('SPAN', (0, count_lines-1), (-1, count_lines-1)),
-                        ('TOPPADDING', (0, count_lines-1), (-1, count_lines-1), 0),
-                        ('BOTTOMPADDING', (0, count_lines-1), (-1, count_lines-1), 0),
-                        ('TOPPADDING', (0, count_lines), (-1, count_lines), 3),
-                        ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 3),
-                        ('RIGHTPADDING', (1, count_lines), (1, count_lines), 3),
-                        ('LEFTPADDING', (2, count_lines), (2, count_lines), 3),
+                        ('SPAN', (0, count_lines), (-1, count_lines)),
+                        ('TOPPADDING', (0, count_lines), (-1, count_lines), 0),
+                        ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 0),
                     ])
-                    if motivations :
-                        table_derogs_style.append(
-                            ('LINEAFTER', (1, count_lines), (1, count_lines), 0.5, colors.red),
+                    for derog in derogs.filter(rule_gen_id=rule.id):
+                        count_lines += 1
+                        table_derogs.append(
+                            [
+                                Paragraph(
+                                    "<para textColor=steelblue><b>(D)</b></para>",
+                                    style=self.styles['CenterNormal']
+                                ),
+                                Table(
+                                    [[self.clean_up(derog.text_specific_paragraph)]],
+                                    style=subtable_style,
+                                ),
+                                Paragraph(
+                                    "<para textColor=red><u>Motif de la dérogation</u> : %s" \
+                                        % derog.text_motiv,
+                                    style=self.styles['Normal']
+                                ) if motivations else ''
+                            ]
                         )
+                        table_derogs_style.extend([
+                            ('TOPPADDING', (0, count_lines), (-1, count_lines), 3),
+                            ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 3),
+                            ('RIGHTPADDING', (1, count_lines), (1, count_lines), 3),
+                            ('LEFTPADDING', (2, count_lines), (2, count_lines), 3),
+                        ])
+                        if motivations:
+                            table_derogs_style.append(
+                                ('LINEAFTER', (1, count_lines), (1, count_lines), 0.5, colors.red),
+                            )
 
-                    if shared_adds and derog.rule_gen_id in [add.rule_gen_id for add in shared_adds]:
+                    if shared_adds and rule.id in [add.rule_gen_id for add in shared_adds]:
                         add = shared_adds.get(rule_gen_id=derog.rule_gen_id).text_additional_paragraph
                         count_lines += 1
                         table_derogs.append([
@@ -166,32 +182,38 @@ class PreviewMecc(PreviewMeccTable):
             if adds:
                 if shared_adds:
                     adds = adds.exclude(id__in=[add.id for add in shared_adds])
-                for add in adds.order_by('rule_gen_id'):
-                    count_lines += 2
-                    table_derogs.extend(
-                        [[Paragraph(
-                            rules.get(id=add.rule_gen_id).label,
+                for rule in rules.filter(id__in=[add.rule_gen_id for add in adds]):
+                    count_lines += 1
+                    table_derogs.append(
+                        [Paragraph(
+                            rule.label,
                             style=self.styles['H2']
-                        )],
-                        [
-                            Paragraph(
-                                "<para textColor=green><b>(A)</b></para>",
-                                style=self.styles['CenterNormal']
-                            ),
-                            Table(
-                                [[self.clean_up(add.text_additional_paragraph)]],
-                                style=subtable_style,
-                            ),
-                            ""
-                        ]]
+                        )]
                     )
                     table_derogs_style.extend([
-                        ('SPAN', (0, count_lines-1), (-1, count_lines-1)),
-                        ('TOPPADDING', (0, count_lines-1), (-1, count_lines-1), 0),
-                        ('BOTTOMPADDING', (0, count_lines-1), (-1, count_lines-1), 0),
-                        ('TOPPADDING', (0, count_lines), (-1, count_lines), 3),
-                        ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 3),
+                        ('SPAN', (0, count_lines), (-1, count_lines)),
+                        ('TOPPADDING', (0, count_lines), (-1, count_lines), 0),
+                        ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 0),
                     ])
+                    for add in adds.filter(rule_gen_id=rule.id):
+                        count_lines += 1
+                        table_derogs.append(
+                            [
+                                Paragraph(
+                                    "<para textColor=green><b>(A)</b></para>",
+                                    style=self.styles['CenterNormal']
+                                ),
+                                Table(
+                                    [[self.clean_up(add.text_additional_paragraph)]],
+                                    style=subtable_style,
+                                ),
+                                ""
+                            ]
+                        )
+                        table_derogs_style.extend([
+                            ('TOPPADDING', (0, count_lines), (-1, count_lines), 3),
+                            ('BOTTOMPADDING', (0, count_lines), (-1, count_lines), 3),
+                        ])
             self.story.append(
                 Table(
                     table_derogs,
