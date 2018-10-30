@@ -111,8 +111,8 @@ def test():
     env.server_ip = ''
     env.no_shared_sessions = False
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/wildcard.u-strasbg.fr-cert.pem'
-    env.path_to_cert_key = '/etc/ssl/private/wildcard.u-strasbg.fr-key.pem'
+    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
     env.goal = 'test'
     env.socket_port = '8030'
     env.socket_host = '127.0.0.1'
@@ -146,8 +146,8 @@ def preprod():
     env.server_ip = '130.79.254.28'
     env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr.pem'
-    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr.key'
+    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
     env.goal = 'preprod'
     env.socket_port = '8012'
     env.map_settings = {
@@ -161,7 +161,7 @@ def preprod():
         'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
         'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
         'ceph_bucket': "CEPH_STORAGE_BUCKET",
-	'rabbitmq_password': 'RABBITMQ_PASSWORD',
+        'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
     env.rabbitmq_server = env.roledefs['broker'][0]
     execute(build_env)
@@ -184,8 +184,8 @@ def prod():
     env.server_ip = '130.79.254.18'
     env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/wildcard.unistra.fr-cert-chained.pem'
-    env.path_to_cert_key = '/etc/ssl/private/wildcard.unistra.fr-key.pem'
+    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
     env.goal = 'prod'
     env.socket_port = '8032'
     env.map_settings = {
@@ -199,7 +199,7 @@ def prod():
         'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
         'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
         'ceph_bucket': "CEPH_STORAGE_BUCKET",
-	'rabbitmq_password': 'RABBITMQ_PASSWORD',
+        'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
     env.rabbitmq_server = env.roledefs['broker'][0]
     execute(build_env)
