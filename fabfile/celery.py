@@ -97,7 +97,9 @@ def install_celery():
                     chown=True,
                     mode='755'
                 )
-            fabric.api.sudo('systemctl daemon-reload')
+            # Registration of the new services
+            for service in [celery_service_name(), celerybeat_service_name()]:
+                fabric.api.sudo('systemctl enable %s.service' % service)
         # if the system doesn't use systemd, we assume that it uses initd
         else:
             # Configure the celery file in /etc/init.d
@@ -113,6 +115,10 @@ def install_celery():
                 )
                 fabric.api.sudo('chmod 755 %s' % celery_service_name())
                 fabric.api.sudo('chmod 755 %s' % celerybeat_service_name())
+
+            # Registration of the new services
+            for service in [celery_service_name(), celerybeat_service_name()]:
+                fabric.api.sudo('update-rc.d %s defaults' % service)
 
         # Configure the celery conf files in /etc/default
         celeryd_path = join(sep, 'etc', 'default')
@@ -139,6 +145,7 @@ def celery_start():
     """ Starts celery """
     if not celery_started():
         if is_systemd():
+            fabric.api.sudo('systemctl daemon-reload')
             fabtools.systemd.start(celery_service_name())
         else:
             fabtools.service.start(celery_service_name())
@@ -150,6 +157,7 @@ def celerybeat_start():
     """ Starts celerybeat """
     if not celerybeat_started():
         if is_systemd():
+            fabric.api.sudo('systemctl daemon-reload')
             fabtools.systemd.start(celerybeat_service_name)
         else:
             fabtools.service.start(celerybeat_service_name())
@@ -165,6 +173,7 @@ def celery_restart():
     else:
         fabric.api.puts("celery-mecc started")
         if is_systemd():
+            fabric.api.sudo('systemctl daemon-reload')
             fabtools.systemd.restart(celery_service_name())
         else:
             fabtools.service.restart(celery_service_name())
@@ -176,6 +185,7 @@ def celerybeat_restart():
         fabric.api.execute(celerybeat_start)
     else:
         if is_systemd():
+            fabric.api.sudo('systemctl daemon-reload')
             fabtools.systemd.stop(celerybeat_service_name())
             fabtools.systemd.start(celerybeat_service_name())
         else:
