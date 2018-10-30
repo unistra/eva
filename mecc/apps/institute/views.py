@@ -93,6 +93,17 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (
             current_year, current_year + 1))
+    data['year_object'] = currentyear()
+    data['published_meccs'] = Training.objects.filter(
+        is_used=True,
+        code_year=current_year,
+        supply_cmp=institute.code,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
 
     return render(request, template, data)
 
