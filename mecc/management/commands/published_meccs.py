@@ -80,7 +80,7 @@ class Command(BaseCommand):
         return trainings
 
     def make_filename(self, training):
-        filename = 'eva/{year}/{id}-{ref_rof}.pdf'.format(
+        filename = '{year}/{id}-{ref_rof}.pdf'.format(
             year=training.code_year,
             id=training.id,
             ref_rof=training.ref_cpa_rof
