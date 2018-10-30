@@ -1,20 +1,58 @@
 {% extends "base.html" %} {% load i18n %} {% load staticfiles %}
 
 {% block page-header %}
-	<div class="alert alert-info show" role="alert">
-        {% trans 'Génération du document MECC en cours. Merci de patienter.' %}
+{% if not message %}
+	<div id="generation_status" class="alert alert-info show" role="alert">
+        <span class="glyphicon glyphicon-refresh glyphicon-spin"></span>
+        {% trans ' Génération du document MECC en cours. Merci de patienter.' %}
 	</div>
+{% endif %}
 {% endblock %}
 
 {% block app_content %}
-    <iframe src="/doc_gen/dispatch/?{{url}}" style="width:100%;height:100vh">
-    </iframe>
-    <script type="text/javascript">
-        $("iframe").parents("div")
-                  .css("width", "100%")
-                  .css("height", "100vh");
-        $("iframe").load(function() {
-            $(".alert").alert('close');
+{% if message %}
+    <h1>{{message}}</h1>
+    {% if back_url %}
+    <br>
+    <a href="{{back_url}}" class="btn btn-default" type="button">{%trans 'Retour'%}</a>
+    {%endif%}
+    <style>
+        h1 {
+            font-size: 1.5em;
+        }
+    </style>
+{% else %}
+    <div id="iframe_wrapper"></div>
+{% endif %}
+{% if task_id %}
+<script type="text/javascript">
+    $(document).ready(function check_status() {
+        $.getJSON("{% url 'doc_gen:get_pdf_task_status' task_id %}", function(data) {
+            if (data['status'] == 'SUCCESS') {
+                console.log("SUCCESS");
+                $("#iframe_wrapper").append(
+                    "<iframe src=\"{% url 'doc_gen:get_pdf' task_id %}\" style=\"width:100%;height:100vh\"></iframe>"
+                );
+                $(".alert").alert('close');
+            }
+            if (data['status'] == 'FAILURE') {
+                console.log("FAILURE");
+                $("#generation_status")
+                    .toggleClass("alert-info", false)
+                    .toggleClass("alert-danger", true)
+                    .html(
+                        '<span class="glyphicon glyphicon-alert"></span>'+
+                        "{% trans ' La génération du document MECC a échoué. Merci de contacter votre administrateur en lui précisant le numéro de génération' %}"+" {{ task_id }}."
+                    );
+            }
+            if (data['status'] == 'PENDING') {
+                console.log("PENDING");
+                setTimeout(function() {
+                    check_status();
+                }, 2000);
+            }
         });
-    </script>
+    });
+</script>
+{% endif %}
 {% endblock %}

@@ -4,11 +4,20 @@
      id="{{a.link.id}}">
 
     <!-- mecc-label -->
-    <span class="mecc-label">
-        {% for i in a.loop %}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {% endfor %}
+    <span class="mecc-label mecc-label-r{{ a.rank }}">
         <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
+        {% if a.rank == 0 and can_edit %}
+            <a href="#" class="order-semester-down" data-id="{{ a.link.id }}" data-training="{{ training.id }}"
+               data-parent-id="{{ a.link.id_parent }}"
+               data-order="{{ a.link.order_in_child }}" data-move="down">
+                <span class="glyphicon glyphicon-arrow-down" title="Déplacer le {{ a.structure.nature }} vers le bas"></span>
+            </a>
+            <a href="#" class="order-semester-up" data-id="{{ a.link.id }}" data-training="{{ training.id }}"
+               data-parent-id="{{ a.link.id_parent }}" data-order="{{ a.link.order_in_child }}"
+               data-move="up">
+                <span class="glyphicon glyphicon-arrow-up" title="Déplacer le {{ a.structure.nature }} vers le haut"></span>
+            </a>
+        {% endif %}
         {{ a.structure.nature }} :
         {% if a.is_imported %}
         {% if not a.not_yet_imported %}
@@ -65,10 +74,10 @@
         <span class="mecc-remove">
             {% if not rof_enabled and can_edit or a.can_be_edited %}
                 {% if a.link.is_imported %}
-                <span data-toggle="modal" 
+                <span data-toggle="modal"
                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
                       title="{% trans 'Décrocher cet objet mutualisé' %}"
-                      onclick='ask_delete_imported({{a.link.id}}, "{{a.structure.label}}")' 
+                      onclick='ask_delete_imported({{a.link.id}}, "{{a.structure.label}}")'
                       data-target="#preview">
                 </span>
                 {% else %}
@@ -80,10 +89,10 @@
                         </span>
                         {% else %}
                             {% if a.is_imported == False and not a.has_childs %}
-                                <span data-toggle="modal" 
+                                <span data-toggle="modal"
                                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
                                       title="{% trans 'Supprimer cet objet' %}"
-                                      onclick='ask_delete({{a.link.id}}, {{a.structure.id}}, "{{a.structure.label}}")' 
+                                      onclick='ask_delete({{a.link.id}}, {{a.structure.id}}, "{{a.structure.label}}")'
                                       data-target="#preview">
                                 </span>
                             {% endif %}
@@ -96,7 +105,7 @@
         <!-- see consumers button -->
         <span class=" mecc-mutual">
             {% if a.structure.mutual and not a.link.is_imported %}
-                <a  onclick="get_consom({{a.structure.id}})" 
+                <a  onclick="get_consom({{a.structure.id}})"
                     class="hand"
                     title="{% trans 'Voir les consommateurs' %}">{% trans "Mut." %}
                 </a>
@@ -140,12 +149,12 @@
     <!-- papers definition -->
     <span class="centered border-left-5 mecc-details ">
         {% if can_edit or a.can_be_edited and not a.is_imported %}
-        <a  class="hand" 
-            onclick="struct_select({{a.structure.id}}, 
-                                  '{{a.structure.get_nature_display}}', 
-                                  '{{a.structure.get_regime_display}}', 
-                                  '{{a.structure.get_session_display}}', 
-                                  '{{a.structure.ref_si_scol}}', 
+        <a  class="hand"
+            onclick="struct_select({{a.structure.id}},
+                                  '{{a.structure.get_nature_display}}',
+                                  '{{a.structure.get_regime_display}}',
+                                  '{{a.structure.get_session_display}}',
+                                  '{{a.structure.ref_si_scol}}',
                                   '{{a.structure.ROF_ref}}')">▶
         </a>
         {% endif %}
@@ -164,12 +173,12 @@
                     {% endfor %}
                     {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %}
                     <td class="border-left">
-                         <a class="smaller hand" 
+                         <a class="smaller hand"
                             onclick="struct_select({{a.structure.id}},
-                                                  '{{a.structure.get_nature_display}}', 
-                                                  '{{a.structure.get_regime_display}}', 
-                                                  '{{a.structure.get_session_display}}', 
-                                                  '{{a.structure.ref_si_scol}}', 
+                                                  '{{a.structure.get_nature_display}}',
+                                                  '{{a.structure.get_regime_display}}',
+                                                  '{{a.structure.get_session_display}}',
+                                                  '{{a.structure.ref_si_scol}}',
                                                   '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
                         </a>
                     </td>
@@ -187,12 +196,12 @@
                     </td>
                     {% endfor %}
                     {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
-                        <a  class="smaller hand" 
-                            onclick="struct_select({{a.structure.id}}, 
-                                                  '{{a.structure.get_nature_display}}', 
-                                                  '{{a.structure.get_regime_display}}', 
-                                                  '{{a.structure.get_session_display}}', 
-                                                  '{{a.structure.ref_si_scol}}', 
+                        <a  class="smaller hand"
+                            onclick="struct_select({{a.structure.id}},
+                                                  '{{a.structure.get_nature_display}}',
+                                                  '{{a.structure.get_regime_display}}',
+                                                  '{{a.structure.get_session_display}}',
+                                                  '{{a.structure.ref_si_scol}}',
                                                   '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
                         </a>
                     </td>

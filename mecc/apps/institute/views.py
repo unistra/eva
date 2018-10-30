@@ -1,5 +1,6 @@
 import json
 
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -92,6 +93,17 @@ def granted_edit_institute(request, code, template='institute/granted.html'):
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (
             current_year, current_year + 1))
+    data['year_object'] = currentyear()
+    data['published_meccs'] = Training.objects.filter(
+        is_used=True,
+        code_year=current_year,
+        supply_cmp=institute.code,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
 
     return render(request, template, data)
 
@@ -335,6 +347,16 @@ class InstituteUpdate(UpdateView):
                 object_id=self.object.id, additional_type='letter_%s/%s' % (current_year, current_year + 1))
             context['misc_file'] = FileUpload.objects.filter(
                 object_id=self.object.id, additional_type='misc_%s/%s' % (current_year, current_year + 1))
+            context['published_meccs'] = Training.objects.filter(
+                is_used=True,
+                code_year=uy.code_year,
+                supply_cmp=self.object.code,
+            ).prefetch_related(
+                'degree_type',
+            ).order_by(
+                'degree_type__display_order',
+                'label',
+            )
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
@@ -567,7 +589,6 @@ def documents_institute(request, code, template='institute/documents.html'):
     """
     Show documents relative to Institute
     """
-
     data = {}
     current_year = list(UniversityYear.objects.filter(
         Q(is_target_year=True))).pop(0)
@@ -579,8 +600,38 @@ def documents_institute(request, code, template='institute/documents.html'):
         object_id=institute.id, additional_type='letter_%s/%s' % (current_year.code_year, current_year.code_year + 1))
     data['misc_file'] = FileUpload.objects.filter(
         object_id=institute.id, additional_type='misc_%s/%s' % (current_year.code_year, current_year.code_year + 1))
+    trainings = Training.objects.filter(
+        is_used=True,
+        code_year=current_year.code_year,
+        supply_cmp=institute.code,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
+    data['published_meccs'] = trainings
+    data['current_year'] = current_year
 
     return render(request, template, data)
+
+
+@login_required()
+def published_meccs_for_institute_and_year(request, year, institute):
+    uy = UniversityYear.objects.get(code_year=year)
+    trainings = Training.objects.filter(
+        is_used=True,
+        code_year=year,
+        supply_cmp=institute,
+    ).prefetch_related(
+        'degree_type',
+    ).order_by(
+        'degree_type__display_order',
+        'label',
+    )
+    html = render_to_string('institute/modal/published_meccs.html', {'published_meccs': trainings, 'current_year': uy})
+    return JsonResponse({'html': html}, content_type='application/json')
+
 
 
 @is_post_request

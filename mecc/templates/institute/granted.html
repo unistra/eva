@@ -1,120 +1,132 @@
 {% extends 'base.html' %}
+
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 {% load groups%}
 {% load field_name %}
 
-
-
 {% block page-header %}
-{{label_cmp}}
+    {{ label_cmp }}
 {% endblock %}
 
-
 {% block app_content %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title"
+          charset="utf-8"/>
 
-<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.css' %}" type="text/css" title="no title" charset="utf-8" />
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <div class="flex-container">
+        <form method="post" class='form-comp'>
+            <div id="div_auto_id" class='form-group'>
+                <label for="auto_id" class="control-label col-lg-5 requiredField">
+                    {% trans "ID composante" %}
+                    <small> {% trans "(auto)" %}</small>
+                </label>
+                <div class="controls col-lg-7"><input class="textinput textInput form-control" id="id_code_auto"
+                                                      value="{{ latest_instit_id }}" readonly=True type="text"></div>
+            </div>
+            {% crispy form_institute %}
+            {% if can_edit_diretu %}
+                {% include "institute/add_diretu_gescol.html" with institute=institute %}
+            {% else %}
+                {% include "institute/view_diretu_gescol.html" with institute=institute %}
+            {% endif %}
+        </form>
 
-<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
-<div class="flex-container">
+        <div class="comp-right">
+            <h3>{% trans "Année cible" %} {{ request.display.current_year }}</h3>
+            <div id="div_cadre_gen">
+                <label for="cadre_gen" class="control-label col-lg-12">
+                    <u>{% trans 'Document Cadre général CFVU' %}</u> : {% if cadre_gen|filename %}
+                    <a href="/media/{{ cadre_gen }}" target="_blank">{{ cadre_gen|filename }}</a> {% else %}
+                    {% trans "Aucun" %}{% endif %}</label>
+            </div>
+            {% crispy form_university_year %}
+            {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP" %}
+                <form method="post">
+                    {% crispy form_institute_year %}
+                </form>
+            {% else %}
+                {% crispy disabled_institute_year %}
+            {% endif %}
 
-<form method="post" class='form-comp'>
-  <div id="div_auto_id" class='form-group'>
-    <label for="auto_id" class="control-label col-lg-5 requiredField">
-                  {% trans "ID composante" %} <small> {% trans "(auto)" %}</small></label>
-  <div class="controls col-lg-7"> <input class="textinput textInput form-control" id="id_code_auto" value="{{latest_instit_id}}" readonly=True type="text"> </div>
-  </div>
-  {% crispy form_institute %}
-  {% if can_edit_diretu %}
-            {% include "institute/add_diretu_gescol.html" with institute=institute%}
-{% else %}
-        {% include "institute/view_diretu_gescol.html" with institute=institute%}
-        {% endif %}
+            <div><br></div>
+            <div>
+                <label class="control-label col-lg-12">
+                    {% trans "Lettre de présentation" %}
+                </label>
+                <div class="controls col-lg-12">
+                    <ul>
+                        {% if letter_file %}
+                            {% include "institute/files_list_only.html" with files=letter_file %}
+                        {% else %}
+                            <li>
+                                {% trans 'Aucun fichier envoyé' %}
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
 
-</form>
+            <div>
+                <label class="control-label col-lg-12">
+                    {% trans "Autres documents (PV, émargement, ...)" %}
+                </label>
+                <div class="controls col-lg-12">
+                    <ul>
+                        {% if misc_file %}
+                            {% include "institute/files_list_only.html" with files=misc_file %}
+                        {% else %}
+                            <li>
+                                {% trans 'Aucun fichier envoyé' %}
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
 
-<div class="comp-right">
-  <h3> {% trans "Année cible" %} {{request.display.current_year}}</h3>
-  <div id="div_cadre_gen">
-    <label for="cadre_gen" class="control-label col-lg-12">
-        <u>{% trans 'Document Cadre général CFVU' %}</u> : {%if cadre_gen|filename%} <a href="/media/{{cadre_gen}}" target="_blank">{{cadre_gen|filename}}</a> {%else%} {% trans "Aucun" %}{%endif%}</label>
-  </div>
-  {% crispy form_university_year%}
-  {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
-  <form method="post">
-  {% crispy form_institute_year%}
-  </form>
-  {% else %}
-  {% crispy disabled_institute_year%}
-  {%endif%}
-
-  <div><br></div>
-  <div>
-    <label class="control-label col-lg-12">
-      {% trans "Lettre de présentation" %}
-    </label>
-    <div class="controls col-lg-12">
-        <ul>
-        {% if letter_file %}
-          {% include "institute/files_list_only.html" with files=letter_file %}
-        {% else %}
-           <li>
-                {% trans 'Aucun fichier envoyé'%}
-           </li>
-        {% endif %}
-        </ul>
+            <div class="text-center">
+                <a href="#" id="comp-list-documents-publisite"
+                   class="btn btn-primary">{% trans "Documents Publication SITES (E)" %}</a>
+            </div>
+            {% include "institute/modal/published_meccs.html" with published_meccs=published_meccs current_year=year_object %}
+        </div>
     </div>
-  </div>
 
-  <div>
-    <label class="control-label col-lg-12">
-      {% trans "Autres documents (PV, émargement, ...)" %}
-    </label>
-    <div class="controls col-lg-12">
-        <ul>
-        {% if misc_file %}
-          {% include "institute/files_list_only.html" with files=misc_file %}
-        {% else %}
-           <li>
-                {% trans 'Aucun fichier envoyé'%}
-           </li>
+    <script>
+        $(document).ready(function () {
+            $('#comp-list-documents-publisite').on('click', function (e) {
+                $("#published_meccs_modal").modal('show');
+                e.preventDefault();
+            });
+        });
+
+        // Add color red if selected date >= expected date
+        function checkIfRed() {
+            var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+            var expected_date = new Date($('#id_date_expected').val().replace(pattern, '$3-$2-$1'));
+            var new_date = new Date($('#id_date_expected_MECC').val().replace(pattern, '$3-$2-$1'));
+            if (new_date >= expected_date) {
+                document.getElementById("id_date_expected_MECC").className += " input-red";
+            } else {
+                document.getElementById("id_date_expected_MECC").className = "datepicker textinput textInput form-control";
+            }
+        }
+
+        // Add checkbox next to id_code
+        check_box = document.getElementById("div_id_is_on_duty");
+        id_code = document.getElementById("id_code").parentNode;
+        id_code.appendChild(check_box);
+        {% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
+            $('#id_date_expected_MECC').datepicker({
+                language: "fr",
+                todayHighlight: true,
+                autoclose: true,
+            });
         {% endif %}
-        </ul>
-    </div>
-  </div>
-</div>
 
-</div>
-<script>
-// Add color red if selected date >= expected date
-function checkIfRed(){
-  var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-  var expected_date = new Date($('#id_date_expected').val().replace(pattern, '$3-$2-$1'));
-  var new_date = new Date($('#id_date_expected_MECC').val().replace(pattern, '$3-$2-$1'));
-  if (new_date >= expected_date ){
-    document.getElementById("id_date_expected_MECC").className += " input-red"
-  } else {
-    document.getElementById("id_date_expected_MECC").className = "datepicker textinput textInput form-control"
-  }
-
-};
-
-// Add checkbox next to id_code
-check_box = document.getElementById("div_id_is_on_duty");
-id_code = document.getElementById("id_code").parentNode;
-id_code.appendChild(check_box);
-{% if request.user.meccuser|is_profile:"DIRCOMP" or request.user.meccuser|is_profile:"RAC" or request.user.meccuser|is_profile:"REFAPP"%}
-
-$('#id_date_expected_MECC').datepicker({
-    language: "fr",
-    todayHighlight: true,
-    autoclose: true,
-});
-{% endif %}
-$("#id_date_expected_MECC").change(checkIfRed);
-window.onload = checkIfRed
-
-</script>
+        $("#id_date_expected_MECC").change(checkIfRed);
+        window.onload = checkIfRed
+    </script>
 
 {% endblock %}

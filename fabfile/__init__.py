@@ -8,6 +8,9 @@ from os.path import join
 
 import pydiploy
 
+from . import celery
+from . import rabbitmq
+
 # edit config here !
 
 env.remote_owner = 'django'  # remote server user
@@ -31,6 +34,9 @@ env.keep_releases = 3  # number of old releases to keep before cleaning
 env.extra_goals = ['preprod']  # add extra goal(s) to defaults (test,dev,prod)
 env.dipstrap_version = 'latest'
 env.verbose_output = True  # True for verbose output
+
+# celery parameters
+env.celery_version = '4.1'
 
 # optional parameters
 
@@ -94,6 +100,8 @@ def test():
     env.roledefs = {
         'web': ['django-test.u-strasbg.fr'],
         'lb': ['django-test.u-strasbg.fr'],
+        'celery-worker' : ['django-test.u-strasbg.fr'],
+        'broker' : ['django-test.u-strasbg.fr'],
     }
     # env.user = 'root'  # user for ssh
     env.backends = ['127.0.0.1']
@@ -110,7 +118,13 @@ def test():
     env.socket_host = '127.0.0.1'
     env.map_settings = {
         'ldap_token': "LDAP_TOKEN",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
+        'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
+    env.rabbitmq_server = env.socket_host
     env.extra_symlink_dirs = ['mecc/media']
     execute(build_env)
 
@@ -121,6 +135,8 @@ def preprod():
     env.roledefs = {
         'web': ['django-pprd-w1.u-strasbg.fr', 'django-pprd-w2.u-strasbg.fr'],
         'lb': ['rp3.u-strasbg.fr'],
+        'celery-worker': ['django-pprd-w1.u-strasbg.fr', 'django-pprd-w2.u-strasbg.fr'],
+        'broker': ['rabbitmq-pprd.di.unistra.fr']
     }
     env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
@@ -141,7 +157,13 @@ def preprod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
+	'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
+    env.rabbitmq_server = env.roledefs['broker'][0]
     execute(build_env)
 
 
@@ -150,7 +172,9 @@ def prod():
     """Define prod stage"""
     env.roledefs = {
         'web': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
-        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr']
+        'lb': ['rp2-m.u-strasbg.fr', 'rp2-s.u-strasbg.fr'],
+        'celery-worker': ['django-w3.u-strasbg.fr', 'django-w4.u-strasbg.fr'],
+        'broker': ['rabbitmq-prod.di.unistra.fr']
     }
     env.user = 'root'  # user for ssh
     env.backends = env.roledefs['web']
@@ -171,7 +195,13 @@ def prod():
         'default_db_name': "DATABASES['default']['NAME']",
         'secret_key': "SECRET_KEY",
         'ldap_token': "LDAP_TOKEN",
+        'ceph_key_id': "CEPH_STORAGE_KEY_ID",
+        'ceph_secret_key': "CEPH_STORAGE_SECRET_KEY",
+        'ceph_endpoint_url': "CEPH_STORAGE_ENDPOINT_URL",
+        'ceph_bucket': "CEPH_STORAGE_BUCKET",
+	'rabbitmq_password': 'RABBITMQ_PASSWORD',
     }
+    env.rabbitmq_server = env.roledefs['broker'][0]
     execute(build_env)
 
 # dont touch after that point if you don't know what you are doing !
@@ -215,6 +245,7 @@ def deploy(update_pkg=False):
     """Deploy code on server"""
     execute(deploy_backend, update_pkg)
     execute(deploy_frontend)
+    execute(deploy_backend_celery)
 
 
 @roles('web')
@@ -222,7 +253,14 @@ def deploy(update_pkg=False):
 def deploy_backend(update_pkg=False):
     """Deploy code on server"""
     execute(pydiploy.django.deploy_backend, update_pkg)
+    execute(celery.deploy_celery_file)
 
+@roles('celery-worker')
+@task
+def deploy_backend_celery():
+    """Restart the celery worker(s)"""
+    execute(celery.celery_restart)
+    execute(celery.celerybeat_restart)
 
 @roles('lb')
 @task
@@ -305,3 +343,40 @@ def set_up():
 def custom_manage_cmd(cmd):
     """ Execute custom command in manage.py """
     execute(pydiploy.django.custom_manage_command, cmd)
+
+# Custom celery commands
+@roles('celery-worker')
+@task
+def install_celery():
+    """Install celery on remote"""
+    execute(celery.install_celery)
+
+@roles('broker')
+@task
+def install_rabbitmq():
+    execute(rabbitmq.install)
+    execute(rabbitmq.enable_management)
+
+@roles('celery-worker')
+@task
+def celery_start():
+    """Start celery service on remote"""
+    execute(celery.celery_start)
+
+@roles('celery-worker')
+@task
+def celery_restart():
+    """Restart celery service on remote"""
+    execute(celery.celery_restart)
+
+@roles('celery-worker')
+@task
+def celerybeat_start():
+    """Start celerybeat service on remote"""
+    execute(celery.celerybeat_start)
+
+@roles('celery-worker')
+@task
+def celerybeat_restart():
+    """Restart celerybeat service on remote"""
+    execute(celery.celerybeat_restart)

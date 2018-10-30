@@ -181,7 +181,7 @@
                     </div>
                 {% endif %}
                 <div class="flex-item">
-                    <a href="{% url 'doc_gen:preview_mecctable' %}?training_id={{ training.id }}"
+                    <a href="{% url 'mecctable:preview_mecctable' %}?training_id={{ training.id }}"
                        class="btn-primary btn btn-sm btn-1 ">{% trans "Pré-visualiser <br>le TABLEAU" %}
                     </a>
                 </div>
@@ -459,6 +459,55 @@
 
             })
         });
+
+        $(document).ready(function () {
+            // le dernier élément de la liste ne peut être déplacé vers le bas
+            $('a.order-semester-down:last').hide();
+        });
+        $(document).ready(function () {
+            // le premier élémént de la liste ne peut être déplacé vers le haut
+            $('a.order-semester-up:first').hide();
+        });
+
+        $('a.order-semester-down').on('click', function (e) {
+            var order = $(this).data('order');
+            var id = $(this).data('id');
+            var url = "{% url 'mecctable:mecctable_objectslink_move_semester' training_id=training.id %}";
+            e.preventDefault();
+            $.post(url, {
+                'order': order,
+                'direction': 'down',
+                'objectslink': id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }, function () {
+                // all well, reload the page
+                location.reload();
+            })
+                .fail(function () {
+                    //tell the user about the failure
+                    alert("Le réordonnancement n'a pas pu être effectué");
+                });
+        });
+        $('a.order-semester-up').on('click', function (e) {
+            e.preventDefault();
+            var order = $(this).data('order');
+            var id = $(this).data('id');
+            var url = "{% url 'mecctable:mecctable_objectslink_move_semester' training_id=training.id %}";
+            $.post(url, {
+                'order': order,
+                'direction': 'up',
+                'objectslink': id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }, function () {
+                // all well, reload the page
+                location.reload();
+            })
+                .fail(function () {
+                    //tell the user about the failure
+                    alert("Le réordonnancement n'a pas pu être effectué");
+                });
+        });
+
     </script>
     <style media="screen">
         .top-right {
@@ -469,6 +518,55 @@
 
         #form-obj {
             overflow-y: scroll;
+        }
+        /* Indentation des label des objets dans le tableau MECC */
+        span.mecc-label-r0 {
+            padding-left: 0;
+        }
+        span.mecc-label-r1 {
+            padding-left: 2rem;
+        }
+        span.mecc-label-r2 {
+            padding-left: 4rem;
+        }
+        span.mecc-label-r3 {
+            padding-left: 6rem;
+        }
+        span.mecc-label-r4 {
+            padding-left: 8rem;
+        }
+        span.mecc-label-r5 {
+            padding-left: 10rem;
+        }
+        span.mecc-label-r6 {
+            padding-left: 12rem;
+        }
+        span.mecc-label-r7 {
+            padding-left: 14rem;
+        }
+        span.mecc-label-r8 {
+            padding-left: 16rem;
+        }
+        span.mecc-label-r9 {
+            padding-left: 18rem;
+        }
+        span.mecc-label-r10 {
+            padding-left: 20rem;
+        }
+        span.mecc-label-r11 {
+            padding-left: 22rem;
+        }
+        span.mecc-label-r12 {
+            padding-left: 24rem;
+        }
+        span.mecc-label-r13 {
+            padding-left: 26rem;
+        }
+        span.mecc-label-r14 {
+            padding-left: 28rem;
+        }
+        span.mecc-label-r15 {
+            padding-left: 30rem;
         }
     </style>
 {%endblock%}

@@ -11,6 +11,7 @@ import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
 from mecc.apps.utils.queries import update_regime_session
+from mecc.libs.html.sanitizer import sanitize
 
 
 class Training(models.Model):
@@ -71,6 +72,10 @@ class Training(models.Model):
     reappli_atb = models.BooleanField(
         _("Témoin de réapplication des attributs en mode ROF"),
         default=False,
+    )
+    published_mecc_url = models.URLField(
+        _("URL publique"),
+        blank=True, null=True, default=None,
     )
 
     @property
@@ -250,7 +255,6 @@ class Training(models.Model):
         if not self.n_train:
             # creating n_train for ROF imported training
             self.n_train = self.id
-            self.save()
 
 
 class SpecificParagraph(models.Model):
@@ -272,6 +276,11 @@ class SpecificParagraph(models.Model):
     def __str__(self):
         return _("Alinéa spécifique n° %s" % self.pk)
 
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.text_specific_paragraph = sanitize(self.text_specific_paragraph)
+        self.text_motiv = sanitize(self.text_motiv)
+
 
 class AdditionalParagraph(models.Model):
     """
@@ -288,3 +297,7 @@ class AdditionalParagraph(models.Model):
 
     def __str__(self):
         return _("Alinéa additionnel n° %s" % self.pk)
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.text_additional_paragraph = sanitize(self.text_additional_paragraph)

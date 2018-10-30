@@ -99,3 +99,22 @@ EMAIL_TEST = ['ibis.ismail@unistra.fr', 'weible@unistra.fr', 'baguet@unistra.fr'
 #########
 
 STAGE = 'dev'
+
+############################
+# Ceph Storage credentials #
+############################
+CEPH_STORAGE_KEY_ID = environ.get('CEPH_KEY_ID')
+CEPH_STORAGE_SECRET_KEY = environ.get('CEPH_SECRET_KEY')
+CEPH_STORAGE_ENDPOINT_URL = environ.get('CEPH_ENDPOINT_URL', 'https://s3.unistra.fr')
+CEPH_STORAGE_BUCKET = environ.get('CEPH_BUCKET')
+
+##########
+# CELERY #
+##########
+RABBITMQ_USER = environ.get('RABBITMQ_USER')
+RABBITMQ_PASSWORD = environ.get('RABBITMQ_PASSWORD')
+RABBITMQ_SERVER = environ.get('RABBITMQ_SERVER')
+RABBITMQ_VHOST = environ.get('RABBITMQ_VHOST')
+BROKER_URL = "amqp://{}:{}@{}/{}".format(
+    RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_SERVER, RABBITMQ_VHOST
+)

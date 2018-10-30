@@ -71,3 +71,23 @@ LDAP_TOKEN = '{{ldap_token}}'
 #######################
 #SERVER_EMAIL = 'root@localhost'
 EMAIL_SUBJECT_PREFIX = '[MECC]'
+
+############################
+# Ceph Storage credentials #
+############################
+CEPH_STORAGE_KEY_ID = '{{ ceph_key_id }}'
+CEPH_STORAGE_SECRET_KEY = '{{ ceph_secret_key }}'
+CEPH_STORAGE_ENDPOINT_URL = '{{ ceph_endpoint_url }}'
+CEPH_STORAGE_BUCKET = '{{ ceph_bucket }}'
+
+##########
+# Celery #
+##########
+
+RABBITMQ_USER = '{{ application_name }}'
+RABBITMQ_PASSWORD = '{{ rabbitmq_password }}'
+RABBITMQ_SERVER = '{{ rabbitmq_server }}'
+RABBITMQ_VHOST = '{}_preprod'.format(RABBITMQ_USER)
+BROKER_URL = "amqp://{}:{}@{}/{}".format(
+    RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_SERVER, RABBITMQ_VHOST
+)

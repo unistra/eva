@@ -1,11 +1,13 @@
 import os
 
 from django.conf import settings
-
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
+from django.utils.translation import ugettext as _
+
+
 # from django.urls import reverse
 # from django.utils.html import format_html
 

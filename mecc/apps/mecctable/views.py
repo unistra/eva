@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django_cas.decorators import login_required
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
@@ -22,7 +23,7 @@ from mecc.apps.utils.ws import get_user_from_ldap
 from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.decorators import is_post_request, is_ajax_request
 from mecc.apps.adm.models import MeccUser, Profile
-from django_cas.decorators import login_required
+from mecc.apps.utils.documents_generator import Document
 
 from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
@@ -895,6 +896,51 @@ def update_mecc_position(request):
     return JsonResponse({'status': 200})
 
 
+@login_required
+@is_post_request
+@is_ajax_request
+def reorder_semester(request, training_id):
+    """
+    Reorder top-level (SE) objects up or down
+    :param request:
+    :param training_id:
+    :return:
+    """
+    direction = request.POST.get('direction').strip()
+    order = int(request.POST.get('order'))
+
+    links = ObjectsLink.objects.filter(
+        id_training=training_id,
+        id_parent=0,
+    ).order_by(
+        'order_in_child'
+    ).values('order_in_child', 'id')
+
+    if direction == 'down':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order + 1
+            elif link['order_in_child'] == order + 1:
+                link['order_in_child'] = order
+            else:
+                pass
+    elif direction == 'up':
+        for link in links:
+            if link['order_in_child'] == order:
+                link['order_in_child'] = order - 1
+            elif link['order_in_child'] == order - 1:
+                link['order_in_child'] = order
+            else:
+                pass
+
+    for link in links:
+        objectslink = ObjectsLink.objects.get(id=link['id'])
+        objectslink.order_in_child = link['order_in_child']
+        objectslink.save()
+
+    return JsonResponse({'status': 200, })
+
+
 @is_ajax_request
 def copy_old_mecctable2(request):
     """
@@ -1063,12 +1109,11 @@ def copy_old_mecctable2(request):
                     new_child_id=new_child_id,
                     new_parent_id=new_parent_id
                 )
- 
+
     mecctable_imported = True
 
     json_response = {"mecctable_imported": mecctable_imported}
     return JsonResponse(json_response)
-
 
 def copy_old_mecctable(request, id_training):
     """
@@ -1228,7 +1273,15 @@ def copy_old_mecctable(request, id_training):
 
     return redirect('/mecctable/training/' + str(id_training))
 
+@login_required
+def preview_mecctable(request):
+    training = request.GET.get('training_id')
 
+    return Document.generate(
+        gen_type='pdf',
+        model='preview_mecctable',
+        trainings=training
+    )
 
 
 
