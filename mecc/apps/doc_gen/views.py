@@ -620,7 +620,7 @@ def generate_rules_docx(request):
 @login_required()
 def published_mecc(request, training_id):
     training = get_object_or_404(Training, pk=training_id)
-    filename = 'eva/{year}/{id}-{ref_rof}.pdf'.format(
+    filename = '{year}/{id}-{ref_rof}.pdf'.format(
         year=training.code_year,
         id=training.id,
         ref_rof=training.ref_cpa_rof
