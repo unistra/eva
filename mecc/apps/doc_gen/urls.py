@@ -3,7 +3,7 @@ from django.conf.urls import url
 from .views import home, trainings_for_target, available_target, \
     preview_mecctable, dispatch_to_good_pdf, generate_pdf, history_home, \
     history_for_year, generate_excel_mecctable, generate_rules_docx, \
-    published_mecc
+    published_mecc, generate, get_pdf_task_status, get_pdf
 
 urlpatterns = [
     url(r'^start/$', home, name='home'),
@@ -11,12 +11,18 @@ urlpatterns = [
         name='trainings_for_target'),
     url(r'^available_target/$', available_target,
         name='available_target'),
-    url(r'^mecctable/$', preview_mecctable,
-        name='preview_mecctable'),
+    # url(r'^mecctable/$', preview_mecctable,
+        # name='preview_mecctable'),
     url(r'^dispatch/$', dispatch_to_good_pdf,
         name='dispatch'),
-    url(r'^generate_pdf/$', generate_pdf,
+    url(r'^generate_pdf/(?P<task_id>\d+)/$', generate_pdf,
         name='generate_pdf'),
+    url(r'^get_pdf_task_status/(?P<task_id>\d+)/$', get_pdf_task_status,
+        name='get_pdf_task_status'),
+    url(r'^get_pdf/(?P<task_id>\d+)/$', get_pdf,
+        name='get_pdf'),
+    url(r'^generate/$', generate,
+        name='generate'),
     url(r'^history/$', history_home,
         name='history_home'),
     url(r'^history/(?P<year>\d+)/$', history_for_year,

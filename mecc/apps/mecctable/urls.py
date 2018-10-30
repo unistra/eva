@@ -8,7 +8,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
     send_mail_respform, copy_old_mecctable2, list_exams, add_exam, update_exam, \
     delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams, get_owner, \
-    reorder_semester
+    reorder_semester, preview_mecctable
+
 
 urlpatterns = [
     url(r'^send_mail_respform/$', send_mail_respform,
@@ -46,7 +47,8 @@ urlpatterns = [
     url(r'^update_grade_coeff/$',
         update_grade_coeff,
         name='update_grade_coeff'),
-
+    url(r'^preview/$', preview_mecctable,
+        name='preview_mecctable'),
     # urls for StructureObject
     url(r'^structureobject/$',
         StructureObjectListView.as_view(),

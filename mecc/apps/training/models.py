@@ -255,7 +255,6 @@ class Training(models.Model):
         if not self.n_train:
             # creating n_train for ROF imported training
             self.n_train = self.id
-            self.save()
 
 
 class SpecificParagraph(models.Model):

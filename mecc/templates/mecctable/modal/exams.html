@@ -238,6 +238,32 @@
         }
     }
 
+    function duration_is_empty(duration) {
+	    duration = duration.trim();
+
+	    if (duration === '' || duration === ' ') {
+	        return true;
+        }
+
+        if (duration === '0') {
+            return true;
+        }
+
+        if (duration === ':') {
+            return true;
+        }
+
+        if (
+            // 0:00 0: :0 0:0 etc.
+            duration.match(/^0?:0+$/) ||
+            duration.match(/^0+:0?$/)
+        )  {
+            return true;
+        }
+
+        return false;
+    }
+
     function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
         let st_label =  $(".struct-" + id_structure).text()
@@ -302,7 +328,7 @@
             // Hide hiding field once data is loaded
             onDataLoaded: function (args) {
                 $(".jsgrid-insert-row").hide();
-                let nb_exams = args.data.length
+                let nb_exams = args.data.length;
                 if (nb_exams === 0) {
                     $('#get_principal_exam').addClass("disabled")
                 } else $('#get_principal_exam').removeClass("disabled")
@@ -321,20 +347,20 @@
                 if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
-                _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
+                _checkall(args.item.eliminatory_grade, "Seuil compens.", args);
 
-                let duration = args.item.exam_duration.trim()
+                let duration = args.item.exam_duration.trim();
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
+                    if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
                 // console.log('%cBOOM!', 'color: red; font-size: 5em; font-weight: bold;');
                 let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'))
+                    ':'));
                 let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1)
+                    1);
                 durations_h = durations_h === '' ? '0' : durations_h;
                 durations_m = durations_m === '' ? '00' : durations_m;
 
@@ -363,7 +389,7 @@
 
                 let duration = args.item.exam_duration.trim();
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
+                    if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
@@ -651,11 +677,11 @@
                 if (typeof args.item.threshold_session_2 !== 'undefined') {
                     _checkall(args.item.threshold_session_2, "À partir de", args)
                 }
-                _checkall(args.item.eliminatory_grade, "Seuil compens.", args)
+                _checkall(args.item.eliminatory_grade, "Seuil compens.", args);
 
-                let duration = args.item.exam_duration;
+                let duration = args.item.exam_duration.trim();
                 if (args.item.type_exam == "E" || args.item.type_exam == "O") {
-                    if (duration === "" || duration === " " || parseInt(duration) === 0) {
+                    if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }

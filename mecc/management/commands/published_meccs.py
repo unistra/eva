@@ -1,11 +1,10 @@
 from datetime import datetime
-from io import BytesIO
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from mecc.apps.training.models import Training
-from mecc.apps.utils.published_mecc_pdf import PublishedMeccPdf
+from mecc.apps.utils.documents_generator import Document
 from mecc.apps.utils.queries import currentyear
 from mecc.libs.storage.ceph import Ceph
 
@@ -27,8 +26,11 @@ class Command(BaseCommand):
         trainings = self.select_trainings_to_publish()
         for training in trainings:
             filename = self.make_filename(training)
-            pdf = BytesIO()
-            PublishedMeccPdf(training, pdf).build_doc()
+            pdf = Document.generate(
+                gen_type='pdf',
+                model='e',
+                training=training
+            )
             url = self.save_to_ceph(training, pdf)
             training.published_mecc_url = url
             training.save(update_fields=['published_mecc_url'])
@@ -78,7 +80,7 @@ class Command(BaseCommand):
         return trainings
 
     def make_filename(self, training):
-        filename = 'eva/{year}/{id}-{ref_rof}.pdf'.format(
+        filename = '{year}/{id}-{ref_rof}.pdf'.format(
             year=training.code_year,
             id=training.id,
             ref_rof=training.ref_cpa_rof

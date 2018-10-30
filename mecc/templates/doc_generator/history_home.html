@@ -48,7 +48,7 @@
                     <td style="padding-left: 2em;">{{ item.labelled }}</td>
                     <td>
                         {% if item.mecc %}
-                             <a href="{% url 'doc_gen:generate_pdf' %}?year={{ selected_year }}&amp;institute={{ item.id }}&amp;model=d&amp;target=history">MECC</a>
+                             <a href="{% url 'doc_gen:generate' %}?year={{ selected_year }}&amp;institute={{ item.id }}&amp;model=d&amp;target=history">MECC</a>
                         {% endif %}
                     </td>
                     <td>
