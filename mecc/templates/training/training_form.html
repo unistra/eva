@@ -6,22 +6,26 @@
 
 {% block breadcrumb %}
 <ol class="breadcrumb">
-        {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
-            {% if request.session.visited_cmp == "RESPFORM" %}
+    {%if request.session.visited_cmp in "RESPFORM, RESPENS"%}
+        {% if request.session.visited_cmp == "RESPFORM" %}
             <li><a href="{% url 'training:list_resp' %}">{% trans "Mes formations" %}</a></li>
-            {% else %}
+        {% else %}
             <li><a href="{% url 'training:my_teachings' %}">{% trans "Mes enseignements" %}</a></li>
-            {% endif %}
-        {%else%}
-            <li><a href="{% if request.user|has_group:'DES1' or request.user.is_superuser %}{% url 'training:list_all'%}
-                {% else %}{%url 'training:list' request.user.meccuser.cmp%}
-                {%endif%}">{% trans "Offre de formation" %}</a></li>
-                <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
-            {% if request.session.training_list %}
-            {% endif %}
-        {%endif%}
-            <li class="active"> {{training.label}}</li>
-        </ol>
+        {% endif %}
+    {%else%}
+        <li><a href="
+            {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+                {% url 'training:list_all'%}
+            {% else %}
+                {%url 'training:list' request.user.meccuser.cmp%}
+            {%endif%}">{% trans "Offre de formation" %}
+        </a></li>
+        <li> <a href="{% url 'training:list' request.session.visited_cmp %}">{{request.session.visited_cmp_label}}</a></li>
+        {% if request.session.training_list %}
+        {% endif %}
+    {%endif%}
+    <li class="active"> {{training.label}}</li>
+</ol>
 
 {% endblock %}
 
@@ -32,114 +36,90 @@
 
 {% block app_content %}
 
-    <link rel="stylesheet" href="{% static 'css/training-form.css' %}">
+<link rel="stylesheet" href="{% static 'css/training-form.css' %}">
 
-    <ul class="nav nav-tabs" style="margin-bottom:1em">
-        <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
-
-        <li><a href="{%if object%}{% url 'training:edit_rules' object.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
-        <li><a href={%if object.MECC_tab %}"{% url 'mecctable:mecctable_home' object.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
-    </ul>
-  <div class="disp-flex">
-      <div id="left-column" class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {%endif%}" style="margin-right:1em">
-          <form action="" method="post" id="training_form" >
-              {%crispy form%}
-              {% include "training/form/add_cmp.html" %}
-              <div>
-              <div class="disp-flex">
-                  <div class="item-100">
-
-
-                      <input name="stay" onclick="_isEdited=false;"class="btn-warning btn btn-sm pull-right" style='margin-bottom:1em;' id="stay" type="submit" value={% trans "Valider" %}>
-                  </div>
-              </div>
-
-              <div class="disp-flex">
-
-              {% include "training/form/add_respform.html" %}
-              {% include "generic/modal_simple.html" %}
-              
+<ul class="nav nav-tabs" style="margin-bottom:1em">
+    <li class="active"><a href="{%if object%}{% url 'training:edit' object.pk%}{%else%}#{%endif%}">{% trans "Général" %}</a></li>
+    <li><a href="{%if object%}{% url 'training:edit_rules' object.pk%}{%else%}#{%endif%}">{% trans "Règles" %}</a></li>
+    <li><a href={%if object.MECC_tab %}"{% url 'mecctable:mecctable_home' object.id%}" {%else%}"#" class="disabled"{%endif%}>{% trans "Tableau MECC" %}</a></li>
+</ul>
+<div class="disp-flex">
+    <div id="left-column" class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {%endif%}" style="margin-right:1em">
+        <form action="" method="post" id="training_form" >
+            {%crispy form%}
+            {% include "training/form/add_cmp.html" %}
+            <div>
+                <div class="disp-flex">
+                    <div class="item-100">
+                        <input name="stay" onclick="_isEdited=false;"class="btn-warning btn btn-sm pull-right" style='margin-bottom:1em;' id="stay" type="submit" value={% trans "Valider" %}>
+                    </div>
+                </div>
+                <div class="disp-flex">
+                    {% include "training/form/add_respform.html" %}
+                    {% include "generic/modal_simple.html" %}
+                </div>
             </div>
-      </div>
-          </form>
-      </div>
-      <div class="item-30">
-          <div class=" {%if not validation_form%}grey {%endif%}">
-              <h2 class="title-block">{% trans "Étapes de validation" %} {{request.display.current_year}}</h2><br>
-             <div class="form-group">
-                <label>
-                {% trans "Etat d'avancement Saisie des règles" %}</label>
+        </form>
+    </div>
+    <div class="item-30">
+        <div class=" {%if not validation_form%}grey {%endif%}">
+            <h2 class="title-block">{% trans "Étapes de validation" %} {{request.display.current_year}}</h2><br>
+            <div class="form-group">
+                <label>{% trans "Etat d'avancement Saisie des règles" %}</label>
                 <div> <input class="form-control" disabled="true" value="{{object.get_progress_rule_display}}"> </div>
-             </div>
-             <div class="form-group">
-                <label>
-                {% trans "Etat d'avancement Saisie Tableau MECC" %}</label>
+            </div>
+            <div class="form-group">
+                <label>{% trans "Etat d'avancement Saisie Tableau MECC" %}</label>
                 <div> <input class="form-control"  disabled="true" value="{{object.get_progress_table_display}}"> </div>
-             </div>
-             <div class="form-group">
-                <label>
-                {% trans "Date de validation en Conseil de Composante" %}</label>
-                <div> <input class="form-control"  disabled="true" {% if object.date_val_cmp  %}
-                 value="{{object.date_val_cmp}}"
-                {% else %}
-                {% endif %}> </div>
-             </div>
-             <div class="form-group">
-                <label>
-                {% trans "Date Réserve DES" %}</label>
-                <div> <input class="form-control"  disabled="true" {% if object.date_res_des  %}
-                 value="{{object.date_res_des}}"
-                {% else %}
-                {% endif %}> </div>
-             </div>
-             <div class="form-group">
-                <label>
-                {% trans "Date Visa DES" %}</label>
-                <div> <input class="form-control"  disabled="true" {% if object.date_visa_des  %}
-                 value="{{object.date_visa_des}}"
-                {% else %}
-                {% endif %}></div>
-             </div>
-             <div class="form-group fill-space">
-                <label>
-                {% trans "Date de validation en CFVU" %}</label>
-                <div> <input class="form-control" disabled="true"  {% if object.date_val_cfvu  %}
-                 value="{{object.date_val_cfvu}}"
-                {% else %}
-                {% endif %}> </div>
-             </div>
-             <div class="buttons_list bold italic {% if object.input_opening.1 == 'ouverte'%} green{%else%} red{%endif%} ">
-                 <span id="input_progress">{% if object %}Saisie {{object.input_opening.1}}{% endif %}</span>
-             </div>
-      </div>
-  </div>
+            </div>
+            <div class="form-group">
+                <label>{% trans "Date de validation en Conseil de Composante" %}</label>
+                <div> <input class="form-control"  disabled="true" {% if object.date_val_cmp %}value="{{object.date_val_cmp}}"{% else %}{% endif %}> </div>
+            </div>
+            <div class="form-group">
+                <label>{% trans "Date Réserve DES" %}</label>
+                <div> <input class="form-control"  disabled="true" {% if object.date_res_des %}value="{{object.date_res_des}}"{% else %}{% endif %}> </div>
+            </div>
+            <div class="form-group">
+                <label>{% trans "Date Visa DES" %}</label>
+                <div> <input class="form-control"  disabled="true" {% if object.date_visa_des %}value="{{object.date_visa_des}}"{% else %}{% endif %}></div>
+            </div>
+            <div class="form-group fill-space">
+                <label>{% trans "Date de validation en CFVU" %}</label>
+                <div> <input class="form-control" disabled="true"  {% if object.date_val_cfvu %}value="{{object.date_val_cfvu}}"{% else %}{% endif %}> </div>
+            </div>
+            <div class="buttons_list bold italic {% if object.input_opening.1 == 'ouverte'%} green{%else%} red{%endif%} ">
+                <span id="input_progress">{% if object %}Saisie {{object.input_opening.1}}{% endif %}</span>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="buttons_list has-top-border" style="margin-top:1em;">
-<a href=
-{% if request.session.visited_cmp in 'RESPFORM'%}"{% url 'training:list_resp' %}"
-{%elif request.session.visited_cmp %}
-    {% if request.session.visited_cmp in 'RESPENS' %}
-    "{% url 'training:my_teachings'  %}"
-    {% else %}
-    "{% url 'training:list' request.session.visited_cmp %}"
+    <a href=
+        {% if request.session.visited_cmp in 'RESPFORM'%}
+            "{% url 'training:list_resp' %}"
+        {%elif request.session.visited_cmp %}
+            {% if request.session.visited_cmp in 'RESPENS' %}
+                "{% url 'training:my_teachings'  %}"
+            {% else %}
+                "{% url 'training:list' request.session.visited_cmp %}"
+            {% endif %}
+        {% else %}
+            "{%url 'training:list_all' %}"
+        {% endif %} class="btn-primary btn btn-sm btn-1">
+        {% trans "Fermer la fiche" %}
+    </a>
+    {% if not rof_enabled %}
+        {%if not is_respform%}
+            <button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
+        {% endif %}
+    {% if  can_edit and object.input_opening.0 != "4" %}
+        <a class="btn-primary btn btn-sm" onclick="check_consistency({{training.id}})">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
     {% endif %}
-{% else %}"{%url 'training:list_all' %}"
-{% endif %} class="btn-primary btn btn-sm btn-1">{% trans "Fermer la fiche" %}</a>
-{% if not rof_enabled %}
-{%if not is_respform%}
-<button name="new_training" class="btn-primary btn btn-sm" id="new_training" type="Submit" form='training_form'>{% trans "Créer une nouvelle formation" %}</button>
-{%endif%}
-{% endif %}
-{% if  can_edit and object.input_opening.0 != "4" %}
-<a class="btn-primary btn btn-sm" onclick="check_consistency({{training.id}})">{% trans "Effectuer les CONTRÔLES DE COHÉRENCE" %}</a>
-{% endif %}
-<a name="preview" class="btn-primary btn btn-sm" id="previewMECC" href="{% url 'training:preview_mecc'%}?training_id={{object.id}}">{% trans "Pré-visualiser les MECC" %}</a>
+    <a name="preview" class="btn-primary btn btn-sm" id="previewMECC" href="{% url 'training:preview_mecc'%}?training_id={{object.id}}">{% trans "Pré-visualiser les MECC" %}</a>
 </div>
 
-
-
 {% include "training/modal_consistency.html" %}
-
 
 <style media="screen">
     .training-form-validate> .form-group:not(:first-child){
@@ -152,82 +132,78 @@
 
 <script type="text/javascript">
 {% if rof_enabled %}
-let logoRofUrl = "{% static 'img/logo_rof.png' %}";
-$('#left-column').prepend('<img class="img-responsivei logo_rof" src="'+logoRofUrl+'" alt="Logo ROF" />');
+    let logoRofUrl = "{% static 'img/logo_rof.png' %}";
+    $('#left-column').prepend('<img class="img-responsivei logo_rof" src="'+logoRofUrl+'" alt="Logo ROF" />');
 {% endif %}
 
 {% if not can_edit %}
-$("input").prop("disabled", true);
-$("select").prop("disabled", true);
-$("textarea").prop("disabled", true);
+    $("input").prop("disabled", true);
+    $("select").prop("disabled", true);
+    $("textarea").prop("disabled", true);
 {% endif %}
- {%if can_edit and object.input_opening.0 != "4"%}
 
-
-var _isEdited = false;
-
-$(document).ready(function () {
-    $(':input').change(function () {
-        _isEdited = true;
-        if(this.id === 'to-search'){_isEdited = false;}
-    });
-    window.onbeforeunload = function (e) {
-        if (_isEdited === true) {
-        var e = e || window.event;
-        // For IE and Firefox
-        if (e) {
-          e.returnValue = 'Des modifications ont été effectuées.';
-        }
-        // For Safari
-        return 'Des modifications ont été effectuées.';
+{%if can_edit and object.input_opening.0 != "4"%}
+    var _isEdited = false;
+    
+    $(document).ready(function () {
+        $(':input').change(function () {
+            _isEdited = true;
+            if(this.id === 'to-search'){
+                _isEdited = false;
+            }
+        });
+        window.onbeforeunload = function (e) {
+            if (_isEdited === true) {
+                var e = e || window.event;
+                // For IE and Firefox
+                if (e) {
+                  e.returnValue = 'Des modifications ont été effectuées.';
+                }
+                // For Safari
+                return 'Des modifications ont été effectuées.';
+            };
         };
-    };
-
-var x = document.getElementsByClassName("alert");
-});
+        var x = document.getElementsByClassName("alert");
+    });
 {%else%}
-{% if request.session.visited_cmp in 'RESPFORM'%}
-$(":input#new_training").prop("disabled", true);
-
-{%else%}
-$(":input").prop("disabled", true);
-
-{%endif%}
-{% if request.session.visited_cmp in 'RESPENS'%}
-$(":input#previewMECC").prop("disabled", false);
-{%endif%}
+    {% if request.session.visited_cmp in 'RESPFORM'%}
+        $(":input#new_training").prop("disabled", true);
+    {%else%}
+        $(":input").prop("disabled", true);
+    {%endif%}
+    {% if request.session.visited_cmp in 'RESPENS'%}
+        $(":input#previewMECC").prop("disabled", false);
+    {%endif%}
 {%endif%}
 
 {% if training.has_custom_paragraph or training.has_exam  %}
-$(":input[name='MECC_type']").prop("disabled", true);
-$(":input[name='session_type']").prop("disabled", true);
-$(":input[name='reapply']").prop("disabled", true);
+    $(":input[name='MECC_type']").prop("disabled", true);
+    $(":input[name='session_type']").prop("disabled", true);
+    $(":input[name='reapply']").prop("disabled", true);
 {%else%}
-$(":input[name='reapply']").on('click', function(e){
-    e.preventDefault()
-    let mecc_type = $('input[name=MECC_type]:checked', '#training_form').val();
-    let session_type = $('input[name=session_type]:checked', '#training_form').val();
-    let training_id = {{object.id}};
-    _isEdited = false;
-    
-    $.ajax({
-        url: "{% url 'training:update_struct_training'%}",
-        type: "POST",
-        data: {
-            training_id: training_id,
-            regime_type: mecc_type,
-            session_type: session_type,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        },
-        success: function (data) {
-            $('#modal_simple #modal-title').text("Réapliquer aux objets");
-            $('#modal_simple #info_1').text(data.status === 200 ? "Les nouveaux régime et session ont bien été réappliqués aux objets propres de la formation." : "Aucune modification sur le régime ou la session de la formation n'a été détectée");
-            $('#modal_simple').modal('show');
+    $(":input[name='reapply']").on('click', function(e){
+        e.preventDefault()
+        let mecc_type = $('input[name=MECC_type]:checked', '#training_form').val();
+        let session_type = $('input[name=session_type]:checked', '#training_form').val();
+        let training_id = {{object.id}};
+        _isEdited = false;
+        
+        $.ajax({
+            url: "{% url 'training:update_struct_training'%}",
+            type: "POST",
+            data: {
+                training_id: training_id,
+                regime_type: mecc_type,
+                session_type: session_type,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                $('#modal_simple #modal-title').text("Réapliquer aux objets");
+                $('#modal_simple #info_1').text(data.status === 200 ? "Les nouveaux régime et session ont bien été réappliqués aux objets propres de la formation." : "Aucune modification sur le régime ou la session de la formation n'a été détectée");
+                $('#modal_simple').modal('show');
             }
         });
-})
-
+    })
 {% endif %}
-
 </script>
 {%endblock%}
