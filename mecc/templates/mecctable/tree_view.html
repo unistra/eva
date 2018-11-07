@@ -6,7 +6,7 @@
     <!-- mecc-label -->
     <span class="mecc-label mecc-label-r{{ a.rank }}">
         <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
-        {% if a.rank == 0 and can_edit %}
+        {% if a.rank == 0 and can_edit and not rof_enabled %}
             <a href="#" class="order-semester-down" data-id="{{ a.link.id }}" data-training="{{ training.id }}"
                data-parent-id="{{ a.link.id_parent }}"
                data-order="{{ a.link.order_in_child }}" data-move="down">
