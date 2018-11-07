@@ -148,15 +148,17 @@
 
     <!-- papers definition -->
     <span class="centered border-left-5 mecc-details ">
-        {% if can_edit or a.can_be_edited and not a.is_imported %}
-        <a  class="hand"
-            onclick="struct_select({{a.structure.id}},
-                                  '{{a.structure.get_nature_display}}',
-                                  '{{a.structure.get_regime_display}}',
-                                  '{{a.structure.get_session_display}}',
-                                  '{{a.structure.ref_si_scol}}',
-                                  '{{a.structure.ROF_ref}}')">▶
+        {% if can_edit or a.can_be_edited %}
+            {% if not a.is_imported %}
+                <a  class="hand"
+                    onclick="struct_select({{a.structure.id}},
+                            '{{a.structure.get_nature_display}}',
+                            '{{a.structure.get_regime_display}}',
+                            '{{a.structure.get_session_display}}',
+                            '{{a.structure.ref_si_scol}}',
+                            '{{a.structure.ROF_ref}}')">▶
         </a>
+            {% endif %}
         {% endif %}
     </span>
 
