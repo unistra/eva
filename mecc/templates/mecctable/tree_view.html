@@ -6,7 +6,7 @@
     <!-- mecc-label -->
     <span class="mecc-label mecc-label-r{{ a.rank }}">
         <!--- id-{{a.link.id}} hover-row r-{{a.rank}} parent-{{a.link.id_parent}} order-{{a.link.order_in_child}} -->
-        {% if a.rank == 0 and can_edit %}
+        {% if a.rank == 0 and can_edit and not rof_enabled %}
             <a href="#" class="order-semester-down" data-id="{{ a.link.id }}" data-training="{{ training.id }}"
                data-parent-id="{{ a.link.id_parent }}"
                data-order="{{ a.link.order_in_child }}" data-move="down">
@@ -148,15 +148,17 @@
 
     <!-- papers definition -->
     <span class="centered border-left-5 mecc-details ">
-        {% if can_edit or a.can_be_edited and not a.is_imported %}
-        <a  class="hand"
-            onclick="struct_select({{a.structure.id}},
-                                  '{{a.structure.get_nature_display}}',
-                                  '{{a.structure.get_regime_display}}',
-                                  '{{a.structure.get_session_display}}',
-                                  '{{a.structure.ref_si_scol}}',
-                                  '{{a.structure.ROF_ref}}')">▶
+        {% if can_edit or a.can_be_edited %}
+            {% if not a.is_imported %}
+                <a  class="hand"
+                    onclick="struct_select({{a.structure.id}},
+                            '{{a.structure.get_nature_display}}',
+                            '{{a.structure.get_regime_display}}',
+                            '{{a.structure.get_session_display}}',
+                            '{{a.structure.ref_si_scol}}',
+                            '{{a.structure.ROF_ref}}')">▶
         </a>
+            {% endif %}
         {% endif %}
     </span>
 
