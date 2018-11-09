@@ -10,7 +10,8 @@ from mecc.apps.institute.models import Institute
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
-from mecc.apps.utils.queries import update_regime_session
+from mecc.apps.utils.queries import update_structs_regime_session, \
+    delete_derogs_adds_regime, update_exams_session
 from mecc.libs.html.sanitizer import sanitize
 
 
@@ -236,7 +237,12 @@ class Training(models.Model):
             self.__original_MECC_type = self.MECC_type
             need_to_edit_struct = True
         if need_to_edit_struct:
-            update_regime_session(self, self.MECC_type, self.session_type)
+            update_structs_regime_session(self, self.MECC_type, self.session_type)
+            if self.has_custom_paragraph:
+                delete_derogs_adds_regime(self, self.MECC_type)
+            if self.has_exam:
+                # TODO : Write the update_exams_session function
+                update_exams_session(self, self.session_type)
 
         super(Training, self).save(*args, **kwargs)
 

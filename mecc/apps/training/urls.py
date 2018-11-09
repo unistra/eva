@@ -5,7 +5,7 @@ from mecc.apps.training.views import TrainingListView, TrainingCreate, \
     edit_rules, specific_paragraph, update_progress_rule_statut, \
     edit_specific_paragraph, edit_additional_paragraph, ask_delete_specific, \
     delete_specific, recover_everything, gen_pdf_all_rules, send_mail,\
-    remove_respform, my_teachings, update_struct_training,\
+    remove_respform, my_teachings, update_training_regime_session,\
     do_consistency_check, do_regime_session_check, preview_mecc
 from mecc.decorators import is_correct_respform
 
@@ -58,8 +58,8 @@ urlpatterns = [
         name='check_consistency'),
     url(r'^remove_respform/$', remove_respform,
         name='remove_respform'),
-    url(r'^update_struct_training/$', update_struct_training,
-        name='update_struct_training'),
+    url(r'^update_training_regime_session/$', update_training_regime_session,
+        name='update_training_regime_session'),
     url(r'^my_teachings/$', my_teachings,
         name='my_teachings'),
     url(r'^regime_session_check/$', do_regime_session_check,
