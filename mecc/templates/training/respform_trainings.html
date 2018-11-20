@@ -51,14 +51,14 @@
        </thead>
    <tbody class="overflow" >
 
-{%regroup trainings by degree_type as trainings %}
+   {% regroup trainings by degree_type as trainings %}
 
 
 {%for field in trainings%}
 <tr>
     <td class='no-border'><strong>{{field.grouper}}</strong></td>
 <tr>
-{% for item in field.list %}
+{% for item in field.list|dictsort:"label"  %}
 <tr class="hover-row">
     <td width="5%" class='no-padding no-border'></td>
     <td width="20%" class='no-padding no-border v-align-m'><a href="{% url 'training:edit' id=item.id %}">{%if not item.is_used%}HS - {%endif%}{{item.label}}</a></td>
