@@ -41,7 +41,7 @@
     <div class="mecc-actionsButtons">
         <!-- add button -->
         <span class="centered mecc-add">
-            {% if a.structure.nature not in "ST PT" and not a.is_imported and not rof_enabled and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and a.can_be_edited %}
+            {% if a.structure.nature not in "ST PT" and not a.is_imported and not rof_enabled and can_edit or a.structure.nature not in "ST PT" and not a.is_imported and not rof_enabled and a.can_be_edited %}
             <a  onclick="get_struct_details(0, {{a.structure.id}},'{{a.structure.nature}}')"
                 data-toggle="modal"
                 class="hand glyphicon glyphicon-plus blue no-border"
@@ -72,7 +72,7 @@
 
         <!-- remove/unbind button -->
         <span class="mecc-remove">
-            {% if not rof_enabled and can_edit or a.can_be_edited %}
+            {% if not rof_enabled and can_edit or not rof_enabled and a.can_be_edited %}
                 {% if a.link.is_imported %}
                 <span data-toggle="modal"
                       class="glyphicon glyphicon glyphicon-remove-sign red hand"
