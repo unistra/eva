@@ -208,7 +208,10 @@ def task_clean_tmp_directory(self):
     The task deletes the tmp directory and recreates it
     """
     tmp_dir_path = os.path.join(settings.MEDIA_ROOT, 'tmp')
-    shutil.rmtree(tmp_dir_path)
+    shutil.rmtree(
+        path=tmp_dir_path,
+        ignore_errors=True
+    )
     os.mkdir(tmp_dir_path)
 
 
