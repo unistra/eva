@@ -18,7 +18,7 @@ from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph, \
 from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from mecc.apps.utils.queries import currentyear
-from mecc.apps.mecctable.models import ObjectsLink
+from mecc.apps.mecctable.models import ObjectsLink, StructureObject
 
 
 class RulesListView(ListView):
@@ -447,11 +447,13 @@ def update_progress(request):
     if _type == "TABLE":
         links = ObjectsLink.objects.filter(
             id_training=training.id,
-            nature_child__in=['UE', 'EC', 'PT', 'ST']
         )
-        if None in [link.coefficient for link in links] and \
-                request.POST.get('val') == 'A':
-            data['status'] = 409
+        if request.POST.get('val') == 'A':
+            for link in links:
+                link_child = StructureObject.objects.get(id=link.id_child)
+                if link.coefficient == None and \
+                        link_child.nature in ['UE', 'EC', 'PT', 'ST']:
+                    data['status'] = 409
         else:
             training.progress_table = request.POST.get('val')
             data['status'] = 200
