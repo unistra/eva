@@ -111,8 +111,8 @@ def test():
     env.server_ip = ''
     env.no_shared_sessions = False
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
-    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
+    env.path_to_cert = '/etc/ssl/certs/mega_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/mega_wildcard.key'
     env.goal = 'test'
     env.socket_port = '8030'
     env.socket_host = '127.0.0.1'
@@ -146,8 +146,8 @@ def preprod():
     env.server_ip = '130.79.254.28'
     env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
-    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
+    env.path_to_cert = '/etc/ssl/certs/mega_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/mega_wildcard.key'
     env.goal = 'preprod'
     env.socket_port = '8012'
     env.map_settings = {
@@ -184,8 +184,8 @@ def prod():
     env.server_ip = '130.79.254.18'
     env.no_shared_sessions = True
     env.server_ssl_on = True
-    env.path_to_cert = '/etc/ssl/certs/triple_wildcard.pem'
-    env.path_to_cert_key = '/etc/ssl/private/triple_wildcard.key'
+    env.path_to_cert = '/etc/ssl/certs/mega_wildcard.pem'
+    env.path_to_cert_key = '/etc/ssl/private/mega_wildcard.key'
     env.goal = 'prod'
     env.socket_port = '8032'
     env.map_settings = {

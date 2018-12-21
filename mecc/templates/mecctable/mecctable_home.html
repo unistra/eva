@@ -139,12 +139,12 @@
             <div class="has-bottom-border has-top-border buttons_list dir-col blue baseline">
                 <label>{% trans 'Etat de saisie du tableau MECC : ' %}</label>
                 <label class="margin-left1">
-                    {% trans "En cours " %}<input type="radio" name="progress" value="E"
+                    {% trans "En cours " %}<input id="in-progress" type="radio" name="progress" value="E"
                         {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
                                                   {% if training.progress_table == "E" %}checked="checked" {% endif %}>
                 </label>
                 <label class="margin-left1">
-                    {% trans 'Achevée ' %} <input type="radio" name="progress" value="A"
+                    {% trans 'Achevée ' %} <input id="done" type="radio" name="progress" value="A"
                         {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
                                                   {% if training.progress_table == "A" %}checked="checked" {% endif %}>
                 </label>
@@ -441,7 +441,7 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (data) {
-                    if (data.status = 200) {
+                    if (data.status == 200) {
                         $('.top-right').notify({
                             message: {text: 'Etat de saisie mis à jour : ' + data.val},
                             type: 'info'
@@ -449,6 +449,13 @@
                         if (statut == 'A' && rof_enabled) {
                             $('#alert_finish_mecctable_edit').modal('show');
                         }
+                    } else if (data.status == 409) {
+                        $('.top-right').notify({
+                            message: {text: 'Vous devez affecter des coefficients aux UE, éléments constitutifs, projets tuteurés et stages !'},
+                            type: 'danger'
+                        }).show();
+                        $('#in-progress').prop('checked', true);
+                        $('#done').prop('checked', false);
                     } else {
                         $('.top-right').notify({
                             message: {text: 'Error lors de la mise à jour de la saisie'},
@@ -456,7 +463,6 @@
                         }).show();
                     }
                 }
-
             })
         });
 
