@@ -112,11 +112,16 @@ def manage_respform(dic, t_id):
 
     return False
 
+def is_megauser(training, user_profiles):
+    # user est membre d'un group pouvant éditer toute la formation
+    return True if user_profiles.filter(
+        cmp=training.supply_cmp,
+        code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']
+    ) else False
 
 def is_poweruser(training, user_profiles, current_user_username):
     # user est membre d'un group pouvant éditer toute la formation
-    if user_profiles.filter(cmp=training.supply_cmp).filter(
-            code__in=['DIRCOMP', 'RAC', 'REFAPP', 'GESCOL', 'DIRETU']):
+    if is_megauser(training, user_profiles): 
         return True
     # user est RESPFORM sur la formation
     return True if current_user_username in [meccuser.user.username for meccuser in

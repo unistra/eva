@@ -91,25 +91,80 @@
 <div class="training-rules">
     <br />
     <div class="margin-top">
-            {%crispy form%}
+        {% if can_apply_to_others %}
+        <ul class="nav nav-tabs" id="specific-form">
+            <li class="active"><a href="#one"><b>ETAPE 1 :</b> Saisie de la dérogation</a></li>
+            <li><a href="#two"><b>ETAPE 2 :</b> Appliquer à d'autres formations</a></li>
+        </ul>
+        {% endif %}
+        <form action="#" method="POST" id="form">
+            {% if can_apply_to_others %}
+            <div class="tab-content">
+                <div class="tab-pane active" id="one">
+                    {% if specific_form %}
+                        {% crispy specific_form %}
+                    {% else %}
+                        {% crispy add_form %}
+                    {% endif %}
+                    <div class="buttons_list">
+                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
+                        <button type="button" class="btn btn-sm btn-primary btnNext">Etape 2 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="tab-pane" id="two">
+                    {% crispy extra_trainings_form %}
+                    <div class="buttons_list">
+                        <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Etape 1</button>
+                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                {% if specific_form %}
+                    {% crispy specific_form %}
+                {% else %}
+                    {% crispy add_form %}
+                {% endif %}
+                <div class="buttons_list">
+                    <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
+                </div>
+            {% endif %}
+        </form>
     </div>
-<script type="text/javascript">
 
-$('#submit-id-add').on('click', function(event) {
+<script type="text/javascript">
+// Afficher l'onglet suivant en cliquant sur le bouton suivant
+$('.btnNext').click(function(){
+    $('.nav-tabs > .active + li a').trigger('click');
+    $(".nav-tabs + .tab-content").find(":input:visible:first").focus();
+});
+// Afficher l'onglet précédent en cliquant sur le bouton précédent
+$('.btnPrevious').click(function(){
+    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+    $(".nav-tabs + .tab-content").find(":input:visible:first").focus();
+});
+
+$('form').submit(function (event) {
     var proceed = true;
-    if (typeof CKEDITOR.instances.id_text_motiv !== 'undefined') {
-        if (CKEDITOR.instances.id_text_motiv.getData() == ''){
-            $("#div_id_text_motiv").addClass("all-in-red");
-            proceed = false;
-        }else{
-            $("#div_id_text_motiv").removeClass("all-in-red")
-        }
+    if(CKEDITOR.instances['id_spe-text_motiv'].getData() == '') {
+        $("#div_id_spe-text_motiv").addClass("all-in-red");
+        console.log("NO TEXT_MOTIV");
+        $('.nav-tabs a[href="#one"]').tab('show');
+        proceed = false;
+    }else{
+        $("#div_id_spe-text_motiv").removeClass("all-in-red");
     }
-    if (!proceed) {
+    if(!proceed){
         event.preventDefault();
     }
-
-
 });
+
+$('#specific-form a').click(function (e) {
+	e.preventDefault();
+    $(this).tab('show');
+});
+
 </script>
 {%endblock%}
