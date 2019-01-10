@@ -93,7 +93,7 @@
     <div class="margin-top">
         {% if can_apply_to_others %}
         <ul class="nav nav-tabs" id="specific-form">
-          <li class="active"><a href="#one"><b>Saisie de {% if specific_form %}la dérogation et des motifs{% else %}l'alinéa additionnel{% endif %}</b></a></li>
+          <li class="active"><a href="#one"><b>Saisir {% if specific_form %}la dérogation et les motifs{% else %}l'alinéa additionnel{% endif %}</b></a></li>
             <li><a href="#two"><b>Appliquer à d'autres formations (Facultatif)</b></a></li>
         </ul>
         {% endif %}
@@ -115,7 +115,7 @@
                 <div class="tab-pane" id="two">
                     {% crispy extra_trainings_form %}
                     <div class="buttons_list">
-                        <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Saisie de la dérogation et des motifs</button>
+                        <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Saisir {% if specific_form %}la dérogation et les motifs{% else %}l'alinéa additionnel{% endif %}</button>
                         <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
                         <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
                     </div>
