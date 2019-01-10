@@ -651,6 +651,8 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     )
     data['extra_trainings_form'] = ExtraTrainingsForm(
         training=training,
+        rule=rule,
+        additional=additional,
         prefix="ext"
     )
 # Delete temporary additional paragraph if created
@@ -671,6 +673,7 @@ votre formation. Merci de la rédiger ci-dessous :")
             extra_trainings_form = ExtraTrainingsForm(
                 data=request.POST,
                 training=training,
+                additional=additional,
                 prefix="ext"
             )
         if add_form.is_valid():
@@ -700,7 +703,6 @@ votre formation. Merci de la rédiger ci-dessous :")
 @is_correct_respform
 def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule, old='N', template="training/form/edit_specific_paragraph.html"):
     data = {}
-    print("POST DONE")
     # CURRENT OBJECTS
     data['title'] = _("Dérogation")
     data['from_id'] = rule_id
@@ -758,6 +760,8 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
     )
     data['extra_trainings_form'] = ExtraTrainingsForm(
         training=training,
+        rule=r,
+        specific=sp,
         prefix="ext"
     )
 
@@ -774,6 +778,8 @@ def edit_specific_paragraph(request, training_id, rule_id, paragraph_id, n_rule,
             extra_trainings_form = ExtraTrainingsForm(
                 data=request.POST,
                 training=training,
+                rule=r,
+                specific=sp,
                 prefix="ext"
             )
         if specific_form.is_valid():

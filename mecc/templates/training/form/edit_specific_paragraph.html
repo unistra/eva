@@ -93,8 +93,8 @@
     <div class="margin-top">
         {% if can_apply_to_others %}
         <ul class="nav nav-tabs" id="specific-form">
-            <li class="active"><a href="#one"><b>ETAPE 1 :</b> Saisie de la dérogation</a></li>
-            <li><a href="#two"><b>ETAPE 2 :</b> Appliquer à d'autres formations</a></li>
+          <li class="active"><a href="#one"><b>Saisie de {% if specific_form %}la dérogation et des motifs{% else %}l'alinéa additionnel{% endif %}</b></a></li>
+            <li><a href="#two"><b>Appliquer à d'autres formations (Facultatif)</b></a></li>
         </ul>
         {% endif %}
         <form action="#" method="POST" id="form">
@@ -107,16 +107,17 @@
                         {% crispy add_form %}
                     {% endif %}
                     <div class="buttons_list">
+                        <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
                         <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
-                        <button type="button" class="btn btn-sm btn-primary btnNext">Etape 2 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-sm btn-primary btnNext">Appliquer à d'autres formation (Facultatif) <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
                     </div>
                 </div>
                 <div class="tab-pane" id="two">
                     {% crispy extra_trainings_form %}
                     <div class="buttons_list">
-                        <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Etape 1</button>
-                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
+                        <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Saisie de la dérogation et des motifs</button>
                         <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
+                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
                     </div>
                 </div>
             </div>
