@@ -129,7 +129,7 @@ class ExtraTrainingsForm(forms.Form):
             choices=((training.id, training.label) for training in trainings),
             widget=forms.CheckboxSelectMultiple(),
             required=False,
-            label="Sélectionner les formations" if trainings.exists() else f"Vous ne pouvez pas appliquer {mode} à d'autres formations."
+            label="Sélectionner les formations" if trainings.exists() else "Vous ne pouvez pas appliquer {} à d'autres formations.".format(mode)
         )
 
         self.helper = FormHelper()

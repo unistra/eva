@@ -673,6 +673,7 @@ votre formation. Merci de la rédiger ci-dessous :")
             extra_trainings_form = ExtraTrainingsForm(
                 data=request.POST,
                 training=training,
+                rule=rule,
                 additional=additional,
                 prefix="ext"
             )
