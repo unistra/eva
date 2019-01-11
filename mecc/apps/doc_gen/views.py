@@ -491,7 +491,11 @@ def get_years(current_year):
 
 @login_required()
 def history_home(request):
-    current_year = currentyear().code_year
+    try:
+        current_year = currentyear().code_year
+    except AttributeError:
+        return render(request, 'msg.html',
+                      {'msg': _("Initialisation de l'année non effectuée")})
     years = get_years(current_year)
 
     return render(request, 'doc_generator/history_home.html', {
