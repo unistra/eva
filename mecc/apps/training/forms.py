@@ -1,10 +1,14 @@
 from ckeditor.widgets import CKEditorWidget
+from crispy_forms.bootstrap import StrictButton, Tab, TabHolder
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, HTML, Div, Submit
 from django import forms
+from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from mecc.apps.training.models import Training, SpecificParagraph, AdditionalParagraph
+from mecc.apps.rules.models import Rule
 from mecc.apps.institute.models import Institute
 
 
@@ -18,29 +22,17 @@ class AdditionalParagraphForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdditionalParagraphForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             HTML("{{additional}}"),
             'text_additional_paragraph',
-            Div(
-                Submit(
-                    'add', _('Valider et fermer la fenêtre'),
-                    css_class="btn-primary btn btn-sm",
-                    ),
-                HTML("""
-                    <a class='btn-primary btn btn-sm'
-                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=from_id %} >
-                    Annuler et fermer la fenêtre </a>
-                     """),
-                css_class='buttons_list'
-            ),
-            )
+        )
 
     class Meta:
         model = AdditionalParagraph
         fields = [
             'text_additional_paragraph'
         ]
-
 
 class SpecificParagraphDerogForm(forms.ModelForm):
     """
@@ -54,24 +46,13 @@ class SpecificParagraphDerogForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SpecificParagraphDerogForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             HTML("<b>ETAPE 1 :</b>{{text_derog|safe}}"),
             'text_specific_paragraph',
             HTML("<b>ETAPE 2 :</b>{{text_motiv|safe}}"),
             'text_motiv',
-            Div(
-                Submit(
-                    'add', _('Valider et fermer la fenêtre'),
-                    css_class="btn-primary btn btn-sm",
-                    ),
-                HTML("""
-                    <a class='btn-primary btn btn-sm'
-                    href={% url 'training:specific_paragraph' training_id=training.id rule_id=from_id %} >
-                    Annuler et fermer la fenêtre </a>
-                     """),
-                css_class='buttons_list'
-            ),
-            )
+        )
 
     class Meta:
         model = SpecificParagraph
@@ -88,6 +69,79 @@ class SpecificParagraphDerogForm(forms.ModelForm):
 
         return self.cleaned_data
 
+class ExtraTrainingsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        training = kwargs.pop('training')
+        rule = kwargs.pop('rule')
+        specific = kwargs.pop('specific', None)
+        additional = kwargs.pop('additional', None)
+        super(ExtraTrainingsForm, self).__init__(*args, **kwargs)
+
+        trainings = Training.objects.\
+            filter(
+                code_year=training.code_year,
+                supply_cmp=training.supply_cmp,
+                degree_type__in=rule.degree_type.all(),
+                progress_rule="E").\
+            filter(
+                Q(date_val_cmp__isnull=True) \
+                | \
+                Q(date_val_cmp__isnull=False, date_res_des__isnull=False)).\
+            exclude(
+                id=training.id).\
+            order_by(
+                'degree_type',
+                'label'
+            )
+
+        if rule.is_eci and not rule.is_ccct:
+            trainings = trainings.filter(MECC_type='E')
+        elif rule.is_ccct and not rule.is_eci:
+            trainings = trainings.filter(MECC_type='C')
+
+        mode = ""
+        if specific:
+            mode = "cette dérogation"
+            same_specific_training_ids = [
+                specific.training_id\
+                for specific\
+                in SpecificParagraph.objects.filter(
+                    code_year=specific.code_year,
+                    rule_gen_id=specific.rule_gen_id,
+                    paragraph_gen_id=specific.paragraph_gen_id
+                )
+            ]
+            trainings = trainings.exclude(
+                id__in=same_specific_training_ids
+            )
+        else:
+            mode = "cet alinéa additionel"
+            same_additional_training_ids = [
+                additional.training_id\
+                for additional\
+                in AdditionalParagraph.objects.filter(
+                    code_year=additional.code_year,
+                    rule_gen_id=additional.rule_gen_id,
+                )
+            ]
+            trainings = trainings.exclude(
+                id__in=same_additional_training_ids
+            )
+
+        self.fields['extra_trainings'] = forms.MultipleChoiceField(
+            choices=((training.id, training.label) for training in trainings),
+            widget=forms.CheckboxSelectMultiple(),
+            required=False,
+            label="Sélectionner les formations" if trainings.exists() else "Vous ne pouvez pas appliquer {} à d'autres formations.".format(mode)
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            HTML("<b>ETAPE 3 :</b>"),
+            'extra_trainings'
+        )
 
 class RespTrainingForm(forms.ModelForm):
     class Meta:
