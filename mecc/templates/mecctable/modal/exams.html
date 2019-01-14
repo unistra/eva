@@ -20,7 +20,7 @@
                 </div>
                 <div class="disp-flex space-between paddin-top">
                     <div>
-                        <span>{% trans "Object : " %} </span>
+                        <span>{% trans "Objet : " %} </span>
                         <strong>
                             <span id="struct_object"></span>
                         </strong>
@@ -266,7 +266,7 @@
 
     function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol,
         st_rof_ref) {
-        let st_label =  $(".struct-" + id_structure).text()
+        let st_label =  $(".struct-" + id_structure).text();
         $("#get_principal_exam").removeData();
         $("#get_principal_exam").attr({
             "data-id_structure": id_structure,
@@ -278,7 +278,7 @@
             "data-st_rof_ref": st_rof_ref,
         });
         // No second session if unique
-        let is_2_session = st_session.indexOf("2") !== -1
+        let is_2_session = st_session.indexOf("2") !== -1;
 
         if (!is_2_session){
             $('.session2_exams').hide()
