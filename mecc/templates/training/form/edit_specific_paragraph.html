@@ -108,8 +108,8 @@
                     {% endif %}
                     <div class="buttons_list">
                         <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
-                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
-                        <button type="button" class="btn btn-sm btn-primary btnNext">Appliquer à d'autres formation (Facultatif) <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-sm btn-primary abort">Annuler et fermer la fenêtre</button>
+                        <button type="button" class="btn btn-sm btn-primary btnNext">Appliquer à d'autres formations (Facultatif) <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
                     </div>
                 </div>
                 <div class="tab-pane" id="two">
@@ -117,7 +117,7 @@
                     <div class="buttons_list">
                         <button type="button" class="btn btn-sm btn-primary btnPrevious"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Saisir {% if specific_form %}la dérogation et les motifs{% else %}l'alinéa additionnel{% endif %}</button>
                         <button type="submit" class="btn btn-sm btn-primary">Valider et fermer la fenêtre</button>
-                        <button type="button" class="btn btn-sm btn-primary" id="abort">Annuler et fermer la fenêtre</button>
+                        <button type="button" class="btn btn-sm btn-primary abort">Annuler et fermer la fenêtre</button>
                     </div>
                 </div>
             </div>
@@ -145,6 +145,10 @@ $('.btnNext').click(function(){
 $('.btnPrevious').click(function(){
     $('.nav-tabs > .active').prev('li').find('a').trigger('click');
     $(".nav-tabs + .tab-content").find(":input:visible:first").focus();
+});
+
+$('.abort').click(function(){
+    location.href = "{% url 'training:specific_paragraph' training.id rule.id %}";
 });
 
 $('form').submit(function (event) {

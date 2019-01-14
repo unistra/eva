@@ -82,14 +82,18 @@ class ExtraTrainingsForm(forms.Form):
             filter(
                 code_year=training.code_year,
                 supply_cmp=training.supply_cmp,
-                degree_type=training.degree_type,
+                degree_type__in=rule.degree_type.all(),
                 progress_rule="E").\
             filter(
                 Q(date_val_cmp__isnull=True) \
                 | \
                 Q(date_val_cmp__isnull=False, date_res_des__isnull=False)).\
             exclude(
-                id=training.id)
+                id=training.id).\
+            order_by(
+                'degree_type',
+                'label'
+            )
 
         if rule.is_eci and not rule.is_ccct:
             trainings = trainings.filter(MECC_type='E')
