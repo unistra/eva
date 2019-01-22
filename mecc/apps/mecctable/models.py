@@ -70,8 +70,17 @@ class StructureObject(models.Model):
     RESPENS_id = models.CharField(
         _("Responsable d'enseignement"), max_length=85, blank=True, null=True)
     mutual = models.BooleanField(_("Mutualisé"))
+    is_exam_template = models.BooleanField(
+        _("Gabarit pour la saisie d'épreuves"),
+        default=False
+    )
+    exam_template_label = models.CharField(
+        _("Nom du garabit pour la saisie d'épreuves"),
+        max_length=60,
+        null=True,
+    )
 
-# ROF prefixed are synchronized => no input for them
+    # ROF prefixed are synchronized => no input for them
     ROF_ref = models.CharField(_(
         "Référence de l'objet ROF"), max_length=20, null=True, blank=True)
     ROF_code_year = models.CharField(
@@ -113,16 +122,14 @@ class StructureObject(models.Model):
         """
         return [StructureObject.objects.get(
             id=e.id_child) for e in ObjectsLink.objects.filter(
-                id_parent=self.id)]
-
+            id_parent=self.id)]
 
     @property
     def get_all_children(self):
         children = self.get_children
         for child in children:
             children += child.get_children
-        return children 
-
+        return children
 
     @property
     def get_respens_name(self):

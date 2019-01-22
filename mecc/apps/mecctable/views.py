@@ -107,6 +107,7 @@ def add_exam(request):
         )
     except Exception as e:
         LOGGER.error('ADD EXAM ERROR__: \n{error}'.format(error=e))
+
     return JsonResponse({"status": 200})
 
 
@@ -238,7 +239,9 @@ def copy_old_exams(request, id_structure=None):
             'st_regime': current_structure.regime,
             'st_session': current_structure.session,
             'st_ref_scol': current_structure.ref_si_scol,
-            'st_rof_ref': current_structure.ROF_ref
+            'st_rof_ref': current_structure.ROF_ref,
+            'st_is_exam_template': current_structure.is_exam_template,
+            'st_exam_template_label': current_structure.exam_template_label,
         }
 
         data['status'] = status = copy_last_year_exams(current_structure)
@@ -271,10 +274,201 @@ def copy_old_exams(request, id_structure=None):
                     'st_regime': structure.regime,
                     'st_session': structure.session,
                     'st_ref_scol': structure.ref_si_scol,
-                    'st_rof_ref': structure.ROF_ref
+                    'st_rof_ref': structure.ROF_ref,
+                    'st_is_exam_template': structure.is_exam_template,
+                    'st_exam_template_label': structure.exam_template_label,
                 }
         data['updated_objects'] = updated_objects
+
     return JsonResponse(data)
+
+
+@login_required
+@is_ajax_request
+def delete_exam_template(request):
+    """
+    Remove flag making a StructureObject a template for exams
+    """
+    try:
+        structure_object_id = request.POST.get('structure_object_id')
+        structure_object = StructureObject.objects.get(id=structure_object_id)
+        structure_object.is_exam_template = False
+        structure_object.exam_template_label = None
+        structure_object.save()
+        result = {
+            'response': {
+                'status': True,
+            },
+            'code': 200,
+        }
+    except Exception as e:
+        result = {
+            'response': {
+                'status': False,
+                'error': e,
+            },
+            'code': 500,
+        }
+
+    return JsonResponse(result['response'], status=result['code'])
+
+
+@login_required
+@is_ajax_request
+def create_exam_template(request):
+    """
+    Mark a StructureObject as a template for exams
+    """
+    try:
+        structure_object_id = request.POST.get('structure_object_id')
+        exam_template_label = request.POST.get('exam_template_label').strip()
+        structure_object = StructureObject.objects.get(id=structure_object_id)
+        structure_object.is_exam_template = True
+        structure_object.exam_template_label = exam_template_label
+        structure_object.save()
+        result = {
+            'response': {
+                'status': True,
+            },
+            'code': 200,
+        }
+    except Exception as e:
+        result = {
+            'response': {
+                'status': False,
+                'error': e,
+            },
+            'code': 500,
+        }
+
+    return JsonResponse(result['response'], status=result['code'])
+
+
+@login_required
+@is_ajax_request
+def edit_exam_template(request):
+    """
+    Update the label describing an exam template
+    """
+    try:
+        structure_object_id = request.POST.get('structure_object_id')
+        exam_template_label = request.POST.get('exam_template_label').strip()
+        structure_object = StructureObject.objects.get(id=structure_object_id)
+        structure_object.exam_template_label = exam_template_label
+        structure_object.save()
+        result = {
+            'response': {
+                'status': True,
+            },
+            'code': 200,
+        }
+    except Exception as e:
+        result = {
+            'response': {
+                'status': False,
+                'error': e,
+            },
+            'code': 500,
+        }
+
+    return JsonResponse(result['response'], status=result['code'])
+
+
+@login_required
+@is_ajax_request
+def exam_template_info(request):
+    """
+    Get exam template info for given StructureObject
+    """
+    structure_object_id = request.GET.get('structure_object_id')
+    structure_object = StructureObject.objects.get(id=structure_object_id)
+
+    return JsonResponse({
+        'is_exam_template': structure_object.is_exam_template,
+        'exam_template_label': structure_object.exam_template_label
+    })
+
+
+@login_required
+@is_ajax_request
+def list_exam_templates(request):
+    """
+    Get a list of all exam templates that can be applied to StructureObject
+    (same Institute, Year and Regime)
+    :param request:
+    """
+    structure_object_id = request.GET.get('structure_object_id')
+    template_structure_object = StructureObject.objects.get(id=structure_object_id)
+
+    institute = template_structure_object.cmp_supply_id
+    regime = template_structure_object.regime
+    session = template_structure_object.session
+    year = template_structure_object.code_year
+
+    templates = StructureObject.objects.filter(
+        is_exam_template=True,
+        cmp_supply_id=institute,
+        code_year=year,
+        regime=regime,
+        session=session,
+    ).exclude(
+        id=structure_object_id,
+    )
+
+    result = []
+    for template in templates:
+        result.append({
+            'id': template.id,
+            'label': template.exam_template_label,
+            'regime': template.get_regime_display(),
+            'session': template.get_session_display(),
+        })
+
+    return JsonResponse(result, safe=False)
+
+
+@login_required
+@is_ajax_request
+def apply_exam_template(request):
+    result = {}
+    id_table = {}
+    source_structure_object = StructureObject.objects.get(
+        id=request.POST.get('source_structure_object_id')
+    )
+    destination_structure_object = StructureObject.objects.get(
+        id=request.POST.get('destination_structure_object_id')
+    )
+
+    source_exams = Exam.objects.filter(id_attached=source_structure_object.id, code_year=currentyear().code_year)
+
+    for source_exam in source_exams:
+        auto_id = None
+        try:
+            if source_exam._id in id_table:
+                auto_id = id_table[source_exam._id]  # exam._id can be the same in session 1 and session 2
+            exam = Exam.objects.create(
+                code_year=source_exam.code_year,
+                id_attached=destination_structure_object.id,
+                session=source_exam.session,
+                _id=auto_id,
+                regime=source_exam.regime,
+                type_exam=source_exam.type_exam,
+                label=source_exam.label,
+                additionnal_info=source_exam.additionnal_info,
+                exam_duration_h=source_exam.exam_duration_h,
+                exam_duration_m=source_exam.exam_duration_m,
+                convocation=source_exam.convocation,
+                type_ccct=source_exam.type_ccct,
+                eliminatory_grade=source_exam.eliminatory_grade,
+                is_session_2=source_exam.is_session_2,
+                threshold_session_2=source_exam.threshold_session_2,
+                coefficient=source_exam.coefficient,
+            )
+            id_table[source_exam._id] = exam._id
+        except Exception as e:
+            LOGGER.error('COPY EXAM ERROR__: \n{error}'.format(error=e))
+
+    return JsonResponse(result)
 
 
 @login_required

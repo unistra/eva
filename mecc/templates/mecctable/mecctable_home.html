@@ -329,7 +329,9 @@
                             data.exams_infos.object.st_regime,
                             data.exams_infos.object.st_session,
                             data.exams_infos.object.st_ref_scol,
-                            data.exams_infos.object.st_rof_ref
+                            data.exams_infos.object.st_rof_ref,
+                            data.exams_infos.object.st_is_exam_template,
+                            data.exams_infos.object.st_exam_template_label
                         );
                     }
                     Object.keys(data.exams_infos).forEach(function(key) {
@@ -343,7 +345,9 @@
                             data.exams_infos[key].st_regime,
                             data.exams_infos[key].st_session,
                             data.exams_infos[key].st_ref_scol,
-                            data.exams_infos[key].st_rof_ref
+                            data.exams_infos[key].st_rof_ref,
+                            data.exams_infos[key].st_is_exam_template,
+                            data.exams_infos[key].st_exam_template_label
                         );
                         update_mini_table(
                             "2",
@@ -353,7 +357,9 @@
                             data.exams_infos[key].st_regime,
                             data.exams_infos[key].st_session,
                             data.exams_infos[key].st_ref_scol,
-                            data.exams_infos[key].st_rof_ref
+                            data.exams_infos[key].st_rof_ref,
+                            data.exams_infos[key].st_is_exam_template,
+                            data.exams_infos[key].st_exam_template_label
                         );
                     });
                 }
