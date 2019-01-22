@@ -253,7 +253,7 @@
 
         function check_regime_session(id_training, link_clicked) {
             $.ajax({
-                url: "{%url 'training:regime_session_check' %}",
+                url: "{% url 'training:regime_session_check' %}",
                 type: "GET",
                 data: {
                     training_id: id_training,
@@ -272,7 +272,7 @@
                             if (data.regime_session_changed) {
                                 $('#exam_regime_session_changed').modal('toggle');
                             } else {
-                                if (link_clicked != 'copy-old-exams') {
+                                if (link_clicked !== 'copy-old-exams') {
                                     $("#exam_copy_confirm .btn-primary").attr("id", link_clicked);
                                 } else {
                                     $("#exam_copy_confirm .btn-primary").removeAttr("id");
