@@ -273,6 +273,7 @@
 
     $('#struct_exam_template_create').on('click', function (e) {
         e.preventDefault();
+        $('#modal_exam_template_edit_confirm').off('click');
         let url = '{% url 'mecctable:create_exam_template' %}';
         let structure_object_id = get_principal_exam.data('id_structure');
 
@@ -281,6 +282,7 @@
 
 	$('#struct_exam_template_edit').on('click', function (e) {
 	    e.preventDefault();
+        $('#modal_exam_template_edit_confirm').off('click');
 	    let url = '{% url 'mecctable:edit_exam_template' %}';
         let structure_object_id = get_principal_exam.data('id_structure');
 
@@ -292,6 +294,8 @@
      * to choose one
      **/
     $('#struct_exam_template_apply').on('click', function (e) {
+        e.preventDefault();
+
         let structure_object_id = get_principal_exam.data('id_structure');
         let templates_list_table = $('#exam_templates_list_table table tbody');
 
