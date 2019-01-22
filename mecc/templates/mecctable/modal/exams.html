@@ -356,6 +356,10 @@
                         let st_exam_template_label = get_principal_exam.data('st_exam_template_label');
                         _setUpExamLists(destination_structure_object_id, st_label, st_nature, st_regime, st_session,
                             st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                        update_mini_table("1", destination_structure_object_id, st_label, st_nature, st_regime, st_session,
+                            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                        update_mini_table("2", destination_structure_object_id, st_label, st_nature, st_regime, st_session,
+                            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
                         $('#modal_exam_templates_list').modal('hide');
                     }
                 });
