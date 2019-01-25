@@ -73,9 +73,17 @@ class Training(models.Model):
         _("Témoin de réapplication des attributs en mode ROF"),
         default=False,
     )
+    recup_atb_ens = models.BooleanField(
+        _('Témoin de récupération des responsables, coef. et notes seuil'),
+        default=False
+    )
     published_mecc_url = models.URLField(
         _("URL publique"),
         blank=True, null=True, default=None,
+    )
+    is_existing_rof = models.BooleanField(
+        _('Témoin d\'existence dans ROF'),
+        default=True
     )
 
     @property
