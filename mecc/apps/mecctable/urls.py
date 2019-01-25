@@ -8,8 +8,8 @@ from .views import StructureObjectListView, StructureObjectCreateView, \
     import_objectslink, remove_imported, get_consom, update_mecc_position, \
     send_mail_respform, copy_old_mecctable2, list_exams, add_exam, update_exam, \
     delete_exam, copy_exam_1_to_2, copy_old_exams, has_exams, get_owner, \
-    reorder_semester, preview_mecctable
-
+    reorder_semester, preview_mecctable, delete_exam_template, \
+    create_exam_template, edit_exam_template, exam_template_info, list_exam_templates, apply_exam_template
 
 urlpatterns = [
     url(r'^send_mail_respform/$', send_mail_respform,
@@ -66,7 +66,15 @@ urlpatterns = [
         remove_object,
         name='remove_structureobject'),
 
-    # urls for ObjectsLink
+    url(r'^exam_template/delete/$', delete_exam_template, name="delete_exam_template"),
+    url(r'^exam_template/create/$', create_exam_template, name="create_exam_template"),
+    url(r'^exam_template/edit/$', edit_exam_template, name="edit_exam_template"),
+    url(r'^exam_template/info/$', exam_template_info, name="info_exam_template"),
+    url(r'^exam_template/list_templates/$', list_exam_templates, name="list_exam_templates"),
+    url(r'^exam_template/apply_template/$', apply_exam_template, name="apply_exam_template"),
+
+
+# urls for ObjectsLink
     url(r'^import_objectslink/$', import_objectslink,
         name='import_objectslink'),
     url(r'^objectslink/$', ObjectsLinkListView.as_view(),

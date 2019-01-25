@@ -151,12 +151,14 @@
         {% if can_edit or a.can_be_edited %}
             {% if not a.is_imported %}
                 <a  class="hand"
-                    onclick="struct_select({{a.structure.id}},
-                            '{{a.structure.get_nature_display}}',
-                            '{{a.structure.get_regime_display}}',
-                            '{{a.structure.get_session_display}}',
-                            '{{a.structure.ref_si_scol}}',
-                            '{{a.structure.ROF_ref}}')">▶
+                    onclick="struct_select({{ a.structure.id }},
+                            '{{ a.structure.get_nature_display }}',
+                            '{{ a.structure.get_regime_display }}',
+                            '{{ a.structure.get_session_display }}',
+                            '{{ a.structure.ref_si_scol }}',
+                            '{{ a.structure.ROF_ref }}',
+                            '{{ a.structure.is_exam_template }}',
+                            '{{ a.structure.exam_template_label }}')">▶
         </a>
             {% endif %}
         {% endif %}
@@ -176,12 +178,14 @@
                     {% if can_edit and a.exams_1_count or a.can_be_edited and a.exams_1_count %}
                     <td class="border-left">
                          <a class="smaller hand"
-                            onclick="struct_select({{a.structure.id}},
-                                                  '{{a.structure.get_nature_display}}',
-                                                  '{{a.structure.get_regime_display}}',
-                                                  '{{a.structure.get_session_display}}',
-                                                  '{{a.structure.ref_si_scol}}',
-                                                  '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
+                            onclick="struct_select({{ a.structure.id }},
+                                    '{{ a.structure.get_nature_display }}',
+                                    '{{ a.structure.get_regime_display }}',
+                                    '{{ a.structure.get_session_display }}',
+                                    '{{ a.structure.ref_si_scol }}',
+                                    '{{ a.structure.ROF_ref }}',
+                                    '{{ a.structure.is_exam_template }}',
+                                    '{{ a.structure.exam_template_label }}')">{% trans 'Voir +' %}
                         </a>
                     </td>
                     {% endif %}
@@ -199,12 +203,14 @@
                     {% endfor %}
                     {% if can_edit and a.exams_2_count or a.can_be_edited and a.exams_2_count %} <td class="border-left ">
                         <a  class="smaller hand"
-                            onclick="struct_select({{a.structure.id}},
-                                                  '{{a.structure.get_nature_display}}',
-                                                  '{{a.structure.get_regime_display}}',
-                                                  '{{a.structure.get_session_display}}',
-                                                  '{{a.structure.ref_si_scol}}',
-                                                  '{{a.structure.ROF_ref}}')">{% trans 'Voir +' %}
+                            onclick="struct_select({{ a.structure.id }},
+                                    '{{ a.structure.get_nature_display }}',
+                                    '{{ a.structure.get_regime_display }}',
+                                    '{{ a.structure.get_session_display }}',
+                                    '{{ a.structure.ref_si_scol }}',
+                                    '{{ a.structure.ROF_ref }}',
+                                    '{{ a.structure.is_exam_template }}',
+                                    '{{ a.structure.exam_template_label }}')">{% trans 'Voir +' %}
                         </a>
                     </td>
                     {% endif %}

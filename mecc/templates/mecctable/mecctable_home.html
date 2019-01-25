@@ -253,7 +253,7 @@
 
         function check_regime_session(id_training, link_clicked) {
             $.ajax({
-                url: "{%url 'training:regime_session_check' %}",
+                url: "{% url 'training:regime_session_check' %}",
                 type: "GET",
                 data: {
                     training_id: id_training,
@@ -272,7 +272,7 @@
                             if (data.regime_session_changed) {
                                 $('#exam_regime_session_changed').modal('toggle');
                             } else {
-                                if (link_clicked != 'copy-old-exams') {
+                                if (link_clicked !== 'copy-old-exams') {
                                     $("#exam_copy_confirm .btn-primary").attr("id", link_clicked);
                                 } else {
                                     $("#exam_copy_confirm .btn-primary").removeAttr("id");
@@ -329,7 +329,9 @@
                             data.exams_infos.object.st_regime,
                             data.exams_infos.object.st_session,
                             data.exams_infos.object.st_ref_scol,
-                            data.exams_infos.object.st_rof_ref
+                            data.exams_infos.object.st_rof_ref,
+                            data.exams_infos.object.st_is_exam_template,
+                            data.exams_infos.object.st_exam_template_label
                         );
                     }
                     Object.keys(data.exams_infos).forEach(function(key) {
@@ -343,7 +345,9 @@
                             data.exams_infos[key].st_regime,
                             data.exams_infos[key].st_session,
                             data.exams_infos[key].st_ref_scol,
-                            data.exams_infos[key].st_rof_ref
+                            data.exams_infos[key].st_rof_ref,
+                            data.exams_infos[key].st_is_exam_template,
+                            data.exams_infos[key].st_exam_template_label
                         );
                         update_mini_table(
                             "2",
@@ -353,7 +357,9 @@
                             data.exams_infos[key].st_regime,
                             data.exams_infos[key].st_session,
                             data.exams_infos[key].st_ref_scol,
-                            data.exams_infos[key].st_rof_ref
+                            data.exams_infos[key].st_rof_ref,
+                            data.exams_infos[key].st_is_exam_template,
+                            data.exams_infos[key].st_exam_template_label
                         );
                     });
                 }

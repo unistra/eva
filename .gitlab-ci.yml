@@ -2,6 +2,6 @@ before_script:
 - pip install tox
 - apt-get update && apt-get install -y libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
 
-py34:
+py35:
   script:
-  - tox -e py34
+  - tox -e py35

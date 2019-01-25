@@ -18,9 +18,9 @@
                     <div id="msg" role="alert"></div>
                     <button type="button" class="btn-primary btn btn-sm btn-1 copy-old">{% trans "Récupérer les ÉPREUVES <br>de l'année précédente pour cet objet" %}</button>
                 </div>
-                <div class="disp-flex space-between paddin-top">
+                <div class="disp-flex space-between paddin-top" id="struct_object_properties">
                     <div>
-                        <span>{% trans "Object : " %} </span>
+                        <span>{% trans "Objet : " %} </span>
                         <strong>
                             <span id="struct_object"></span>
                         </strong>
@@ -50,14 +50,25 @@
                         </strong>
                     </div>
                 </div>
+                <div class="disp-flex space-between paddin-top">
+                    <div>
+                        <span>{% trans "Objet gabarit : " %} </span>
+                        <strong>
+                            <span class="margin-left05" id="struct_is_exam_template"></span>
+                        </strong>
+                        <span class="margin-left05" id="struct_exam_template_label"></span>
+                        <span class="margin-left05" id="struct_exam_template_edit"><a href="#">Modifier le gabarit</a></span>
+                        <span class="margin-left05" id="struct_exam_template_delete"><a href="#" id="struct_exam_template_delete">Supprimer le gabarit</a></span>
+                        <span class="margin-left05" id="struct_exam_template_create"><a href="#" id="struct_exam_template_create">Créer un gabarit</a></span>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
-
                 <h4 class="blue">
                     {% trans "Épreuves de la session principale"%}
+                    <small><a href="#" id="struct_exam_template_apply">{% trans "Appliquer un gabarit" %}</a></small>
                 </h4>
                 <div id="principal_exam"></div>
-
                 <br>
                 <div class="session2_exams">
 
@@ -68,13 +79,10 @@
                         <button type="button" class="btn-primary btn btn-sm btn-1" id="get_principal_exam">{% trans "Copier toutes les épreuves de la session principale" %}</button>
                     </div>
                     <br>
-
                     <div id="second_exam"></div>
                 </div>
-
             </div>
             <div class="modal-footer">
-
                 <button class="btn-primary btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
             </div>
         </div>
@@ -90,7 +98,6 @@
             </div>
             <div class="modal-footer">
                 <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
-
             </div>
         </div>
     </div>
@@ -109,31 +116,82 @@
             <div class="modal-footer">
                 <button class="btn-primary btn" aria-hidden="true" id="confirm_additional">{% trans "Confirmer" %}</button>
                 <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
-
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal_exam_template_edit" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="title-modal">{% trans "Gabarit - Ensemble d'épreuves" %}</h1>
+                <div class="disp-flex space-between paddin-top" id="struct_object_properties_container"></div>
+                <div>
+                    <label for="modal_exam_template_label">Description du gabarit <small>(60 caractères max.)</small></label>
+                    <input type="text" maxlength="60" id="modal_exam_template_label" style="width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary btn" aria-hidden="true" id="modal_exam_template_edit_confirm">{% trans "Confirmer" %}</button>
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_exam_templates_list" role="dialog" style="z-index: 1450">
+    <div class="modal-dialog modal-75">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="title-modal">{% trans "Appliquer un gabarit" %}</h1>
+            </div>
+            <div class="modal-body">
+                <div id="exam_templates_list_table">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th><span class="sr-only">Id</span></th>
+                            <th>{% trans "Gabarits compatibles de ma composante" %}</th>
+                            <th>{% trans "Régime" %}</th>
+                            <th>{% trans "Session" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary btn" aria-hidden="true" id="modal_exam_template_list_confirm">{% trans "Appliquer le gabarit sélectionné" %}</button>
+                <button class=" btn" data-dismiss="modal" aria-hidden="true">{% trans "Annuler" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
 	$("#exams_tab").on('hidden.bs.modal', function (e) {
         $("#msg").hide();
-    })
+    });
 
     var type_dict = {
         "A": "Autre",
         "O": "Oral",
         "E": "Ecrit"
-    }
+    };
 
-    $('#get_principal_exam').on('click', function (e) {
-        let id_structure = $("#get_principal_exam").data("id_structure");
-        let st_label = $("#get_principal_exam").data("st_label");
-        let st_nature = $("#get_principal_exam").data("st_nature");
-        let st_regime = $("#get_principal_exam").data("st_regime");
-        let st_session = $("#get_principal_exam").data("st_session");
-        let st_ref_scol = $("#get_principal_exam").data("st_ref_scol");
-        let st_rof_ref = $("#get_principal_exam").data("st_rof_ref");
+	let get_principal_exam = $('#get_principal_exam');
+	get_principal_exam.on('click', function (e) {
+        let id_structure = get_principal_exam.data("id_structure");
+        let st_label = get_principal_exam.data("st_label");
+        let st_nature = get_principal_exam.data("st_nature");
+        let st_regime = get_principal_exam.data("st_regime");
+        let st_session = get_principal_exam.data("st_session");
+        let st_ref_scol = get_principal_exam.data("st_ref_scol");
+        let st_rof_ref = get_principal_exam.data("st_rof_ref");
+        let st_is_exam_template = get_principal_exam.data("st_is_exam_template");
+        let st_exam_template_label = get_principal_exam.data("st_exam_template_label");
         let url_copy = "/mecctable/copy_exam_1_to_2/" + id_structure;
         $.ajax({
             url: url_copy,
@@ -144,17 +202,177 @@
             success: function (data) {
                 $("#second_exam").jsGrid("loadData");
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol,
-                    st_rof_ref)
-                $(".jsgrid-insert-row").hide()
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                $(".jsgrid-insert-row").hide();
                 $('#title_complete').text(
                     '{% trans " Copie des épreuves principales terminée."%}');
                 $('#complete').modal('show');
-
             }
         })
+    });
 
-    })
+    // Remove mark to make StructureObject as a template for exams
+	$('#struct_exam_template_delete').on('click', function (e) {
+	    e.preventDefault();
+	    let url = '{% url 'mecctable:delete_exam_template' %}';
+	    $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                'structure_object_id': get_principal_exam.data('id_structure'),
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (Boolean(data.status)) {
+                    $('#struct_is_exam_template').text('{% trans 'Non' %}');
+                    $('#struct_exam_template_label').text('');
+                    $('#struct_exam_template_edit').hide();
+                    $('#struct_exam_template_delete').hide();
+                    $('#struct_exam_template_create').show();
+                }
+            },
+        });
+    });
+
+    function _updateExamTemplate(structureObjectId, url) {
+        let object_properties = $('#struct_object_properties').html();
+        let label = get_principal_exam.data('st_exam_template_label');
+        if (label === 'None') {
+            label = '';
+        }
+        $('#struct_object_properties_container').html(object_properties);
+        $('#modal_exam_template_label').val(label);
+        $('#modal_exam_template_edit').modal('show');
+
+        $('#modal_exam_template_edit_confirm').on('click', function() {
+            let label = $('#modal_exam_template_label').val();
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    'structure_object_id': structureObjectId,
+                    'exam_template_label': label,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    $('#struct_object_properties_container').html('');
+                    $('#struct_is_exam_template').text('{% trans 'Oui' %}');
+                    get_principal_exam.data('st_is_exam_template', 'True');
+                    $('#struct_exam_template_label').text(label).show();
+                    get_principal_exam.data('st_exam_template_label', label);
+                    $('#struct_exam_template_create').hide();
+                    $('#struct_exam_template_edit').show();
+                    $('#struct_exam_template_delete').show();
+                }
+            });
+            $('#modal_exam_template_edit').modal('hide');
+        });
+
+    }
+
+    $('#struct_exam_template_create').on('click', function (e) {
+        e.preventDefault();
+        $('#modal_exam_template_edit_confirm').off('click');
+        let url = '{% url 'mecctable:create_exam_template' %}';
+        let structure_object_id = get_principal_exam.data('id_structure');
+
+        _updateExamTemplate(structure_object_id, url);
+    });
+
+	$('#struct_exam_template_edit').on('click', function (e) {
+	    e.preventDefault();
+        $('#modal_exam_template_edit_confirm').off('click');
+	    let url = '{% url 'mecctable:edit_exam_template' %}';
+        let structure_object_id = get_principal_exam.data('id_structure');
+
+        _updateExamTemplate(structure_object_id, url);
+    });
+
+    /**
+     * Load available exam templates for a given StuctureObject and present them in a table
+     * to choose one
+     **/
+    $('#struct_exam_template_apply').on('click', function (e) {
+        e.preventDefault();
+
+        let structure_object_id = get_principal_exam.data('id_structure');
+        let templates_list_table = $('#exam_templates_list_table table tbody');
+
+        templates_list_table.empty();
+
+        $.ajax({
+            url: '{% url 'mecctable:list_exam_templates' %}',
+            type: "GET",
+            data: {
+                structure_object_id: structure_object_id
+            },
+            success: function (templates_list) {
+                let html = '';
+                if (templates_list.length) {
+                    templates_list.forEach(function (template_data) {
+                        html += '<tr>' +
+                            '<td><input type="checkbox" value="' + template_data.id + '"/></td>' +
+                            '<td>' + template_data.label + '</td>' +
+                            '<td>' + template_data.regime + '</td>' +
+                            '<td>' + template_data.session + '</td>' +
+                            '</tr>';
+                    });
+                    $('#modal_exam_template_list_confirm').prop('disabled', false);
+                } else {
+                    $('#modal_exam_template_list_confirm').prop('disabled', true);
+                    html = '<tr><td>' + "{% trans "Aucun gabarit n'est disponible" %}" +'</td></tr>';
+                }
+                templates_list_table.append($(html));
+                $('#modal_exam_templates_list').modal('show');
+            }
+        });
+    });
+
+    $('#modal_exam_template_list_confirm').on('click', function (e) {
+        let selected_templates = $('#exam_templates_list_table input:checked');
+
+        switch (selected_templates.length) {
+            case 0:
+                alert("{% trans "Veuillez sélectionner le gabarit à appliquer" %}");
+                break;
+            case 1:
+                let source_structure_object_id = $(selected_templates[0]).val();
+                let destination_structure_object_id = get_principal_exam.data('id_structure');
+
+                $.ajax({
+                    url: "{% url "mecctable:apply_exam_template" %}",
+                    type: "POST",
+                    data: {
+                        source_structure_object_id: source_structure_object_id,
+                        destination_structure_object_id: destination_structure_object_id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        let get_principal_exam = $('#get_principal_exam');
+                        let st_nature = get_principal_exam.data('st_nature');
+                        let st_label = get_principal_exam.data('st_label');
+                        let st_regime = get_principal_exam.data('st_regime');
+                        let st_session = get_principal_exam.data('st_session');
+                        let st_ref_scol = get_principal_exam.data('st_ref_scol');
+                        let st_rof_ref = get_principal_exam.data('st_rof_ref');
+                        let st_is_exam_template = get_principal_exam.data('st_is_exam_template');
+                        let st_exam_template_label = get_principal_exam.data('st_exam_template_label');
+                        _setUpExamLists(destination_structure_object_id, st_label, st_nature, st_regime, st_session,
+                            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                        update_mini_table("1", destination_structure_object_id, st_label, st_nature, st_regime, st_session,
+                            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                        update_mini_table("2", destination_structure_object_id, st_label, st_nature, st_regime, st_session,
+                            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                        $('#modal_exam_templates_list').modal('hide');
+                    }
+                });
+                break;
+            default:
+                alert("{% trans "Vous ne pouvez sélectionner qu'un seul gabarit" %}");
+                break;
+        }
+    });
 
     function _checkall(what, label, args) {
 
@@ -162,7 +380,7 @@
         _is_grade(what, label);
 
         function _is_nan(what, label) {
-            if (isNaN(what) && (what != "" || what !== null)) {
+            if (isNaN(what) && (what !== "" || what !== null)) {
                 args.cancel = true;
                 alert(label + " doit être un nombre.");
                 return false
@@ -173,15 +391,15 @@
             if (!_is_nan(what, label)) {
                 if (what > 20 || what < 0) {
                     args.cancel = true;
-                    let text = what > 20 ? " ne peut pas être supérieur à 20." : " ne peut pas être négatif."
+                    let text = what > 20 ? " ne peut pas être supérieur à 20." : " ne peut pas être négatif.";
                     alert(label + text);
                 }
             }
         }
     }
 
-    function update_mini_table(session, id_structure, st_label, st_nature, st_regime, st_session, st_ref_scol,
-        st_rof_ref) {
+    function update_mini_table(session, id_structure, st_label, st_nature, st_regime,
+                               st_session, st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label) {
         // called afer each insertion, update or copy
         let url_list = "/mecctable/list_exams/" + id_structure;
 
@@ -211,8 +429,8 @@
             // Update it with current items
             let see_more = '<td class="border-left" ><a class="hand" onclick="struct_select(' +
                 id_structure +'\', \'' + st_nature + '\',  \'' + st_regime + '\', \'' + st_session + '\', \'' +
-                st_ref_scol + '\', \'' +
-                st_rof_ref + '\');">Voir +</a></td>'
+                st_ref_scol + '\', \'' + st_rof_ref + '\', \'' + st_is_exam_template + '\', \'' +
+                st_exam_template_label + '\');">Voir +</a></td>';
 
 
             for (i = 0; i < items.length; i++) {
@@ -264,53 +482,13 @@
         return false;
     }
 
-    function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol,
-        st_rof_ref) {
-        let st_label =  $(".struct-" + id_structure).text()
-        $("#get_principal_exam").removeData();
-        $("#get_principal_exam").attr({
-            "data-id_structure": id_structure,
-            "data-st_nature": st_nature,
-            "data-st_label": st_label,
-            "data-st_regime": st_regime,
-            "data-st_session": st_session,
-            "data-st_ref_scol": st_ref_scol,
-            "data-st_rof_ref": st_rof_ref,
-        });
-        // No second session if unique
-        let is_2_session = st_session.indexOf("2") !== -1
-
-        if (!is_2_session){
-            $('.session2_exams').hide()
-        } else {
-            $('.session2_exams').show()
-        }
-
-        // update title
-        $("#exams_tab .copy-old").attr("id", id_structure);
-        $.ajax({
-            type: "GET",
-            url: "{% url 'mecctable:has_exams' %}",
-            data: { structure_id: id_structure },
-            success: function (data) {
-                $("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
-            }
-        });
-        document.getElementById('struct_object').innerHTML = st_label;
-        document.getElementById('struct_type').innerHTML = st_nature;
-        document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
-        document.getElementById('struct_siscol').innerHTML = st_ref_scol;
-        document.getElementById('struct_rof').innerHTML = st_rof_ref;
-        // Show the modal
-        $('#exams_tab').modal('show');
-
-        jsGrid.locale("fr");
+    function _setUpExamLists(id_structure, st_label, st_nature, st_regime, st_session,
+                             st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label) {
 
         let url_list = "/mecctable/list_exams/" + id_structure;
         let url_add = "/mecctable/add_exam/";
         let url_update = "/mecctable/update_exam/" + id_structure;
         let url_delete = "/mecctable/delete_exam/" + id_structure;
-
 
         $("#principal_exam").jsGrid({
             height: "auto",
@@ -332,12 +510,11 @@
                 if (nb_exams === 0) {
                     $('#get_principal_exam').addClass("disabled")
                 } else $('#get_principal_exam').removeClass("disabled")
-
             },
             onItemInserted: function (args) {
                 args.grid.loadData();
                 update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
             },
             onItemInserting: function (args) {
                 if (args.item.label === "") {
@@ -350,17 +527,15 @@
                 _checkall(args.item.eliminatory_grade, "Seuil compens.", args);
 
                 let duration = args.item.exam_duration.trim();
-                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                if (args.item.type_exam === "E" || args.item.type_exam === "O") {
                     if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
                 // console.log('%cBOOM!', 'color: red; font-size: 5em; font-weight: bold;');
-                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'));
-                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1);
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(':'));
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') + 1);
                 durations_h = durations_h === '' ? '0' : durations_h;
                 durations_m = durations_m === '' ? '00' : durations_m;
 
@@ -388,16 +563,14 @@
                 _checkall(args.item.eliminatory_grade, "Note seuil", args);
 
                 let duration = args.item.exam_duration.trim();
-                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                if (args.item.type_exam === "E" || args.item.type_exam === "O") {
                     if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
-                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'));
-                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1);
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(':'));
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') + 1);
                 durations_h = durations_h === '' ? '0' : durations_h;
                 durations_m = durations_m === '' ? '00' : durations_m;
 
@@ -417,20 +590,20 @@
             onItemUpdated: function (args) {
                 args.grid.loadData();
                 update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
             },
             onItemDeleted: function (args) {
                 args.grid.loadData();
                 update_mini_table("1", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref);
-		        $.ajax({
-		            type: "GET",
-		            url: "{% url 'mecctable:has_exams' %}",
-		            data: { structure_id: id_structure },
-		            success: function (data) {
-						$("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
-		            }
-		        });
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'mecctable:has_exams' %}",
+                    data: { structure_id: id_structure },
+                    success: function (data) {
+                        $("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+                    }
+                });
             },
             onInit: function () {},
             controller: {
@@ -439,7 +612,6 @@
                         url: url_list,
                         dataType: "json"
                     })
-
                 },
                 insertItem: function (item) {
                     var d = $.Deferred();
@@ -478,7 +650,6 @@
                     });
 
                     return d.promise();
-
                 },
                 deleteItem: function (item) {
                     var d = $.Deferred();
@@ -494,7 +665,6 @@
                     }).done(function (response) {
                         d.resolve(response.value);
                         $(".jsgrid-insert-row").hide();
-
                     });
 
                     return d.promise();
@@ -502,23 +672,23 @@
             },
 
             fields: [{
-                    name: "_id",
-                    type: "text",
-                    title: "id auto",
-                    width: 40,
-                    validate: "required",
-                    editing: false,
-                    inserting: false,
-                },
+                name: "_id",
+                type: "text",
+                title: "id auto",
+                width: 40,
+                validate: "required",
+                editing: false,
+                inserting: false,
+            },
                 {
                     css: "select_type",
                     name: "type_exam",
                     type: "select",
                     title: "Type",
                     items: [{
-                            Name: "Ecrit",
-                            Id: "E"
-                        },
+                        Name: "Ecrit",
+                        Id: "E"
+                    },
                         {
                             Name: "Oral",
                             Id: "O"
@@ -563,14 +733,14 @@
                     name: "type_ccct",
                     type: "select",
                     title: "Type CC/CT",
-                    visible: st_regime == "ECI" ? false : true,
+                    visible: st_regime !== "ECI",
                     width: 45,
                     valueField: "Id",
                     textField: "Name",
                     items: [{
-                            Name: "CC",
-                            Id: "C"
-                        },
+                        Name: "CC",
+                        Id: "C"
+                    },
                         {
                             Name: "CT",
                             Id: "T"
@@ -586,9 +756,9 @@
                 },
                 {
                     name: "convocation",
-                    type: st_regime == "ECI" ? "checkbox" : "text",
+                    type: st_regime === "ECI" ? "checkbox" : "text",
                     title: "Convocation",
-                    visible: st_regime == "ECI" ? true : false,
+                    visible: st_regime === "ECI",
                     width: 75
                 },
                 {
@@ -610,7 +780,7 @@
                     name: "is_session_2",
                     type: "checkbox",
                     title: "Repport session 2",
-                    visible: st_session == "Session unique" ? false : true,
+                    visible: st_session !== "Session unique",
                     width: 70,
                 },
                 {
@@ -618,7 +788,7 @@
                     type: "text",
                     title: "À partir de ...",
                     width: 70,
-                    visible: st_session == "Session unique" ? false : true,
+                    visible: st_session !== "Session unique",
                     css: "thresold",
                     editTemplate: function (value, item) {
                         value = value === null ? "" : value;
@@ -636,8 +806,8 @@
                         return $("<button>").attr("type", "button").text("+")
                             .on("click", function () {
                                 $("#principal_exam .jsgrid-insert-row .thresold input")
-                                    .hide()
-                                $("#principal_exam .jsgrid-insert-row").show()
+                                    .hide();
+                                $("#principal_exam .jsgrid-insert-row").show();
                                 $("#principal_exam .jsgrid-insert-row .exam_duration input").attr(
                                     "placeholder", "2:00");
                                 $("#principal_exam .jsgrid-insert-row .coefficient input").attr(
@@ -667,7 +837,7 @@
             onItemInserted: function (args) {
                 args.grid.loadData();
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
             },
             onItemInserting: function (args) {
                 if (args.item.label === "") {
@@ -680,22 +850,20 @@
                 _checkall(args.item.eliminatory_grade, "Seuil compens.", args);
 
                 let duration = args.item.exam_duration.trim();
-                if (args.item.type_exam == "E" || args.item.type_exam == "O") {
+                if (args.item.type_exam === "E" || args.item.type_exam === "O") {
                     if (duration_is_empty(duration)) {
                         args.cancel = true;
                         alert('La durée est obligatoire');
                     }
                 }
-                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(
-                    ':'));
-                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') +
-                    1);
+                let durations_h = duration.indexOf(':') === -1 ? duration : duration.slice(0, duration.indexOf(':'));
+                let durations_m = duration.indexOf(':') === -1 ? "" : duration.slice(duration.indexOf(':') + 1);
                 durations_h = durations_h === '' ? '0' : durations_h;
                 durations_m = durations_m === '' ? '00' : durations_m;
 
                 if (isNaN(durations_h) || isNaN(durations_m)) {
                     args.cancel = true;
-                    alert("'Durée' doit être sous le format H:mm")
+                    alert("'Durée' doit être sous le format H:mm");
                 }
                 if (args.item.coefficient === "" || args.item.coefficient === " ") {
                     args.cancel = true;
@@ -709,9 +877,9 @@
             onItemUpdating: function (args) {
                 if (args.item.label === "") {
                     args.cancel = true;
-                    alert("Un intitulé est obligatoire")
+                    alert("Un intitulé est obligatoire");
                 }
-                _checkall(args.item.eliminatory_grade, "Seuil compens.")
+                _checkall(args.item.eliminatory_grade, "Seuil compens.");
 
                 let duration = args.item.exam_duration;
                 let durations_h = duration.slice(0, duration.indexOf(':'));
@@ -723,7 +891,7 @@
                     args.cancel = true;
                     alert("'Durée' doit être sour le format H:mm");
                 }
-                if (isNaN(args.item.coefficient) && args.item.coefficient != "") {
+                if (isNaN(args.item.coefficient) && args.item.coefficient !== "") {
                     args.cancel = true;
                     alert("'Coefficient' doit être un nombre");
                 }
@@ -731,30 +899,28 @@
             onItemUpdated: function (args) {
                 args.grid.loadData();
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
             },
             onItemDeleted: function (args) {
                 args.grid.loadData();
                 update_mini_table("2", id_structure, st_label, st_nature, st_regime, st_session,
-                    st_ref_scol, st_rof_ref)
+                    st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
                 $.ajax({
-		            type: "GET",
-		            url: "{% url 'mecctable:has_exams' %}",
-		            data: { structure_id: id_structure },
-		            success: function (data) {
-						$("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
-		            }
-		        });
+                    type: "GET",
+                    url: "{% url 'mecctable:has_exams' %}",
+                    data: { structure_id: id_structure },
+                    success: function (data) {
+                        $("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+                    }
+                });
             },
             controller: {
                 loadData: function (filter) {
-
                     return $.ajax({
                         url: url_list,
                         data: 'session2=True',
                         dataType: "json"
                     })
-
                 },
                 insertItem: function (item) {
                     var d = $.Deferred();
@@ -792,12 +958,9 @@
                     }).done(function (response) {
                         d.resolve(response.value);
                         $(".jsgrid-insert-row").hide();
-
                     });
 
                     return d.promise();
-
-
                 },
                 deleteItem: function (item) {
                     var d = $.Deferred();
@@ -814,31 +977,28 @@
                     }).done(function (response) {
                         d.resolve(response.value);
                         $(".jsgrid-insert-row").hide();
-
                     });
 
                     return d.promise();
-
-
                 },
             },
 
             fields: [{
-                    name: "_id",
-                    type: "text",
-                    title: "id auto",
-                    width: 40,
-                    editing: false,
-                    inserting: false,
-                },
+                name: "_id",
+                type: "text",
+                title: "id auto",
+                width: 40,
+                editing: false,
+                inserting: false,
+            },
                 {
                     name: "type_exam",
                     type: "select",
                     title: "Type",
                     items: [{
-                            Name: "Ecrit",
-                            Id: "E"
-                        },
+                        Name: "Ecrit",
+                        Id: "E"
+                    },
                         {
                             Name: "Oral",
                             Id: "O"
@@ -883,7 +1043,7 @@
                     name: "type_ccct",
                     type: "select",
                     title: "Type CC/CT",
-                    visible: st_regime == "ECI" ? false : true,
+                    visible: st_regime !== "ECI",
                     width: 45,
                     valueField: "Id",
                     textField: "Name",
@@ -920,7 +1080,7 @@
                         // Add + button to show
                         return $("<button>").attr("type", "button").text("+")
                             .on("click", function () {
-                                $("#second_exam .jsgrid-insert-row").show()
+                                $("#second_exam .jsgrid-insert-row").show();
                                 $("#second_exam .jsgrid-insert-row .exam_duration input").attr(
                                     "placeholder", "2:00");
                                 $("#second_exam .jsgrid-insert-row .coefficient input").attr(
@@ -930,6 +1090,86 @@
                 }
             ]
         });
+    }
+
+    function struct_select(id_structure, st_nature, st_regime, st_session, st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label) {
+        let st_label =  $(".struct-" + id_structure).text();
+        $("#get_principal_exam").removeData();
+        $("#get_principal_exam").attr({
+            "data-id_structure": id_structure,
+            "data-st_nature": st_nature,
+            "data-st_label": st_label,
+            "data-st_regime": st_regime,
+            "data-st_session": st_session,
+            "data-st_ref_scol": st_ref_scol,
+            "data-st_rof_ref": st_rof_ref,
+            "data-st_is_exam_template": st_is_exam_template,
+            "data-st_exam_template_label": st_exam_template_label
+        });
+        // No second session if unique
+        let is_2_session = st_session.indexOf("2") !== -1;
+
+        if (!is_2_session){
+            $('.session2_exams').hide()
+        } else {
+            $('.session2_exams').show()
+        }
+
+        // update title
+        $("#exams_tab .copy-old").attr("id", id_structure);
+        $.ajax({
+            type: "GET",
+            url: "{% url 'mecctable:has_exams' %}",
+            data: { structure_id: id_structure },
+            success: function (data) {
+                $("#"+String(id_structure)).prop("disabled", Boolean(data.has_exams));
+            }
+        });
+
+        // Check if StructureObject is an Exam Template and display related information
+        $.get('{% url 'mecctable:info_exam_template' %}', {structure_object_id: id_structure}, function (data) {
+            let st_is_exam_template = data.is_exam_template;
+            let st_exam_template_label = data.exam_template_label;
+
+            let exam_template_label = $('#struct_exam_template_label');
+            let exam_template_create = $('#struct_exam_template_create');
+            let exam_template_delete = $('#struct_exam_template_delete');
+            let exam_template_edit = $('#struct_exam_template_edit');
+            let get_principal_exam = $('#get_principal_exam');
+
+            get_principal_exam.data('st_is_exam_template', st_is_exam_template);
+            get_principal_exam.data('st_exam_template_label', st_exam_template_label);
+
+            if (true === Boolean(st_is_exam_template)) {
+                document.getElementById('struct_is_exam_template').innerHTML = '{% trans 'Oui' %}';
+                exam_template_label.text(st_exam_template_label).show();
+                exam_template_edit.show();
+                exam_template_delete.show();
+                exam_template_create.hide();
+            } else {
+                document.getElementById('struct_is_exam_template').innerHTML = '{% trans 'Non' %}';
+                exam_template_label.text('').hide();
+                exam_template_edit.hide();
+                exam_template_delete.hide();
+                exam_template_create.show();
+            }
+        });
+
+        document.getElementById('struct_object').innerHTML = st_label;
+        document.getElementById('struct_type').innerHTML = st_nature;
+        document.getElementById('struct_regime').innerHTML = st_regime + ' ' + st_session;
+        document.getElementById('struct_siscol').innerHTML = st_ref_scol;
+        document.getElementById('struct_rof').innerHTML = st_rof_ref;
+
+        // Show the modal
+        $('#exams_tab').modal('show');
+
+        jsGrid.locale("fr");
+
+
+        _setUpExamLists(id_structure, st_label, st_nature, st_regime, st_session,
+            st_ref_scol, st_rof_ref, st_is_exam_template, st_exam_template_label);
+
         $(".jsgrid-insert-row").hide()
     }
     // Jquery power !!
@@ -937,25 +1177,25 @@
     // delegate stuff
     $("#principal_exam").delegate('.repport_session_2 input', 'click',
         function (e) {
+            let myinput = $("#principal_exam .thresold input");
             if (this.checked) {
-                $("#principal_exam .thresold input").val('0')
-                $("#principal_exam .thresold input").show()
+                myinput.val('0');
+                myinput.show();
             } else {
-                $("#principal_exam .thresold input").val('')
-
-                $("#principal_exam .thresold input").hide()
+                myinput.val('');
+                myinput.hide();
             }
-        })
+        });
+
     $("#principal_exam, #second_exam").delegate('.additionnal_info input', 'click', function (e) {
-        let that = this
+        let that = this;
         $('#additional').val(that.value);
         $('#additional_info').modal('show');
 
-              
-        document.getElementById("additional").focus()
+        document.getElementById("additional").focus();
 
         $('#confirm_additional').on('click', function () {
-            let val = $('#additional').val()
+            let val = $('#additional').val();
             that.value = val;
             $('#additional_info').modal('hide');
         })

@@ -60,6 +60,7 @@ def do_regime_session_check(request):
 
     return JsonResponse(json_response)
 
+
 @is_ajax_request
 def do_consistency_check(request):
     """
