@@ -842,7 +842,9 @@ def duplicate_add(request):
             # date_visa_des=t.date_visa_des,
             # date_val_cfvu=t.date_val_cfvu,
             supply_cmp=t.supply_cmp,
-            n_train=t.n_train
+            n_train=t.n_train,
+            reappli_atb=False,
+            recup_atb_ens=False,
         )
         for cmp in t.institutes.all():
             training.institutes.add(cmp)
