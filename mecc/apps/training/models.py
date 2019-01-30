@@ -117,11 +117,6 @@ class Training(models.Model):
     def clean_fields(self, exclude=None):
         if self.code_year is None:
             self.code_year = currentyear().code_year
-        if self.n_train in ['', ' ', 0, None]:
-            try:
-                self.n_train = Training.objects.all().latest('id').id + 1
-            except ObjectDoesNotExist:
-                self.n_train = 1
         if 'CATALOGUE' in self.label.upper():
             self.progress_rule = 'A'
         if not self.MECC_tab:
@@ -247,6 +242,11 @@ class Training(models.Model):
             update_regime_session(self, self.MECC_type, self.session_type)
 
         super(Training, self).save(*args, **kwargs)
+
+        # Lors de la création d'une formation, n_train = id
+        if self.n_train in ('', ' ', None):
+            self.n_train = self.id
+            self.save()
 
     def __init__(self, *args, **kwargs):
         super(Training, self).__init__(*args, **kwargs)
