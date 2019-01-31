@@ -158,13 +158,10 @@ def delete_derogs_adds_regime(training, regime):
     adds.delete()
 
 
-def update_exams_session(training, session):
-    pass
-
 def save_training_update_regime_session(training, regime_type, session_type):
     """
     Reapply regime and session to selected training and all it objects
-    => return true if updated  and else if nothin' was done
+    => return true if updated and false if nothing was done
     """
     # set regime and session type to new stuff
     old_session_type = training.session_type

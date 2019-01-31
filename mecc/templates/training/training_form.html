@@ -190,7 +190,7 @@ $("input[type='radio'][checked='checked']").prop('checked', true)
     });
 {% endif %}
 
-$("#regime-session button").click(function(event){
+$("#regime-session button[type=button]").click(function(event){
     console.log("TRANSFORM BUTTON CLICKED...");
     event.preventDefault()
     let mode = event.target.name;

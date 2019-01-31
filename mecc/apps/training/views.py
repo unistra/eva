@@ -85,8 +85,14 @@ def update_training_regime_session(request):
     """
     ajax call to update session and regime as you want
     """
-    done = save_training_update_regime_session(
-        Training.objects.get(id=request.POST.get('training_id')),
+    # done = save_training_update_regime_session(
+    #     Training.objects.get(id=request.POST.get('training_id')),
+    #     request.POST.get('regime_type'),
+    #     request.POST.get('session_type')
+    # )
+
+    done = Training.objects.get(id=request.POST.get('training_id')).transform(
+        request.POST.get('mode'),
         request.POST.get('regime_type'),
         request.POST.get('session_type')
     )
