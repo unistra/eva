@@ -572,6 +572,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     old_year = currentyear().code_year - 1
     old_training = Training.objects.filter(
         n_train=t.n_train, code_year=old_year).first()
+    old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
     old_specific = SpecificParagraph.objects.filter(
         code_year=old_year).filter(paragraph_gen_id__in=[
             e.origin_parag for e in p
@@ -580,7 +581,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year - 1,
-            rule_gen_id=r.n_rule)
+            rule_gen_id=old_rule.id)
     except AdditionalParagraph.DoesNotExist:
         old_additional = None
 
