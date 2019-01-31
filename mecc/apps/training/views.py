@@ -621,6 +621,7 @@ def gen_pdf_all_rules(request, training_id):
 
 
 def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", template="training/form/edit_specific_paragraph.html"):
+    print("PROUT")
     data = {}
 # CURRENT OBJECTS
     training = data['training'] = Training.objects.get(id=training_id)
@@ -632,8 +633,9 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
         or 'DES1' in [e.name for e in request.user.groups.all()] \
         or request.user.is_superuser)
     old_year = currentyear().code_year - 1
+    old_rule = Rule.objects.get(code_year=old_year, n_rule=n_rule)
     old_additional = AdditionalParagraph.objects.filter(
-        code_year=old_year, rule_gen_id=n_rule).first() if old == 'Y' else None
+        code_year=old_year, rule_gen_id=old_rule.id).first() if old == 'Y' else None
 # Create temporary additional; just in order to fill the form with ease
     additional, created = AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
