@@ -45,7 +45,7 @@
         <form action="" method="post" id="training_form" >
             {%crispy form%}
             <div id="transform-warning" style="display: none;">
-                <strong>En cliquant sur le bouton "Transformer" (ci-dessus) ou sur le bouton "Valider" (ci-dessous):</strong>
+                <strong>En cliquant sur le bouton "Transformer" (ci-dessus) :</strong>
                 <br><br>
                 <ul>
                     <li><strong>{% trans "Les dérogations et alinéas additionnels existants pour des règles non applicables au nouveau régime seront supprimés" %}</strong></li>
@@ -186,9 +186,13 @@ $("input[type='radio'][checked='checked']").prop('checked', true)
 
 {% if training.has_custom_paragraph or training.has_exam  %}
     $("#regime-session input[type='radio']").change(function(){
-        $("#transform-warning").removeClass().addClass("alert alert-danger").show("fast");
+        $("#transform-warning").addClass("alert alert-danger").show("fast");
         $("#stay").attr('disabled','disabled');
     });
+    $("#regime-session button[type='reset']").click(function(){
+        $("#transform-warning").removeClass("alert alert-danger").hide("fast");
+        $("#stay").removeAttr('disabled')
+    })
 {% endif %}
 
 $("#regime-session button[type=button]").click(function(event){
@@ -216,7 +220,8 @@ $("#regime-session button[type=button]").click(function(event){
             let success_msg = "Les nouveaux régime et session ont bien été réappliqués aux objets propres de la formation.";
             let nothing_done_msg = "Aucune modification sur le régime ou la session de la formation n'a été détectée"
             if(mode=="transform"){
-                $("#transform-warning").removeClass().hide();
+                $("#transform-warning").removeClass("alert alert-danger").hide();
+                $("#stay").removeAttr('disabled')
                 modal_title = "Transformer une formation"
                 success_msg = '\
                     La formation a bien été transformée:\
