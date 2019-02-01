@@ -98,6 +98,10 @@ class StructureObject(models.Model):
     external_name = models.CharField(
         _("Intervenant exterieur"), max_length=240, null=True, blank=True
     )
+    is_existing_rof = models.BooleanField(
+        _('Témoin d\'existence dans ROF'),
+        default=True
+    )
 
     def save(self, *args, **kwargs):
         if self.auto_id in ['', ' ', 0, None]:
@@ -185,6 +189,10 @@ class ObjectsLink(models.Model):
         default=None, null=True, blank=True)
     is_imported = models.NullBooleanField(
         _('Est importé'), null=True, blank=True)
+    is_existing_rof = models.BooleanField(
+        _('Témoin d\'existence dans ROF'),
+        default=True
+    )
 
     @property
     def nature_parent(self):

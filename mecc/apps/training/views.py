@@ -572,6 +572,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     old_year = currentyear().code_year - 1
     old_training = Training.objects.filter(
         n_train=t.n_train, code_year=old_year).first()
+    old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
     old_specific = SpecificParagraph.objects.filter(
         code_year=old_year).filter(paragraph_gen_id__in=[
             e.origin_parag for e in p
@@ -580,7 +581,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year - 1,
-            rule_gen_id=r.n_rule)
+            rule_gen_id=old_rule.id)
     except AdditionalParagraph.DoesNotExist:
         old_additional = None
 
@@ -630,9 +631,16 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
         is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
         or 'DES1' in [e.name for e in request.user.groups.all()] \
         or request.user.is_superuser)
+
+    # OLD STUFF
     old_year = currentyear().code_year - 1
-    old_additional = AdditionalParagraph.objects.filter(
-        code_year=old_year, rule_gen_id=n_rule).first() if old == 'Y' else None
+    old_training = Training.objects.get(
+        code_year=old_year, n_train=training.n_train) if old == 'Y' else None
+    old_rule = Rule.objects.get(
+        code_year=old_year, n_rule=n_rule) if old == 'Y' else None
+    old_additional = AdditionalParagraph.objects.get(
+        code_year=old_year, rule_gen_id=old_rule.id, training_id=old_training.id) if old == 'Y' else None
+
 # Create temporary additional; just in order to fill the form with ease
     additional, created = AdditionalParagraph.objects.get_or_create(
         code_year=currentyear().code_year,
@@ -842,7 +850,9 @@ def duplicate_add(request):
             # date_visa_des=t.date_visa_des,
             # date_val_cfvu=t.date_val_cfvu,
             supply_cmp=t.supply_cmp,
-            n_train=t.n_train
+            n_train=t.n_train,
+            reappli_atb=False,
+            recup_atb_ens=False,
         )
         for cmp in t.institutes.all():
             training.institutes.add(cmp)
