@@ -436,9 +436,16 @@ def validate_institute(request, code, template='institute/validate.html'):
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
     data['date_last_notif'] = institute_year.date_last_notif
-    data['trainings'] = Training.objects.filter(
+    trainings = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
-        institutes__code=code, is_used=True).order_by('degree_type', 'label')
+        institutes__code=code,
+        is_used=True
+    ).order_by(
+        'degree_type',
+        'label'
+    )
+    trainings = _filter_out_rof_excluded_trainings(institute, trainings)
+    data['trainings'] = trainings
     data['notification_to'] = settings.MAIL_FROM
     data['notification_object'] = "%s - %s %s" % (
         institute.label, request.user.first_name, request.user.last_name)
@@ -520,9 +527,16 @@ def check_validate_institute(request, code, template='institute/check_validate.h
     data['label_cmp'] = institute.label
     data['form_institute'] = DircompInstituteForm(instance=institute)
     data['date_last_notif'] = institute_year.date_last_notif
-    data['trainings'] = Training.objects.filter(
+    trainings = Training.objects.filter(
         code_year=currentyear().code_year if currentyear() is not None else None,
-        institutes__code=code, is_used=True).order_by('degree_type', 'label')
+        institutes__code=code,
+        is_used=True
+    ).order_by(
+        'degree_type',
+        'label'
+    )
+    trainings = _filter_out_rof_excluded_trainings(institute, trainings)
+    data['trainings'] = trainings
     data['notification_to'] = [user.email for user in staff.filter(
         meccuser__profile__code__in=["RAC", "DIRCOMP", "DIRETU"]).distinct()]
     data['notification_cc'] = [user.email for user in staff.filter(
@@ -582,6 +596,14 @@ Merci. """)
         messages.add_message(request, messages.ERROR, _(
             'Veuillez renseigner une date de validation valide'))
     return render(request, template, data)
+
+
+def _filter_out_rof_excluded_trainings(institute, trainings):
+    if institute.ROF_support:
+        trainings = trainings.exclude(is_existing_rof=False)
+    else:
+        trainings = trainings.exclude(is_existing_rof=False, degree_type__ROF_code='EA')
+    return trainings
 
 
 @user_passes_test(lambda u: True if 'DIRETU' or 'GESCOL' or 'RESPFORM' in [e.code for e in u.meccuser.profile.all()] else False)
