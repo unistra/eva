@@ -1,7 +1,7 @@
 """
 Django view for training part
 """
-
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
@@ -98,6 +98,19 @@ def update_training_regime_session(request):
     )
 
     return JsonResponse({'status': 200 if done else 300})
+
+@is_ajax_request
+def cancel_transform(request):
+    training_form = TrainingForm(
+        instance=Training.objects.get(id=request.GET.get('training_id'))
+    )
+    mecc_type_layout = as_crispy_field(field=training_form['MECC_type'])
+    session_type_layout = as_crispy_field(field=training_form['session_type'])
+
+    return JsonResponse({
+        'mecc_type_layout': mecc_type_layout,
+        'session_type_layout': session_type_layout
+    })
 
 def my_teachings(request, template='training/respform_trainings.html'):
     """
@@ -286,7 +299,6 @@ class TrainingEdit(UpdateView):
         # En service et Réf. CP Année ROF sont désactivés (attribut "disabled")
         # Le formulaire ne retourne don aucune valeur pour ces champs
         # Ces champs sont alimentés ici par les infos en base de données
-        print("CLICK ON TRASFORM BUTTON GENERATES POST ACTION... which is pretty bad...")
         self.object = self.get_object()
         if Institute.objects.get(code=self.object.supply_cmp).ROF_support:
             request.POST = request.POST.copy()

@@ -235,7 +235,6 @@ class Training(models.Model):
         AdditionalParagraph, StructureObject, Exam) based on new regime
         and new session
         """
-        print("IN TRANSFORM")
         # Simple flag to know if some treatment is done
         done = False
         # Code built concatenating new regime, old regime, new session, old session - Ex : CE21
@@ -243,10 +242,11 @@ class Training(models.Model):
             new_regime, self.MECC_type,
             new_session, self.session_type
         )
-        print(transformation_code)
 
         def transform_exams():
-            print("IN TRANSFORM_EXAMS")
+            """
+            Transform exams owned by the training we are working on
+            """
             structs = StructureObject.objects.filter(owner_training_id=self.id)
             for struct in structs:
                 exams = Exam.objects.filter(id_attached=struct.id)
@@ -261,7 +261,6 @@ class Training(models.Model):
                     exam.save()
 
         def delete_exams_session_two():
-            print('IN DELETE_EXAMS_SESSION_TWO')
             structs = StructureObject.objects.filter(owner_training_id=self.id)
             for struct in structs:
                 exams = Exam.objects.filter(
@@ -275,7 +274,6 @@ class Training(models.Model):
             """
             update regime and session of training structure according to new elements
             """
-            print('UPDATE_STRUCT')
             structs = StructureObject.objects.filter(owner_training_id=self.id)
             for struc in structs:
                 struc.regime = new_regime
@@ -288,7 +286,6 @@ class Training(models.Model):
             """
             from mecc.apps.rules.models import Rule
 
-            print("IN DELETE_DEROGS_ADDS")
 
             is_ccct = False if new_regime == 'C' else True
             is_eci = False if new_regime == 'E' else True
@@ -344,7 +341,6 @@ class Training(models.Model):
         if transformation_code in all_treatments_codes:
             # List containing the functions to launch
             to_be_done = [k for k, v in treatments.items() if transformation_code in v]
-            print(to_be_done)
 
             # List comprehension that launch the functions stored in to_be_done
             list([x() for x in to_be_done])

@@ -152,7 +152,7 @@ $("input[type='radio'][checked='checked']").prop('checked', true)
 
 {%if can_edit and object.input_opening.0 != "4"%}
     var _isEdited = false;
-    
+
     $(document).ready(function () {
         $(':input').change(function () {
             _isEdited = true;
@@ -185,21 +185,15 @@ $("input[type='radio'][checked='checked']").prop('checked', true)
 {%endif%}
 
 {% if training.has_custom_paragraph or training.has_exam  %}
-    $("#regime-session input[type='radio']").change(function(){
+    $("#regime-session").on("change", ":radio", function(){
         $("#transform-warning").addClass("alert alert-danger").show("fast");
         $("#stay").attr('disabled','disabled');
     });
-    $("#regime-session button[type='reset']").click(function(){
-        $("#transform-warning").removeClass("alert alert-danger").hide("fast");
-        $("#stay").removeAttr('disabled')
-    })
 {% endif %}
 
-$("#regime-session button[type=button]").click(function(event){
-    console.log("TRANSFORM BUTTON CLICKED...");
+$("button[name='transform'], button[name='reapply']").click(function(event){
     event.preventDefault()
     let mode = event.target.name;
-    console.log(mode);
     let mecc_type = $('input[name=MECC_type]:checked', '#training_form').val();
     let session_type = $('input[name=session_type]:checked', '#training_form').val();
     let training_id = {{object.id}};
@@ -216,13 +210,13 @@ $("#regime-session button[type=button]").click(function(event){
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function (data) {
-            let modal_title = "Réappliquer aux objets"
+            let modal_title = "Réappliquer aux objets";
             let success_msg = "Les nouveaux régime et session ont bien été réappliqués aux objets propres de la formation.";
-            let nothing_done_msg = "Aucune modification sur le régime ou la session de la formation n'a été détectée"
+            let nothing_done_msg = "Aucune modification sur le régime ou la session de la formation n'a été détectée";
             if(mode=="transform"){
                 $("#transform-warning").removeClass("alert alert-danger").hide();
-                $("#stay").removeAttr('disabled')
-                modal_title = "Transformer une formation"
+                $("#stay").removeAttr('disabled');
+                modal_title = "Transformer une formation";
                 success_msg = '\
                     La formation a bien été transformée:\
                     <br><br>\
@@ -239,5 +233,24 @@ $("#regime-session button[type=button]").click(function(event){
         }
     });
 });
+
+$("button[name='cancel_transform']").click(function(){
+    let training_id = {{object.id}};
+    $.ajax({
+        url: "{% url 'training:cancel_transform' %}",
+        type: "GET",
+        data: {
+            training_id: training_id,
+        },
+        success: function(data) {
+            let mecc_type_content = $(data.mecc_type_layout).html();
+            let session_type_content = $(data.session_type_layout).html();
+            $('#div_id_MECC_type').html(mecc_type_content);
+            $('#div_id_session_type').html(session_type_content);
+            $("#transform-warning").removeClass("alert alert-danger").hide("fast");
+            $("#stay").removeAttr('disabled')               
+        },
+    });
+})
 </script>
 {% endblock %}
