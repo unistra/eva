@@ -107,7 +107,9 @@ def get_mecc_table_order(
             'exams_2_count': True if exams_2.count() > 3 else False,
             'can_be_edited': True if user_can_edit else False,
         }
+
         return items
+
     for link in links:
         imported = True if link.is_imported else False
         stuff.append(get_childs(link, imported))
