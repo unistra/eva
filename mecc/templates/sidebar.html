@@ -5,7 +5,8 @@
     <ul class="sidebar-nav">
         {% if request.user.is_active and request.user.is_staff %}
             <li>
-                <a href="/admin" {% if 'admin' in request.path %}class="item-selected"{% endif %}>
+                {% url 'admin:index' as admin_url %}
+                <a href="{{ admin_url }}" {% if request.path == admin_url %}class="item-selected"{% endif %}>
                     {% trans 'Administration' %}
                 </a>
             </li>
@@ -13,7 +14,8 @@
 
         {% if request.user|has_group:'DES1' or request.user|has_group:'VP' or request.user.is_superuser %}
             <li>
-                <a href="/dashboards/" {% if request.path == '/dashboards/' %}class="item-selected"{% endif %}>
+                {% url 'dashboards:general' as dashboards_url %}
+                <a href="{{ dashboards_url }}" {% if request.path == dashboards_url %}class="item-selected"{% endif %}>
                     {% trans 'Tableau de bord général' %}
                 </a>
             </li>
@@ -27,17 +29,20 @@
                     </a>
                     <ul class="collapse {% if e.cmp in request.path and 'institute' in request.path%} in {% endif %} slump" id="collapse{{e.pk}}">
                         <li>
-                            <a href="/institute/granted/{{e.cmp}}" {% if e.cmp in request.path and 'institute' in request.path%}class="item-selected"{% endif %}>
+                            {% url 'institute:dircomp_edit' e.cmp as url_dircomp_edit %}
+                            <a href="{{ url_dircomp_edit }}" {% if request.path == url_dircomp_edit %}class="item-selected"{% endif %}>
                                 {% trans 'Général' %}
                             </a>
                         </li>
                         <li>
-                            <a href="/institute/validate/{{e.cmp}}" {% if 'institute/---' in request.path %}class="item-selected"{% endif %}>
+                            {% url 'institute:validate' e.cmp as url_institute_validate %}
+                            <a href="{{ url_institute_validate }}" {% if request.path == url_institute_validate %}class="item-selected"{% endif %}>
                                 {% trans 'Validations' %}
                             </a>
                         </li>
                         <li>
-                            <a href="/dashboards/institute/{{e.cmp}}" {% if 'valid' in request.path %}class="item-selected"{% endif %}>
+                            {% url 'dashboards:institute' e.cmp as url_dashboards_institute %}
+                            <a href="{{ url_dashboards_institute }}" {% if request.path == url_dashboards_institute %}class="item-selected"{% endif %}>
                                 {% trans 'Tableau de bord' %}
                             </a>
                         </li>
@@ -51,17 +56,20 @@
                         </a>
                         <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
                             <li>
-                                <a href="/institute/granted/{{e.cmp}}" {% if e.cmp in request.path %}class="item-selected"{% endif %}>
+                                {% url 'institute:dircomp_edit' e.cmp as url_institute_dircomp_edit %}
+                                <a href="{{ url_institute_dircomp_edit }}" {% if request.path == url_institute_dircomp_edit %}class="item-selected"{% endif %}>
                                     {% trans 'Général' %}
                                 </a>
                             </li>
                             <li>
-                                <a href="/institute/documents/{{e.cmp}}" {% if 'valid' in request.path %}class="item-selected"{% endif %}>
+                                {% url 'institute:documents' e.cmp as url_institute_documents %}
+                                <a href="{{ url_institute_documents }}" {% if request.path == url_institute_documents %}class="item-selected"{% endif %}>
                                     {% trans 'Documents' %}
                                 </a>
                             </li>
                             <li>
-                                <a href="{% url 'dashboards:institute' e.cmp %}" {% if 'valid' in request.path %} class="item-selected" {% endif %}>
+                                {% url 'dashboards:institute' e.cmp as url_dashboards_institute %}
+                                <a href="{{ url_dashboards_institute }}" {% if request.path == url_dashboards_institute %} class="item-selected" {% endif %}>
                                     {% trans 'Tableau de bord' %}
                                 </a>
                             </li>
@@ -75,14 +83,16 @@
                     <a href="#collapse{{e.pk}}" class="dropdown-toggle" data-toggle="collapse" aria-expanded="false" aria-controls="collapseDegree">
                         {{e.cmp}} - {% trans 'Resp. pédago.' %} <span class="caret"></span>
                     </a>
-                    <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump"id="collapse{{e.pk}}">
+                    <ul class="collapse {% if e.cmp in request.path %} in {% endif %} slump" id="collapse{{e.pk}}">
                         <li>
-                            <a href="/institute/granted/{{e.cmp}}" {% if "granted" in request.path %}class="item-selected"{% endif %}>
+                            {% url 'institute:dircomp_edit' e.cmp as url_institute_granted %}
+                            <a href="{{ url_institute_granted }}" {% if request.path == url_institute_granted %}class="item-selected"{% endif %}>
                                 {% trans 'Général' %}
                             </a>
                         </li>
                         <li>
-                            <a href="/institute/documents/{{e.cmp}}" {% if 'institute/documents' in request.path %}class="item-selected"{% endif %}>
+                            {% url 'institute:documents' e.cmp as url_institute_documents %}
+                            <a href="{{ url_institute_documents }}" {% if request.path == url_institute_documents %}class="item-selected"{% endif %}>
                                 {% trans 'Documents' %}
                             </a>
                         </li>
@@ -93,7 +103,8 @@
 
         {% if is_respens %}
             <li>
-                <a href="{% url 'training:my_teachings' %}" {% if "teach" in request.path %}class="item-selected"{% endif %}>
+                {% url 'training:my_teachings' as url_training_my_teachings %}
+                <a href="{{ url_training_my_teachings }}" {% if request.path == url_training_my_teachings %}class="item-selected"{% endif %}>
                     {% trans 'Mes enseignements' %}
                 </a>
             </li>
@@ -101,7 +112,8 @@
 
         {% if perms.adm.can_spoof_user or request.user|has_group:'DES3' %}
             <li>
-                <a href="/spoof" {% if 'spoof' in request.path %}class="item-selected"{% endif %}>
+                {% url 'spoof:home' as url_spoof %}
+                <a href="{{ url_spoof }}" {% if request.path == url_spoof %}class="item-selected"{% endif %}>
                     {% trans "Endossement d'identité" %}
                 </a>
             </li>
@@ -109,7 +121,8 @@
 
         {% if request.user|has_group:'DES1' or request.user.is_superuser %}
             <li>
-                <a href="{% url 'commission:home' %}" {% if 'commission' in request.path %}class="item-selected"{% endif %}>
+                {% url 'commission:home' as url_commission_home %}
+                <a href="{{ url_commission_home }}" {% if request.path == url_commission_home %}class="item-selected"{% endif %}>
                     {% trans 'Commission MECC' %}
                 </a>
             </li>
@@ -117,7 +130,8 @@
 
         {% if request.user|has_group:'DES1' or request.user|has_group:'DES2' or request.user.is_superuser %}
             <li>
-                <a href="{% url 'institute:home' %}" {% if 'institute' in request.path and not 'dashboards' in request.path %}class="item-selected"{% endif %}>
+                {% url 'institute:home' as url_institute_home %}
+                <a href="{{ url_institute_home }}" {% if request.path == url_institute_home %}class="item-selected"{% endif %}>
                     {% trans 'Composantes' %}
                 </a>
             </li>
@@ -125,7 +139,8 @@
 
         {% if request.user|has_group:'DES1' or request.user.is_superuser %}
             <li>
-                <a href="{% url 'years:home' %}" {% if 'year' in request.path %}class="item-selected"{% endif %}>
+                {% url 'years:home' as url_years_home %}
+                <a href="{{ url_years_home }}" {% if request.path == url_years_home %}class="item-selected"{% endif %}>
                     {% trans 'Années universitaires' %}
                 </a>
             </li>
@@ -133,7 +148,8 @@
 
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user|has_group:'DES2' %}
             <li>
-                <a href="{% url 'degree:type' %}" {% if 'degree/type' in request.path %}class="item-selected"{% endif %}>
+                {% url 'degree:type' as url_degree_type %}
+                <a href="{{ url_degree_type }}" {% if request.path == url_degree_type %}class="item-selected"{% endif %}>
                     {% trans 'Types de diplômes' %}
                 </a>
             </li>
@@ -141,7 +157,8 @@
 
         {% if request.user|has_group:'DES1' or request.user.is_superuser %}
             <li>
-                <a href="{% url 'rules:list' %}" {% if 'rules' in request.path and not 'training' in request.path %}class="item-selected"{% endif %}>
+                {% url 'rules:list' as url_rules_list %}
+                <a href="{{ url_rules_list }}" {% if request.path == url_rules_list %}class="item-selected"{% endif %}>
                     {% trans 'Règles générales' %}
                 </a>
             </li>
@@ -149,31 +166,33 @@
 
         {% if request.user.meccuser|is_profile_this_year:'RESPFORM' or request.user.is_superuser %}
             <li>
-                <a href="{% url 'training:list_resp' %}" {% if request.session.visited_cmp == "RESPFORM" and 'list_resp' in request.path %}class="item-selected"{% endif %}>
+                {% url 'training:list_resp' as url_list_resp %}
+                <a href="{{ url_list_resp }}" {% if request.session.visited_cmp == "RESPFORM" and request.path == url_list_resp %}class="item-selected"{% endif %}>
                     {% trans 'MES FORMATIONS' %}
                 </a>
             </li>
         {% endif %}
 
         {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC,DIRCOMP,GESCOL,REFAPP,DIRETU' %}
-            <li style>
-                <a href=
-                           {% if request.user|has_group:'DES1' or request.user.is_superuser %}"{% url 'training:list_all' %}"
-                           {% else %}"{% url 'training:list' request.user.meccuser.cmp %}"
-                           {% endif %}
-                {% if 'training/list_all/' in request.path or 'training/list/' in request.path %}
-                    class="item-selected"
-                {% elif 'dashboards/institute/' in request.path and request.user|has_group:'DES1' %}
-                    class="item-selected"
-                {% elif 'dashboards/institute/' in request.path and request.user.is_superuser %}
-                    class="item-selected"
-                {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
+            <li>
+                {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+                    {% url 'training:list_all' as url_offre_de_formation %}
+                {% else %}
+                    {% url 'training:list' request.user.meccuser.cmp as url_offre_de_formation %}
+                {% endif %}
+                <a href="{{ url_offre_de_formation }}"
+                   {% if request.path == url_offre_de_formation %}class="item-selected"
+                   {% elif 'training/list_all/' in request.path or 'training/list/' in request.path %}class="item-selected"
+                   {% elif 'dashboards/institute/' in request.path and request.user|has_group:'DES1' %}class="item-selected"
+                   {% elif 'dashboards/institute/' in request.path and request.user.is_superuser %}class="item-selected"
+                   {% endif %}>{% trans 'OFFRE DE FORMATION' %}</a>
             </li>
         {% endif %}
 
         {% if request.user.meccuser|is_profile:'ECI' %}
             <li>
-                <a href="{% url 'training:list_all_meccs' %}" {% if 'trainins/list_all_meccs/' in request.path %}class="item-selected"{% endif %}>
+                {% url 'training:list_all_meccs' as url_training_list_all_meccs %}
+                <a href="{{ url_training_list_all_meccs }}" {% if request.path == url_training_list_all_meccs %}class="item-selected"{% endif %}>
                     {% trans "MECC " %} {{ request.display.current_year }}
                 </a>
             </li>
@@ -182,13 +201,15 @@
         <div class="bottom">
             {% if request.user|has_group:'DES1' or request.user.is_superuser or request.user.meccuser|has_profile:'RAC, DIRCOMP, GESCOL, REFAPP, DIRETU, RESPENS, RESPFORM' %}
                 <li id="genmecc">
-                    <a href="{% url 'doc_gen:home' %}" {% if 'start/' in request.path %}class="item-selected"{% endif %}>
+                    {% url 'doc_gen:home' as url_doc_gen_home %}
+                    <a href="{{ url_doc_gen_home }}" {% if request.path == url_doc_gen_home %}class="item-selected"{% endif %}>
                         {% trans 'Moteur de génération de documents MECC' %}
                     </a>
                 </li>
             {% endif %}
             <li id="historic">
-                <a href="{% url 'doc_gen:history_home' %}" {% if 'historic' in request.path %}class="item-selected"{% endif %}>
+                {% url 'doc_gen:history_home' as url_doc_gen_history %}
+                <a href="{{ url_doc_gen_history }}" {% if request.path == url_doc_gen_history %}class="item-selected"{% endif %}>
                     {% trans 'Historique MECC validées' %}
                 </a>
             </li>
