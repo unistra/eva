@@ -445,9 +445,12 @@ def update_progress(request):
     _type = request.POST.get('type')
     data = {}
     if _type == "TABLE":
+        structures = StructureObject.objects.filter(
+            owner_training_id=training.id,
+            nature__in=['UE', 'EC', 'PT', 'ST']
+        )
         links = ObjectsLink.objects.filter(
-            id_training=training.id,
-            nature_child__in=['UE', 'EC', 'PT', 'ST']
+            id_child__in=[structure.id for structure in structures],
         )
         if None in [link.coefficient for link in links] and \
                 request.POST.get('val') == 'A':
