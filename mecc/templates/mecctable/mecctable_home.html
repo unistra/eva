@@ -148,6 +148,7 @@
                         {% if not can_edit or training.input_opening.0 == '2' %} disabled{% endif %}
                                                   {% if training.progress_table == "A" %}checked="checked" {% endif %}>
                 </label>
+                <span class="bottom-right"></span>
             </div>
 
             <div class="button_container dir-row">
@@ -448,7 +449,7 @@
                 },
                 success: function (data) {
                     if (data.status == 200) {
-                        $('.top-right').notify({
+                        $('.bottom-right').notify({
                             message: {text: 'Etat de saisie mis à jour : ' + data.val},
                             type: 'info'
                         }).show();
@@ -456,15 +457,15 @@
                             $('#alert_finish_mecctable_edit').modal('show');
                         }
                     } else if (data.status == 409) {
-                        $('.top-right').notify({
+                        $('.bottom-right').notify({
                             message: {text: 'Vous devez affecter des coefficients aux UE, éléments constitutifs, projets tuteurés et stages !'},
                             type: 'danger'
                         }).show();
                         $('#in-progress').prop('checked', true);
                         $('#done').prop('checked', false);
                     } else {
-                        $('.top-right').notify({
-                            message: {text: 'Error lors de la mise à jour de la saisie'},
+                        $('.bottom-right').notify({
+                            message: {text: 'Erreur lors de la mise à jour de la saisie'},
                             type: 'warning'
                         }).show();
                     }
@@ -522,7 +523,7 @@
 
     </script>
     <style media="screen">
-        .top-right {
+        .top-right, .bottom-right {
             position: absolute;
             z-index: 1200;
             right: 2em;;
