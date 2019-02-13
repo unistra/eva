@@ -153,8 +153,11 @@
                         <tr>
                             <th><span class="sr-only">Id</span></th>
                             <th>{% trans "Gabarits compatibles de ma composante" %}</th>
+                            <th><span class="sr-only">{% trans "Nature" %}</span></th>
+                            <th>{% trans "Créé depuis" %}</th>
+                            <th>{% trans "Formation" %}</th>
                             <th>{% trans "Régime" %}</th>
-                            <th>{% trans "Session" %}</th>
+                            <th><span class="sr-only">{% trans "Session" %}</span></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -314,6 +317,9 @@
                         html += '<tr>' +
                             '<td><input type="checkbox" value="' + template_data.id + '"/></td>' +
                             '<td>' + template_data.label + '</td>' +
+                            '<td>' + template_data.nature + '</td>' +
+                            '<td>' + template_data.structure_object_label + '</td>' +
+                            '<td>' + template_data.training_label + '</td>' +
                             '<td>' + template_data.regime + '</td>' +
                             '<td>' + template_data.session + '</td>' +
                             '</tr>';

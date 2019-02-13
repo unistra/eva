@@ -581,7 +581,9 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     try:
         old_additional = AdditionalParagraph.objects.filter(
             code_year=currentyear().code_year - 1,
-            rule_gen_id=old_rule.id)
+            rule_gen_id=old_rule.id,
+            training_id=old_training.id
+        )
     except AdditionalParagraph.DoesNotExist:
         old_additional = None
 

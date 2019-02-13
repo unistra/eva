@@ -417,9 +417,13 @@ def list_exam_templates(request):
 
     result = []
     for template in templates:
+        training = Training.objects.get(id=template.owner_training_id)
         result.append({
             'id': template.id,
             'label': template.exam_template_label,
+            'nature': template.nature,
+            'structure_object_label': template.label,
+            'training_label': training.label,
             'regime': template.get_regime_display(),
             'session': template.get_session_display(),
         })

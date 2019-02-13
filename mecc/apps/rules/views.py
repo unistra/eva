@@ -445,15 +445,16 @@ def update_progress(request):
     _type = request.POST.get('type')
     data = {}
     if _type == "TABLE":
-        links = ObjectsLink.objects.filter(
-            id_training=training.id,
+        structures = StructureObject.objects.filter(
+            owner_training_id=training.id,
+            nature__in=['UE', 'EC', 'PT', 'ST']
         )
-        if request.POST.get('val') == 'A':
-            for link in links:
-                link_child = StructureObject.objects.get(id=link.id_child)
-                if link.coefficient == None and \
-                        link_child.nature in ['UE', 'EC', 'PT', 'ST']:
-                    data['status'] = 409
+        links = ObjectsLink.objects.filter(
+            id_child__in=[structure.id for structure in structures],
+        )
+        if None in [link.coefficient for link in links] and \
+                request.POST.get('val') == 'A':
+            data['status'] = 409
         else:
             training.progress_table = request.POST.get('val')
             data['status'] = 200
