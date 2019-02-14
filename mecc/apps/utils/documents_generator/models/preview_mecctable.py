@@ -13,6 +13,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm
 
+from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import get_mecc_table_order
@@ -292,6 +293,11 @@ class PreviewMeccTable(Document):
         current_links = ObjectsLink.objects.filter(
             code_year=self.training.code_year
         )
+        # Ne pas inclure les objets dont le témoin is_existing_rof = False
+        # si composante en appui ROF ou formation de type Catalogue NS cf #131
+        supply_cmp = Institute.objects.get(code=self.training.supply_cmp)
+        if supply_cmp.ROF_support or self.training.degree_type.ROF_code == 'EA':
+            current_links = current_links.exclude(is_existing_rof=False)
         current_exams = Exam.objects.filter(
             code_year=self.training.code_year
         )
