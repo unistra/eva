@@ -591,6 +591,7 @@ def get_mutual_by_cmp(request):
     """
     Give list of suggested cmp according by
     """
+    data = []
     try:
         asking = StructureObject.objects.get(
             id=request.GET.get('asking_id')) if request.GET.get(
@@ -608,10 +609,17 @@ def get_mutual_by_cmp(request):
         except AttributeError as e:  # when asking from root
             to_exclude = [""]
         s_list = StructureObject.objects.filter(
-            cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+            cmp_supply_id=request.GET.get('cmp_code'),
+            mutual=True,
             code_year=currentyear().code_year,
-            is_in_use=True).exclude(nature__in=to_exclude).exclude(
-            owner_training_id=int(training_id))
+            is_in_use=True,
+        ).exclude(
+            is_existing_rof=False,
+        ).exclude(
+            nature__in=to_exclude,
+        ).exclude(
+            owner_training_id=int(training_id),
+        )
         if asking_period:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
         mutual_list = [[
@@ -629,6 +637,7 @@ def get_mutual_by_cmp(request):
         data['suggest'] = mutual_list
     except Exception as e:
         LOGGER.error('CANNOT GET mutual : \n{error}'.format(error=e))
+
     return JsonResponse(data)
 
 
