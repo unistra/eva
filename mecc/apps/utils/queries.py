@@ -60,19 +60,13 @@ def institute_staff(institute_code):
     return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)
 
 
-def get_mecc_table_order(
-        link, struc_respens, current_structures,
-        current_links, current_exams, input_is_open=True, all_exam=False):
-    """
-    Recurse until end of time
-    """
+def get_mecc_table_order(link, struc_respens, current_structures,
+                         current_links, current_exams, input_is_open=True, all_exam=False):
+
     links = not isinstance(link, (list, tuple)) and [link] or link
     stuff = []
 
-    def get_childs(link, is_imported, user_can_edit=False, rank=0):
-        """
-        Looking for children in order to recurse on them
-        """
+    def get_children(link, is_imported, user_can_edit=False, rank=0):
         rank += 1
         not_yet_imported = False
         try:
@@ -82,37 +76,50 @@ def get_mecc_table_order(
             not_yet_imported = True
             structure = StructureObject.objects.get(id=link.id_child)
         children = current_links.filter(
-            id_parent=link.id_child).order_by('order_in_child')
-        imported = True if link.is_imported or is_imported else False
-        # ADDING FUN WITH EXAMS
-        # Get 3 first exams_1 & exam_2
-        exams_1 = current_exams.filter(
-            id_attached=structure.id, session="1").order_by('_id')
-        exams_2 = current_exams.filter(
-            id_attached=structure.id, session="2").order_by('_id')
+            id_parent=link.id_child,
+        ).order_by('order_in_child')
 
-        items = {
-            "link": link,
-            'structure': structure,
-            'is_imported': imported,
-            'has_childs': True if len(children) > 0 else False,
-            'children': [get_childs(
-                e, imported, user_can_edit=user_can_edit, rank=rank) for e in children],
-            'rank': rank - 1,
-            'loop': range(0, rank - 1),
-            'not_yet_imported': not_yet_imported,
-            'exams_1': exams_1 if all_exam else exams_1[:3],
-            'exams_1_count': True if exams_1.count() > 3 else False,
-            'exams_2': exams_2 if all_exam else exams_2[:3],
-            'exams_2_count': True if exams_2.count() > 3 else False,
-            'can_be_edited': True if user_can_edit else False,
-        }
+        if structure.is_existing_rof is False:
+            return None
+        else:
+            imported = True if link.is_imported or is_imported else False
+            exams_1 = current_exams.filter(
+                id_attached=structure.id,
+                session="1"
+            ).order_by('_id')
+            exams_2 = current_exams.filter(
+                id_attached=structure.id,
+                session="2"
+            ).order_by('_id')
+            child_items = []
+            for e in children:
+                subitems = get_children(e, imported, user_can_edit=user_can_edit, rank=rank)
+                if subitems:
+                    child_items.append(subitems)
 
-        return items
+            items = {
+                "link": link,
+                "structure": structure,
+                "is_imported": imported,
+                "has_childs": True if len(children) > 0 else False,
+                "children": child_items,
+                "rank": rank - 1,
+                "loop": range(0, rank - 1),
+                "not_yet_imported": not_yet_imported,
+                'exams_1': exams_1 if all_exam else exams_1[:3],
+                'exams_1_count': True if exams_1.count() > 3 else False,
+                'exams_2': exams_2 if all_exam else exams_2[:3],
+                'exams_2_count': True if exams_2.count() > 3 else False,
+                'can_be_edited': True if user_can_edit else False,
+            }
+
+            return items
 
     for link in links:
         imported = True if link.is_imported else False
-        stuff.append(get_childs(link, imported))
+        child_items = get_children(link, imported)
+        if child_items is not None:
+            stuff.append(child_items)
 
     return stuff
 
