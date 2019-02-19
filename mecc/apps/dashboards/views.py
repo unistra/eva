@@ -1,30 +1,24 @@
-from ..degree.models import Degree, DegreeType
+from io import BytesIO
+from itertools import groupby
+
+import xlsxwriter
+from bs4 import BeautifulSoup
+from django.db.models import Count
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
+from django_cas.decorators import login_required
+
+from mecc.decorators import group_required, profile_or_group_required
+from mecc.decorators import has_cmp
+from ..degree.models import DegreeType
 from ..files.models import FileUpload
 from ..institute.models import Institute
-from ..adm.models import MeccUser, Profile
 from ..rules.models import Rule
 from ..training.models import Training, SpecificParagraph, AdditionalParagraph
 from ..utils.pdfs import derogations, setting_up_pdf, NumberedCanvas
 from ..utils.queries import currentyear
 from ..years.models import InstituteYear, UniversityYear
-
-from django_cas.decorators import login_required, user_passes_test
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
-from django.db.models import Count
-from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.utils.translation import ugettext as _
-from django.views.generic.list import ListView
-
-from mecc.decorators import group_required, profile_required, profile_or_group_required
-from mecc.decorators import is_ajax_request, is_post_request, has_cmp
-
-from bs4 import BeautifulSoup
-import xlsxwriter
-from io import BytesIO
-from itertools import groupby
 
 
 @login_required

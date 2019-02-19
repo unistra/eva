@@ -1,4 +1,8 @@
-{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
 <div class="modal fade" id="rules_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-90">
         <div class="modal-content">
@@ -9,34 +13,36 @@
             <div class="modal-body">
                 <div class="comp-left">
                     <div>
-                        <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
+                        <h4>{% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
                         <table class="table">
-                            {% if rules %} {% for rule in rules %}
-                            <tr>
-                                <td><a class="select " onclick="detail_rule({{rule.id}},'standard')">{{ rule }}</a></td>
-                                <td class="align-right"><span class="red">{% if rule.is_edited == "O" %}{% trans "Modifiée" %}{% elif rule.is_edited == "X" %}{% trans "Nouvelle" %}{% endif %}</span></td>
-                                <td class="align-right">{% if rule.is_eci %}ECI{% endif %}</td>
-                                <td class="align-right">{% if rule.is_cctt %}CC/CT{% endif %}</td>
-                            </tr>
-                            {% endfor %} {% else %}
-                            <tr>
-                                <td>
-                                    {% trans 'Aucune règle'%}
-                                </td>
-                            </tr>
+                            {% if rules %}
+                                {% for rule in rules %}
+                                    <tr>
+                                        <td><a class="select "
+                                               onclick="detail_rule({{ rule.id }},'standard')">{{ rule }}</a></td>
+                                        <td class="align-right"><span class="red">{% if rule.is_edited == "O" %}
+                                            {% trans "Modifiée" %}{% elif rule.is_edited == "X" %}
+                                            {% trans "Nouvelle" %}{% endif %}</span></td>
+                                        <td class="align-right">{% if rule.is_eci %}ECI{% endif %}</td>
+                                        <td class="align-right">{% if rule.is_cctt %}CC/CT{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td>{% trans 'Aucune règle' %}</td>
+                                </tr>
                             {% endif %}
                         </table>
                     </div>
-
                 </div>
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Fermer' %}</button>
             </div>
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
     function detail_rule(id, type) {
         $.ajax({
@@ -49,9 +55,9 @@
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function(data) {
-                document.getElementById('year').innerHTML = data.year
-                document.getElementById('title-preview').innerHTML = data.title
-                document.getElementById('preview-rules').getElementsByTagName('tbody')[0].innerHTML = ''
+                document.getElementById('year').innerHTML = data.year;
+                document.getElementById('title-preview').innerHTML = data.title;
+                document.getElementById('preview-rules').getElementsByTagName('tbody')[0].innerHTML = '';
                 document.getElementById('big-title-preview').innerHTML = "";
                 document.getElementById('subtitle-preview').innerHTML = "";
                 document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
@@ -103,7 +109,7 @@
                     } else {
                         if (data.paragraphs[i].can_be_derog === true) {
                             cell2.className += ' border-left disabled italic td-centered';
-                            cell2.innerHTML = '{% trans "Dérogation possible"%}'
+                            cell2.innerHTML = '{% trans "Dérogation possible"%}';
                         }
                     }
                 }

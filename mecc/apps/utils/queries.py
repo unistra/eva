@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
-from django.core.serializers import serialize
 from django.core.exceptions import ObjectDoesNotExist
 
+from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.rules.models import Rule
 from mecc.apps.years.models import UniversityYear
-from mecc.apps.mecctable.models import StructureObject
 
 
 def rules_since_ever(degree_type_code):
