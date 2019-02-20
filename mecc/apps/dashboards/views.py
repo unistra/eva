@@ -203,6 +203,16 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
                                      cmp=institute.label, date=year.date_expected_MECC))
 
         t = Training.objects.filter(code_year=uy.code_year, supply_cmp=code)
+        # ignore trainings disabled during ROF sync (cf di/mecc#125)
+        if institute.ROF_support:
+            t = t.exclude(
+                is_existing_rof=False,
+            )
+        else:
+            t = t.exclude(
+                degree_type__ROF_code='EA',
+                is_existing_rof=False,
+            )
         t_eci = t.filter(MECC_type='E')
         t_cc_ct = t.filter(MECC_type='C')
 
@@ -545,55 +555,58 @@ def institute_derogations_export_excel(request, code):
     # Datas fetching
     data = []
     derogations = SpecificParagraph.objects.filter(
-        code_year=currentyear().code_year, training__supply_cmp=code)
+        code_year=currentyear().code_year,
+        training__supply_cmp=code,
+    ).select_related('training__degree_type')
 
     if derogations:
         for v in derogations:
-            cmp = Institute.objects.get(code=v.training.supply_cmp).label
-            clean_paragraph = BeautifulSoup(
-                v.text_specific_paragraph, 'html.parser').get_text()
-            clean_motivation = BeautifulSoup(
-                v.text_motiv, 'html.parser').get_text()
+            institute = Institute.objects.get(code=v.training.supply_cmp)
+            if not training_is_excluded_by_rof_sync(v.training, institute):
+                clean_paragraph = BeautifulSoup(
+                    v.text_specific_paragraph, 'html.parser').get_text()
+                clean_motivation = BeautifulSoup(
+                    v.text_motiv, 'html.parser').get_text()
 
-            rule = Rule.objects.get(id=v.rule_gen_id)
+                rule = Rule.objects.get(id=v.rule_gen_id)
 
-            if rule:
-                if rule.is_eci and rule.is_ccct:
-                    regime = "ECI et CC/CT"
-                elif rule.is_eci:
-                    regime = "ECI"
-                elif rule.is_ccct:
-                    regime = "CC/CT"
-            else:
-                regime = ""
+                if rule:
+                    if rule.is_eci and rule.is_ccct:
+                        regime = "ECI et CC/CT"
+                    elif rule.is_eci:
+                        regime = "ECI"
+                    elif rule.is_ccct:
+                        regime = "CC/CT"
+                else:
+                    regime = ""
 
-            data.append([regime,
-                         v.rule_gen_id,
-                         rule.label,
-                         v.paragraph_gen_id,
-                         cmp,
-                         v.training.pk,
-                         v.training.label,
-                         " ".join(clean_paragraph.split()),
-                         " ".join(clean_motivation.split())
-                         ])
+                data.append([regime,
+                             v.rule_gen_id,
+                             rule.label,
+                             v.paragraph_gen_id,
+                             institute.label,
+                             v.training.pk,
+                             v.training.label,
+                             " ".join(clean_paragraph.split()),
+                             " ".join(clean_motivation.split())
+                             ])
 
-            sheet.set_column('A:A', 15)
-            sheet.set_column('B:C', 14)
-            sheet.set_column('E:E', 55)
-            sheet.set_column('F:F', 12)
-            sheet.set_column('G:G', 45)
-            sheet.set_column('H:I', 80)
+                sheet.set_column('A:A', 15)
+                sheet.set_column('B:C', 14)
+                sheet.set_column('E:E', 55)
+                sheet.set_column('F:F', 12)
+                sheet.set_column('G:G', 45)
+                sheet.set_column('H:I', 80)
 
-            row = 0
-            for i, header in enumerate(headers):
-                sheet.write(row, i, header, bold)
-            row += 1
-
-            for r, columns in enumerate(data):
-                for column, cell_data in enumerate(columns):
-                    sheet.write(row, column, cell_data, main)
+                row = 0
+                for i, header in enumerate(headers):
+                    sheet.write(row, i, header, bold)
                 row += 1
+
+                for r, columns in enumerate(data):
+                    for column, cell_data in enumerate(columns):
+                        sheet.write(row, column, cell_data, main)
+                    row += 1
     else:
         sheet.write('B1', _('Pas de données'), bold)
 
@@ -642,37 +655,38 @@ def institute_alineas_export_excel(request, code):
     data = []
     alineas = AdditionalParagraph.objects.filter(
         code_year=currentyear().code_year,
-        training__supply_cmp=code)
+        training__supply_cmp=code,
+    ).select_related('training__degree_type')
 
     if alineas:
         clean_additionals = ""
 
         for a in alineas:
+            institute = Institute.objects.get(code=a.training.supply_cmp)
+            if not training_is_excluded_by_rof_sync(a.training, institute):
+                rule = Rule.objects.get(id=a.rule_gen_id)
 
-            rule = Rule.objects.get(id=a.rule_gen_id)
-            cmp = a.training.supply_cmp_label
+                clean_additionals = BeautifulSoup(
+                    a.text_additional_paragraph, 'html.parser').get_text()
 
-            clean_additionals = BeautifulSoup(
-                a.text_additional_paragraph, 'html.parser').get_text()
+                if rule:
+                    if rule.is_eci and rule.is_ccct:
+                        regime = "ECI et CC/CT"
+                    elif rule.is_eci:
+                        regime = "ECI"
+                    elif rule.is_ccct:
+                        regime = "CC/CT"
+                else:
+                    regime = ""
 
-            if rule:
-                if rule.is_eci and rule.is_ccct:
-                    regime = "ECI et CC/CT"
-                elif rule.is_eci:
-                    regime = "ECI"
-                elif rule.is_ccct:
-                    regime = "CC/CT"
-            else:
-                regime = ""
-
-            data.append([regime,
-                         a.rule_gen_id,
-                         rule.label,
-                         cmp,
-                         a.training.pk,
-                         a.training.label,
-                         " ".join(clean_additionals.split())
-                         ])
+                data.append([regime,
+                             a.rule_gen_id,
+                             rule.label,
+                             institute.label,
+                             a.training.pk,
+                             a.training.label,
+                             " ".join(clean_additionals.split())
+                             ])
 
         sheet.set_column('A:B', 10)
         sheet.set_column('C:D', 75)
