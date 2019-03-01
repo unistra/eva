@@ -632,6 +632,7 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['title'] = _("Alinéa additionnel")
     rule = data['rule'] = Rule.objects.get(id=rule_id)
     data['from_id'] = rule_id
+    input_is_open = training.input_opening[0] in ['1', '3']
     data['can_apply_to_others'] = ((
         is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
         or 'DES1' in [e.name for e in request.user.groups.all()] \

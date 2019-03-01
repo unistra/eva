@@ -469,15 +469,17 @@ class ModelA(PreviewMecc):
             )
 
         if 'E' in trainings_mecc_types:
-            self.write_mecc_type_title(
-                "ECI",
-                degree_type.short_label
-            )
-            self.write_rules_table(
-                rules.filter(degree_type=degree_type, is_eci=True, is_ccct=False),
-                paragraphs,
-                degree_type,
-            )
+            rules_eci = rules.filter(degree_type=degree_type, is_eci=True, is_ccct=False)
+            if rules_eci.exists():
+                self.write_mecc_type_title(
+                    "ECI",
+                    degree_type.short_label
+                )
+                self.write_rules_table(
+                    rules_eci,
+                    paragraphs,
+                    degree_type,
+                )
 
     def write_mecc_type_title(self, mecc_type, degree_type):
         if mecc_type == "all":
