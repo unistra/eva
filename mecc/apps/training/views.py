@@ -578,13 +578,16 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
             e.origin_parag for e in p
         ], training_id=old_training.id) if old_training else []
 
-    try:
-        old_additional = AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year - 1,
-            rule_gen_id=old_rule.id,
-            training_id=old_training.id
-        )
-    except AdditionalParagraph.DoesNotExist:
+    if old_training:
+        try:
+            old_additional = AdditionalParagraph.objects.filter(
+                code_year=currentyear().code_year - 1,
+                rule_gen_id=old_rule.id,
+                training_id=old_training.id
+            )
+        except AdditionalParagraph.DoesNotExist:
+            old_additional = None
+    else:
         old_additional = None
 
     # PROCESSING WITH DATAS
