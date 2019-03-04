@@ -578,13 +578,16 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
             e.origin_parag for e in p
         ], training_id=old_training.id) if old_training else []
 
-    try:
-        old_additional = AdditionalParagraph.objects.filter(
-            code_year=currentyear().code_year - 1,
-            rule_gen_id=old_rule.id,
-            training_id=old_training.id
-        )
-    except AdditionalParagraph.DoesNotExist:
+    if old_training:
+        try:
+            old_additional = AdditionalParagraph.objects.filter(
+                code_year=currentyear().code_year - 1,
+                rule_gen_id=old_rule.id,
+                training_id=old_training.id
+            )
+        except AdditionalParagraph.DoesNotExist:
+            old_additional = None
+    else:
         old_additional = None
 
     # PROCESSING WITH DATAS
@@ -629,6 +632,7 @@ def edit_additional_paragraph(request, training_id, rule_id, n_rule, old="N", te
     data['title'] = _("Alinéa additionnel")
     rule = data['rule'] = Rule.objects.get(id=rule_id)
     data['from_id'] = rule_id
+    input_is_open = training.input_opening[0] in ['1', '3']
     data['can_apply_to_others'] = ((
         is_megauser(training, request.user.meccuser.profile.all()) and input_is_open) \
         or 'DES1' in [e.name for e in request.user.groups.all()] \

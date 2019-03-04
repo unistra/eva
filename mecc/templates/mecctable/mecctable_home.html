@@ -242,7 +242,8 @@
 
         let asking_inclusion = 0;
 
-        $('.copy-old').click(function () {
+        $('.copy-old').one('click', function () {
+            $(this).prop("disabled", true);
             check_regime_session({{training.id}}, this.id);
         });
 

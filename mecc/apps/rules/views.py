@@ -451,6 +451,7 @@ def update_progress(request):
         )
         links = ObjectsLink.objects.filter(
             id_child__in=[structure.id for structure in structures],
+            id_training=training.id
         )
         if None in [link.coefficient for link in links] and \
                 request.POST.get('val') == 'A':
