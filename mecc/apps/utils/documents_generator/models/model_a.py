@@ -458,18 +458,26 @@ class ModelA(PreviewMecc):
         )
 
         if 'C' in trainings_mecc_types:
-            self.write_mecc_type_title(
-                "CC/CT",
-                degree_type.short_label
+            rules_ccct = rules.filter(
+                degree_type=degree_type,
+                is_eci=False, is_ccct=True
             )
-            self.write_rules_table(
-                rules.filter(degree_type=degree_type, is_eci=False, is_ccct=True),
-                paragraphs,
-                degree_type,
-            )
+            if rules_ccct.exists():
+                self.write_mecc_type_title(
+                    "CC/CT",
+                    degree_type.short_label
+                )
+                self.write_rules_table(
+                    rules_ccct,
+                    paragraphs,
+                    degree_type,
+                )
 
         if 'E' in trainings_mecc_types:
-            rules_eci = rules.filter(degree_type=degree_type, is_eci=True, is_ccct=False)
+            rules_eci = rules.filter(
+                degree_type=degree_type,
+                is_eci=True, is_ccct=False
+            )
             if rules_eci.exists():
                 self.write_mecc_type_title(
                     "ECI",
