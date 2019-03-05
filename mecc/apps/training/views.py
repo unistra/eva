@@ -593,6 +593,7 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     old_year = currentyear().code_year - 1
     old_training = Training.objects.filter(
         n_train=t.n_train, code_year=old_year).first()
+    can_be_recup = True if r.is_edited == 'N' else False
 
     if old_training:
         old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
@@ -608,13 +609,14 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
             )
         except AdditionalParagraph.DoesNotExist:
             old_additional = None
+
+        data['old_specific'] = [
+            e.paragraph_gen_id for e in old_specific] if can_be_recup else False
+
     else:
         old_additional = None
 
     # PROCESSING WITH DATAS
-    can_be_recup = True if r.is_edited == 'N' else False
-    data['old_specific'] = [
-        e.paragraph_gen_id for e in old_specific] if can_be_recup else False
     data['old_additional'] = True if old_additional and can_be_recup else False
     data['specific_ids'] = [
         a.paragraph_gen_id for a in data['specific_paragraph']]
