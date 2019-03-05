@@ -1,4 +1,8 @@
-{% load i18n %} {% load dipstrapfiles %} {% load crispy_forms_tags %} {% load staticfiles %}
+{% load i18n %}
+{% load dipstrapfiles %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
 <div class="modal fade" id="institutes_list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-90">
         <div class="modal-content">
@@ -8,28 +12,24 @@
             </div>
             <div class="modal-body">
                 <div class="comp-left">
-                  <div>
-
-                      <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
-                      <ul>
-                      {% if institutes %}
-                          {% regroup institutes|dictsort:"field.name" by field.name as institutes_list %}
-                          {% for institute in institutes_list %}
+                    <div>
+                        <h4> {% trans "Année universitaire" %} : {{ request.display.current_year }}</h4>
+                        <ul>
+                            {% if institutes %}
+                                {% regroup institutes|dictsort:"field.name" by field.name as institutes_list %}
+                                {% for institute in institutes_list %}
                                     <li>{{ institute.grouper }}</li>
                                     <ul>
-                                    {% for label in institute.list  %}
+                                        {% for label in institute.list %}
                                             <li>{{ label }}</li>
-                                    {% endfor %}
-                                </ul>
-                          {% endfor %}
-                      {% else %}
-                         <li>
-                              {% trans 'Aucune composante'%}
-                         </li>
-                      {% endif %}
-                      </ul>
-                  </div>
-
+                                        {% endfor %}
+                                    </ul>
+                                {% endfor %}
+                            {% else %}
+                                <li>{% trans 'Aucune composante' %}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 

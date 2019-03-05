@@ -120,12 +120,18 @@ def my_teachings(request, template='training/respform_trainings.html'):
     request.session['visited_cmp'] = 'RESPENS'
     request.session['list_training'] = False
     current_year = currentyear().code_year
-    data = {}
     struct_object = StructureObject.objects.filter(
-        code_year=current_year, RESPENS_id=request.user.username)
-    data['trainings'] = Training.objects.filter(
-        id__in=[e.owner_training_id for e in struct_object])
-    return render(request, template, data)
+        code_year=current_year, RESPENS_id=request.user.username
+    )
+    trainings = Training.objects.filter(
+        id__in=[e.owner_training_id for e in struct_object]
+    ).select_related('degree_type')
+
+    trainings = _filter_out_rof_disabled_trainings(trainings)
+
+    return render(request, template, {
+        'trainings': trainings,
+    })
 
 
 @is_ajax_request
@@ -227,17 +233,29 @@ class TrainingListView(ListView):
 
     @has_requested_cmp
     def get_queryset(self):
+        id_cmp = self.kwargs.get('cmp')
+        institute = Institute.objects.get(code=id_cmp) if id_cmp else None
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
-            code_year=currentyear().code_year
-            if currentyear() is not None else None).order_by(
-                'degree_type', 'label')
+            code_year=currentyear().code_year if currentyear() is not None else None
+        )
+        trainings = trainings.order_by(
+            'degree_type', 'label'
+        )
 
-        if self.kwargs['cmp'] is None:
+        if institute and institute.ROF_support:
+            # Si la composante est en appui ROF, ne pas afficher les formations avec is_existing_rof = False
+            trainings = trainings.exclude(is_existing_rof=False)
+        else:
+            # Ne pas afficher la formation si elle est de type catalogue NS et is_existing_rof = False
+            trainings = trainings.exclude(is_existing_rof=False, degree_type__ROF_code='EA')
+
+        if id_cmp is None:
             return trainings
 
-        if self.kwargs['cmp'] in institutes:
-            return trainings.filter(institutes__code=self.kwargs['cmp'])
+        if id_cmp in institutes:
+            trainings = trainings.filter(institutes__code=self.kwargs['cmp'])
+            return trainings
 
     template_name = 'training/training_list.html'
 
@@ -392,11 +410,16 @@ def respform_list(request, template='training/respform_trainings.html'):
     """
     request.session['visited_cmp'] = 'RESPFORM'
     request.session['list_training'] = False
-    data = {}
-    data['trainings'] = Training.objects.filter(
+    trainings = Training.objects.filter(
         resp_formations=request.user.meccuser,
-        code_year=currentyear().code_year if currentyear() is not None else None)
-    return render(request, template, data)
+        code_year=currentyear().code_year if currentyear() is not None else None,
+    ).select_related('degree_type')
+
+    trainings = _filter_out_rof_disabled_trainings(trainings)
+
+    return render(request, template, {
+        'trainings': trainings,
+    })
 
 
 @login_required
@@ -933,3 +956,24 @@ def preview_mecc(request):
         model='preview_mecc',
         trainings=request.GET.get('training_id')
     )
+
+
+def _filter_out_rof_disabled_trainings(trainings):
+    # ne pas garder les formations supprimées dans ROF
+    filtered_trainings = []
+    institutes_with_rof_support = Institute.objects.filter(
+        ROF_support=True
+    ).values_list(
+        'code', flat=True
+    )
+    for training in trainings:
+        if training.supply_cmp in institutes_with_rof_support:
+            # ne pas garder si is_existing_rof = False
+            if training.is_existing_rof:
+                filtered_trainings.append(training)
+        else:
+            # ne pas garder si type Catalogue NS et is_existing_rof = False
+            if not(training.degree_type.ROF_code == 'EA' and training.is_existing_rof is False):
+                filtered_trainings.append(training)
+
+    return filtered_trainings

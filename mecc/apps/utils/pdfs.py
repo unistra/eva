@@ -1158,7 +1158,7 @@ def derog_and_additional(training, derogs, additionals, edited_rules, story=[], 
                     [list_of_parag_with_bullet(e.text_additional_paragraph)]
                 ], style=additional_style, ),
                 ""
-            ]) 
+            ])
     if table:
         story.append(Table(table, style=main_table_style,
                            colWidths=main_table_size))
@@ -1233,7 +1233,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
     )
     title_data = [[title_left, title_right]]
     title = Table(
-        title_data, 
+        title_data,
         style=title_style,
         spaceBefore=14,
         spaceAfter=14
@@ -1628,7 +1628,20 @@ def derogations(title, year):
     institutes = Institute.objects.filter(
         training__code_year=uy.code_year).distinct()
 
-    t = Training.objects.filter(code_year=uy.code_year)
+    institutes_with_rof_support = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
+
+    t = Training.objects.filter(
+        code_year=uy.code_year,
+    )
+    # ignore trainings disabled during ROF sync (cf di/mecc#124)
+    t = t.exclude(
+        Q(
+            degree_type__ROF_code='EA',
+            is_existing_rof=False)
+        | Q(
+            supply_cmp__in=institutes_with_rof_support,
+            is_existing_rof=False)
+    )
 
     for training in t:
         if training.supply_cmp in institutes.values_list('code', flat=True):

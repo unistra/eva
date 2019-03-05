@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views import home, trainings_for_target, available_target, \
-    preview_mecctable, dispatch_to_good_pdf, generate_pdf, history_home, \
+    dispatch_to_good_pdf, generate_pdf, history_home, \
     history_for_year, generate_excel_mecctable, generate_rules_docx, \
     published_mecc, generate, get_pdf_task_status, get_pdf
 

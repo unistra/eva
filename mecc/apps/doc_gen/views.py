@@ -408,10 +408,21 @@ def trainings_for_target(request):
     user = User.objects.get(username=request.GET.get('user'))
 
     target = request.GET.get('target')
-    institute = request.GET.get('institute')
+    institute_code = request.GET.get('institute')
+    institute = Institute.objects.get(code=institute_code)
     json = True if request.GET.get('json') else False
     trainings = Training.objects.filter(
-        code_year=current_year, supply_cmp=institute, is_used=True).order_by('degree_type', 'label')
+        code_year=current_year, supply_cmp=institute_code, is_used=True).order_by('degree_type', 'label')
+
+    if institute.ROF_support:
+        trainings = trainings.exclude(
+            is_existing_rof=False,
+        )
+    else:
+        trainings = trainings.exclude(
+            is_existing_rof=False,
+            degree_type__ROF_code='EA',
+        )
 
     profiles = user.meccuser.profile.all()
 
@@ -476,8 +487,8 @@ def trainings_for_target(request):
         'publish_all': process_publish_all,
         'publish_my': process_publish_my,
     }
-
     trains = process[target]()
+
     return JsonResponse(trains, safe=False) if json else trains
 
 
