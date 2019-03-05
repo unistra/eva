@@ -252,9 +252,16 @@ moins une composante porteuse."))
                         'session_type',
                         HTML("""
                         <div class="re-apply">
-                        {% if not new%}
-                        <button class="btn btn-primary " name="reapply">Réappliquer <br/> aux objets</button>
-                        {%endif%}
+                        {% if not new %}
+                            {% if training.has_custom_paragraph or training.has_exam %}
+                            <button type="button" class="btn btn-primary" name="transform">Transformer</button>
+                            <br /><br />
+                            <button type="button" class="btn btn-primary" name="cancel_transform" onclick="_isEdited=false;" style="width: 100%;">Annuler</button>
+                            {% include "training/modals/training_transform.html" %}
+                            {% else %}
+                            <button type="button" class="btn btn-primary " name="reapply">Réappliquer <br/> aux objets</button>
+                            {% endif %}
+                        {% endif %}
                         </div>
                         """),
                         Div(
@@ -268,7 +275,8 @@ moins une composante porteuse."))
                             ),
                             css_class="form-group aaaa"
                         ),
-                        css_class="form-add-stats"
+                        css_class="form-add-stats",
+                        css_id="regime-session",
                     )
                 ),
                 Div('institutes', css_class="hidden"),
@@ -289,4 +297,40 @@ moins une composante porteuse."))
             'ref_si_scol',
             'institutes',
             'supply_cmp',
+        ]
+
+class TrainingTransformForm(forms.ModelForm):
+    MECC_type = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(('E', _('ECI')), ('C', _('CC/CT'))),
+        label=_('Régime'),
+        initial='E',
+        required=False
+    )
+    session_type = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=(('2', _('2 sessions')), (('1', _('Session unique')))),
+        label=_('Session'),
+        initial='2',
+        required=False
+    )
+    def __init__(self, *args, **kwargs):
+        super(TrainingTransformForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.disable_csrf = True
+        self.helper.layout = Layout(
+            Div(
+                'MECC_type',
+                'session_type',
+                css_class="form-add-stats",
+            )
+        )
+
+    class Meta:
+        model = Training
+        fields = [
+            'MECC_type',
+            'session_type',
         ]

@@ -10,8 +10,10 @@ from mecc.apps.institute.models import Institute
 import operator
 from functools import reduce
 from django.core.exceptions import ValidationError
-from mecc.apps.utils.queries import update_regime_session
+from mecc.apps.utils.queries import update_structs_regime_session, \
+    delete_derogs_adds_regime
 from mecc.libs.html.sanitizer import sanitize
+from itertools import chain
 
 
 class Training(models.Model):
@@ -224,24 +226,134 @@ class Training(models.Model):
     @property
     def has_exam(self):
         """
-        Retiurn true if this training has at least one exam
+        Return true if this training has at least one exam
         """
         struct = StructureObject.objects.filter(owner_training_id=self.id)
         exam = Exam.objects.filter(id_attached__in=[e.id for e in struct])
         return True if exam else False
 
-    def save(self, *args, **kwargs):
-        need_to_edit_struct = False
-        if self.session_type != self.__original_session_type:
-            self.__original_session_type = self.session_type
-            need_to_edit_struct = True
-        if self.MECC_type != self.__original_MECC_type:
-            self.__original_MECC_type = self.MECC_type
-            need_to_edit_struct = True
-        if need_to_edit_struct:
-            update_regime_session(self, self.MECC_type, self.session_type)
+    def transform(self, mode, new_regime, new_session):
+        """
+        Transforms the training and related objects (SpecificParagraph,
+        AdditionalParagraph, StructureObject, Exam) based on new regime
+        and new session
+        """
+        # Simple flag to know if some treatment is done
+        done = False
+        # Code built concatenating new regime, old regime, new session, old session - Ex : CE21
+        transformation_code = "{}{}{}{}".format(
+            new_regime, self.MECC_type,
+            new_session, self.session_type
+        )
 
-        super(Training, self).save(*args, **kwargs)
+        def transform_exams():
+            """
+            Transform exams owned by the training we are working on
+            """
+            structs = StructureObject.objects.filter(owner_training_id=self.id)
+            for struct in structs:
+                exams = Exam.objects.filter(id_attached=struct.id)
+                for exam in exams:
+                    exam.regime = new_regime
+                    if new_regime == 'C':
+                        exam.type_ccct = 'T' if exam.convocation == 'O' else 'C'
+                        exam.convocation = None
+                    else:
+                        exam.convocation = 'O' if exam.type_ccct == 'T' else 'N'
+                        exam.type_ccct = None
+                    exam.save()
+
+        def delete_exams_session_two():
+            structs = StructureObject.objects.filter(owner_training_id=self.id)
+            for struct in structs:
+                exams = Exam.objects.filter(
+                    id_attached=struct.id,
+                    session=2
+                )
+                for exam in exams:
+                    exam.delete()
+
+        def update_struct():
+            """
+            update regime and session of training structure according to new elements
+            """
+            structs = StructureObject.objects.filter(owner_training_id=self.id)
+            for struc in structs:
+                struc.regime = new_regime
+                struc.session = new_session
+                struc.save()
+
+        def delete_derogs_adds():
+            """
+            Delete derogs and adds according to new regime
+            """
+            from mecc.apps.rules.models import Rule
+
+
+            is_ccct = False if new_regime == 'C' else True
+            is_eci = False if new_regime == 'E' else True
+
+            rules = Rule.objects.\
+                filter(
+                    code_year=self.code_year,
+                    is_in_use=True,
+                    is_ccct=is_ccct,
+                    is_eci=is_eci
+                )
+            rules_ids = [rule.id for rule in rules]
+
+            derogs = SpecificParagraph.objects.\
+                filter(
+                    training=self,
+                    rule_gen_id__in=rules_ids
+                )
+            derogs.delete()
+
+            adds = AdditionalParagraph.objects.\
+                filter(
+                    training=self,
+                    rule_gen_id__in=rules_ids
+                )
+            adds.delete()
+
+        # Dict containing all codes (values) that trigger a given treatment (keys)
+        treatments = {
+            update_struct: ['EE12', 'EE21', 'EC11', 'EC12', 'EC21', 'EC22',
+                            'CE11', 'CE12', 'CE21', 'CE22', 'CC12', 'CC21']
+        }
+
+        # Based on the mode (transform or reapply)
+        # the treatment dict is enhanced
+        # In reapply mode, we only want to do the update_struct() treatment
+        # In transform mode we want to do al treatments
+        if mode == "transform":
+            transform_treatments = {
+                transform_exams: ['CE11', 'CE21', 'CE12', 'CE22', 'EC11',
+                                  'EC21', 'EC12', 'EC22', 'CE22', 'EC22'],
+                delete_exams_session_two: ['EE12', 'CE12', 'EC12', 'CC12'],
+                delete_derogs_adds: ['EC11', 'EC12', 'EC21', 'EC22',
+                                     'CE11', 'CE12', 'CE21', 'CE22']
+            }
+            treatments.update(transform_treatments)
+
+        # list containing all codes that trigger a treatment
+        all_treatments_codes = list(chain(*treatments.values()))
+
+        # tranformation_code (built at the beginning of the method) is evualuated
+        # against all_treatments_code to determine if something has to be done
+        if transformation_code in all_treatments_codes:
+            # List containing the functions to launch
+            to_be_done = [k for k, v in treatments.items() if transformation_code in v]
+
+            # List comprehension that launch the functions stored in to_be_done
+            list([x() for x in to_be_done])
+
+            self.MECC_type = new_regime
+            self.session_type = new_session
+            self.save()
+            done = True
+
+        return done
 
         # Lors de la création d'une formation, n_train = id
         if self.n_train in ('', ' ', None):

@@ -115,7 +115,7 @@ def get_mecc_table_order(
     return stuff
 
 
-def update_regime_session(training, regime, session):
+def update_structs_regime_session(training, regime, session):
     """
     update regime and session of training structure according to new elements
     """
@@ -125,11 +125,43 @@ def update_regime_session(training, regime, session):
         struc.session = session
         struc.save()
 
+def delete_derogs_adds_regime(training, regime):
+    """
+    Delete derogs and adds when according to new regime of a training
+    """
+    from mecc.apps.training.models import AdditionalParagraph, SpecificParagraph
 
-def save_training_update_structs(training, regime_type, session_type):
+    is_ccct = False if regime == 'C' else True
+    is_eci = False if regime == 'E' else True
+
+    rules = Rule.objects.\
+        filter(
+            code_year=training.code_year,
+            is_in_use=True,
+            is_ccct=is_ccct,
+            is_eci=is_eci
+        )
+    rules_ids = [rule.id for rule in rules]
+
+    derogs = SpecificParagraph.objects.\
+        filter(
+            training=training,
+            rule_gen_id__in=rules_ids
+        )
+    derogs.delete()
+
+    adds = AdditionalParagraph.objects.\
+        filter(
+            training=training,
+            rule_gen_id__in=rules_ids
+        )
+    adds.delete()
+
+
+def save_training_update_regime_session(training, regime_type, session_type):
     """
     Reapply regime and session to selected training and all it objects
-    => return true if updated  and else if nothin' was done
+    => return true if updated and false if nothing was done
     """
     # set regime and session type to new stuff
     old_session_type = training.session_type

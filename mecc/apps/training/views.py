@@ -1,7 +1,7 @@
 """
 Django view for training part
 """
-
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
@@ -22,13 +22,13 @@ from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
     is_megauser
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
-from mecc.apps.utils.queries import currentyear, save_training_update_structs
+from mecc.apps.utils.queries import currentyear, save_training_update_regime_session
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.rules.models import Rule, Paragraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
-    AdditionalParagraphForm, ExtraTrainingsForm
+    AdditionalParagraphForm, TrainingTransformForm, ExtraTrainingsForm
 from mecc.apps.training.utils import remove_training, consistency_check
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.utils.documents_generator import Document
@@ -82,16 +82,36 @@ def do_consistency_check(request):
 
 
 @is_ajax_request
-def update_struct_training(request):
+def update_training_regime_session(request):
     """
     ajax call to update session and regime as you want
     """
-    done = save_training_update_structs(
-        Training.objects.get(id=request.POST.get('training_id')),
-        request.POST.get('regime_type'), request.POST.get('session_type'))
+    # done = save_training_update_regime_session(
+    #     Training.objects.get(id=request.POST.get('training_id')),
+    #     request.POST.get('regime_type'),
+    #     request.POST.get('session_type')
+    # )
+
+    done = Training.objects.get(id=request.POST.get('training_id')).transform(
+        request.POST.get('mode'),
+        request.POST.get('regime_type'),
+        request.POST.get('session_type')
+    )
 
     return JsonResponse({'status': 200 if done else 300})
 
+@is_ajax_request
+def cancel_transform(request):
+    training_form = TrainingForm(
+        instance=Training.objects.get(id=request.GET.get('training_id'))
+    )
+    mecc_type_layout = as_crispy_field(field=training_form['MECC_type'])
+    session_type_layout = as_crispy_field(field=training_form['session_type'])
+
+    return JsonResponse({
+        'mecc_type_layout': mecc_type_layout,
+        'session_type_layout': session_type_layout
+    })
 
 def my_teachings(request, template='training/respform_trainings.html'):
     """
@@ -351,6 +371,7 @@ class TrainingDelete(DeleteView):
     model = Training
     slug_field = 'id'
     slug_url_kwarg = 'id_training'
+
 
 
 @login_required
