@@ -58,11 +58,11 @@
             </div>
 
         </div>
-        {% if topten_derog %}
-            <div class="col-sm-6">
-                <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
-                    {% trans 'Dérogations sollicitées par la composante' %}
-                </legend>
+        <div class="col-sm-6">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
+                {% trans 'Dérogations sollicitées par la composante' %}
+            </legend>
+            {% if topten_derog %}
                 <div class="col-sm-9">
                     {% include 'dashboards/institute_institute.html' %}
                 </div>
@@ -76,8 +76,8 @@
                         </li>
                     </ul>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
     {% include "dashboards/modals/institute_training_detail.html" %}

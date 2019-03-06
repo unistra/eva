@@ -109,7 +109,10 @@ def general_dashboard(request, template='dashboards/general_dashboard.html'):
                                             supply_cmp=s.code).count(),
                                         ))
 
-        derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
+        derogations = SpecificParagraph.objects.filter(
+            code_year=uy.code_year,
+            training_id__in=t.values_list('id', flat=True),
+        )
 
         d = []
         topten_d = []
@@ -245,7 +248,10 @@ def institute_dashboard(request, code, template='dashboards/institute_dashboard.
         trainings_data = t.values('degree_type').annotate(t_count=Count('pk'))
 
         derogations = SpecificParagraph.objects.filter(
-            training__supply_cmp=code, code_year=uy.code_year)
+            training__supply_cmp=code,
+            code_year=uy.code_year,
+            training_id__in=t.values_list('id', flat=True),
+        )
 
         d = []
         topten_d = []

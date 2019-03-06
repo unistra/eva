@@ -1643,11 +1643,16 @@ def derogations(title, year):
             is_existing_rof=False)
     )
 
+    training_ids = t.values_list('id', flat=True)
+
     for training in t:
         if training.supply_cmp in institutes.values_list('code', flat=True):
             supply_filter.append(training.supply_cmp)
 
-    derogations = SpecificParagraph.objects.filter(code_year=uy.code_year)
+    derogations = SpecificParagraph.objects.filter(
+        code_year=uy.code_year,
+        training_id__in=training_ids,
+    )
 
     d = []
     toptend = []
