@@ -1197,6 +1197,13 @@ def copy_old_mecctable2(request):
         ACHTUNG : ONLY USEABLE HERE
         """
         new_struct = copy.copy(to_copy)
+        if new_struct.RESPENS_id:
+            profile, created = Profile.objects.get_or_create(
+                code="RESPENS", label="RESPENS - %s" % new_struct.label,
+                cmp=training.supply_cmp, year=training.code_year
+            )
+            meccuser = MeccUser.objects.get(user__username=new_struct.RESPENS_id)
+            meccuser.profile.add(profile)
         new_struct.id = None  # Needed to not override exisitng object !
         new_struct.owner_training_id = training.id
         new_struct.regime = training.MECC_type
