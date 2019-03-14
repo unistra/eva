@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
+from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.rules.models import Rule
 from mecc.apps.years.models import UniversityYear
@@ -78,7 +79,9 @@ def get_mecc_table_order(link, struc_respens, current_structures,
             id_parent=link.id_child,
         ).order_by('order_in_child')
 
-        if structure.is_existing_rof is False:
+        supply_cmp = Institute.objects.get(code__exact=structure.cmp_supply_id)
+
+        if structure.is_existing_rof is False and supply_cmp.ROF_support is True:
             return None
         else:
             imported = True if link.is_imported or is_imported else False
