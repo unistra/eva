@@ -44,7 +44,7 @@
     <div id="left-column" class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {% endif %}" style="margin-right:1em">
         <form action="" method="post" id="training_form" >
             {%crispy form%}
-            <div id="transform-warning" style="display: none;">
+            <div id="transform-warning" class="clearfix" style="display: none;">
                 <strong>En cliquant sur le bouton "Transformer" (ci-dessus) :</strong>
                 <br><br>
                 <ul>
@@ -52,6 +52,8 @@
                     <li><strong>{% trans "Les nouveaux attributs Régime et Session seront appliqués à tous les enseignements dont la formation est propriétaire" %}</strong></li>
                     <li><strong>{% trans "Les épreuves existantes seront transformées selon les règles fixées par la DES et pourront encore être modifiées" %}</strong></li>
                 </ul>
+                <br>
+                <button type="button" class="btn btn-danger pull-right" name="cancel_transform" onclick="_isEdited=false;">Annuler</button>
             </div>
             {% include "training/form/add_cmp.html" %}
             <div>
