@@ -255,8 +255,6 @@ moins une composante porteuse."))
                         {% if not new %}
                             {% if training.has_custom_paragraph or training.has_exam %}
                             <button type="button" class="btn btn-primary" name="transform">Transformer</button>
-                            <br /><br />
-                            <button type="button" class="btn btn-primary" name="cancel_transform" onclick="_isEdited=false;" style="width: 100%;">Annuler</button>
                             {% include "training/modals/training_transform.html" %}
                             {% else %}
                             <button type="button" class="btn btn-primary " name="reapply">Réappliquer <br/> aux objets</button>
