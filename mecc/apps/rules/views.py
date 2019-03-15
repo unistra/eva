@@ -19,6 +19,7 @@ from mecc.apps.utils.pdfs import degree_type_rules, \
     setting_up_pdf, NumberedCanvas, one_rule
 from mecc.apps.utils.queries import currentyear
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject
+from mecc.apps.institute.models import Institute
 
 
 class RulesListView(ListView):
@@ -445,10 +446,13 @@ def update_progress(request):
     _type = request.POST.get('type')
     data = {}
     if _type == "TABLE":
+        supply_cmp = Institute.objects.get(code=training.supply_cmp)
         structures = StructureObject.objects.filter(
             owner_training_id=training.id,
             nature__in=['UE', 'EC', 'PT', 'ST']
         )
+        if supply_cmp.ROF_support:
+            structures = structures.filter(is_existing_rof=True)
         links = ObjectsLink.objects.filter(
             id_child__in=[structure.id for structure in structures],
             id_training=training.id
