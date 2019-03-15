@@ -597,7 +597,9 @@ def get_mutual_by_cmp(request):
             id=request.GET.get('asking_id')) if request.GET.get(
             'asking_id') is not '0' else None
         asking_period = asking.period if asking else None
+        cmp_code = request.GET.get('cmp_code')
         training_id = request.GET.get('training_id')
+        cmp_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
         data = {}
         try:
             if asking.nature == "SE":
@@ -609,31 +611,40 @@ def get_mutual_by_cmp(request):
         except AttributeError as e:  # when asking from root
             to_exclude = [""]
         s_list = StructureObject.objects.filter(
-            cmp_supply_id=request.GET.get('cmp_code'),
+            cmp_supply_id=cmp_code,
             mutual=True,
             code_year=currentyear().code_year,
             is_in_use=True,
-        ).exclude(
-            is_existing_rof=False,
         ).exclude(
             nature__in=to_exclude,
         ).exclude(
             owner_training_id=int(training_id),
         )
+
         if asking_period:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
-        mutual_list = [[
-            "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
-            e.nature,
-            e.label,
-            Training.objects.get(id=e.owner_training_id).label,
-            e.get_regime_display(),
-            e.get_session_display(),
-            e.ECTS_credit,
-            e.external_name if e.external_name else e.get_respens_name,
-            e.ref_si_scol,
-            e.ROF_ref
-        ] for e in s_list]
+        mutual_list = []
+        for structure_object in s_list:
+            training = Training.objects.get(id=structure_object.owner_training_id)
+
+            if structure_object.is_existing_rof is False and structure_object.cmp_supply_id in cmp_with_rof_support_ids:
+                continue
+            if structure_object.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+                continue
+
+            mutual_list.append([
+                "<input name='suggest-id' value='%s' type='checkbox'>" % (structure_object.id),
+                structure_object.nature,
+                structure_object.label,
+                training.label,
+                structure_object.get_regime_display(),
+                structure_object.get_session_display(),
+                structure_object.ECTS_credit,
+                structure_object.external_name if structure_object.external_name else structure_object.get_respens_name,
+                structure_object.ref_si_scol,
+                structure_object.ROF_ref
+            ])
+
         data['suggest'] = mutual_list
     except Exception as e:
         LOGGER.error('CANNOT GET mutual : \n{error}'.format(error=e))
