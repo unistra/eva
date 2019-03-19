@@ -955,7 +955,8 @@ def mecctable_update(request):
                 nature_child='INT',
                 is_imported=False
             )
-        if 'DU' in str(training.degree_type.short_label) and int(struct.ECTS_credit) == 0:
+        if str(training.degree_type.short_label) == 0\
+                and int(0 if struct.ECTS_credit is None else struct.ECTS_credit) == 0:
             coeff = 0
         else:
             coeff = coeff if coeff != 0 else None
