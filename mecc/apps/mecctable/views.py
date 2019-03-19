@@ -617,8 +617,6 @@ def get_mutual_by_cmp(request):
             is_in_use=True,
         ).exclude(
             nature__in=to_exclude,
-        ).exclude(
-            owner_training_id=int(training_id),
         )
 
         if asking_period:
