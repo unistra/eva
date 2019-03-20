@@ -1,7 +1,7 @@
 """
 Django view for training part
 """
-
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
@@ -22,13 +22,13 @@ from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
     is_megauser
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
-from mecc.apps.utils.queries import currentyear, save_training_update_structs
+from mecc.apps.utils.queries import currentyear, save_training_update_regime_session
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.rules.models import Rule, Paragraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
 from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
-    AdditionalParagraphForm, ExtraTrainingsForm
+    AdditionalParagraphForm, TrainingTransformForm, ExtraTrainingsForm
 from mecc.apps.training.utils import remove_training, consistency_check
 from mecc.apps.years.models import UniversityYear
 from mecc.apps.utils.documents_generator import Document
@@ -82,16 +82,36 @@ def do_consistency_check(request):
 
 
 @is_ajax_request
-def update_struct_training(request):
+def update_training_regime_session(request):
     """
     ajax call to update session and regime as you want
     """
-    done = save_training_update_structs(
-        Training.objects.get(id=request.POST.get('training_id')),
-        request.POST.get('regime_type'), request.POST.get('session_type'))
+    # done = save_training_update_regime_session(
+    #     Training.objects.get(id=request.POST.get('training_id')),
+    #     request.POST.get('regime_type'),
+    #     request.POST.get('session_type')
+    # )
+
+    done = Training.objects.get(id=request.POST.get('training_id')).transform(
+        request.POST.get('mode'),
+        request.POST.get('regime_type'),
+        request.POST.get('session_type')
+    )
 
     return JsonResponse({'status': 200 if done else 300})
 
+@is_ajax_request
+def cancel_transform(request):
+    training_form = TrainingForm(
+        instance=Training.objects.get(id=request.GET.get('training_id'))
+    )
+    mecc_type_layout = as_crispy_field(field=training_form['MECC_type'])
+    session_type_layout = as_crispy_field(field=training_form['session_type'])
+
+    return JsonResponse({
+        'mecc_type_layout': mecc_type_layout,
+        'session_type_layout': session_type_layout
+    })
 
 def my_teachings(request, template='training/respform_trainings.html'):
     """
@@ -100,12 +120,18 @@ def my_teachings(request, template='training/respform_trainings.html'):
     request.session['visited_cmp'] = 'RESPENS'
     request.session['list_training'] = False
     current_year = currentyear().code_year
-    data = {}
     struct_object = StructureObject.objects.filter(
-        code_year=current_year, RESPENS_id=request.user.username)
-    data['trainings'] = Training.objects.filter(
-        id__in=[e.owner_training_id for e in struct_object])
-    return render(request, template, data)
+        code_year=current_year, RESPENS_id=request.user.username
+    )
+    trainings = Training.objects.filter(
+        id__in=[e.owner_training_id for e in struct_object]
+    ).select_related('degree_type')
+
+    trainings = _filter_out_rof_disabled_trainings(trainings)
+
+    return render(request, template, {
+        'trainings': trainings,
+    })
 
 
 @is_ajax_request
@@ -207,17 +233,29 @@ class TrainingListView(ListView):
 
     @has_requested_cmp
     def get_queryset(self):
+        id_cmp = self.kwargs.get('cmp')
+        institute = Institute.objects.get(code=id_cmp) if id_cmp else None
         institutes = [e.code for e in Institute.objects.all()]
         trainings = Training.objects.filter(
-            code_year=currentyear().code_year
-            if currentyear() is not None else None).order_by(
-                'degree_type', 'label')
+            code_year=currentyear().code_year if currentyear() is not None else None
+        )
+        trainings = trainings.order_by(
+            'degree_type', 'label'
+        )
 
-        if self.kwargs['cmp'] is None:
+        if institute and institute.ROF_support:
+            # Si la composante est en appui ROF, ne pas afficher les formations avec is_existing_rof = False
+            trainings = trainings.exclude(is_existing_rof=False)
+        else:
+            # Ne pas afficher la formation si elle est de type catalogue NS et is_existing_rof = False
+            trainings = trainings.exclude(is_existing_rof=False, degree_type__ROF_code='EA')
+
+        if id_cmp is None:
             return trainings
 
-        if self.kwargs['cmp'] in institutes:
-            return trainings.filter(institutes__code=self.kwargs['cmp'])
+        if id_cmp in institutes:
+            trainings = trainings.filter(institutes__code=self.kwargs['cmp'])
+            return trainings
 
     template_name = 'training/training_list.html'
 
@@ -353,6 +391,7 @@ class TrainingDelete(DeleteView):
     slug_url_kwarg = 'id_training'
 
 
+
 @login_required
 @is_post_request
 def process_respform(request):
@@ -371,11 +410,16 @@ def respform_list(request, template='training/respform_trainings.html'):
     """
     request.session['visited_cmp'] = 'RESPFORM'
     request.session['list_training'] = False
-    data = {}
-    data['trainings'] = Training.objects.filter(
+    trainings = Training.objects.filter(
         resp_formations=request.user.meccuser,
-        code_year=currentyear().code_year if currentyear() is not None else None)
-    return render(request, template, data)
+        code_year=currentyear().code_year if currentyear() is not None else None,
+    ).select_related('degree_type')
+
+    trainings = _filter_out_rof_disabled_trainings(trainings)
+
+    return render(request, template, {
+        'trainings': trainings,
+    })
 
 
 @login_required
@@ -572,13 +616,14 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     old_year = currentyear().code_year - 1
     old_training = Training.objects.filter(
         n_train=t.n_train, code_year=old_year).first()
-    old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
-    old_specific = SpecificParagraph.objects.filter(
-        code_year=old_year).filter(paragraph_gen_id__in=[
-            e.origin_parag for e in p
-        ], training_id=old_training.id) if old_training else []
+    can_be_recup = True if r.is_edited == 'N' else False
 
     if old_training:
+        old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
+        old_specific = SpecificParagraph.objects.filter(
+            code_year=old_year).filter(paragraph_gen_id__in=[
+                e.origin_parag for e in p
+            ], training_id=old_training.id) if old_training else []
         try:
             old_additional = AdditionalParagraph.objects.filter(
                 code_year=currentyear().code_year - 1,
@@ -587,13 +632,14 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
             )
         except AdditionalParagraph.DoesNotExist:
             old_additional = None
+
+        data['old_specific'] = [
+            e.paragraph_gen_id for e in old_specific] if can_be_recup else False
+
     else:
         old_additional = None
 
     # PROCESSING WITH DATAS
-    can_be_recup = True if r.is_edited == 'N' else False
-    data['old_specific'] = [
-        e.paragraph_gen_id for e in old_specific] if can_be_recup else False
     data['old_additional'] = True if old_additional and can_be_recup else False
     data['specific_ids'] = [
         a.paragraph_gen_id for a in data['specific_paragraph']]
@@ -910,3 +956,24 @@ def preview_mecc(request):
         model='preview_mecc',
         trainings=request.GET.get('training_id')
     )
+
+
+def _filter_out_rof_disabled_trainings(trainings):
+    # ne pas garder les formations supprimées dans ROF
+    filtered_trainings = []
+    institutes_with_rof_support = Institute.objects.filter(
+        ROF_support=True
+    ).values_list(
+        'code', flat=True
+    )
+    for training in trainings:
+        if training.supply_cmp in institutes_with_rof_support:
+            # ne pas garder si is_existing_rof = False
+            if training.is_existing_rof:
+                filtered_trainings.append(training)
+        else:
+            # ne pas garder si type Catalogue NS et is_existing_rof = False
+            if not(training.degree_type.ROF_code == 'EA' and training.is_existing_rof is False):
+                filtered_trainings.append(training)
+
+    return filtered_trainings

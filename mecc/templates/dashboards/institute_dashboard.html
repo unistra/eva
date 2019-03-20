@@ -1,70 +1,86 @@
 {% extends 'base.html' %}
+
 {% load i18n %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% load mecc_tags %}
 {% load groups %}
+
 {% block page-header %}
-{% trans 'MECC' %} {{ request.display.current_year }} <br>
-{{ institute.label }} :
-{% trans 'Tableau de bord de pilotage' %}
+    {% trans 'MECC' %} {{ request.display.current_year }}<br>{{ institute.label }} : {% trans 'Tableau de bord de pilotage' %}
 {% endblock %}
+
 {% block breadcrumb %}
-<ol class="breadcrumb">
-    {% if request.user|has_group:'DES1' or request.user.is_superuser %}
-        <li class="active"><a href="{% url 'training:list_all'%}">{% trans "Offre de formation" %}</a></li>
-        <li> {{institute.label}} </li>
-    {%endif%}
-</ol>
+    <ol class="breadcrumb">
+        {% if request.user|has_group:'DES1' or request.user.is_superuser %}
+            <li class="active"><a href="{% url 'training:list_all' %}">{% trans "Offre de formation" %}</a></li>
+            <li> {{ institute.label }} </li>
+        {% endif %}
+    </ol>
 {% endblock %}
+
 {% block app_content %}
-<script src="{% static 'js/ajax.django.js' %}"></script>
-<div class="row no-margin">
-    <div class="row">
-        <div class="col-sm-12">
-        </div>
-    </div>
-</div>
-<div class="row has-top-border has-bottom-border no-margin">
-    <div class="col-sm-6 border-right-blue no-margin">
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans "Périmètre de l'application" %}</legend>
+    <script src="{% static 'js/ajax.django.js' %}"></script>
+
+    <div class="row no-margin">
         <div class="row">
             <div class="col-sm-12">
-                {% include 'dashboards/institute_application_stats.html' %}
             </div>
         </div>
     </div>
-    <div class="col-sm-6" >
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Processus de validation par la CFVU' %}</legend>
-        <div class="col-sm-12">
-            {% include 'dashboards/institute_validation.html' %}
+    <div class="row has-top-border has-bottom-border no-margin">
+        <div class="col-sm-6 border-right-blue no-margin">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
+                {% trans "Périmètre de l'application" %}
+            </legend>
+            <div class="row">
+                <div class="col-sm-12">
+                    {% include 'dashboards/institute_application_stats.html' %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
+                {% trans 'Processus de validation par la CFVU' %}
+            </legend>
+            <div class="col-sm-12">
+                {% include 'dashboards/institute_validation.html' %}
+            </div>
         </div>
     </div>
-</div>
-<div class="row has-bottom-border no-margin">
-    <div class="col-sm-6 border-right-blue no-margin">
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans "Etat d'avancement du processus de saisie" %}</legend>
-        <div class="col-sm-12">
-            {% include 'dashboards/institute_edit_status.html' %}
-        </div>
+    <div class="row has-bottom-border no-margin">
+        <div class="col-sm-6 border-right-blue no-margin">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
+                {% trans "Etat d'avancement du processus de saisie" %}
+            </legend>
+            <div class="col-sm-12">
+                {% include 'dashboards/institute_edit_status.html' %}
+            </div>
 
-    </div>
-    {% if topten_derog %}
-    <div class="col-sm-6" >
-        <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">{% trans 'Dérogations sollicitées par la composante' %}</legend>
-        <div class="col-sm-9">
-            {% include 'dashboards/institute_institute.html' %}
         </div>
-        <div class="col-sm-3">
-            <ul>
-                <li class="link-list"><a href="{% url 'dashboards:institute_derogations_export_excel' code=institute.code %}">{% trans "Détail des dérogations et motivations (excel)" %}</a></li>
-                <li class="link-list"><a href="{% url 'dashboards:institute_alineas_export_excel'  code=institute.code %}">{% trans "Détail des alinéas additionnels (excel)" %}</a></li>
-            </ul>
+        <div class="col-sm-6">
+            <legend class="no-border" style="margin-top: 0.5em;margin-bottom: 2em; margin-left: 1em;">
+                {% trans 'Dérogations sollicitées par la composante' %}
+            </legend>
+            {% if topten_derog %}
+                <div class="col-sm-9">
+                    {% include 'dashboards/institute_institute.html' %}
+                </div>
+                <div class="col-sm-3">
+                    <ul>
+                        <li class="link-list">
+                            <a href="{% url 'dashboards:institute_derogations_export_excel' code=institute.code %}">{% trans "Détail des dérogations et motivations (excel)" %}</a>
+                        </li>
+                        <li class="link-list">
+                            <a href="{% url 'dashboards:institute_alineas_export_excel'  code=institute.code %}">{% trans "Détail des alinéas additionnels (excel)" %}</a>
+                        </li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-</div>
-{% include "dashboards/modals/institute_training_detail.html" %}
-{% include "dashboards/modals/preview_rule.html" %}
-{% include "dashboards/modals/rules_list.html" %}
+
+    {% include "dashboards/modals/institute_training_detail.html" %}
+    {% include "dashboards/modals/preview_rule.html" %}
+    {% include "dashboards/modals/rules_list.html" %}
 {% endblock %}

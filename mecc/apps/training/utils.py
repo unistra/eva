@@ -107,7 +107,7 @@ compris entre 1 et 3"),
                             "4": "%s = <span class='red'>%s</span>" % (
                                  _("Coefficient"), link.coefficient)
                         })
-            #  1 - 2 
+            #  1 - 2
             if "E" in training.MECC_type and struc.nature == 'UE':
                 ue_children = struc.get_all_children
                 children_exam_1 = exams.filter(
@@ -129,17 +129,18 @@ compris entre 1 et 3"),
                             _("Nombre d'épreuves en session 1"),
                             "<span class='red'>%s</span>" % (len(proper_exam_1)+len(children_exam_1))),
                     })
-                # 2
-                if len(proper_exam_2) + len(children_exam_2) > 1:
-                    to_add = report['2']['objects']
-                    to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
-                        "3": "%s = %s" % (
-                            _("Nombre d'épreuves en session 2"),
-                            "<span class='red'>%s</span>" % (len(proper_exam_2)+len(children_exam_2))),
-                    })
+                #
+                # 2 (Contrôle supprimé : di/mecc#145)
+                # if len(proper_exam_2) + len(children_exam_2) > 1:
+                #     to_add = report['2']['objects']
+                #     to_add.append({
+                #         "0": struc.nature,
+                #         "1": struc.label,
+                #         "2": struc.ref_si_scol,
+                #         "3": "%s = %s" % (
+                #             _("Nombre d'épreuves en session 2"),
+                #             "<span class='red'>%s</span>" % (len(proper_exam_2)+len(children_exam_2))),
+                #     })
             # 3
             if "C" in training.MECC_type and "2" in struc.session:
                 to_add = report['3']['objects']

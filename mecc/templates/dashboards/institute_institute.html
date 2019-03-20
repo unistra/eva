@@ -3,23 +3,26 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 {% load mecc_tags %}
+
 <div>
-        <table class="dashboard-topten-table">
-            <thead>
-                <tr>
-                    <th style="width:60%;"></th>
-                    <th class="align-right">{% trans "Régime" %}</th>
-                    <th class="align-right">{% trans "Nb Formations" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in topten_derog|dictsort:"rule.display_order"  %}
-                <tr>
-                    <td>{{i.rule}}</td>
-                    <td class="align-right">{% if i.rule.is_eci and i.rule.is_ccct %}{% trans "Tous" %}{% elif i.rule.is_ccct %}{% trans "CC/CT" %}{% elif i.rule.is_eci %}{% trans "ECI" %}{% endif %}</td>
-                    <td class="align-right">{{i.nb_formations}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <table class="dashboard-topten-table">
+        <thead>
+        <tr>
+            <th style="width:60%;"></th>
+            <th class="align-right">{% trans "Régime" %}</th>
+            <th class="align-right">{% trans "Nb Formations" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in topten_derog|dictsort:"rule.display_order" %}
+            <tr>
+                <td>{{ i.rule }}</td>
+                <td class="align-right">
+                    {% if i.rule.is_eci and i.rule.is_ccct %}{% trans "Tous" %}{% elif i.rule.is_ccct %}
+                        {% trans "CC/CT" %}{% elif i.rule.is_eci %}{% trans "ECI" %}{% endif %}</td>
+                <td class="align-right">{{ i.nb_formations }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>

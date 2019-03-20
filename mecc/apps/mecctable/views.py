@@ -591,12 +591,15 @@ def get_mutual_by_cmp(request):
     """
     Give list of suggested cmp according by
     """
+    data = []
     try:
         asking = StructureObject.objects.get(
             id=request.GET.get('asking_id')) if request.GET.get(
             'asking_id') is not '0' else None
         asking_period = asking.period if asking else None
+        cmp_code = request.GET.get('cmp_code')
         training_id = request.GET.get('training_id')
+        cmp_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
         data = {}
         try:
             if asking.nature == "SE":
@@ -608,27 +611,42 @@ def get_mutual_by_cmp(request):
         except AttributeError as e:  # when asking from root
             to_exclude = [""]
         s_list = StructureObject.objects.filter(
-            cmp_supply_id=request.GET.get('cmp_code'), mutual=True,
+            cmp_supply_id=cmp_code,
+            mutual=True,
             code_year=currentyear().code_year,
-            is_in_use=True).exclude(nature__in=to_exclude).exclude(
-            owner_training_id=int(training_id))
+            is_in_use=True,
+        ).exclude(
+            nature__in=to_exclude,
+        )
+
         if asking_period:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
-        mutual_list = [[
-            "<input name='suggest-id' value='%s' type='checkbox'>" % (e.id),
-            e.nature,
-            e.label,
-            Training.objects.get(id=e.owner_training_id).label,
-            e.get_regime_display(),
-            e.get_session_display(),
-            e.ECTS_credit,
-            e.external_name if e.external_name else e.get_respens_name,
-            e.ref_si_scol,
-            e.ROF_ref
-        ] for e in s_list]
+        mutual_list = []
+        for structure_object in s_list:
+            training = Training.objects.get(id=structure_object.owner_training_id)
+
+            if structure_object.is_existing_rof is False and structure_object.cmp_supply_id in cmp_with_rof_support_ids:
+                continue
+            if structure_object.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+                continue
+
+            mutual_list.append([
+                "<input name='suggest-id' value='%s' type='checkbox'>" % (structure_object.id),
+                structure_object.nature,
+                structure_object.label,
+                training.label,
+                structure_object.get_regime_display(),
+                structure_object.get_session_display(),
+                structure_object.ECTS_credit,
+                structure_object.external_name if structure_object.external_name else structure_object.get_respens_name,
+                structure_object.ref_si_scol,
+                structure_object.ROF_ref
+            ])
+
         data['suggest'] = mutual_list
     except Exception as e:
         LOGGER.error('CANNOT GET mutual : \n{error}'.format(error=e))
+
     return JsonResponse(data)
 
 
@@ -991,11 +1009,22 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     """
     Display mecctable including StructureObject, ObjectsLink and Exam
     """
-    data = {}
     code_year = currentyear().code_year
+    data = {}
+    data['training'] = training = Training.objects.get(id=id)
+    supply_cmp = Institute.objects.get(code__exact=training.supply_cmp)
+    data['rof_enabled'] = supply_cmp.ROF_support
 
     current_structures = StructureObject.objects.filter(code_year=code_year)
     current_links = ObjectsLink.objects.filter(code_year=code_year)
+
+    # Si la composante en appui ROF ou la formation est de type Catalogue NS :
+    # exclure si is_existing_rof = False
+    if supply_cmp.ROF_support or training.degree_type.ROF_code == 'EA':
+        current_links = current_links.exclude(
+            is_existing_rof=False,
+        )
+
     current_exams = Exam.objects.filter(code_year=code_year)
 
     root_link = current_links.filter(id_parent='0', id_training=id).order_by(
@@ -1005,12 +1034,9 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
         e.cmp_supply_id for e in current_structures.filter(mutual=True))
 
     data['all_cmp'] = Institute.objects.filter(code__in=struc_o)
-    data['training'] = training = Training.objects.get(id=id)
     data['next_id'] = current_structures.count() + 1
     data['form'] = StructureObjectForm
     data['notification_to'] = settings.MAIL_FROM
-    supply_cmp = Institute.objects.get(code__exact=training.supply_cmp)
-    data['rof_enabled'] = supply_cmp.ROF_support
     # user = reques.user.username
     respens_struct = [e.id for e in current_structures.filter(
         RESPENS_id=request.user.username)]

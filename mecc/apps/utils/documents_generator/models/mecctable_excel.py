@@ -49,6 +49,10 @@ class MeccTableExcel(Document):
 
             current_structures = StructureObject.objects.filter(code_year=self.year)
             current_links = ObjectsLink.objects.filter(code_year=self.year)
+            if institute.ROF_support or training.degree_type.ROF_code == 'EA':
+                current_links = current_links.exclude(
+                    is_existing_rof=False,
+                )
             current_exams = Exam.objects.filter(code_year=self.year)
             root_link = current_links.filter(
                 id_parent=0, id_training=training.id

@@ -3,12 +3,14 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 {% load mecc_tags %}
+
 <div>
     <table class="table" style="order:1">
         <tr>
             <td>{% trans "Composantes ayant recours à l'application ÉVA" %}</td>
             <td class="stat-result">{{ institutes_counter }}</td>
-            <td> <a data-toggle="modal" class="hand no-border" aria-hidden="true" data-target="#institutes_list">{% trans "Voir la liste" %}</a></td>
+            <td><a data-toggle="modal" class="hand no-border" aria-hidden="true"
+                   data-target="#institutes_list">{% trans "Voir la liste" %}</a></td>
         </tr>
         <tr>
             <td>{% trans "Formations gérées par l'application ÉVA" %}</td>
