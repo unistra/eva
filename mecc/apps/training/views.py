@@ -519,9 +519,12 @@ def recover_everything(request, training_id):
         code_year=old_year,
         training=old_training)
     for e in old_additional:
-        old_rule = old_rules.get(id=e.rule_gen_id)
-        new_rule = rules.filter(n_rule=old_rule.n_rule).first()
-        if new_rule.id not in rules_with_additional:
+        try:
+            old_rule = old_rules.get(id=e.rule_gen_id)
+            new_rule = rules.filter(n_rule=old_rule.n_rule).first()
+        except Rule.DoesNotExist:
+            new_rule = None
+        if new_rule and new_rule.id not in rules_with_additional:
             r_add, created = AdditionalParagraph.objects.get_or_create(
                 code_year=currentyear().code_year,
                 training=training,
@@ -619,7 +622,6 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
     can_be_recup = True if r.is_edited == 'N' else False
 
     if old_training:
-        old_rule = Rule.objects.get(code_year=old_year, n_rule=r.n_rule)
         old_specific = SpecificParagraph.objects.filter(
             code_year=old_year).filter(paragraph_gen_id__in=[
                 e.origin_parag for e in p
@@ -627,10 +629,10 @@ def specific_paragraph(request, training_id, rule_id, template="training/specifi
         try:
             old_additional = AdditionalParagraph.objects.filter(
                 code_year=currentyear().code_year - 1,
-                rule_gen_id=old_rule.id,
+                rule_gen_id=Rule.objects.get(code_year=old_year, n_rule=r.n_rule).id,
                 training_id=old_training.id
             )
-        except AdditionalParagraph.DoesNotExist:
+        except (AdditionalParagraph.DoesNotExist, Rule.DoesNotExist):
             old_additional = None
 
         data['old_specific'] = [
