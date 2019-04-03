@@ -1045,7 +1045,7 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     user_profiles = request.user.meccuser.profile.all()
     data['la_liste'] = get_mecc_table_order(
         [e for e in root_link], respens_struct, current_structures,
-        current_links, current_exams, input_is_open, all_exam=False)
+        current_links, current_exams, training, input_is_open, all_exam=False)
 
     # data['input_is_open'] = input_is_open
     user_is_poweruser = is_poweruser(training, user_profiles, request.user.username)
