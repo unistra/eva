@@ -60,8 +60,9 @@ def institute_staff(institute_code):
     return User.objects.select_related().filter(meccuser__profile__cmp=institute_code)
 
 
-def get_mecc_table_order(link, struc_respens, current_structures,
-                         current_links, current_exams, input_is_open=True, all_exam=False):
+def get_mecc_table_order(link, struc_respens, current_structures, current_links,
+                         current_exams, current_training, input_is_open=True,
+                         all_exam=False):
 
     links = not isinstance(link, (list, tuple)) and [link] or link
     stuff = []
@@ -88,7 +89,10 @@ def get_mecc_table_order(link, struc_respens, current_structures,
         elif structure.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
             return None
         else:
-            imported = True if link.is_imported or is_imported else False
+            imported = True\
+                if (link.is_imported or is_imported)\
+                and (structure.owner_training_id != current_training.id)\
+                else False
             exams_1 = current_exams.filter(
                 id_attached=structure.id,
                 session="1"
