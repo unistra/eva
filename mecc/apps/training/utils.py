@@ -49,10 +49,28 @@ def consistency_check(training):
         =>  Liste des objets non semestre dont le coefficient n’est
             pas compris entre 1 et 3
     """
-    structs = StructureObject.objects.filter(owner_training_id=training.id)
+    institutes_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
+
+    structs = StructureObject.objects.filter(
+        owner_training_id=training.id,
+    )
+    training_structs = []
+
+    for struct in structs:
+        # ne pas tenir compte des SO si la composante porteuse est en appui ROF et is_existing_rof == False
+        if struct.is_existing_rof is False and struct.cmp_supply_id in institutes_with_rof_support_ids:
+            pass
+        # ne pas tenir compte des SO si la formation est de type Catalogue NS et is_existing_rof == False
+        elif struct.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+            pass
+        else:
+            training_structs.append(struct)
+
     links = ObjectsLink.objects.filter(
-        id_training=training.id, id_child__in=[e.id for e in structs])
-    exams = Exam.objects.filter(id_attached__in=[e.id for e in structs])
+        id_training=training.id,
+        id_child__in=[e.id for e in training_structs],
+    )
+    exams = Exam.objects.filter(id_attached__in=[e.id for e in training_structs])
     try:
         report = {
             '0': {"title": _(
@@ -90,26 +108,26 @@ ou dont la note seuil est différente de 10"),
 compris entre 1 et 3"),
                 "objects": []}
         }
-        for struc in structs:
-            proper_exam_1 = exams.filter(id_attached=struc.id, session=1)
-            proper_exam_2 = exams.filter(id_attached=struc.id, session=2)
-            link = links.get(id_child=struc.id)
+        for struct in training_structs:
+            proper_exam_1 = exams.filter(id_attached=struct.id, session=1)
+            proper_exam_2 = exams.filter(id_attached=struct.id, session=2)
+            link = links.get(id_child=struct.id)
             # 0
             if "DU" not in training.degree_type.short_label:
                 to_add = report['0']['objects']
-                if struc.nature == 'UE':
-                    if struc.ECTS_credit / 3 != link.coefficient:
+                if struct.nature == 'UE':
+                    if struct.ECTS_credit / 3 != link.coefficient:
                         to_add.append({
-                            "0": struc.nature,
-                            "1": struc.label,
-                            "2": struc.ref_si_scol,
-                            "3": "%s = %s" % (_("Crédits"), struc.ECTS_credit),
+                            "0": struct.nature,
+                            "1": struct.label,
+                            "2": struct.ref_si_scol,
+                            "3": "%s = %s" % (_("Crédits"), struct.ECTS_credit),
                             "4": "%s = <span class='red'>%s</span>" % (
                                  _("Coefficient"), link.coefficient)
                         })
             #  1 - 2
-            if "E" in training.MECC_type and struc.nature == 'UE':
-                ue_children = struc.get_all_children
+            if "E" in training.MECC_type and struct.nature == 'UE':
+                ue_children = struct.get_all_children
                 children_exam_1 = exams.filter(
                     session=1,
                     id_attached__in=[child.id for child in ue_children]
@@ -122,9 +140,9 @@ compris entre 1 et 3"),
                 if len(proper_exam_1) + len(children_exam_1) < 3:
                     to_add = report['1']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("Nombre d'épreuves en session 1"),
                             "<span class='red'>%s</span>" % (len(proper_exam_1)+len(children_exam_1))),
@@ -142,12 +160,12 @@ compris entre 1 et 3"),
                 #             "<span class='red'>%s</span>" % (len(proper_exam_2)+len(children_exam_2))),
                 #     })
             # 3
-            if "C" in training.MECC_type and "2" in struc.session:
+            if "C" in training.MECC_type and "2" in struct.session:
                 to_add = report['3']['objects']
                 can_be_added = {
-                    "0": struc.nature,
-                    "1": struc.label,
-                    "2": struc.ref_si_scol,
+                    "0": struct.nature,
+                    "1": struct.label,
+                    "2": struct.ref_si_scol,
                     "3": _("<span class='red'>Les épreuves \
                     de la session 2 sont différentes</span>")
                 }
@@ -172,9 +190,9 @@ compris entre 1 et 3"),
                 if link.eliminatory_grade not in ['', ' ', None]:
                     to_add = report['4']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s </span>" % link.eliminatory_grade)
@@ -191,9 +209,9 @@ compris entre 1 et 3"),
                         "0": "%s : %s" % (_("Epreuve"), e.label),
                         "1": "%s : %s de l'objet : %s - %s" % (
                             _("Session"), e.session,
-                            struc.nature, struc.label
+                            struct.nature, struct.label
                         ),
-                        "2": struc.ref_si_scol,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
@@ -201,13 +219,13 @@ compris entre 1 et 3"),
             # 6 - 7 - 8
             if "master" in training.degree_type.short_label.lower():
                 # 6
-                if link.eliminatory_grade not in ['', ' ', None] and struc.nature != "SE":
+                if link.eliminatory_grade not in ['', ' ', None] and struct.nature != "SE":
 
                     to_add = report['6']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % link.eliminatory_grade)
@@ -224,31 +242,31 @@ compris entre 1 et 3"),
                         "0": "%s : %s" % (_("Epreuve"), e.label),
                         "1": "%s : %s de l'objet : %s - %s" % (
                             _("Session"), e.session,
-                            struc.nature, struc.label
+                            struct.nature, struct.label
                         ),
-                        "2": struc.ref_si_scol,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
                     })
 
                 # 8
-                if struc.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
+                if struct.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
                     to_add = report['8']['objects']
                     to_add.append({
-                        "0": "%s : %s" % (struc.get_nature_display(), struc.label),
-                        "1": struc.ref_si_scol,
+                        "0": "%s : %s" % (struct.get_nature_display(), struct.label),
+                        "1": struct.ref_si_scol,
                         "2": "<span class='red'>%s</span>" % _("Pas de note seuil") if link.eliminatory_grade in ['', ' ', None] else "<span class='red' %s = %s</span>" % (
                             _("Note seuil"), link.eliminatory_grade)
                     })
             # 9
-            if 'licence pro' in training.degree_type.short_label.lower() and struc.nature != 'SE':
+            if 'licence pro' in training.degree_type.short_label.lower() and struct.nature != 'SE':
                 if not link.coefficient or not (0 < link.coefficient < 4):
                     to_add = report['9']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "<span class='red'>%s</span>" % _("Pas de coefficient") if not link.coefficient else "<span class='red'>%s = %s</span>" % (_("Coefficient"), link.coefficient)
 
                     })
