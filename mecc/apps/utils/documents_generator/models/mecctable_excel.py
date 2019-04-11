@@ -60,7 +60,7 @@ class MeccTableExcel(Document):
                 'order_in_child'
             ).distinct()
             links = get_mecc_table_order([e for e in root_link], [], current_structures,
-                                         current_links, current_exams, all_exam=True)
+                                         current_links, current_exams, training, all_exam=True)
 
             for link in links:
                 self.write_training_data(link, worksheet, training, training_is_ccct)

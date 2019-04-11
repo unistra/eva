@@ -1189,7 +1189,7 @@ def preview_mecctable_story(training, story=[], preview=True, ref="both", model=
         'order_in_child').distinct()
     links = get_mecc_table_order([e for e in root_link], [],
                                  current_structures, current_links,
-                                 current_exams, all_exam=True)
+                                 current_exams, training, all_exam=True)
     references = '<para textColor=steelblue><strong>%s</strong></para>' % ("Référence ROF \
 <br></br><br></br> Référence APOGEE" if ref == "both" else "Référence\
  ROF" if "with_rof" == ref else 'Référence APOGEE' if "with_si" == ref else '')
