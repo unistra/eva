@@ -312,7 +312,7 @@ class PreviewMeccTable(Document):
             [e for e in root_link],
             [],
             current_structures, current_links,
-            current_exams, all_exam=True
+            current_exams, self.training, all_exam=True
         )
 
         col_width, width_exams, mecc_table_style, big_table = \

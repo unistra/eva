@@ -134,6 +134,7 @@ class PublishedMeccPdf:
             current_structures,
             current_links,
             current_exams,
+            self.training,
             all_exam=True
         )
 
