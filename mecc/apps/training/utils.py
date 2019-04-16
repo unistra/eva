@@ -111,7 +111,12 @@ compris entre 1 et 3"),
         for struct in training_structs:
             proper_exam_1 = exams.filter(id_attached=struct.id, session=1)
             proper_exam_2 = exams.filter(id_attached=struct.id, session=2)
-            link = links.get(id_child=struct.id)
+            try:
+                link = links.get(id_child=struct.id)
+            except ObjectsLink.DoesNotExist:
+                # di/mecc#148 : links can ref another training in id_training, therefore use n_train_child
+                link = ObjectsLink.objects.get(id_child=struct.id, n_train_child=training.id)
+
             # 0
             if "DU" not in training.degree_type.short_label:
                 to_add = report['0']['objects']
@@ -271,7 +276,7 @@ compris entre 1 et 3"),
 
                     })
     except Exception as e:
-        LOGGER.error('Consistency check error __: \n{error}'.format(error=e))
+        LOGGER.exception(e)
     return report
 
 
