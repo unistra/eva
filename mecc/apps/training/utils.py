@@ -4,17 +4,13 @@ Usefull stuff for trainings view
 import logging
 from datetime import datetime
 
-from django.utils.translation import ugettext as _
 from django.contrib.auth.models import Group
+from django.utils.translation import ugettext as _
 
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.queries import currentyear
-from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
-
-LOGGER = logging.getLogger(__name__)
-
-ALLS = ObjectsLink.objects.all()
+from mecc.apps.training.models import Training
+from mecc.apps.utils.queries import currentyear
 
 
 def consistency_check(training):
@@ -137,10 +133,10 @@ compris entre 1 et 3"),
                     session=1,
                     id_attached__in=[child.id for child in ue_children]
                 )
-                children_exam_2 = exams.filter(
-                    session=2,
-                    id_attached__in=[child.id for child in ue_children]
-                )
+                # children_exam_2 = exams.filter(
+                #     session=2,
+                #     id_attached__in=[child.id for child in ue_children]
+                # )
                 # 1
                 if len(proper_exam_1) + len(children_exam_1) < 3:
                     to_add = report['1']['objects']
@@ -276,7 +272,8 @@ compris entre 1 et 3"),
 
                     })
     except Exception as e:
-        LOGGER.exception(e)
+        logger = logging.getLogger(__name__)
+        logger.exception(e)
     return report
 
 
@@ -284,7 +281,7 @@ def training_has_consumed(training, current_year):
     """
     Return true if training has on of its object consumed by another training
     """
-    all_links = ALLS.filter(code_year=current_year)
+    all_links = ObjectsLink.objects.filter(code_year=current_year)
     all_id_imported = {link.id_child for link in all_links.filter(
         is_imported=True).exclude(id_training=training.id)}
     id_in_training = {link.id_child for link in all_links.filter(
@@ -293,8 +290,8 @@ def training_has_consumed(training, current_year):
     one_is_present = any(
         id_training in all_id_imported for id_training in id_in_training)
 
-    message = _("Cela entraine la suppression du tableau MECC (les éléments \
-    importés continuent d'exister dans leur formation d'orgine")
+    # message = _("Cela entraine la suppression du tableau MECC (les éléments \
+    # importés continuent d'exister dans leur formation d'orgine")
 
     return True if one_is_present else False
 
@@ -325,8 +322,6 @@ def remove_training(request, training_id):
     mecc_validated = _("MECC validées en")
     message = ""
     removable = True
-
-
 
     def has_consumed(removable, message):
         """" check training strucutre object are not used anywhere else """
