@@ -13,7 +13,18 @@ from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
 
 
-def consistency_check(training):
+def _link_is_excluded_by_rof(link, institutes_with_rof_support_ids) -> bool:
+    # cf. di/mecc#147
+    training = Training.objects.get(pk=link.id_training)
+    if link.is_existing_rof is False and training.supply_cmp in institutes_with_rof_support_ids:
+        return True
+    if link.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+        return True
+    else:
+        return False
+
+
+def consistency_check(training: Training):
     """
     Lets do some checking:
     Pour tous les types de diplôme sauf les diplômes d’université
@@ -52,6 +63,7 @@ def consistency_check(training):
     )
     training_structs = []
 
+    # cf. di/mecc#147
     for struct in structs:
         # ne pas tenir compte des SO si la composante porteuse est en appui ROF et is_existing_rof == False
         if struct.is_existing_rof is False and struct.cmp_supply_id in institutes_with_rof_support_ids:
@@ -112,6 +124,8 @@ compris entre 1 et 3"),
             except ObjectsLink.DoesNotExist:
                 # di/mecc#148 : links can ref another training in id_training, therefore use n_train_child
                 link = ObjectsLink.objects.get(id_child=struct.id, n_train_child=training.id)
+            if _link_is_excluded_by_rof(link, institutes_with_rof_support_ids):
+                continue
 
             # 0
             if "DU" not in training.degree_type.short_label:
