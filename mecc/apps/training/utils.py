@@ -3,6 +3,7 @@ Usefull stuff for trainings view
 """
 import logging
 from datetime import datetime
+from typing import List
 
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext as _
@@ -13,7 +14,9 @@ from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
 
 
-def _link_is_excluded_by_rof(link, institutes_with_rof_support_ids) -> bool:
+def _link_is_excluded_by_rof(
+        link: ObjectsLink,
+        institutes_with_rof_support_ids: List[str]) -> bool:
     # cf. di/mecc#147
     training = Training.objects.get(pk=link.id_training)
     if link.is_existing_rof is False and training.supply_cmp in institutes_with_rof_support_ids:
@@ -22,6 +25,84 @@ def _link_is_excluded_by_rof(link, institutes_with_rof_support_ids) -> bool:
         return True
     else:
         return False
+
+
+def _object_is_excluded_by_rof(
+        structure_object: StructureObject,
+        training: Training,
+        institutes_with_rof_support: List[str]) -> bool:
+    # cf di/mecc#147
+    if structure_object.is_existing_rof is False and training.supply_cmp in institutes_with_rof_support:
+        return True
+    if structure_object.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+        return True
+    else:
+        return False
+
+
+def get_links_for_structure(structure: StructureObject):
+    links = ObjectsLink.objects.filter(
+        id_parent=structure.id,
+    ).order_by('order_in_child')
+    return links
+
+
+def get_children_for_link(link: ObjectsLink,
+                          training: Training,
+                          institutes_with_rof_support_ids: List[str],
+                          selected_links: List[ObjectsLink],
+                          selected_structures: List[StructureObject]):
+    if not _link_is_excluded_by_rof(link, institutes_with_rof_support_ids):
+        selected_links.append(link)
+        structure = StructureObject.objects.get(pk=link.id_child)
+        if not _object_is_excluded_by_rof(structure, training, institutes_with_rof_support_ids):
+            selected_structures.append(structure)
+            for link in get_links_for_structure(structure):
+                get_children_for_link(link, training, institutes_with_rof_support_ids, selected_links, selected_structures)
+    return selected_links, selected_structures,
+
+
+def build_objects_and_links_list(training: Training):
+    """
+    Build a list of structure objects and links recursively, excluding those
+    disabled by ROF sync, including their descendants
+    """
+    current_year = currentyear().code_year
+    institutes_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
+    current_structures = StructureObject.objects.filter(code_year=current_year)
+    current_links = ObjectsLink.objects.filter(code_year=current_year)
+
+    selected_links = []
+    selected_structures = []
+
+    # Si la composante en appui ROF ou la formation est de type Catalogue NS :
+    # exclure si is_existing_rof = False
+    if training.supply_cmp in institutes_with_rof_support_ids or training.degree_type.ROF_code == 'EA':
+        current_links = current_links.exclude(
+            is_existing_rof=False,
+        )
+
+    root_links = current_links.filter(
+        id_parent='0',
+        id_training=training.id
+    ).order_by('order_in_child').distinct()
+
+    for link in root_links:
+        current_links, current_structures = get_children_for_link(link, training,
+                                                                  institutes_with_rof_support_ids,
+                                                                  selected_links, selected_structures)
+
+    return current_links, current_structures
+
+
+def test():
+    training = Training.objects.get(pk=1197)
+    print('Training #{} - {}'.format(training.id, training.label))
+    links, structures = build_objects_and_links_list(training)
+    print("\n"+'# Links')
+    [print(l.id) for l in links]
+    print('\n# Structures')
+    [print('{} - {}'.format(o.id, o.label)) for o in structures]
 
 
 def consistency_check(training: Training):
@@ -56,7 +137,6 @@ def consistency_check(training: Training):
         =>  Liste des objets non semestre dont le coefficient n’est
             pas compris entre 1 et 3
     """
-    institutes_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
 
     structs = StructureObject.objects.filter(
         owner_training_id=training.id,
@@ -124,7 +204,7 @@ compris entre 1 et 3"),
             except ObjectsLink.DoesNotExist:
                 # di/mecc#148 : links can ref another training in id_training, therefore use n_train_child
                 link = ObjectsLink.objects.get(id_child=struct.id, n_train_child=training.id)
-            if _link_is_excluded_by_rof(link, institutes_with_rof_support_ids):
+            if _link_is_excluded_by_rof(link, training, institutes_with_rof_support_ids):
                 continue
 
             # 0
