@@ -56,9 +56,10 @@ def get_children_for_link(link: ObjectsLink,
         selected_links.append(link)
         structure = StructureObject.objects.get(pk=link.id_child)
         if not _object_is_excluded_by_rof(structure, training, institutes_with_rof_support_ids):
-            selected_structures.append(structure)
-            for link in get_links_for_structure(structure):
-                get_children_for_link(link, training, institutes_with_rof_support_ids, selected_links, selected_structures)
+            if link.is_imported is False:
+                selected_structures.append(structure)
+                for link in get_links_for_structure(structure):
+                    get_children_for_link(link, training, institutes_with_rof_support_ids, selected_links, selected_structures)
     return selected_links, selected_structures,
 
 
@@ -138,21 +139,8 @@ def consistency_check(training: Training):
             pas compris entre 1 et 3
     """
 
-    structs = StructureObject.objects.filter(
-        owner_training_id=training.id,
-    )
-    training_structs = []
-
-    # cf. di/mecc#147
-    for struct in structs:
-        # ne pas tenir compte des SO si la composante porteuse est en appui ROF et is_existing_rof == False
-        if struct.is_existing_rof is False and struct.cmp_supply_id in institutes_with_rof_support_ids:
-            pass
-        # ne pas tenir compte des SO si la formation est de type Catalogue NS et is_existing_rof == False
-        elif struct.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
-            pass
-        else:
-            training_structs.append(struct)
+    links, training_structs = build_objects_and_links_list(training)
+    institutes_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
 
     links = ObjectsLink.objects.filter(
         id_training=training.id,
@@ -204,7 +192,7 @@ compris entre 1 et 3"),
             except ObjectsLink.DoesNotExist:
                 # di/mecc#148 : links can ref another training in id_training, therefore use n_train_child
                 link = ObjectsLink.objects.get(id_child=struct.id, n_train_child=training.id)
-            if _link_is_excluded_by_rof(link, training, institutes_with_rof_support_ids):
+            if _link_is_excluded_by_rof(link, institutes_with_rof_support_ids):
                 continue
 
             # 0
@@ -222,6 +210,7 @@ compris entre 1 et 3"),
                         })
             #  1 - 2
             if "E" in training.MECC_type and struct.nature == 'UE':
+                # should those be filtered for is_existing_rof ??
                 ue_children = struct.get_all_children
                 children_exam_1 = exams.filter(
                     session=1,
