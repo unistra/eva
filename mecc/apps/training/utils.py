@@ -3,21 +3,113 @@ Usefull stuff for trainings view
 """
 import logging
 from datetime import datetime
+from typing import List
 
-from django.utils.translation import ugettext as _
 from django.contrib.auth.models import Group
+from django.db.models import QuerySet
+from django.utils.translation import ugettext as _
 
 from mecc.apps.institute.models import Institute
-from mecc.apps.utils.queries import currentyear
-from mecc.apps.training.models import Training
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
-
-LOGGER = logging.getLogger(__name__)
-
-ALLS = ObjectsLink.objects.all()
+from mecc.apps.training.models import Training
+from mecc.apps.utils.queries import currentyear
 
 
-def consistency_check(training):
+def link_is_excluded_by_rof(
+        link: ObjectsLink,
+        institutes_with_rof_support_ids: List[str]) -> bool:
+    """
+    Check if ObjectsLink is disabled in ROF (and therefore not considered in Eva)
+    """
+    # cf. di/mecc#147
+    training = Training.objects.get(pk=link.id_training)
+    if link.is_existing_rof is False and training.supply_cmp in institutes_with_rof_support_ids:
+        return True
+    if link.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+        return True
+    else:
+        return False
+
+
+def structure_object_is_excluded_by_rof(
+        structure_object: StructureObject,
+        training: Training,
+        institutes_with_rof_support: List[str]) -> bool:
+    """
+    Check if structure_object is disabled in ROF (and therefore not considered in Eva)
+    """
+    # cf di/mecc#147
+    if structure_object.is_existing_rof is False and training.supply_cmp in institutes_with_rof_support:
+        return True
+    if structure_object.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+        return True
+    else:
+        return False
+
+
+def get_links_for_structure(structure_object: StructureObject) -> QuerySet:
+    """
+    get queryset of ordered children links for structure_object
+    """
+    links = ObjectsLink.objects.filter(
+        id_parent=structure_object.id,
+    ).order_by('order_in_child')
+    return links
+
+
+def get_children_for_link(link: ObjectsLink,
+                          training: Training,
+                          ids_of_institutes_with_rof_support: List[str],
+                          selected_links: List[ObjectsLink],
+                          selected_structures: List[StructureObject]):
+    """
+    Get children (ObjectLinks and StructureObjects) for a link recursively
+    excluding those disabled by ROF sync
+    """
+    if not link_is_excluded_by_rof(link, ids_of_institutes_with_rof_support):
+        selected_links.append(link)
+        structure = StructureObject.objects.get(pk=link.id_child)
+        if not structure_object_is_excluded_by_rof(structure, training, ids_of_institutes_with_rof_support):
+            if link.is_imported is False:
+                selected_structures.append(structure)
+                for link in get_links_for_structure(structure):
+                    get_children_for_link(link, training, ids_of_institutes_with_rof_support, selected_links, selected_structures)
+    return selected_links, selected_structures,
+
+
+def build_objects_and_links_list(training: Training, ids_of_institutes_with_rof_support: List[str]):
+    """
+    Build a list of structure objects and links recursively, excluding those
+    disabled by ROF sync and their descendants
+    """
+    current_year = currentyear().code_year
+    current_structures = StructureObject.objects.filter(code_year=current_year)
+    current_links = ObjectsLink.objects.filter(code_year=current_year)
+
+    selected_links = []
+    selected_structures = []
+
+    # Si la composante en appui ROF ou la formation est de type Catalogue NS :
+    # exclure si is_existing_rof = False
+    if training.supply_cmp in ids_of_institutes_with_rof_support or training.degree_type.ROF_code == 'EA':
+        current_links = current_links.exclude(
+            is_existing_rof=False,
+        )
+
+    root_links = current_links.filter(
+        id_parent='0',
+        id_training=training.id
+    ).order_by('order_in_child').distinct()
+
+    for link in root_links:
+        current_links, current_structures = get_children_for_link(link, training,
+                                                                  ids_of_institutes_with_rof_support,
+                                                                  selected_links, selected_structures)
+
+    return current_links, current_structures
+
+
+def consistency_check(training: Training):
     """
     Lets do some checking:
     Pour tous les types de diplôme sauf les diplômes d’université
@@ -49,10 +141,15 @@ def consistency_check(training):
         =>  Liste des objets non semestre dont le coefficient n’est
             pas compris entre 1 et 3
     """
-    structs = StructureObject.objects.filter(owner_training_id=training.id)
+
+    ids_of_institutes_with_rof_support = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
+    links, training_structs = build_objects_and_links_list(training, ids_of_institutes_with_rof_support)
+
     links = ObjectsLink.objects.filter(
-        id_training=training.id, id_child__in=[e.id for e in structs])
-    exams = Exam.objects.filter(id_attached__in=[e.id for e in structs])
+        id_training=training.id,
+        id_child__in=[e.id for e in training_structs],
+    )
+    exams = Exam.objects.filter(id_attached__in=[e.id for e in training_structs])
     try:
         report = {
             '0': {"title": _(
@@ -90,47 +187,56 @@ ou dont la note seuil est différente de 10"),
 compris entre 1 et 3"),
                 "objects": []}
         }
-        for struc in structs:
-            proper_exam_1 = exams.filter(id_attached=struc.id, session=1)
-            proper_exam_2 = exams.filter(id_attached=struc.id, session=2)
-            link = links.get(id_child=struc.id)
-            # 0
+        for struct in training_structs:
+            proper_exam_1 = exams.filter(id_attached=struct.id, session=1)
+            proper_exam_2 = exams.filter(id_attached=struct.id, session=2)
+            try:
+                link = links.get(id_child=struct.id)
+            except ObjectsLink.DoesNotExist:
+                # di/mecc#148 : links can ref another training in id_training, therefore use n_train_child
+                link = ObjectsLink.objects.get(id_child=struct.id, n_train_child=training.id)
+            if link_is_excluded_by_rof(link, ids_of_institutes_with_rof_support):
+                continue
+
+            # 0 Liste des UE qui ne respectent pas la règle coef = nb crédits / 3
             if "DU" not in training.degree_type.short_label:
                 to_add = report['0']['objects']
-                if struc.nature == 'UE':
-                    if struc.ECTS_credit / 3 != link.coefficient:
+                if struct.nature == 'UE':
+                    if struct.ECTS_credit / 3 != link.coefficient:
                         to_add.append({
-                            "0": struc.nature,
-                            "1": struc.label,
-                            "2": struc.ref_si_scol,
-                            "3": "%s = %s" % (_("Crédits"), struc.ECTS_credit),
+                            "0": struct.nature,
+                            "1": struct.label,
+                            "2": struct.ref_si_scol,
+                            "3": "%s = %s" % (_("Crédits"), struct.ECTS_credit),
                             "4": "%s = <span class='red'>%s</span>" % (
                                  _("Coefficient"), link.coefficient)
                         })
             #  1 - 2
-            if "E" in training.MECC_type and struc.nature == 'UE':
-                ue_children = struc.get_all_children
+            if "E" in training.MECC_type and struct.nature == 'UE':
+                # should those be filtered for is_existing_rof ??
+                ue_children = struct.get_all_children
                 children_exam_1 = exams.filter(
                     session=1,
                     id_attached__in=[child.id for child in ue_children]
                 )
-                children_exam_2 = exams.filter(
-                    session=2,
-                    id_attached__in=[child.id for child in ue_children]
-                )
-                # 1
+                # children_exam_2 = exams.filter(
+                #     session=2,
+                #     id_attached__in=[child.id for child in ue_children]
+                # )
+
+                # 1 Liste des UE en ECI ayant moins de 3 épreuves. en session 1
                 if len(proper_exam_1) + len(children_exam_1) < 3:
                     to_add = report['1']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("Nombre d'épreuves en session 1"),
                             "<span class='red'>%s</span>" % (len(proper_exam_1)+len(children_exam_1))),
                     })
                 #
-                # 2 (Contrôle supprimé : di/mecc#145)
+                # 2 Liste des UE en ECI ayant plus d'une épreuve en session 2 (Contrôle supprimé : di/mecc#145)
                 # if len(proper_exam_2) + len(children_exam_2) > 1:
                 #     to_add = report['2']['objects']
                 #     to_add.append({
@@ -141,13 +247,14 @@ compris entre 1 et 3"),
                 #             _("Nombre d'épreuves en session 2"),
                 #             "<span class='red'>%s</span>" % (len(proper_exam_2)+len(children_exam_2))),
                 #     })
-            # 3
-            if "C" in training.MECC_type and "2" in struc.session:
+            # 3 Liste des objets en CC/CT 2 sessions dont les épreuves et/ou les attributs d'épreuves diffèrent
+            # en session 2
+            if "C" in training.MECC_type and "2" in struct.session:
                 to_add = report['3']['objects']
                 can_be_added = {
-                    "0": struc.nature,
-                    "1": struc.label,
-                    "2": struc.ref_si_scol,
+                    "0": struct.nature,
+                    "1": struct.label,
+                    "2": struct.ref_si_scol,
                     "3": _("<span class='red'>Les épreuves \
                     de la session 2 sont différentes</span>")
                 }
@@ -168,18 +275,18 @@ compris entre 1 et 3"),
                             yet_done = True
             # 4 -5
             if "licence" in training.degree_type.short_label.lower():
-                # 4
+                # 4 Liste des objets qui ont une note seuil
                 if link.eliminatory_grade not in ['', ' ', None]:
                     to_add = report['4']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s </span>" % link.eliminatory_grade)
                     })
-                # 5
+                # 5 Liste des épreuves qui ont une note seuil
                 e1_with_elim = proper_exam_1.exclude(
                     eliminatory_grade=None)
                 e2_with_elim = proper_exam_2.exclude(
@@ -191,28 +298,29 @@ compris entre 1 et 3"),
                         "0": "%s : %s" % (_("Epreuve"), e.label),
                         "1": "%s : %s de l'objet : %s - %s" % (
                             _("Session"), e.session,
-                            struc.nature, struc.label
+                            struct.nature, struct.label
                         ),
-                        "2": struc.ref_si_scol,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
                     })
+
             # 6 - 7 - 8
             if "master" in training.degree_type.short_label.lower():
-                # 6
-                if link.eliminatory_grade not in ['', ' ', None] and struc.nature != "SE":
+                # 6 Liste des objets *non semestre* qui ont une note seuil
+                if link.eliminatory_grade not in ['', ' ', None] and struct.nature != "SE":
 
                     to_add = report['6']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % link.eliminatory_grade)
                     })
-                # 7
+                # 7 Liste des épreuves qui ont une note seuil
                 e1_with_elim = proper_exam_1.exclude(
                     eliminatory_grade=None)
                 e2_with_elim = proper_exam_2.exclude(
@@ -224,36 +332,39 @@ compris entre 1 et 3"),
                         "0": "%s : %s" % (_("Epreuve"), e.label),
                         "1": "%s : %s de l'objet : %s - %s" % (
                             _("Session"), e.session,
-                            struc.nature, struc.label
+                            struct.nature, struct.label
                         ),
-                        "2": struc.ref_si_scol,
+                        "2": struct.ref_si_scol,
                         "3": "%s = %s" % (
                             _("<span class='red'>Note seuil"),
                             "%s</span>" % e.eliminatory_grade)
                     })
 
-                # 8
-                if struc.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
+                # 8 Liste des objets *semestre* qui n'ont pas de note seuil ou
+                # dont la note seuil est différente de 10
+                if struct.nature == "SE" and (link.eliminatory_grade in ['', ' ', None] or link.eliminatory_grade != 10):
                     to_add = report['8']['objects']
                     to_add.append({
-                        "0": "%s : %s" % (struc.get_nature_display(), struc.label),
-                        "1": struc.ref_si_scol,
+                        "0": "%s : %s" % (struct.get_nature_display(), struct.label),
+                        "1": struct.ref_si_scol,
                         "2": "<span class='red'>%s</span>" % _("Pas de note seuil") if link.eliminatory_grade in ['', ' ', None] else "<span class='red' %s = %s</span>" % (
                             _("Note seuil"), link.eliminatory_grade)
                     })
-            # 9
-            if 'licence pro' in training.degree_type.short_label.lower() and struc.nature != 'SE':
+            # 9 Liste des objets *non semestre* dont le coefficient n'est pas compris entre 1 et 3
+            if 'licence pro' in training.degree_type.short_label.lower() and struct.nature != 'SE':
                 if not link.coefficient or not (0 < link.coefficient < 4):
                     to_add = report['9']['objects']
                     to_add.append({
-                        "0": struc.nature,
-                        "1": struc.label,
-                        "2": struc.ref_si_scol,
+                        "0": struct.nature,
+                        "1": struct.label,
+                        "2": struct.ref_si_scol,
                         "3": "<span class='red'>%s</span>" % _("Pas de coefficient") if not link.coefficient else "<span class='red'>%s = %s</span>" % (_("Coefficient"), link.coefficient)
 
                     })
     except Exception as e:
-        LOGGER.error('Consistency check error __: \n{error}'.format(error=e))
+        logger = logging.getLogger(__name__)
+        logger.exception(e)
+
     return report
 
 
@@ -261,7 +372,7 @@ def training_has_consumed(training, current_year):
     """
     Return true if training has on of its object consumed by another training
     """
-    all_links = ALLS.filter(code_year=current_year)
+    all_links = ObjectsLink.objects.filter(code_year=current_year)
     all_id_imported = {link.id_child for link in all_links.filter(
         is_imported=True).exclude(id_training=training.id)}
     id_in_training = {link.id_child for link in all_links.filter(
@@ -270,8 +381,8 @@ def training_has_consumed(training, current_year):
     one_is_present = any(
         id_training in all_id_imported for id_training in id_in_training)
 
-    message = _("Cela entraine la suppression du tableau MECC (les éléments \
-    importés continuent d'exister dans leur formation d'orgine")
+    # message = _("Cela entraine la suppression du tableau MECC (les éléments \
+    # importés continuent d'exister dans leur formation d'orgine")
 
     return True if one_is_present else False
 
@@ -302,8 +413,6 @@ def remove_training(request, training_id):
     mecc_validated = _("MECC validées en")
     message = ""
     removable = True
-
-
 
     def has_consumed(removable, message):
         """" check training strucutre object are not used anywhere else """

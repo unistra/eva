@@ -66,7 +66,9 @@ def do_consistency_check(request):
     """
     call consistency check for a specified training
     """
-    training = Training.objects.get(id=request.GET.get('training_id'))
+    training = Training.objects\
+        .select_related('degree_type')\
+        .get(id=request.GET.get('training_id'))
     report = consistency_check(training)
     to_remove = []
 
