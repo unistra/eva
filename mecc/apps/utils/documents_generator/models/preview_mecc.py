@@ -231,6 +231,8 @@ class PreviewMecc(PreviewMeccTable):
         """
         Return correct string in order to be displayed as list
         """
+        text = text.replace('<br>', '<br/>')
+        text = text.replace('\\r\\n', '<br/>')
         reg = re.compile(r'>(.*?)</(p|li)>')
         r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
         _list = []
