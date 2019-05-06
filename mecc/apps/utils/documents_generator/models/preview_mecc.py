@@ -143,7 +143,7 @@ class PreviewMecc(PreviewMeccTable):
                                 ),
                                 Paragraph(
                                     "<para textColor=red><u>Motif de la dérogation</u> : %s" \
-                                        % derog.text_motiv,
+                                    % self.close_empty_br(derog.text_motiv),
                                     style=self.styles['Normal']
                                 ) if motivations else ''
                             ]
@@ -231,7 +231,7 @@ class PreviewMecc(PreviewMeccTable):
         """
         Return correct string in order to be displayed as list
         """
-        text = text.replace('<br>', '<br/>')
+        text = self.close_empty_br(text)
         text = text.replace('\\r\\n', '<br/>')
         reg = re.compile(r'>(.*?)</(p|li)>')
         r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
@@ -246,3 +246,8 @@ class PreviewMecc(PreviewMeccTable):
                     "<para %s >%s</para>" % (
                         style, t), self.styles['Justify']))
         return _list
+
+    def close_empty_br(self, text):
+        """Reportlab requires opened tags to be closed"""
+        text = text.replace('<br>', '<br/>')
+        return text
