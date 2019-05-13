@@ -397,7 +397,36 @@ $.fn.serializeObject = function () {
 
 function updateStructure(id_parent, id_child) {
 
+    if (rof_enabled) {
+        // activer les champs afin que leur valeur soit transmise
+        $('select#id_nature').prop('disabled', false);
+        $('input#id_label').prop('disabled', false);
+        $('input#id_is_in_use').prop('disabled', false);
+        $('input#id_ECTS_credit').prop('disabled', false);
+        $('input[type=radio][name=period]').prop('disabled', false);
+        $('input#id_mutual').prop('disabled', false);
+        $('div#div_id_ROF_ref').removeClass('disabled');
+        $('input#id_ROF_ref').prop('disabled', false);
+        $('input#id_ROF_code_year').prop('disabled', false);
+        $('input#id_ROF_nature').prop('disabled', false);
+        $('input#id_ROF_supply_program').prop('disabled', false);
+    }
     let data_form = JSON.stringify($(".formstruct").serializeObject());
+    if (rof_enabled) {
+        // par précaution, désactiver à nouveau les champs
+        $('select#id_nature').prop('disabled', true);
+        $('input#id_label').prop('disabled', true);
+        $('input#id_is_in_use').prop('disabled', true);
+        $('input#id_ECTS_credit').prop('disabled', true);
+        $('input[type=radio][name=period]').prop('disabled', true);
+        $('input#id_mutual').prop('disabled', true);
+        $('div#div_id_ROF_ref').addClass('disabled');
+        $('input#id_ROF_ref').prop('disabled', true);
+        $('input#id_ROF_code_year').prop('disabled', true);
+        $('input#id_ROF_nature').prop('disabled', true);
+        $('input#id_ROF_supply_program').prop('disabled', true);
+    }
+
     let is_mutual = document.getElementById('id_mutual').checked;
     let type_val = $(document.getElementById('id_nature')).find('option:selected').val();
     let label = document.getElementById('id_label').value;
