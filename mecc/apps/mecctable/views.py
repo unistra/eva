@@ -857,7 +857,7 @@ def mecctable_update(request):
     Update mecctable
     """
     training = Training.objects.get(id=request.POST.get('training_id'))
-    is_catalgue = 'CATALOGUE' in training.degree_type.short_label
+    is_catalogue = 'CATALOGUE' in training.degree_type.short_label
     institute = Institute.objects.get(code__exact=training.supply_cmp)
 
     # needed stuff in order to create objectslink
@@ -907,9 +907,9 @@ def mecctable_update(request):
             nature=j.get('nature'),
             owner_training_id=training.id,
             cmp_supply_id=training.supply_cmp,
-            regime=j.get('regime') if is_catalgue else training.MECC_type,
+            regime=j.get('regime') if is_catalogue else training.MECC_type,
             session=j.get(
-                'session') if is_catalgue else training.session_type,
+                'session') if is_catalogue else training.session_type,
             label=j.get('label'),
             is_in_use=True if j.get('is_in_use') else False,
             period=j.get('period'),
@@ -925,6 +925,20 @@ def mecctable_update(request):
             ref_si_scol=j.get('ref_si_scol'),
             external_name=j.get('external_name')
         )
+
+    def update_recup_atb_ens(struct):
+        """
+        Si l'un des quatre champs est modifié, training.recup_atb_ens est mis à True
+        cf di/mecc#42
+        """
+        respens_changed = struct.RESPENS_id != j.get('RESPENS_id') or struct.external_name != j.get('external_name')
+        regime_changed = struct.regime != j.get('regime')
+        session_changed = struct.session != j.get('session')
+        ref_si_scol_changed = struct.ref_si_scol != j.get('ref_si_scol')
+
+        if respens_changed or regime_changed or session_changed or ref_si_scol_changed:
+            training.recup_atb_ens = True
+            training.save()
 
     if id_child == 0:
         struct = create_new_struct()
@@ -976,12 +990,13 @@ def mecctable_update(request):
                 remove_respens(struct.RESPENS_id, j.get('label'), training)
             if j.get('RESPENS_id') not in ['', ' ', None]:
                 create_respens(j.get('RESPENS_id'))
+        update_recup_atb_ens(struct)
         struct.code_year = currentyear().code_year
         struct.owner_training_id = training.id
         struct.cmp_supply_id = training.supply_cmp
-        struct.regime = j.get('regime') if is_catalgue else training.MECC_type
+        struct.regime = j.get('regime') if is_catalogue else training.MECC_type
         struct.session = j.get(
-            'session') if is_catalgue else training.session_type
+            'session') if is_catalogue else training.session_type
         struct.RESPENS_id = j.get('RESPENS_id')
         struct.external_name = j.get('external_name')
         struct.ROF_ref = j.get('ROF_ref')
@@ -1001,7 +1016,6 @@ def mecctable_update(request):
             struct.mutual = is_mutual
 
         struct.save()
-
 
     return JsonResponse(data)
 
