@@ -252,7 +252,7 @@ def setting_up_pdf(title, margin=72, portrait=True):
     Create the HttpResponse object with the appropriate PDF headers.
     """
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = ('filename="%s.pdf"' % title)
+    response['Content-Disposition'] = ('filename="%s.pdf"' % title.strip())
     page_size = A4 if portrait else landscape(A4)
     doc = SimpleDocTemplate(response, pagesize=page_size,
                             showBoundary=0,
