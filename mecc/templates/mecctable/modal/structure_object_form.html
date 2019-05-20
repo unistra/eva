@@ -30,8 +30,8 @@
             </div>
             <form class="formstruct">
                 <div class="modal-body">
-                    <div class="flex-container ">
-                        {% crispy form %}
+                    <div class="flex-container" style="align-items:flex-start">
+                        {% crispy object_form %}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -75,6 +75,7 @@ function check_if_closed() {
         $('#confirm-quit').modal("show");
     } else {
         $('#form-obj').modal("hide");
+        if (!!$(is_imported_container)) $(is_imported_container).remove();
     }
 }
 
@@ -237,6 +238,20 @@ function check_d(id_obj) {
 
 function get_struct_details(_id, id_parent, nature) {
     // appelé au chargement
+    {% if request.user.is_superuser %}
+    const linkForm =
+        "<div id='is_imported_container'> \
+             <div class='form-group'> \
+                 <div id='div_id_is_imported>' class='checkbox'> \
+                     <label for='id_is_imported'> \
+                         <input id='id_is_imported' class='checkboxinput' name='is_imported' type='checkbox'> \
+                         Is imported \
+                     </label> \
+                 </div> \
+             </div> \
+         </div>";
+    $(".structure-form-left").append(linkForm);
+    {% endif %}
     $("#struct_id").text(_id);
     select.innerHTML = "";
     select.innerHTML = options;
@@ -282,7 +297,7 @@ function get_struct_details(_id, id_parent, nature) {
                     } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
                         $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
                     } else {
-                        if (prop == 'is_in_use' || prop == 'mutual') {
+                        if (prop == 'is_in_use' || prop == 'mutual' || prop == 'is_imported') {
                             document.getElementById('id_' + prop).checked = data[prop];
                         }
                         $("input[name=" + prop + "]").val(data[prop]);
@@ -462,6 +477,9 @@ function updateStructure(id_parent, id_child) {
             id_parent: id_parent,
             formdata: data_form,
             is_mutual: is_mutual,
+            {% if request.user.is_superuser %}
+            is_imported: document.getElementById('id_is_imported').checked,
+            {% endif %}
         },
         success: function (data) {
             // Next three lines are used to dismiss modal

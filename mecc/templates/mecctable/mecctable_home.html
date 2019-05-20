@@ -217,7 +217,6 @@
     <script type="text/javascript">
         $('.editme').on('keydown', function (e) {
             let that = this;
-            console.log("EDITION");
             if (e.which == 13 && e.shiftKey == false) {
                 let value = this.innerHTML;
                 $.ajax({
@@ -232,7 +231,6 @@
                         if (data.status === "ERROR") {
                             alert(data.error);
                         }
-                        console.log("EDIT SUCCESS");
                         that.innerHTML = data.val;
                     }
                 });
@@ -337,8 +335,6 @@
                         );
                     }
                     Object.keys(data.exams_infos).forEach(function(key) {
-                        console.log(key);
-                        console.log(data.exams_infos[key].id_struct);
                         update_mini_table(
                             "1",
                             data.exams_infos[key].id_struct,

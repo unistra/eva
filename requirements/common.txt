@@ -14,3 +14,4 @@ html-sanitizer>1.6,<1.7
 celery==4.1.0
 kombu==4.1.0
 django-celery-results==1.0.1
+sentry-sdk==0.7.14
