@@ -26,7 +26,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.documents_generator import Document
 
 from .models import StructureObject, ObjectsLink, Exam
-from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm, IsImportedObjectForm
+from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
 
 LOGGER = logging.getLogger(__name__)
 
@@ -1063,7 +1063,6 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
     data['all_cmp'] = Institute.objects.filter(code__in=struc_o)
     data['next_id'] = current_structures.count() + 1
     data['object_form'] = StructureObjectForm
-    data['link_form'] = IsImportedObjectForm
     data['notification_to'] = settings.MAIL_FROM
     # user = reques.user.username
     respens_struct = [e.id for e in current_structures.filter(
