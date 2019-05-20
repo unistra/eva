@@ -26,7 +26,7 @@ from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.utils.documents_generator import Document
 
 from .models import StructureObject, ObjectsLink, Exam
-from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
+from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm, IsImportedObjectForm
 
 LOGGER = logging.getLogger(__name__)
 
@@ -766,8 +766,12 @@ def get_stuct_obj_details(request):
         'ROF_nature': struct_obj.ROF_nature,
         'ROF_supply_program': struct_obj.ROF_supply_program,
         'ref_si_scol': struct_obj.ref_si_scol,
-        'period_fix': True if parent else False
+        'period_fix': True if parent else False,
     }
+    if request.user.is_superuser:
+        j.update({
+            'is_imported': ObjectsLink.objects.get(id_child=struct_obj.id, id_parent=request.GET.get('id_parent')).is_imported
+        })
     return JsonResponse(j)
 
 
@@ -980,6 +984,10 @@ def mecctable_update(request):
         link.save()
     else:
         struct = StructureObject.objects.get(id=id_child)
+        link = ObjectsLink.objects.get(
+            id_parent = id_parent,
+            id_child = id_child
+        )
         # check the respens is the same as before and update respens label
         # if updated
         if struct.label != j.get('label') and struct.RESPENS_id not in ['', ' ', None]:
@@ -1007,14 +1015,17 @@ def mecctable_update(request):
         struct.ref_si_scol = j.get('ref_si_scol')
         if not institute.ROF_support:
             """Champs non modifiables si appui ROF"""
-            struct.nature = j.get('nature')
+            struct.nature = j.get('nature') if j.get('nature') else struct.nature
             struct.label = j.get('label')
             struct.is_in_use = True if j.get('is_in_use') else False
             struct.ECTS_credit = None if j.get('ECTS_credit') in [
                 0, '', ' '] else j.get('ECTS_credit')
             struct.period = j.get('period')
             struct.mutual = is_mutual
+        if 'is_imported' in request.POST.keys() and link.is_imported != request.POST.get('is_imported'):
+            link.is_imported = True if request.POST.get('is_imported') == 'true' else False
 
+        link.save()
         struct.save()
 
     return JsonResponse(data)
@@ -1051,7 +1062,8 @@ def mecctable_home(request, id=None, template='mecctable/mecctable_home.html'):
 
     data['all_cmp'] = Institute.objects.filter(code__in=struc_o)
     data['next_id'] = current_structures.count() + 1
-    data['form'] = StructureObjectForm
+    data['object_form'] = StructureObjectForm
+    data['link_form'] = IsImportedObjectForm
     data['notification_to'] = settings.MAIL_FROM
     # user = reques.user.username
     respens_struct = [e.id for e in current_structures.filter(
