@@ -85,3 +85,15 @@ RABBITMQ_VHOST = '{}_test'.format(RABBITMQ_USER)
 BROKER_URL = "amqp://{}:{}@{}/{}".format(
     RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_SERVER, RABBITMQ_VHOST
 )
+
+##########
+# SENTRY #
+##########
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://38db3389420c4cc6b544a4c50c150569@sentry-test.app.unistra.fr/11",
+    integrations=[DjangoIntegration()],
+    environment=STAGE,
+)
