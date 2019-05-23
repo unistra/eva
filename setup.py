@@ -30,7 +30,7 @@ recursive_requirements('requirements.txt', libraries, dependency_links)
 
 setup(
     name='mecc',
-    version='0.1',
+    version='2.3.9',
     packages=find_packages(),
     install_requires=libraries,
     dependency_links=dependency_links,
