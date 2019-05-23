@@ -768,9 +768,12 @@ def get_stuct_obj_details(request):
         'ref_si_scol': struct_obj.ref_si_scol,
         'period_fix': True if parent else False,
     }
+    print(parent)
     if request.user.is_superuser:
         j.update({
-            'is_imported': ObjectsLink.objects.get(id_child=struct_obj.id, id_parent=request.GET.get('id_parent')).is_imported
+            'is_imported': ObjectsLink.objects.get(id_child=struct_obj.id, id_parent=request.GET.get('id_parent')).is_imported,
+            'parent_label': parent.label if parent else 'no parent label to display',
+            'parent_rof_ref': parent.ROF_ref if parent else 'no ROF reference to display',
         })
     return JsonResponse(j)
 

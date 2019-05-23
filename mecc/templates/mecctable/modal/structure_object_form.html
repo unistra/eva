@@ -245,8 +245,10 @@ function get_struct_details(_id, id_parent, nature) {
                  <div id='div_id_is_imported>' class='checkbox'> \
                      <label for='id_is_imported'> \
                          <input id='id_is_imported' class='checkboxinput' name='is_imported' type='checkbox'> \
-                         Is imported \
+                         Is imported in \
                      </label> \
+                     <b><span id='parent_label'></span> \
+                     (ROF reference : <span id='parent_rof_ref'></span>)</b> \
                  </div> \
              </div> \
          </div>";
@@ -297,8 +299,12 @@ function get_struct_details(_id, id_parent, nature) {
                     } else if (prop == 'regime' || prop == 'period' || prop == 'session') {
                         $("input[name=" + prop + "][value=" + data[prop] + "]").prop('checked', 'checked')
                     } else {
-                        if (prop == 'is_in_use' || prop == 'mutual' || prop == 'is_imported') {
+                        if (prop == 'is_in_use' || prop == 'mutual') {
                             document.getElementById('id_' + prop).checked = data[prop];
+                        } else if (prop == 'is_imported') {
+                            document.getElementById('id_' + prop).checked = data[prop];
+                            document.getElementById('parent_label').innerText = data.parent_label;
+                            document.getElementById('parent_rof_ref').innerText = data.parent_rof_ref;
                         }
                         $("input[name=" + prop + "]").val(data[prop]);
                     }
