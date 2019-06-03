@@ -434,6 +434,7 @@ def append_text(story, text, style, special=False, spacer=6):
                 "<para textColor=red leftIndent=20><u>Motifs de la dérogation</u> :\
                 </para>", styles["Justify"]))
     for t, v in r:
+        t = t.replace('<br>', '<br/>')
         if v == 'li':
             story.append(Paragraph(
                 "<para %s leftIndent=40>%s</para>" % (
