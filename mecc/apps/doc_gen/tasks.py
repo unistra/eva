@@ -212,7 +212,8 @@ def task_clean_tmp_directory(self):
         path=tmp_dir_path,
         ignore_errors=True
     )
-    os.mkdir(tmp_dir_path)
+    if not os.path.exists(tmp_dir_path):
+        os.mkdir(tmp_dir_path)
 
 
 @task_prerun.connect(sender=task_clean_tmp_directory)
