@@ -598,7 +598,6 @@ def get_mutual_by_cmp(request):
             'asking_id') is not '0' else None
         asking_period = asking.period if asking else None
         cmp_code = request.GET.get('cmp_code')
-        training_id = request.GET.get('training_id')
         cmp_with_rof_support_ids = Institute.objects.filter(ROF_support=True).values_list('code', flat=True)
         data = {}
         try:
@@ -617,9 +616,11 @@ def get_mutual_by_cmp(request):
             is_in_use=True,
         ).exclude(
             nature__in=to_exclude,
-        ).exclude(
-            id=asking.id,
         )
+        if asking is not None:
+            s_list = s_list.exclude(
+                id=asking.id,
+            )
 
         if asking_period:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
