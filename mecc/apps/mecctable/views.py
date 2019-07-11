@@ -622,7 +622,7 @@ def get_mutual_by_cmp(request):
                 id=asking.id,
             )
 
-        if asking_period:
+        if asking_period and asking_period in ['I', 'P']:
             s_list = s_list.filter(period__in=[asking_period, 'A'])
         mutual_list = []
         for structure_object in s_list:
