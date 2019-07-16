@@ -10,6 +10,6 @@ def filter_content(content):
     content = content.replace('<br>', '<br/>')
 
     # Escape &, for example in R&D
-    content = re.sub(r"&(?!#\d{4};|amp;)", "&amp;", content)
+    # content = re.sub(r"&(?!#\d{4};|amp;)", "&amp;", content)
 
     return content
