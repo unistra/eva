@@ -1,23 +1,22 @@
-from math import modf
-from io import BytesIO
 import itertools
+from io import BytesIO
+from math import modf
 
 from django.http import HttpResponse
-
-from reportlab.pdfgen import canvas
-from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Frame
-from reportlab.platypus.flowables import Flowable
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm
+from reportlab.pdfgen import canvas
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Paragraph, Table, TableStyle, Frame
+from reportlab.platypus.flowables import Flowable
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.training.models import Training
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from mecc.apps.utils.queries import get_mecc_table_order
-
 from ..document import Document
 
 
@@ -143,7 +142,7 @@ class PreviewMeccTable(Document):
         self.story.append(
             Paragraph(
                 "<para align=center fontSize=14 spaceAfter=14 textColor=red>\
-                <strong>%s</strong></para>" % self.title_header,
+                <strong>%s</strong></para>" % filter_content(self.title_header),
                 self.styles['Normal']
             )
         )
@@ -215,7 +214,7 @@ class PreviewMeccTable(Document):
 
         table = [
             [
-                Paragraph("%s" % self.training.label, self.styles['InversedBigBold']),
+                Paragraph("%s" % filter_content(self.training.label), self.styles['InversedBigBold']),
                 "%s - %s" % (
                     self.training.get_MECC_type_display(),
                     self.training.get_session_type_display()
@@ -357,10 +356,10 @@ class PreviewMeccTable(Document):
                     ex_1_table = [
                         formated(ex_1.coefficient) if ex_1 is not None else '',
                         [
-                            Paragraph(ex_1.label if ex_1 else '',
+                            Paragraph(filter_content(ex_1).label if ex_1 else '',
                                       self.styles['SmallNormal']),
                             Paragraph(
-                                "<para textColor=grey>" + ex_1.additionnal_info \
+                                "<para textColor=grey>" + filter_content(ex_1.additionnal_info) \
                                 if ex_1 and ex_1.additionnal_info \
                                 else "" + "</para\>",
                                 self.styles['SmallNormal'])
@@ -376,7 +375,7 @@ class PreviewMeccTable(Document):
 
                     ex_2_table = [
                         formated(ex_2.coefficient) if ex_2 is not None else '',
-                        [Paragraph(ex_2.label if ex_2 is not None else '', self.styles[
+                        [Paragraph(filter_content(ex_2.label) if ex_2 is not None else '', self.styles[
                             'SmallNormal']), Paragraph("<para textColor=grey\
                             >" + ex_2.additionnal_info + "</para\
                             >" if ex_2.additionnal_info is not None else "",
@@ -420,7 +419,7 @@ class PreviewMeccTable(Document):
 
             object_line = [
                 Paragraph(
-                    "<para leftIndent=%s>%s</para> " % (what.get('rank')*10,struct.label),
+                    "<para leftIndent=%s>%s</para> " % (what.get('rank')*10, filter_content(struct.label)),
                     self.styles['SmallBold'] if what.get('rank') == 0 \
                         or what.get('structure').nature == 'UE' \
                         else self.styles['SmallNormal']

@@ -13,6 +13,7 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.rules.models import Rule, Paragraph as RuleParagraph
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from mecc.apps.years.models import UniversityYear
 from .preview_mecctable import PreviewMeccTable
 
@@ -81,7 +82,7 @@ class ModelE(PreviewMeccTable):
                             "{}<br/><b>Modalités d'évaluation des connaissances \
                                 et des compétences</b><br/>{}".format(
                                     self.year.label_year,
-                                    self.institute.label
+                                    filter_content(self.institute.label)
                                 ),
                             self.styles['HeaderTitle']
                         )
@@ -102,13 +103,13 @@ class ModelE(PreviewMeccTable):
                 [
                     [
                         Paragraph(
-                            "<b>{}</b>".format(self.training.label),
+                            "<b>{}</b>".format(filter_content(self.training.label)),
                             self.styles['NormalInversed']
                         )
                     ],
                     [
                         Paragraph(
-                            "<b>Responsable(s) :</b> {}".format(respforms),
+                            "<b>Responsable(s) :</b> {}".format(filter_content(respforms)),
                             self.styles['NormalCentered']
                         )
                     ]
@@ -429,7 +430,7 @@ class ModelE(PreviewMeccTable):
         for rule in rules:
             self.story.append(
                 Paragraph(
-                    "<b>{}</b>".format(rule.label),
+                    "<b>{}</b>".format(filter_content(rule.label)),
                     self.styles['TextSubHeader']
                 )
             )

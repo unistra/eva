@@ -3,6 +3,7 @@ from reportlab.platypus import Paragraph, NextPageTemplate, PageBreak, Table
 
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from .model_a import ModelA, LandscapeLeftNumberedCanvas
 
 
@@ -97,7 +98,7 @@ class ModelB(ModelA):
             rules_table.append(
                 [
                     Paragraph(
-                        "%s" % rule.label,
+                        "%s" % filter_content(rule.label),
                         style=self.styles['H2']
                     ),
                     '',
@@ -143,7 +144,7 @@ class ModelB(ModelA):
                     rules_table.append([
                         '',
                         Paragraph(
-                            "<para textColor=red><u>Motif de la dérogation</u> : %s</para>" % text_motiv,
+                            "<para textColor=red><u>Motif de la dérogation</u> : %s</para>" % filter_content(text_motiv),
                             style=self.styles['Normal']
                         ),
                         ''
