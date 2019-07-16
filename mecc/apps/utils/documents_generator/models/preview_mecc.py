@@ -1,7 +1,6 @@
 import re
 
 from django.db.models import Q
-
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.styles import ParagraphStyle
@@ -10,6 +9,7 @@ from reportlab.platypus import Paragraph, Table, CondPageBreak
 
 from mecc.apps.rules.models import Rule
 from mecc.apps.training.models import SpecificParagraph, AdditionalParagraph
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from .preview_mecctable import PreviewMeccTable, LandscapeLeftNumberedCanvas
 
 
@@ -143,7 +143,7 @@ class PreviewMecc(PreviewMeccTable):
                                 ),
                                 Paragraph(
                                     "<para textColor=red><u>Motif de la dérogation</u> : %s" \
-                                    % self.close_empty_br(derog.text_motiv),
+                                    % filter_content(derog.text_motiv),
                                     style=self.styles['Normal']
                                 ) if motivations else ''
                             ]
@@ -231,7 +231,7 @@ class PreviewMecc(PreviewMeccTable):
         """
         Return correct string in order to be displayed as list
         """
-        text = self.close_empty_br(text)
+        text = filter_content(text)
         text = text.replace('\\r\\n', '<br/>')
         reg = re.compile(r'>(.*?)</(p|li)>')
         r = reg.findall(text.replace('r\\n\\', '<br><\\br>'))
@@ -247,7 +247,3 @@ class PreviewMecc(PreviewMeccTable):
                         style, t), self.styles['Justify']))
         return _list
 
-    def close_empty_br(self, text):
-        """Reportlab requires opened tags to be closed"""
-        text = text.replace('<br>', '<br/>')
-        return text

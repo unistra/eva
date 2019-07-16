@@ -2,30 +2,31 @@ import collections
 import datetime
 import re
 from itertools import groupby
-from django.shortcuts import render
+from math import modf
 
 from django.db.models import Q
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.utils.translation import ugettext as _
-from math import modf
-from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
-    Table, TableStyle, PageBreak, CondPageBreak, FrameBreak, Frame, PageTemplate
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import mm, cm
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm, cm
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph, Spacer, Image, SimpleDocTemplate, \
+    Table, TableStyle, PageBreak, CondPageBreak, FrameBreak, Frame, PageTemplate
+from reportlab.platypus.flowables import Flowable
 
 from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import ObjectsLink, StructureObject, Exam
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import Training, \
     AdditionalParagraph, SpecificParagraph
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from mecc.apps.utils.queries import rules_degree_for_year, currentyear, \
     get_mecc_table_order
 from mecc.apps.years.models import UniversityYear
-from reportlab.platypus.flowables import Flowable
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
@@ -1466,7 +1467,7 @@ def complete_rule(year, title, training, rules, specific, add):
     # ############ TITLE ################################
     header = [
         _("Année universitaire %s/%s" % (year, year + 1)),
-        _("%s" % training.label),
+        "%s" % filter_content(training.label),
         _("Récapitulatif des règles de la formation"),
     ]
     ttle = []

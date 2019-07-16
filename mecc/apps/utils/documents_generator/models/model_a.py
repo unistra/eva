@@ -13,6 +13,7 @@ from reportlab.platypus.doctemplate import _doNothing
 
 from mecc.apps.rules.models import Rule, Paragraph as ParagraphRules
 from mecc.apps.training.models import Training
+from mecc.apps.utils.documents_generator.utils.pdf import filter_content
 from mecc.apps.utils.queries import currentyear
 from .preview_mecc import PreviewMecc
 from .preview_mecctable import LandscapeLeftNumberedCanvas
@@ -313,7 +314,7 @@ class ModelA(PreviewMecc):
 
         for line in title:
             self.story.append(Paragraph("<para align=center fontSize=16 spaceBefore=16 textColor=\
-                steelblue>%s</para>" % line, self.styles['Normal']))
+                steelblue>%s</para>" % filter_content(line), self.styles['Normal']))
         self.story.append(Spacer(0, 24))
 
         self.story.append(Paragraph("<para align=center fontSize=16 spaceBefore=24 textColor=\
@@ -384,7 +385,7 @@ class ModelA(PreviewMecc):
         training_list = [
             [
                 Paragraph(
-                    "<para fontSize=9>%s</para>" % training.label,
+                    "<para fontSize=9>%s</para>" % filter_content(training.label),
                     self.styles['Normal']
                 ),
                 Table(
@@ -528,7 +529,7 @@ class ModelA(PreviewMecc):
             ]
             rules_table.append([
                 Paragraph(
-                    rule.label,
+                    filter_content(rule.label),
                     style=self.styles['H2']
                 ),
                 '',
