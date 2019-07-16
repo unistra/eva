@@ -356,7 +356,7 @@ class PreviewMeccTable(Document):
                     ex_1_table = [
                         formated(ex_1.coefficient) if ex_1 is not None else '',
                         [
-                            Paragraph(filter_content(ex_1).label if ex_1 else '',
+                            Paragraph(filter_content(ex_1.label) if ex_1 else '',
                                       self.styles['SmallNormal']),
                             Paragraph(
                                 "<para textColor=grey>" + filter_content(ex_1.additionnal_info) \
