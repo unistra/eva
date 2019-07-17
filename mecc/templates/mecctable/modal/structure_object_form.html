@@ -31,7 +31,7 @@
             <form class="formstruct">
                 <div class="modal-body">
                     <div class="flex-container" style="align-items:flex-start">
-                        {% crispy object_form %}
+                        {% crispy form %}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -239,20 +239,21 @@ function check_d(id_obj) {
 function get_struct_details(_id, id_parent, nature) {
     // appelé au chargement
     {% if request.user.is_superuser %}
-    const linkForm =
-        "<div id='is_imported_container'> \
-             <div class='form-group'> \
-                 <div id='div_id_is_imported>' class='checkbox'> \
-                     <label for='id_is_imported'> \
-                         <input id='id_is_imported' class='checkboxinput' name='is_imported' type='checkbox'> \
-                         Is imported in \
-                     </label> \
-                     <b><span id='parent_label'></span> \
-                     (ROF reference : <span id='parent_rof_ref'></span>)</b> \
-                 </div> \
-             </div> \
-         </div>";
-    $(".structure-form-left").append(linkForm);
+    const linkForm = document.createElement("div");
+    linkForm.id = "is_imported_container";
+    linkForm.innerHTML =
+        "<div class='form-group'> \
+            <div id='div_id_is_imported>' class='checkbox'> \
+                <label for='id_is_imported'> \
+                    <input id='id_is_imported' class='checkboxinput' name='is_imported' type='checkbox'> \
+                    Is imported in \
+                </label> \
+                <b><span id='parent_label'></span> \
+                (ROF reference : <span id='parent_rof_ref'></span>)</b> \
+            </div> \
+        </div>";
+    const leftColumn = document.querySelector(".structure-form-left");
+    leftColumn.appendChild(linkForm);
     {% endif %}
     $("#struct_id").text(_id);
     select.innerHTML = "";
