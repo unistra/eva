@@ -1,3 +1,4 @@
+import html
 import re
 
 
@@ -10,6 +11,6 @@ def filter_content(content):
     content = content.replace('<br>', '<br/>')
 
     # Escape &, for example in R&D
-    # content = re.sub(r"&(?!#\d{4};|amp;)", "&amp;", content)
+    content = re.sub(r"&(?!amp;)", "&amp;", html.unescape(content))
 
     return content
