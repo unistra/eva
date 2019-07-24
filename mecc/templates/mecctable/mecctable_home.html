@@ -18,7 +18,10 @@
                  {% endif %}">{% trans "Offre de formation" %}</a>
             </li>
             <li>
-                <a href="{% url 'training:list' request.session.visited_cmp %}">{{ request.session.visited_cmp_label }}</a>
+                {% url 'training:list' request.session.visited_cmp as visited_cmp_url %}
+                {% if visited_cmp_url %}
+                    <a href="{% url 'training:list' request.session.visited_cmp %}">{{ request.session.visited_cmp_label }}</a>
+                {% endif %}
             </li>
             {% if request.session.training_list %}
             {% endif %}
