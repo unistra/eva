@@ -82,11 +82,14 @@ def get_mecc_table_order(link, struc_respens, current_structures, current_links,
 
         from mecc.apps.training.models import Training
         supply_cmp = Institute.objects.get(code__exact=structure.cmp_supply_id)
-        training = Training.objects.get(id=link.n_train_child)
+        try:
+            training = Training.objects.get(id=link.n_train_child)
+        except Training.DoesNotExist:
+            training = None
 
         if structure.is_existing_rof is False and supply_cmp.ROF_support is True:
             return None
-        elif structure.is_existing_rof is False and training.degree_type.ROF_code == 'EA':
+        elif structure.is_existing_rof is False and training is not None and training.degree_type.ROF_code == 'EA':
             return None
         else:
             imported = True\
