@@ -7,6 +7,7 @@ from math import modf
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils.text import slugify
 from django.utils.translation import ugettext as _
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_RIGHT
@@ -253,7 +254,7 @@ def setting_up_pdf(title, margin=72, portrait=True):
     Create the HttpResponse object with the appropriate PDF headers.
     """
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = ('filename="%s.pdf"' % title.strip())
+    response['Content-Disposition'] = ('filename="%s.pdf"' % slugify(title))
     page_size = A4 if portrait else landscape(A4)
     doc = SimpleDocTemplate(response, pagesize=page_size,
                             showBoundary=0,
