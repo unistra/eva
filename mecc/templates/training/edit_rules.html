@@ -157,12 +157,12 @@
 
 
 
-    
+
 </div>
     {% include "training/modal_consistency.html" %}
     {% include "training/send_mail.html"%}
     {% include "training/rule_preview.html"%}
-    
+
     <style media="screen">
       table {
         display: flex;
@@ -245,7 +245,7 @@
                            document.getElementById('subtitle-preview').innerHTML = "";
                            document.getElementById('big-title-preview').innerHTML = "{% trans 'Règle standard' %}";
                        } else {
-                           document.getElementById('subtitle-preview').innerHTML = "{% trans 'FORMATION'%} : {{training.label}}";
+                           document.getElementById('subtitle-preview').innerHTML = "{% trans 'FORMATION'%} : {{training.label|escapejs}}";
                            document.getElementById('big-title-preview').innerHTML = "{% trans 'Règles avec dérogations (et alinéa additionnel)' %}";
                        }
 
