@@ -102,6 +102,18 @@ class StructureObject(models.Model):
         _('Témoin d\'existence dans ROF'),
         default=True
     )
+    sync_create = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_deactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_update_reactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
 
     def save(self, *args, **kwargs):
         if self.auto_id in ['', ' ', 0, None]:
@@ -192,6 +204,18 @@ class ObjectsLink(models.Model):
     is_existing_rof = models.BooleanField(
         _('Témoin d\'existence dans ROF'),
         default=True
+    )
+    sync_create = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_deactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_update_reactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
     )
 
     @property

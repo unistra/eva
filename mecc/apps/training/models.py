@@ -1,19 +1,18 @@
-from django.db import models
-from django.utils.translation import ugettext as _
-from mecc.apps.degree.models import DegreeType
-from mecc.apps.utils.queries import currentyear
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
-from mecc.apps.adm.models import Profile
-from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
-from mecc.apps.institute.models import Institute
 import operator
 from functools import reduce
-from django.core.exceptions import ValidationError
-from mecc.apps.utils.queries import update_structs_regime_session, \
-    delete_derogs_adds_regime
-from mecc.libs.html.sanitizer import sanitize
 from itertools import chain
+
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import Q
+from django.utils.translation import ugettext as _
+
+from mecc.apps.adm.models import Profile
+from mecc.apps.degree.models import DegreeType
+from mecc.apps.institute.models import Institute
+from mecc.apps.mecctable.models import ObjectsLink, Exam, StructureObject
+from mecc.apps.utils.queries import currentyear
+from mecc.libs.html.sanitizer import sanitize
 
 
 class Training(models.Model):
@@ -86,6 +85,18 @@ class Training(models.Model):
     is_existing_rof = models.BooleanField(
         _('Témoin d\'existence dans ROF'),
         default=True
+    )
+    sync_create = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_deactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
+    )
+    sync_update_reactiv = models.DateField(
+        # Témoin de synchronisation ROF/EVA
+        null=True
     )
 
     @property
