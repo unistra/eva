@@ -1,0 +1,185 @@
+CREATE TABLE public.trav_desact_form (
+	tdf_id int4 NULL,
+	tdf_code_year int4 NULL,
+	tdf_label text NULL,
+	tdf_ref_cpa_rof varchar(20) NULL,
+	tdf_supply_cmp varchar(3) NULL,
+	tdf_typdip int4 NULL,
+	tdf_progress_rule varchar(1) NULL,
+	tdf_progress_table varchar(1) NULL
+);
+
+CREATE TABLE public.trav_comprog_new (
+	tnf_code_year varchar(12) NULL,
+	tnf_typ_dip varchar(2) NULL,
+	tnf_intitule text NULL,
+	tnf_ide varchar(20) NULL,
+	tnf_cmp_resp varchar(8) NULL,
+	tnf_prog_porteur varchar(20) NULL,
+	tnf_ideva_1 int4 NULL
+);
+
+CREATE TABLE public.trav_comprog_update (
+	tnf_code_year varchar(12) NULL,
+	tnf_typ_dip varchar(2) NULL,
+	tnf_intitule text NULL,
+	tnf_ide varchar(20) NULL,
+	tnf_cmp_resp varchar(8) NULL,
+	tnf_prog_porteur varchar(20) NULL,
+	tnf_ideva_1 int4 NULL
+);
+
+CREATE TABLE public.trav_formations (
+	tform_code_year varchar(25) NULL,
+	tform_typ_dip varchar(2) NULL,
+	tform_intitule text NULL,
+	tform_ide varchar(20) NULL,
+	tform_cmp_resp varchar(8) NULL,
+	tform_prog_porteur varchar(20) NULL,
+	tform_id_eva int4 NULL,
+	tform_supply_cmp_eva varchar(3) NULL,
+	tform_regime_eva varchar(1) NULL,
+	tform_sessions_eva varchar(1) NULL
+);
+
+CREATE TABLE public.archi (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT archi_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
+
+CREATE TABLE public.synchro_controle (
+	cont_prog_rof varchar(25) NULL
+);
+
+CREATE TABLE public.trav_reactiv_objet (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT trav_reactiv_objet_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
+
+CREATE TABLE public.trav_create_objet (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT trav_create_objet_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
+
+CREATE TABLE public.archi_plus (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT archi_plus_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
+
+CREATE TABLE public.trav_reactiv_lien (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT trav_reactiv_lien_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
+
+CREATE TABLE public.trav_create_lien (
+	archi_annee_eva int4 NOT NULL,
+	archi_idform_eva int4 NOT NULL,
+	archi_cmpform_eva varchar(3) NULL,
+	archi_regime_eva varchar(1) NULL,
+	archi_sessions_eva varchar(1) NULL,
+	archi_prog_rof varchar(20) NOT NULL,
+	archi_pere_rof varchar(20) NOT NULL,
+	archi_fils_rof varchar(20) NOT NULL,
+	archi_ordre_rof int4 NULL,
+	archi_prog_pere_rof varchar(20) NULL,
+	archi_prog_fils_rof varchar(20) NULL,
+	archi_pere_eva int4 NULL,
+	archi_fils_eva int4 NULL,
+	archi_fils_eva_1 int4 NULL,
+	archi_lienpf_eva int4 NULL,
+	archi_tri1_fils varchar(2) NULL,
+	archi_tri2_fils int4 NULL,
+	archi_passage int4 NULL,
+	archi_lien_entree bool NULL,
+	CONSTRAINT trav_create_lien_pkey PRIMARY KEY (archi_annee_eva, archi_idform_eva, archi_prog_rof, archi_pere_rof, archi_fils_rof)
+);
