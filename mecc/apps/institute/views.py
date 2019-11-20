@@ -281,6 +281,11 @@ class InstituteCreate(CreateView):
             code_year=current_year)
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super(InstituteCreate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     model = Institute
     form_class = InstituteForm
 
@@ -301,12 +306,12 @@ def edit_institute(request, template='institute/institute_form.html', code=None)
             name = request.POST.get("id_%s" % e)
             manage_dircomp_rac(username, e, institute, request, name)
 
-        form = InstituteForm(request.POST, request.FILES, instance=institute)
+        form = InstituteForm(request.POST, request.FILES, instance=institute, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('institute:home')  # Redirect after POST
     else:
-        form = InstituteForm(instance=institute)
+        form = InstituteForm(instance=institute, user=request.user)
 
     return render(request, template, {'form': form, 'institute': institute})
 
@@ -360,6 +365,11 @@ class InstituteUpdate(UpdateView):
         except UniversityYear.DoesNotExist:
             context['institute_year'] = _('Aucune année selectionnée')
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super(InstituteUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     slug_field = 'code'
     slug_url_kwarg = 'code'

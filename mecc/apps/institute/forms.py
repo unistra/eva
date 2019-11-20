@@ -65,6 +65,12 @@ class InstituteForm(forms.ModelForm):
             'ROF_support'
         ]
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(InstituteForm, self).__init__(*args, **kwargs)
+        if user is None or user.is_staff is False:
+            del self.fields['ROF_support']
+
 
 class DircompInstituteForm(InstituteForm):
     """
