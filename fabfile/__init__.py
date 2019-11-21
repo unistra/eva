@@ -8,8 +8,7 @@ from os.path import join
 
 import pydiploy
 
-from . import celery
-from . import rabbitmq
+from . import celery, rabbitmq, sentry
 
 # edit config here !
 
@@ -18,6 +17,8 @@ env.remote_group = 'di'  # remote server group
 
 env.application_name = 'mecc'   # name of webapp
 env.root_package_name = 'mecc'  # name of app in webapp
+env.sentry_application_name = 'eva'
+env.sentry_goals = ['prod']
 
 env.remote_home = '/home/django'  # remote home root
 env.remote_python_version = '3.5'  # python version
@@ -244,6 +245,7 @@ def pre_install_frontend():
 def deploy(update_pkg=False):
     """Deploy code on server"""
     execute(deploy_backend, update_pkg)
+    execute(declare_release_to_sentry)
     execute(deploy_frontend)
     execute(deploy_backend_celery)
 
@@ -254,6 +256,13 @@ def deploy_backend(update_pkg=False):
     """Deploy code on server"""
     execute(pydiploy.django.deploy_backend, update_pkg)
     execute(celery.deploy_celery_file)
+
+
+@task
+def declare_release_to_sentry():
+    if env.goal in env.sentry_goals:
+        execute(sentry.declare_release)
+
 
 @roles('celery-worker')
 @task
