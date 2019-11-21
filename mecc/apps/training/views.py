@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
@@ -16,22 +16,22 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from django_cas.decorators import login_required
 
-from mecc.apps.institute.models import Institute
 from mecc.apps.files.models import FileUpload
+from mecc.apps.institute.models import Institute
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
+from mecc.apps.rules.models import Rule, Paragraph
+from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
+    AdditionalParagraphForm, ExtraTrainingsForm
+from mecc.apps.training.models import Training, SpecificParagraph, \
+    AdditionalParagraph
+from mecc.apps.training.utils import remove_training, consistency_check
+from mecc.apps.utils.documents_generator import Document
 from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
     is_megauser
 from mecc.apps.utils.pdfs import setting_up_pdf, NumberedCanvas, \
     complete_rule, watermark_do_not_distribute
-from mecc.apps.utils.queries import currentyear, save_training_update_regime_session
-from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
-from mecc.apps.rules.models import Rule, Paragraph
-from mecc.apps.training.models import Training, SpecificParagraph, \
-    AdditionalParagraph
-from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm,\
-    AdditionalParagraphForm, TrainingTransformForm, ExtraTrainingsForm
-from mecc.apps.training.utils import remove_training, consistency_check
+from mecc.apps.utils.queries import currentyear
 from mecc.apps.years.models import UniversityYear
-from mecc.apps.utils.documents_generator import Document
 from mecc.decorators import is_post_request, is_DES1, has_requested_cmp, \
     is_ajax_request, is_correct_respform
 
@@ -333,19 +333,15 @@ class TrainingEdit(UpdateView):
 
     def form_valid(self, form):
         # En mode ROF, si le témoin reappli_atb est positionné à False et que
-        # l'un des champs Témoin Tableau MECC, Régime, Session Référence SI Scol
-        # ou Composantes est modifié, on positionne le témoin reappli_atb à True
-        if Institute.objects.get(code=self.object.supply_cmp).ROF_support and \
-                not self.object.reappli_atb and \
-                not set(form.changed_data).isdisjoint(['MECC_tab',
-                                                       'MECC_type',
-                                                       'session_type',
-                                                       'ref_si_scol',
-                                                       'institutes',
-                                                       'supply_cmp']):
-
-            self.object.reappli_atb = True
-
+        # l'un des champs Témoin Tableau MECC ou Composantes est modifié, on
+        # positionne le témoin reappli_atb à True (di/mecc#158)
+        if self.object.reappli_atb is False:
+            if not set(form.changed_data).isdisjoint([
+                'MECC_tab',
+                'institutes',
+                'supply_cmp',
+            ]):
+                self.object.reappli_atb = True
         return super(TrainingEdit, self).form_valid(form)
 
     def form_invalid(self, form):
