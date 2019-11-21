@@ -68,8 +68,8 @@ class InstituteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(InstituteForm, self).__init__(*args, **kwargs)
-        if user is None or user.is_staff is False:
-            del self.fields['ROF_support']
+        if user is None or not user.is_staff:
+            self.fields['ROF_support'].widget.attrs['disabled'] = True
 
 
 class DircompInstituteForm(InstituteForm):

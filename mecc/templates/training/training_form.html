@@ -43,7 +43,7 @@
 <div class="disp-flex">
     <div id="left-column" class="item-70 border-right-blue {% if not can_edit and object.input_opening.0 != "4" or not can_edit %}disabled {% endif %}" style="margin-right:1em">
         <form action="" method="post" id="training_form" >
-            {%crispy form%}
+            {% crispy form %}
             <div id="transform-warning" class="clearfix" style="display: none;">
                 <strong>En cliquant sur le bouton "Transformer" (ci-dessus) :</strong>
                 <br><br>

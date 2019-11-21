@@ -324,6 +324,15 @@ class InstituteUpdate(UpdateView):
 
     form_class = InstituteForm
 
+    def post(self, request, *args, **kwargs):
+        # En mode ROF le champ ROF_support ne peut être modifié que si user.is_staff
+        # Le formulaire ne retourne donc aucune valeur : reprise ici de l'info en BD
+        obj = self.get_object()  # type: Institute
+        if not request.user.is_staff:
+            request.POST = request.POST.copy()
+            request.POST['ROF_support'] = obj.ROF_support
+        return super(InstituteUpdate, self).post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
 
