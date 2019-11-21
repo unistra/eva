@@ -333,13 +333,11 @@ class TrainingEdit(UpdateView):
 
     def form_valid(self, form):
         # En mode ROF, si le témoin reappli_atb est positionné à False et que
-        # l'un des champs Témoin Tableau MECC ou Composantes est modifié, on
+        # le champ Témoin Tableau MECC est modifié, on
         # positionne le témoin reappli_atb à True (di/mecc#158)
         if self.object.reappli_atb is False:
             if not set(form.changed_data).isdisjoint([
                 'MECC_tab',
-                'institutes',
-                'supply_cmp',
             ]):
                 self.object.reappli_atb = True
         return super(TrainingEdit, self).form_valid(form)
