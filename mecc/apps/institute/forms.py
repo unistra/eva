@@ -65,6 +65,12 @@ class InstituteForm(forms.ModelForm):
             'ROF_support'
         ]
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(InstituteForm, self).__init__(*args, **kwargs)
+        if user is None or not user.is_staff:
+            self.fields['ROF_support'].widget.attrs['disabled'] = True
+
 
 class DircompInstituteForm(InstituteForm):
     """

@@ -86,8 +86,10 @@ def manage_respform(dic, t_id):
         meccuser.cmp = dic.get('cmp')
         meccuser.profile.add(user_profile)
         training.resp_formations.add(meccuser)
-        if Institute.objects.get(code=training.supply_cmp).ROF_support and \
-                not training.reappli_atb:
+        # En mode ROF, si le témoin reappli_atb est positionné à False
+        # et qu'un responsable de formation est modifié on positionne
+        # le témoin reappli_atb à True (di/mecc#158)
+        if training.reappli_atb is False:
             training.reappli_atb = True
         training.save()
         meccuser.save()
@@ -98,10 +100,12 @@ def manage_respform(dic, t_id):
             resp_formations__user__username=dic.get('username')
         )
         training.resp_formations.remove(meccuser)
-        if Institute.objects.get(code=training.supply_cmp).ROF_support and \
-                not training.reappli_atb:
+        # En mode ROF, si le témoin reappli_atb est positionné à False
+        # et qu'un responsable de formation est modifié on positionne
+        # le témoin reappli_atb à True (di/mecc#158)
+        if training.reappli_atb is False:
             training.reappli_atb = True
-            training.save()
+        training.save()
         meccuser.profile.remove(user_profile)
         # if len(train_respform) < 1:
         #     meccuser.profile.remove(user_profile)
