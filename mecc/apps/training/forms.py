@@ -229,6 +229,7 @@ moins une composante porteuse."))
                 self.fields['label'].widget.attrs['disabled'] = \
                 self.fields['is_used'].widget.attrs['disabled'] = \
                 self.fields['ref_cpa_rof'].widget.attrs['disabled'] = \
+                self.fields['ref_si_scol'].widget.attrs['disabled'] = \
                 True if Institute.objects.get(code=self.instance.supply_cmp).ROF_support else False
         self.helper = FormHelper()
         self.helper.form_tag = False

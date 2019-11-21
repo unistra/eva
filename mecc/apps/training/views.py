@@ -320,13 +320,14 @@ class TrainingEdit(UpdateView):
         # En service et Réf. CP Année ROF sont désactivés (attribut "disabled")
         # Le formulaire ne retourne don aucune valeur pour ces champs
         # Ces champs sont alimentés ici par les infos en base de données
-        self.object = self.get_object()
+        self.object = self.get_object()  # type: Training
         if Institute.objects.get(code=self.object.supply_cmp).ROF_support:
             request.POST = request.POST.copy()
             request.POST['label'] = self.object.label
             request.POST['degree_type'] = self.object.degree_type.id
             request.POST['is_used'] = self.object.is_used
             request.POST['ref_cpa_rof'] = self.object.ref_cpa_rof
+            request.POST['ref_si_scol'] = self.object.ref_si_scol
 
         return super(TrainingEdit, self).post(request, *args, **kwargs)
 
