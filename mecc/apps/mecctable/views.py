@@ -665,15 +665,24 @@ def update_grade_coeff(request):
     type_to_update = to_update.split('-')[-1]
     id_to_update = to_update.split('-')[0]
     link = ObjectsLink.objects.get(id=id_to_update)
+    training = Training.objects.get(id=link.id_training)
+
+    def update_recup_atb_ens(oldvalue, newvalue):
+        if oldvalue != newvalue and training.recup_atb_ens is False:
+            training.recup_atb_ens = True
+            training.save()
+
     if type_to_update == "coeff":
         old_coeff = link.coefficient
         if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
             link.coefficient = None
             link.save()
+            update_recup_atb_ens(old_coeff, link.coefficient)
             return JsonResponse({"status": 'OK', "val": ""})
         try:
             link.coefficient = float(val.replace(",", "."))
             link.save()
+            update_recup_atb_ens(old_coeff, link.coefficient)
             value = '{0:.2f}'.format(link.coefficient).replace(".", ",")
         except (ValueError, InvalidOperation) as e:
             if "ValueError" in e.__class__.__name__:
@@ -697,11 +706,13 @@ def update_grade_coeff(request):
                 })
             link.eliminatory_grade = int(val)
             link.save()
+            update_recup_atb_ens(old_grade, link.eliminatory_grade)
             value = link.eliminatory_grade
         except ValueError:
             if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
                 link.eliminatory_grade = None
                 link.save()
+                update_recup_atb_ens(old_grade, link.eliminatory_grade)
                 return JsonResponse({"status": 'OK', "val": ''})
             return JsonResponse({
                 "status": 'ERROR',
@@ -769,7 +780,6 @@ def get_stuct_obj_details(request):
         'ref_si_scol': struct_obj.ref_si_scol,
         'period_fix': True if parent else False,
     }
-    print(parent)
     if request.user.is_superuser:
         j.update({
             'is_imported': ObjectsLink.objects.get(id_child=struct_obj.id, id_parent=request.GET.get('id_parent')).is_imported,
