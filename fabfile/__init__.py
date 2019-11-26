@@ -18,7 +18,7 @@ env.remote_group = 'di'  # remote server group
 env.application_name = 'mecc'   # name of webapp
 env.root_package_name = 'mecc'  # name of app in webapp
 env.sentry_application_name = 'eva'
-env.sentry_goals = ['prod']
+env.sentry_goals = ['preprod', 'prod']
 
 env.remote_home = '/home/django'  # remote home root
 env.remote_python_version = '3.5'  # python version
@@ -101,8 +101,8 @@ def test():
     env.roledefs = {
         'web': ['django-test.u-strasbg.fr'],
         'lb': ['django-test.u-strasbg.fr'],
-        'celery-worker' : ['django-test.u-strasbg.fr'],
-        'broker' : ['django-test.u-strasbg.fr'],
+        'celery-worker': ['django-test.u-strasbg.fr'],
+        'broker': ['django-test.u-strasbg.fr'],
     }
     # env.user = 'root'  # user for ssh
     env.backends = ['127.0.0.1']
