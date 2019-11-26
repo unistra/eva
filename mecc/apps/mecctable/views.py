@@ -1,32 +1,29 @@
 # -*- coding: UTF-8 -*-
-
 import json
 import logging
 from decimal import InvalidOperation
 
-from django.views.generic import DetailView, ListView, UpdateView, CreateView
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext as _
-from django.utils.html import strip_tags
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.utils.html import strip_tags
+from django.utils.translation import ugettext as _
+from django.views.generic import DetailView, ListView, UpdateView, CreateView
 from django_cas.decorators import login_required
 
+from mecc.apps.adm.models import MeccUser, Profile
 from mecc.apps.institute.models import Institute
 from mecc.apps.training.models import Training
+from mecc.apps.utils.documents_generator import Document
+from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.apps.utils.queries import currentyear, get_mecc_table_order
 from mecc.apps.utils.ws import get_user_from_ldap
-from mecc.apps.utils.manage_pple import is_poweruser
 from mecc.decorators import is_post_request, is_ajax_request
-from mecc.apps.adm.models import MeccUser, Profile
-from mecc.apps.utils.documents_generator import Document
-
-from .models import StructureObject, ObjectsLink, Exam
 from .forms import StructureObjectForm, ObjectsLinkForm, ExamForm
+from .models import StructureObject, ObjectsLink, Exam
 
 LOGGER = logging.getLogger(__name__)
 
@@ -667,22 +664,28 @@ def update_grade_coeff(request):
     link = ObjectsLink.objects.get(id=id_to_update)
     training = Training.objects.get(id=link.id_training)
 
-    def update_recup_atb_ens(oldvalue, newvalue):
-        if oldvalue != newvalue and training.recup_atb_ens is False:
-            training.recup_atb_ens = True
-            training.save()
+    def update_recup_atb_ens(oldvalue, newvalue, type):
+        if oldvalue is not None:
+            if type == 'coeff':
+                oldvalue = float(oldvalue)
+            elif type == 'grade':
+                oldvalue = int(oldvalue)
+        if oldvalue != newvalue:
+            if training.recup_atb_ens is False:
+                training.recup_atb_ens = True
+                training.save()
 
     if type_to_update == "coeff":
         old_coeff = link.coefficient
         if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
             link.coefficient = None
             link.save()
-            update_recup_atb_ens(old_coeff, link.coefficient)
+            update_recup_atb_ens(old_coeff, link.coefficient, 'coeff')
             return JsonResponse({"status": 'OK', "val": ""})
         try:
             link.coefficient = float(val.replace(",", "."))
             link.save()
-            update_recup_atb_ens(old_coeff, link.coefficient)
+            update_recup_atb_ens(old_coeff, link.coefficient, 'coeff')
             value = '{0:.2f}'.format(link.coefficient).replace(".", ",")
         except (ValueError, InvalidOperation) as e:
             if "ValueError" in e.__class__.__name__:
@@ -706,13 +709,13 @@ def update_grade_coeff(request):
                 })
             link.eliminatory_grade = int(val)
             link.save()
-            update_recup_atb_ens(old_grade, link.eliminatory_grade)
+            update_recup_atb_ens(old_grade, link.eliminatory_grade, 'grade')
             value = link.eliminatory_grade
         except ValueError:
             if "nbsp" in val or val in ['', ' ', '&nbsp;', '&nbsp;&nbsp;']:
                 link.eliminatory_grade = None
                 link.save()
-                update_recup_atb_ens(old_grade, link.eliminatory_grade)
+                update_recup_atb_ens(old_grade, link.eliminatory_grade, 'grade')
                 return JsonResponse({"status": 'OK', "val": ''})
             return JsonResponse({
                 "status": 'ERROR',
