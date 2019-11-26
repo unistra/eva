@@ -8,5 +8,5 @@ omit = mecc/settings/*
        *egg*
        *tests*
        manage.py
-       fabfile.py
+       fabfile/*
        */__init__.py

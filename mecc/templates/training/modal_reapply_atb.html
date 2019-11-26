@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load staticfiles %}
+
+<div class=" modal fade" id="modal-reapply-atb" role="dialog" style="z-index: 1400;">
+    <div class="modal-dialog modal-90">
+        <!-- Modal content-->
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <h2>{% trans "Réappliquer les attributs de l'année précédente" %}</h2>
+            </div>
+            <div class="modal-body" id="report-list">
+                <h3>Formations traitées</h3>
+                <div id="reapply-atb-processed"></div>
+                <h3>Formations ignorées</h3>
+                <div id="reapply-atb-skipped"></div>
+            </div>
+            <div class="modal-footer" style="padding-bottom:1em">
+                <button class="btn-default btn" data-dismiss="modal" aria-hidden="true">{% trans "Fermer" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('a#btn-reapply-atb').on('click', function (e) {
+            $.ajax({
+                url: '{% url 'training:reapply_atb' %}',
+                type: 'POST',
+                data: {
+                    institute: '{{ institute.code }}',
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    processed_trainings = '';
+                    skipped_trainings = '';
+                    data.processed.forEach(function(p) {
+                        processed_trainings += '<li>'+p+'</li>';
+                    });
+                    data.skipped.forEach(function(s) {
+                        skipped_trainings += '<li>'+s+'</li>';
+                    });
+                    $('#reapply-atb-processed').html('<ul>'+processed_trainings+'</ul>');
+                    $('#reapply-atb-skipped').html('<ul>'+skipped_trainings+'</ul>');
+                },
+                error: function (jqXHR, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    })
+</script>
+
+
+

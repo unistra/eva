@@ -101,5 +101,5 @@ from sentry_sdk.integrations.django import DjangoIntegration
 sentry_sdk.init(
     dsn="https://38db3389420c4cc6b544a4c50c150569@sentry-test.app.unistra.fr/11",
     integrations=[DjangoIntegration()],
-    environment=STAGE,
+    environment='prod',
 )

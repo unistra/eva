@@ -1,16 +1,15 @@
 from django.conf.urls import url
+from django_cas.decorators import login_required
+
 from mecc.apps.training.views import TrainingListView, TrainingCreate, \
     TrainingDelete, TrainingEdit, process_respform, list_training, \
     list_training_mecc, respform_list, duplicate_home, duplicate_add, \
     edit_rules, specific_paragraph, update_progress_rule_statut, \
     edit_specific_paragraph, edit_additional_paragraph, ask_delete_specific, \
-    delete_specific, recover_everything, gen_pdf_all_rules, send_mail,\
-    remove_respform, my_teachings, update_training_regime_session,\
-    do_consistency_check, do_regime_session_check, preview_mecc, cancel_transform
+    delete_specific, recover_everything, gen_pdf_all_rules, send_mail, \
+    remove_respform, my_teachings, update_training_regime_session, \
+    do_consistency_check, do_regime_session_check, preview_mecc, cancel_transform, reapply_atb
 from mecc.decorators import is_correct_respform
-
-from django_cas.decorators import login_required
-
 
 urlpatterns = [
     url(r'^list(?:/(?P<cmp>\w+))?/$',
@@ -68,4 +67,5 @@ urlpatterns = [
         name='regime_session_check'),
     url(r'^preview_mecc/$', preview_mecc,
         name='preview_mecc'),
+    url(r'^reapply_atb/$', reapply_atb, name='reapply_atb'),
 ]

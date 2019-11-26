@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Count
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -24,7 +24,7 @@ from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
     AdditionalParagraphForm, ExtraTrainingsForm
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
-from mecc.apps.training.utils import remove_training, consistency_check
+from mecc.apps.training.utils import remove_training, consistency_check, reapply_attributes_previous_year
 from mecc.apps.utils.documents_generator import Document
 from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
     is_megauser
@@ -976,3 +976,15 @@ def _filter_out_rof_disabled_trainings(trainings):
                 filtered_trainings.append(training)
 
     return filtered_trainings
+
+
+@login_required
+@is_ajax_request
+@is_post_request
+def reapply_atb(request):
+    year = currentyear()
+    institute = get_object_or_404(Institute, code=request.POST.get('institute'), ROF_support=True)
+    processed_trainings, skipped_trainings = reapply_attributes_previous_year(institute, year)
+    processed = [t.label for t in processed_trainings]
+    skipped = [t.label for t in skipped_trainings]
+    return JsonResponse({'skipped': skipped, 'processed': processed})

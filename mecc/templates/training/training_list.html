@@ -31,6 +31,7 @@
     <h2 class='title-block bold'>{{ label_cmp }}</h2>
     <br>
     {% include "institute/modal/documents_list.html" %}
+    {% include "training/modal_reapply_atb.html" %}
     {% if object_list %}
         <div class="table_list list-training">
         {% if object_list %}
@@ -121,7 +122,7 @@
                 <a href="{% url 'training:new' %}" class="btn-primary btn btn-sm"
                    style="width:45%">{% trans "Créer une nouvelle formation" %}</a>
             {% else %}
-                <a href="#" class="btn-primary btn btn-sm btn-1"
+                <a href="#" id="btn-reapply-atb" class="btn-primary btn btn-sm btn-1" data-toggle="modal" data-target="#modal-reapply-atb"
                    style="width:45%">{% trans "Réappliquer les attributs de l'année précédente" %}</a>
             {% endif %}
         </div>
@@ -172,4 +173,5 @@
             table-layout: fixed;
         }
     </style>
+
 {% endblock %}

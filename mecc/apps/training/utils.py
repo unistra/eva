@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from typing import List
 
+from britney.errors import SporeMethodStatusError
 from django.contrib.auth.models import Group
 from django.db.models import QuerySet
 from django.utils.translation import ugettext as _
@@ -13,6 +14,8 @@ from mecc.apps.institute.models import Institute
 from mecc.apps.mecctable.models import StructureObject, ObjectsLink, Exam
 from mecc.apps.training.models import Training
 from mecc.apps.utils.queries import currentyear
+from mecc.apps.utils.ws import get_user_from_ldap
+from mecc.apps.years.models import UniversityYear
 
 
 def link_is_excluded_by_rof(
@@ -498,3 +501,77 @@ def remove_training(request, training_id):
             removable, message = has_consumed(removable, message)
 
         return {"removable": removable, "message": message, "confirmed": confirmed}
+
+
+def reapply_respforms(destination_training: Training, source_training: Training):
+    # di/mecc#43 : copy respforms from previous year
+    for respform in source_training.resp_formations.all():
+        username = respform.user.username
+        try:
+            get_user_from_ldap(username)
+            destination_training.resp_formations.add(respform)
+        except SporeMethodStatusError as error:
+            if error.response.status_code == 404:
+                continue
+            else:
+                raise error
+
+
+def reapply_attributes_previous_year(institute: Institute, current_year: UniversityYear):
+    # di/mecc#43: reapply attributes from previous year
+    skipped_trainings = []
+    processed_trainings = []
+    previous_year = UniversityYear.objects.exclude(
+        code_year=current_year.code_year,
+    ).order_by('code_year').last()  # type: UniversityYear
+    trainings_current_year = Training.objects.filter(
+        supply_cmp=institute.code,
+        code_year=current_year.code_year,
+    )
+    trainings_previous_year = Training.objects.filter(
+        supply_cmp=institute.code,
+        code_year=previous_year.code_year,
+    )
+
+    for training in trainings_current_year:
+        if training.reappli_atb is True:
+            # traitement déjà effectué ou modifications apportées
+            skipped_trainings.append(training)
+            continue
+        if training.n_train == training.id or training.n_train is None:
+            # La formation n'était pas présente l'année n-1
+            skipped_trainings.append(training)
+            continue
+        else:
+            try:
+                # La formation était présente l'année n-1
+                source_training = trainings_previous_year.get(pk=training.n_train)
+            except Training.DoesNotExist:
+                # training.n_train devrait référencer une formation existante
+                message = "Training #{} has n_train attribute {} but training #{} does not exist".format(
+                    training.id,
+                    training.n_train,
+                    training.n_train,
+                )
+                log_error(message, training)
+                skipped_trainings.append(training)
+                continue
+        training.MECC_tab = source_training.MECC_tab
+        reapply_respforms(training, source_training)
+        processed_trainings.append(training)
+        training.reappli_atb = True
+        training.save()
+
+    return processed_trainings, skipped_trainings
+
+
+def log_error(message: str, training: Training) -> None:
+    """
+    Log error message to app log and Sentry
+    """
+    import logging
+    from sentry_sdk import capture_message
+
+    logger = logging.getLogger(__name__)
+    logger.error(message)
+    capture_message(message, level='error')
