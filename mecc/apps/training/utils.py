@@ -3,7 +3,7 @@ Usefull stuff for trainings view
 """
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 from britney.errors import SporeMethodStatusError
 from django.contrib.auth.models import Group
@@ -563,6 +563,22 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
         training.save()
 
     return processed_trainings, skipped_trainings
+
+
+def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tuple[bool, str]:
+    # cf di/mecc#44
+    processed = True
+    message = ''
+    if training.recup_atb_ens is True:
+        return False, 'Le témoin recup_atb_ens vaut True'
+    try:
+        previous_training = Training.objects.get(pk=training.n_train)
+    except Training.DoesNotExist:
+        return False, 'Aucune formation correspondante dans l\'année précédente'
+    if not previous_training.ref_cpa_rof:
+        return False, 'La formation de l\'année précédente n\'a pas de réf. ROF'
+
+    return processed, message
 
 
 def log_error(message: str, training: Training) -> None:
