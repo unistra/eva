@@ -1,11 +1,13 @@
-from django.conf import settings
-from django.contrib.auth.models import User, Group
-from django.core.urlresolvers import reverse
+from unittest.mock import patch, Mock
+
+from britney.errors import SporeMethodStatusError
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 from mecc.apps.adm.models import MeccUser
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.institute.models import AcademicField, Institute
+from mecc.apps.mecctable.models import StructureObject
 from mecc.apps.training.models import Training
 from mecc.apps.training.utils import reapply_respens_and_attributes_from_previous_year
 from mecc.apps.years.models import UniversityYear
@@ -92,3 +94,104 @@ class RecupAtbEnsTest(TestCase):
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
         self.assertFalse(processed)
         self.assertIn('Aucune formation correspondante dans l\'année précédente', message)
+
+    def create_structure_objects(self):
+        se1_prev = StructureObject.objects.create(
+            code_year=self.previous_year.code_year,
+            nature='SE',
+            owner_training_id=self.training_prev_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session='1',
+            label='Semestre 1',
+            period='I',
+            RESPENS_id=self.respform1.user.username,
+            mutual=False,
+        )
+        StructureObject.objects.create(
+            code_year=self.previous_year.code_year,
+            nature='SE',
+            owner_training_id=self.training_prev_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session='1',
+            label='Semestre 2',
+            period='P',
+            RESPENS_id=self.respform2.user.username,
+            mutual=False,
+        )
+        se1 = StructureObject.objects.create(
+            code_year=self.current_year.code_year,
+            auto_id=se1_prev.id,
+            nature='SE',
+            owner_training_id=self.training_current_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session='1',
+            label='Semestre 1',
+            period='I',
+            RESPENS_id=None,
+            external_name='First External Name',
+            mutual=False,
+        )
+        se2 = StructureObject.objects.create(
+            code_year=self.current_year.code_year,
+            nature='SE',
+            owner_training_id=self.training_current_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session='1',
+            label='Semestre 2',
+            period='P',
+            RESPENS_id=None,
+            external_name=None,
+            mutual=False,
+        )
+        return se1, se1_prev, se2
+
+    @patch('mecc.apps.training.utils.get_user_from_ldap')
+    def test_reapply_previous_year_structureobject_respens(self, ldap_mock):
+        ldap_mock.return_value = True
+        self.training_current_1.ref_cpa_rof = 'ABC123'
+        self.training_current_1.save()
+        self.training_prev_1.ref_cpa_rof = '123ABC'
+        self.training_prev_1.save()
+        se1, se1_prev, se2 = self.create_structure_objects()
+
+        processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
+        se1.refresh_from_db()
+        se2.refresh_from_db()
+
+        self.assertTrue(processed)
+        self.assertEqual(se1.RESPENS_id, se1_prev.RESPENS_id)
+        self.assertEqual(se1.external_name, se1_prev.external_name)
+        self.assertEqual(se2.RESPENS_id, None)
+        self.assertEqual(se2.external_name, None)
+        self.assertTrue(self.training_current_1.recup_atb_ens)
+
+    @patch('mecc.apps.training.utils.get_user_from_ldap')
+    def test_dont_reapply_respens_if_not_in_ldap(self, ldap_mock):
+        response_mock = Mock()
+        response_mock.status_code = 404
+        ldap_mock.side_effect = SporeMethodStatusError(response_mock)
+
+        self.training_current_1.ref_cpa_rof = 'ABC123'
+        self.training_current_1.save()
+        self.training_prev_1.ref_cpa_rof = '123ABC'
+        self.training_prev_1.save()
+        se1, se1_prev, se2 = self.create_structure_objects()
+
+        processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
+        se1.refresh_from_db()
+        se2.refresh_from_db()
+
+        self.assertTrue(processed)
+        self.assertEqual(se1.RESPENS_id, None)
+        self.assertEqual(se1.external_name, se1_prev.external_name)
+        self.assertEqual(se2.RESPENS_id, None)
+        self.assertEqual(se2.external_name, None)
+        self.assertTrue(self.training_current_1.recup_atb_ens)
+
+    def todo_test_user_not_in_ldap_is_not_copied(self):
+        # @todo write test
+        pass

@@ -521,9 +521,7 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
     # di/mecc#43: reapply attributes from previous year
     skipped_trainings = []
     processed_trainings = []
-    previous_year = UniversityYear.objects.exclude(
-        code_year=current_year.code_year,
-    ).order_by('code_year').last()  # type: UniversityYear
+    previous_year = get_previous_year(current_year)
     trainings_current_year = Training.objects.filter(
         supply_cmp=institute.code,
         code_year=current_year.code_year,
@@ -565,6 +563,13 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
     return processed_trainings, skipped_trainings
 
 
+def get_previous_year(current_year: UniversityYear) -> UniversityYear:
+    previous_year = UniversityYear.objects.exclude(
+        code_year=current_year.code_year,
+    ).order_by('code_year').last()  # type: UniversityYear
+    return previous_year
+
+
 def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tuple[bool, str]:
     # cf di/mecc#44
     processed = True
@@ -577,6 +582,35 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
         return False, 'Aucune formation correspondante dans l\'année précédente'
     if not previous_training.ref_cpa_rof:
         return False, 'La formation de l\'année précédente n\'a pas de réf. ROF'
+
+    current_year = UniversityYear.objects.get(code_year=training.code_year)
+    previous_year = get_previous_year(current_year)
+    objects = StructureObject.objects.filter(
+        owner_training_id=training.id,
+        code_year=current_year.code_year,
+    )
+    for structure_object in objects:
+        try:
+            previous_object = StructureObject.objects.get(
+                pk=structure_object.auto_id,
+                code_year=previous_year.code_year,
+            )
+        except StructureObject.DoesNotExist:
+            continue
+        try:
+            get_user_from_ldap(structure_object.RESPENS_id)
+            structure_object.RESPENS_id = previous_object.RESPENS_id
+        except SporeMethodStatusError as error:
+            if error.response.status_code == 404:
+                structure_object.RESPENS_id = None
+            else:
+                raise error
+        structure_object.external_name = previous_object.external_name
+        structure_object.save()
+
+    # do the "same" for ObjectLink
+    training.recup_atb_ens = True
+    training.save()
 
     return processed, message
 
