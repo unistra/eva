@@ -7,7 +7,7 @@ from django.test import TestCase
 from mecc.apps.adm.models import MeccUser
 from mecc.apps.degree.models import DegreeType
 from mecc.apps.institute.models import AcademicField, Institute
-from mecc.apps.mecctable.models import StructureObject
+from mecc.apps.mecctable.models import StructureObject, ObjectsLink
 from mecc.apps.training.models import Training
 from mecc.apps.training.utils import reapply_respens_and_attributes_from_previous_year
 from mecc.apps.years.models import UniversityYear
@@ -149,14 +149,73 @@ class RecupAtbEnsTest(TestCase):
         )
         return se1, se1_prev, se2
 
+    def create_objectslinks(self, se1: StructureObject, se1_prev: StructureObject):
+        ol_local_current = ObjectsLink.objects.create(
+            code_year=self.current_year.code_year,
+            id_training=self.training_current_1.id,
+            id_parent=0,
+            id_child=se1.id,
+            order_in_child=0,
+            n_train_child=self.training_current_1.id,
+            nature_child='INT',
+            is_imported=False,
+        )
+        ol_imported_current = ObjectsLink.objects.create(
+            code_year=self.current_year.code_year,
+            id_training=self.training_current_1.id,
+            id_parent=0,
+            id_child=se1.id,
+            order_in_child=1,
+            n_train_child=self.training_current_1.id,
+            nature_child='EXT',
+            is_imported=True,
+        )
+        ol_local_prev = ObjectsLink.objects.create(
+            code_year=self.previous_year.code_year,
+            id_training=self.training_prev_1.id,
+            id_parent=0,
+            id_child=se1_prev.id,
+            order_in_child=0,
+            n_train_child=self.training_prev_1.id,
+            nature_child='INT',
+            is_imported=False,
+            coefficient=15,
+            eliminatory_grade=9,
+        )
+        ol_imported_prev = ObjectsLink.objects.create(
+            code_year=self.previous_year.code_year,
+            id_training=self.training_prev_1.id,
+            id_parent=0,
+            id_child=se1.id,
+            order_in_child=1,
+            n_train_child=self.training_prev_1.id,
+            nature_child='EXT',
+            is_imported=True,
+            coefficient=2,
+            eliminatory_grade=8,
+        )
+        return ol_local_current, ol_imported_current, ol_local_prev, ol_imported_prev
+
+    @patch('mecc.apps.training.utils.get_user_from_ldap')
+    def test_reapply_previous_year_objectslink_attributes(self, ldap_mock):
+        ldap_mock.return_value = True
+        se1, se1_prev, se2 = self.setup_training_and_structure_objects()
+        ol_loc_current, ol_imp_current, ol_loc_prev, ol_imp_prev = self.create_objectslinks(se1, se1_prev)
+
+        processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
+        ol_loc_current.refresh_from_db()
+        ol_imp_current.refresh_from_db()
+
+        self.assertTrue(processed)
+        self.assertEqual(ol_loc_current.coefficient, ol_loc_prev.coefficient)
+        self.assertEqual(ol_loc_current.eliminatory_grade, ol_loc_prev.eliminatory_grade)
+        self.assertEqual(ol_imp_current.coefficient, None)
+        self.assertEqual(ol_imp_current.eliminatory_grade, None)
+
     @patch('mecc.apps.training.utils.get_user_from_ldap')
     def test_reapply_previous_year_structureobject_respens(self, ldap_mock):
         ldap_mock.return_value = True
-        self.training_current_1.ref_cpa_rof = 'ABC123'
-        self.training_current_1.save()
-        self.training_prev_1.ref_cpa_rof = '123ABC'
-        self.training_prev_1.save()
-        se1, se1_prev, se2 = self.create_structure_objects()
+        se1, se1_prev, se2 = self.setup_training_and_structure_objects()
 
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
         se1.refresh_from_db()
@@ -169,17 +228,21 @@ class RecupAtbEnsTest(TestCase):
         self.assertEqual(se2.external_name, None)
         self.assertTrue(self.training_current_1.recup_atb_ens)
 
+    def setup_training_and_structure_objects(self):
+        self.training_current_1.ref_cpa_rof = 'ABC123'
+        self.training_current_1.save()
+        self.training_prev_1.ref_cpa_rof = '123ABC'
+        self.training_prev_1.save()
+        se1, se1_prev, se2 = self.create_structure_objects()
+        return se1, se1_prev, se2
+
     @patch('mecc.apps.training.utils.get_user_from_ldap')
     def test_dont_reapply_respens_if_not_in_ldap(self, ldap_mock):
         response_mock = Mock()
         response_mock.status_code = 404
         ldap_mock.side_effect = SporeMethodStatusError(response_mock)
 
-        self.training_current_1.ref_cpa_rof = 'ABC123'
-        self.training_current_1.save()
-        self.training_prev_1.ref_cpa_rof = '123ABC'
-        self.training_prev_1.save()
-        se1, se1_prev, se2 = self.create_structure_objects()
+        se1, se1_prev, se2 = self.setup_training_and_structure_objects()
 
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
         se1.refresh_from_db()
@@ -192,6 +255,4 @@ class RecupAtbEnsTest(TestCase):
         self.assertEqual(se2.external_name, None)
         self.assertTrue(self.training_current_1.recup_atb_ens)
 
-    def todo_test_user_not_in_ldap_is_not_copied(self):
-        # @todo write test
-        pass
+    

@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 from britney.errors import SporeMethodStatusError
 from django.contrib.auth.models import Group
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from django.utils.translation import ugettext as _
 
 from mecc.apps.institute.models import Institute
@@ -551,7 +551,7 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
                     training.n_train,
                     training.n_train,
                 )
-                log_error(message, training)
+                log_error(message)
                 skipped_trainings.append(training)
                 continue
         training.MECC_tab = source_training.MECC_tab
@@ -589,7 +589,7 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
         owner_training_id=training.id,
         code_year=current_year.code_year,
     )
-    for structure_object in objects:
+    for structure_object in objects:  # type: StructureObject
         try:
             previous_object = StructureObject.objects.get(
                 pk=structure_object.auto_id,
@@ -609,13 +609,37 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
         structure_object.save()
 
     # do the "same" for ObjectLink
+    links = ObjectsLink.objects.filter(
+        ~Q(is_imported=True),   # exclude links with is_imported = True
+        code_year=current_year.code_year,
+        id_training=training.id,
+    )
+    for object_link in links:  # type: ObjectsLink
+        try:
+            if object_link.id_parent == 0:
+                parent_auto_id = 0
+            else:
+                parent_object = StructureObject.objects.get(pk=object_link.id_parent)
+                parent_auto_id = parent_object.auto_id
+            child_object = StructureObject.objects.get(pk=object_link.id_child)
+            previous_link = ObjectsLink.objects.get(
+                id_parent=parent_auto_id,
+                id_child=child_object.auto_id,
+                code_year=previous_year.code_year,
+            )
+            object_link.coefficient = previous_link.coefficient
+            object_link.eliminatory_grade = previous_link.eliminatory_grade
+            object_link.save()
+        except (ObjectsLink.DoesNotExist, StructureObject.DoesNotExist):
+            continue
+
     training.recup_atb_ens = True
     training.save()
 
     return processed, message
 
 
-def log_error(message: str, training: Training) -> None:
+def log_error(message: str) -> None:
     """
     Log error message to app log and Sentry
     """
