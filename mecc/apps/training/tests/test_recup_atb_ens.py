@@ -150,11 +150,48 @@ class RecupAtbEnsTest(TestCase):
         return se1, se1_prev, se2
 
     def create_objectslinks(self, se1: StructureObject, se1_prev: StructureObject):
-        ol_local_current = ObjectsLink.objects.create(
+        ue_prev = StructureObject.objects.create(
+            code_year=self.previous_year.code_year,
+            nature='UE',
+            owner_training_id=self.training_prev_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session=1,
+            label='UE 1',
+            period='P',
+            RESPENS_id=None,
+            external_name=None,
+            mutual=False,
+        )
+        ue = StructureObject.objects.create(
+            code_year=self.current_year.code_year,
+            auto_id=ue_prev.id,
+            nature='UE',
+            owner_training_id=self.training_current_1.id,
+            cmp_supply_id=self.cuj.code,
+            regime='E',
+            session=1,
+            label='UE 1',
+            period='P',
+            RESPENS_id=None,
+            external_name=None,
+            mutual=False,
+        )
+        ol_local_current_1 = ObjectsLink.objects.create(
             code_year=self.current_year.code_year,
             id_training=self.training_current_1.id,
             id_parent=0,
             id_child=se1.id,
+            order_in_child=0,
+            n_train_child=self.training_current_1.id,
+            nature_child='INT',
+            is_imported=False,
+        )
+        ol_local_current_2 = ObjectsLink.objects.create(
+            code_year=self.current_year.code_year,
+            id_training=self.training_current_1.id,
+            id_parent=se1.id,
+            id_child=ue.id,
             order_in_child=0,
             n_train_child=self.training_current_1.id,
             nature_child='INT',
@@ -170,7 +207,7 @@ class RecupAtbEnsTest(TestCase):
             nature_child='EXT',
             is_imported=True,
         )
-        ol_local_prev = ObjectsLink.objects.create(
+        ol_local_prev_1 = ObjectsLink.objects.create(
             code_year=self.previous_year.code_year,
             id_training=self.training_prev_1.id,
             id_parent=0,
@@ -181,6 +218,18 @@ class RecupAtbEnsTest(TestCase):
             is_imported=False,
             coefficient=15,
             eliminatory_grade=9,
+        )
+        ol_local_prev_2 = ObjectsLink.objects.create(
+            code_year=self.previous_year.code_year,
+            id_training=self.training_prev_1.id,
+            id_parent=se1_prev.id,
+            id_child=ue_prev.id,
+            order_in_child=0,
+            n_train_child=self.training_prev_1.id,
+            nature_child='INT',
+            is_imported=False,
+            coefficient=5,
+            eliminatory_grade=7,
         )
         ol_imported_prev = ObjectsLink.objects.create(
             code_year=self.previous_year.code_year,
@@ -194,23 +243,26 @@ class RecupAtbEnsTest(TestCase):
             coefficient=2,
             eliminatory_grade=8,
         )
-        return ol_local_current, ol_imported_current, ol_local_prev, ol_imported_prev
+        return ol_local_current_1, ol_local_current_2, ol_imported_current, ol_local_prev_1, ol_local_prev_2, ol_imported_prev
 
     @patch('mecc.apps.training.utils.get_user_from_ldap')
     def test_reapply_previous_year_objectslink_attributes(self, ldap_mock):
         ldap_mock.return_value = True
         se1, se1_prev, se2 = self.setup_training_and_structure_objects()
-        ol_loc_current, ol_imp_current, ol_loc_prev, ol_imp_prev = self.create_objectslinks(se1, se1_prev)
+        ol_loc_cur1, ol_loc_cur2, ol_imp_cur1, ol_loc_prev1, ol_loc_prev2, ol_imp_prev = self.create_objectslinks(se1, se1_prev)
 
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
-        ol_loc_current.refresh_from_db()
-        ol_imp_current.refresh_from_db()
+        ol_loc_cur1.refresh_from_db()
+        ol_loc_cur2.refresh_from_db()
+        ol_imp_cur1.refresh_from_db()
 
         self.assertTrue(processed)
-        self.assertEqual(ol_loc_current.coefficient, ol_loc_prev.coefficient)
-        self.assertEqual(ol_loc_current.eliminatory_grade, ol_loc_prev.eliminatory_grade)
-        self.assertEqual(ol_imp_current.coefficient, None)
-        self.assertEqual(ol_imp_current.eliminatory_grade, None)
+        self.assertEqual(ol_loc_cur1.coefficient, ol_loc_prev1.coefficient)
+        self.assertEqual(ol_loc_cur1.eliminatory_grade, ol_loc_prev1.eliminatory_grade)
+        self.assertEqual(ol_loc_cur2.coefficient, ol_loc_prev2.coefficient)
+        self.assertEqual(ol_loc_cur2.eliminatory_grade, ol_loc_prev2.eliminatory_grade)
+        self.assertEqual(ol_imp_cur1.coefficient, None)
+        self.assertEqual(ol_imp_cur1.eliminatory_grade, None)
 
     @patch('mecc.apps.training.utils.get_user_from_ldap')
     def test_reapply_previous_year_structureobject_respens(self, ldap_mock):
