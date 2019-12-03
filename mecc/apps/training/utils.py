@@ -573,7 +573,7 @@ def get_previous_year(current_year: UniversityYear) -> UniversityYear:
 def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tuple[bool, str]:
     # cf di/mecc#44
     processed = True
-    message = ''
+    message = 'Traitement de récupération effectué.'
     if training.recup_atb_ens is True:
         return False, 'Le témoin recup_atb_ens vaut True'
     try:
