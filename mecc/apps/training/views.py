@@ -24,7 +24,8 @@ from mecc.apps.training.forms import SpecificParagraphDerogForm, TrainingForm, \
     AdditionalParagraphForm, ExtraTrainingsForm
 from mecc.apps.training.models import Training, SpecificParagraph, \
     AdditionalParagraph
-from mecc.apps.training.utils import remove_training, consistency_check, reapply_attributes_previous_year
+from mecc.apps.training.utils import remove_training, consistency_check, reapply_attributes_previous_year, \
+    reapply_respens_and_attributes_from_previous_year
 from mecc.apps.utils.documents_generator import Document
 from mecc.apps.utils.manage_pple import manage_respform, is_poweruser, \
     is_megauser
@@ -988,3 +989,12 @@ def reapply_atb(request):
     processed = [t.label for t in processed_trainings]
     skipped = [t.label for t in skipped_trainings]
     return JsonResponse({'skipped': skipped, 'processed': processed})
+
+
+@login_required
+@is_ajax_request
+@is_post_request
+def recup_atb_ens(request):
+    training = get_object_or_404(Training, pk=request.POST.get('training'))
+    processed, message = reapply_respens_and_attributes_from_previous_year(training)
+    return JsonResponse({'processed': processed, 'message': message})

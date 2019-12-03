@@ -3,11 +3,11 @@ Usefull stuff for trainings view
 """
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 from britney.errors import SporeMethodStatusError
 from django.contrib.auth.models import Group
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from django.utils.translation import ugettext as _
 
 from mecc.apps.institute.models import Institute
@@ -521,9 +521,7 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
     # di/mecc#43: reapply attributes from previous year
     skipped_trainings = []
     processed_trainings = []
-    previous_year = UniversityYear.objects.exclude(
-        code_year=current_year.code_year,
-    ).order_by('code_year').last()  # type: UniversityYear
+    previous_year = get_previous_year(current_year)
     trainings_current_year = Training.objects.filter(
         supply_cmp=institute.code,
         code_year=current_year.code_year,
@@ -553,7 +551,7 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
                     training.n_train,
                     training.n_train,
                 )
-                log_error(message, training)
+                log_error(message)
                 skipped_trainings.append(training)
                 continue
         training.MECC_tab = source_training.MECC_tab
@@ -565,7 +563,83 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
     return processed_trainings, skipped_trainings
 
 
-def log_error(message: str, training: Training) -> None:
+def get_previous_year(current_year: UniversityYear) -> UniversityYear:
+    previous_year = UniversityYear.objects.exclude(
+        code_year=current_year.code_year,
+    ).order_by('code_year').last()  # type: UniversityYear
+    return previous_year
+
+
+def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tuple[bool, str]:
+    # cf di/mecc#44
+    processed = True
+    message = 'Traitement de récupération effectué.'
+    if training.recup_atb_ens is True:
+        return False, 'Le témoin recup_atb_ens vaut True'
+    try:
+        previous_training = Training.objects.get(pk=training.n_train)
+    except Training.DoesNotExist:
+        return False, 'Aucune formation correspondante dans l\'année précédente'
+    if not previous_training.ref_cpa_rof:
+        return False, 'La formation de l\'année précédente n\'a pas de réf. ROF'
+
+    current_year = UniversityYear.objects.get(code_year=training.code_year)
+    previous_year = get_previous_year(current_year)
+    objects = StructureObject.objects.filter(
+        owner_training_id=training.id,
+        code_year=current_year.code_year,
+    )
+    for structure_object in objects:  # type: StructureObject
+        try:
+            previous_object = StructureObject.objects.get(
+                pk=structure_object.auto_id,
+                code_year=previous_year.code_year,
+            )
+        except StructureObject.DoesNotExist:
+            continue
+        try:
+            get_user_from_ldap(structure_object.RESPENS_id)
+            structure_object.RESPENS_id = previous_object.RESPENS_id
+        except SporeMethodStatusError as error:
+            if error.response.status_code == 404:
+                structure_object.RESPENS_id = None
+            else:
+                raise error
+        structure_object.external_name = previous_object.external_name
+        structure_object.save()
+
+    # do the "same" for ObjectLink
+    links = ObjectsLink.objects.filter(
+        ~Q(is_imported=True),   # exclude links with is_imported = True
+        code_year=current_year.code_year,
+        id_training=training.id,
+    )
+    for object_link in links:  # type: ObjectsLink
+        try:
+            if object_link.id_parent == 0:
+                parent_auto_id = 0
+            else:
+                parent_object = StructureObject.objects.get(pk=object_link.id_parent)
+                parent_auto_id = parent_object.auto_id
+            child_object = StructureObject.objects.get(pk=object_link.id_child)
+            previous_link = ObjectsLink.objects.get(
+                id_parent=parent_auto_id,
+                id_child=child_object.auto_id,
+                code_year=previous_year.code_year,
+            )
+            object_link.coefficient = previous_link.coefficient
+            object_link.eliminatory_grade = previous_link.eliminatory_grade
+            object_link.save()
+        except (ObjectsLink.DoesNotExist, StructureObject.DoesNotExist):
+            continue
+
+    training.recup_atb_ens = True
+    training.save()
+
+    return processed, message
+
+
+def log_error(message: str) -> None:
     """
     Log error message to app log and Sentry
     """

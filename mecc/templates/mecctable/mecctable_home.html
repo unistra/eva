@@ -161,7 +161,7 @@
                     {% if rof_enabled %}
                         <a href="#"
                            class="btn-primary btn btn-sm btn-1 {% if not can_edit %}disabled{% endif %}"
-                           id="retrieve-previous-attributes">{% trans "Récupérer les responsables,<br>coefs et seuils de compensation<br>des objets de l'année précédente" %}
+                           id="btn-recup-atb-ens">{% trans "Récupérer les responsables,<br>coefs et seuils de compensation<br>des objets de l'année précédente" %}
                         </a>
                     {% else %}
                         <a href="#"
@@ -248,10 +248,30 @@
             check_regime_session({{training.id}}, this.id);
         });
 
-        $('#retrieve-previous-attributes').on('click', function (e) {
-            // @todo implémenter, cf #44
+        $('#btn-recup-atb-ens').on('click', function (e) {
             e.preventDefault();
-            alert('À implémenter, #44');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "training:recup_atb_ens" %}',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    training: {{ training.id }},
+                },
+                success: function (data) {
+                    if (data.processed === true) {
+                        message = data.message + "\n\nVeuillez patienter pendant le rechargement de la page.";
+                    } else {
+                        message = "Le traitement n'a pas été effectué.\n\n" + data.message;
+                    }
+                    alert(message);
+                    if (data.processed === true) {
+                        document.location.reload(true);
+                    }
+                },
+                error: function (jqXHR, status, error) {
+                    console.log(error);
+                }
+            });
         });
 
         function check_regime_session(id_training, link_clicked) {

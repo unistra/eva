@@ -8,7 +8,7 @@ from mecc.apps.training.views import TrainingListView, TrainingCreate, \
     edit_specific_paragraph, edit_additional_paragraph, ask_delete_specific, \
     delete_specific, recover_everything, gen_pdf_all_rules, send_mail, \
     remove_respform, my_teachings, update_training_regime_session, \
-    do_consistency_check, do_regime_session_check, preview_mecc, cancel_transform, reapply_atb
+    do_consistency_check, do_regime_session_check, preview_mecc, cancel_transform, reapply_atb, recup_atb_ens
 from mecc.decorators import is_correct_respform
 
 urlpatterns = [
@@ -68,4 +68,5 @@ urlpatterns = [
     url(r'^preview_mecc/$', preview_mecc,
         name='preview_mecc'),
     url(r'^reapply_atb/$', reapply_atb, name='reapply_atb'),
+    url(r'^recup_at_ens/$', recup_atb_ens, name='recup_atb_ens'),
 ]
