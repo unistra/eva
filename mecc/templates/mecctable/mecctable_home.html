@@ -160,7 +160,7 @@
                 <div class="flex-item">
                     {% if rof_enabled %}
                         <a href="#"
-                           class="btn-primary btn btn-sm btn-1 {% if not can_edit %}disabled{% endif %}"
+                           class="btn-primary btn btn-sm btn-1 {% if not can_edit or training.recup_atb_ens == True %}disabled{% endif %}"
                            id="btn-recup-atb-ens">{% trans "Récupérer les responsables,<br>coefs et seuils de compensation<br>des objets de l'année précédente" %}
                         </a>
                     {% else %}

@@ -579,7 +579,7 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
     if training.recup_atb_ens is True:
         return False, 'Le témoin recup_atb_ens vaut True'
     try:
-        previous_training = Training.objects.get(pk=training.n_train)
+        previous_training = Training.objects.exclude(pk=training.id).get(pk=training.n_train)
     except Training.DoesNotExist:
         return False, 'Aucune formation correspondante dans l\'année précédente'
     if not previous_training.ref_cpa_rof:
