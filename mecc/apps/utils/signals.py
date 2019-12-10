@@ -115,10 +115,13 @@ def ECI_post_delete(sender, **kwargs):
     if kwargs.get('raw', False):  # Usefull for fixtures
         return
     to_del = kwargs['instance'].username
-    meccuser = MeccUser.objects.get(user__username=to_del)
-    profiles = meccuser.profile.all()
-    eci = profiles.get(code='ECI')
-    meccuser.profile.remove(eci)
-    if len(profiles) < 1 and not meccuser.user.is_superuser:
-        meccuser.user.delete()
-        meccuser.delete()
+    try:
+        meccuser = MeccUser.objects.get(user__username=to_del)
+        profiles = meccuser.profile.all()
+        eci = profiles.get(code='ECI')
+        meccuser.profile.remove(eci)
+        if len(profiles) < 1 and not meccuser.user.is_superuser:
+            meccuser.user.delete()
+            meccuser.delete()
+    except MeccUser.DoesNotExist:
+        pass
