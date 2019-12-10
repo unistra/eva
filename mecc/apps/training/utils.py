@@ -538,6 +538,8 @@ def reapply_attributes_previous_year(institute: Institute, current_year: Univers
             continue
         if training.n_train == training.id or training.n_train is None:
             # La formation n'était pas présente l'année n-1
+            training.reappli_atb = True
+            training.save()
             skipped_trainings.append(training)
             continue
         else:

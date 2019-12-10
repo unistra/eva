@@ -124,3 +124,20 @@ class ReappliAtbTest(TestCase):
                 self.training_current_1.id,
                 self.training_current_1.n_train, self.training_current_1.n_train)
             self.assertIn(message, cm.output)
+
+    @patch('mecc.apps.training.utils.get_user_from_ldap')
+    def test_even_if_there_is_no_corresponding_training_in_previous_year_flag_is_set_to_true(self, ldap_mock):
+        ldap_mock.return_value = True
+        self.training_prev_2.delete()
+        self.training_current_2.n_train = self.training_current_2.id
+        self.training_current_2.save()
+
+        processed, skipped = reapply_attributes_previous_year(self.cuj, self.current_year)
+        self.training_current_1.refresh_from_db()
+        self.training_current_2.refresh_from_db()
+
+        self.assertEqual(len(processed), 1)
+        self.assertEqual(len(skipped), 1)
+        self.assertListEqual(skipped, [self.training_current_2])
+        self.assertTrue(self.training_current_1.reappli_atb)
+        self.assertTrue(self.training_current_2.reappli_atb)
