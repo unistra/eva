@@ -574,6 +574,11 @@ def get_previous_year(current_year: UniversityYear) -> UniversityYear:
 
 def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tuple[bool, str]:
     # cf di/mecc#44
+
+    def update_flag():
+        training.recup_atb_ens = True
+        training.save()
+
     processed = True
     message = 'Traitement de récupération effectué.'
     if training.recup_atb_ens is True:
@@ -581,8 +586,10 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
     try:
         previous_training = Training.objects.exclude(pk=training.id).get(pk=training.n_train)
     except Training.DoesNotExist:
+        update_flag()
         return False, 'Aucune formation correspondante dans l\'année précédente'
     if not previous_training.ref_cpa_rof:
+        update_flag()
         return False, 'La formation de l\'année précédente n\'a pas de réf. ROF'
 
     current_year = UniversityYear.objects.get(code_year=training.code_year)
@@ -635,8 +642,7 @@ def reapply_respens_and_attributes_from_previous_year(training: Training) -> Tup
         except (ObjectsLink.DoesNotExist, StructureObject.DoesNotExist):
             continue
 
-    training.recup_atb_ens = True
-    training.save()
+    update_flag()
 
     return processed, message
 

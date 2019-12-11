@@ -84,16 +84,20 @@ class RecupAtbEnsTest(TestCase):
         self.training_prev_1.save()
         self.training_prev_1.refresh_from_db()
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
+        self.training_current_1.refresh_from_db()
         self.assertFalse(processed)
         self.assertIn('La formation de l\'année précédente n\'a pas de réf. ROF', message)
+        self.assertTrue(self.training_current_1.recup_atb_ens)
 
     def test_previous_year_training_can_not_be_found(self):
         self.training_current_1.n_train = 99999999
         self.training_current_1.save()
         self.training_current_1.refresh_from_db()
         processed, message = reapply_respens_and_attributes_from_previous_year(self.training_current_1)
+        self.training_current_1.refresh_from_db()
         self.assertFalse(processed)
         self.assertIn('Aucune formation correspondante dans l\'année précédente', message)
+        self.assertTrue(self.training_current_1.recup_atb_ens)
 
     def create_structure_objects(self):
         se1_prev = StructureObject.objects.create(
