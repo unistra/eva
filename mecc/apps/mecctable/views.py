@@ -185,11 +185,11 @@ def copy_old_exams(request, id_structure=None):
         """
         Copy last year exams for the given structure
         """
-        old_structure = StructureObject.objects.get(
-            auto_id=structure.auto_id,
-            code_year=structure.code_year-1
-        )
-        if old_structure:
+        try:
+            old_structure = StructureObject.objects.get(
+                auto_id=structure.auto_id,
+                code_year=structure.code_year-1
+            )
             old_exams = Exam.objects.filter(
                 id_attached=old_structure.id,
             )
@@ -221,7 +221,7 @@ def copy_old_exams(request, id_structure=None):
                 return 666
             else:
                 return 333
-        else:
+        except StructureObject.DoesNotExist:
             return 999
 
     id_structure = request.GET.get('structure_id')
